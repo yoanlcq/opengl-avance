@@ -1,0 +1,4 @@
+baseurl = "http://replace-this-with-your-hugo-site.com/"
+title = "OpenGL Avancé"
+languageCode = "en-us"
+theme = "hugo-theme-learn"
