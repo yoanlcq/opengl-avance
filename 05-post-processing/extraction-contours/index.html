@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="generator" content="Hugo 0.17" />
+    <meta name="description" content="">
+
+
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+
+    
+    <title>Extraction de contours</title>
+    <link href="https://celeborn2bealive.github.io/opengl-avance//css/nucleus.css" rel="stylesheet">
+    <link href="https://celeborn2bealive.github.io/opengl-avance//css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://celeborn2bealive.github.io/opengl-avance//css/hybrid.css" rel="stylesheet">
+    <link href="https://celeborn2bealive.github.io/opengl-avance//css/featherlight.min.css" rel="stylesheet">
+    <link href="https://celeborn2bealive.github.io/opengl-avance//css/perfect-scrollbar.min.css" rel="stylesheet">
+    <link href="https://celeborn2bealive.github.io/opengl-avance//css/horsey.css" rel="stylesheet">
+    <link href="https://celeborn2bealive.github.io/opengl-avance//css/theme.css" rel="stylesheet">
+    <link href="https://celeborn2bealive.github.io/opengl-avance//css/hugo-theme.css" rel="stylesheet">
+    <script src="https://celeborn2bealive.github.io/opengl-avance//js/jquery-2.x.min.js"></script>
+    <style type="text/css">:root #header + #content > #left > #rlblock_left
+    {display:none !important;}</style>
+    
+
+<style>
+    #header-wrapper {
+        background: #F0F0F0;
+        color: #fff;
+        text-align: center;
+        border-bottom: 4px solid #E0E0E0;
+        padding: 1rem;
+    }
+</style>
+  </head>
+  <body class="" data-url="/opengl-avance/05-post-processing/extraction-contours/">
+    <nav id="sidebar">
+  <div id="header-wrapper">
+    <div id="header">
+      
+
+<script src="/scripts/sylvester.js" type="text/javascript"></script>
+<script src="/scripts/glUtils.js" type="text/javascript"></script>
+<script src="/scripts/webgl-demo.js" type="text/javascript"></script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+      varying highp vec2 vTextureCoord;
+
+      uniform sampler2D uSampler;
+
+      void main(void) {
+        gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+      }
+</script>
+
+    
+
+<script id="shader-vs" type="x-shader/x-vertex">
+  attribute vec3 aVertexPosition;
+  attribute vec2 aTextureCoord;
+
+  uniform mat4 uMVMatrix;
+  uniform mat4 uPMatrix;
+
+  varying highp vec2 vTextureCoord;
+
+  void main(void) {
+    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+    vTextureCoord = aTextureCoord;
+  }
+</script>
+
+<canvas width = "200" height = "200" id = "glcanvas"></canvas>
+
+<script>
+    start();
+</script>
+    </div>
+    
+</div>
+
+
+  <div class="highlightable">
+    <ul class="topics">
+      
+      
+        
+      
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/opengl-avance/01-introduction/">
+        <a href="/opengl-avance/01-introduction/">
+          <span>
+            
+              <b>1. </b>
+            
+             Introduction
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/01-introduction/objectifs/">
+              <a href="/opengl-avance/01-introduction/objectifs/">
+                <span>Objectifs     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/01-introduction/code-template/">
+              <a href="/opengl-avance/01-introduction/code-template/">
+                <span>Code template     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/01-introduction/lib-externes/">
+              <a href="/opengl-avance/01-introduction/lib-externes/">
+                <span>Bibliotheques externes     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/01-introduction/projet/">
+              <a href="/opengl-avance/01-introduction/projet/">
+                <span>Projet     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/01-introduction/liens/">
+              <a href="/opengl-avance/01-introduction/liens/">
+                <span>Liens     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/opengl-avance/02-forward-shading/">
+        <a href="/opengl-avance/02-forward-shading/">
+          <span>
+            
+              <b>2. </b>
+            
+             Forward Shading (Rappels)
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/02-forward-shading/pipeline/">
+              <a href="/opengl-avance/02-forward-shading/pipeline/">
+                <span>Pipeline de rendu     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/02-forward-shading/geometrie/">
+              <a href="/opengl-avance/02-forward-shading/geometrie/">
+                <span>Geometrie     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/02-forward-shading/shaders/">
+              <a href="/opengl-avance/02-forward-shading/shaders/">
+                <span>Shaders     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/02-forward-shading/transformations/">
+              <a href="/opengl-avance/02-forward-shading/transformations/">
+                <span>Transformations     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/02-forward-shading/lighting/">
+              <a href="/opengl-avance/02-forward-shading/lighting/">
+                <span>Lighting     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/02-forward-shading/textures/">
+              <a href="/opengl-avance/02-forward-shading/textures/">
+                <span>Textures     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/02-forward-shading/load-obj/">
+              <a href="/opengl-avance/02-forward-shading/load-obj/">
+                <span>Chargement de modèles OBJ     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/opengl-avance/03-deferred-shading/">
+        <a href="/opengl-avance/03-deferred-shading/">
+          <span>
+            
+              <b>3. </b>
+            
+             Deferred Shading
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/03-deferred-shading/pipeline/">
+              <a href="/opengl-avance/03-deferred-shading/pipeline/">
+                <span>Pipeline de rendu     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/03-deferred-shading/geometry-pass/">
+              <a href="/opengl-avance/03-deferred-shading/geometry-pass/">
+                <span>Geometry pass     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/03-deferred-shading/shading-pass/">
+              <a href="/opengl-avance/03-deferred-shading/shading-pass/">
+                <span>Shading pass     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  " data-nav-id="/opengl-avance/04-shadow-mapping/">
+        <a href="/opengl-avance/04-shadow-mapping/">
+          <span>
+            
+              <b>4. </b>
+            
+             Shadow Mapping
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/04-shadow-mapping/introduction/">
+              <a href="/opengl-avance/04-shadow-mapping/introduction/">
+                <span>Introduction     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/04-shadow-mapping/creation-shadow-map/">
+              <a href="/opengl-avance/04-shadow-mapping/creation-shadow-map/">
+                <span>Création de la Shadow Map     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/04-shadow-mapping/utilisation-shadow-map/">
+              <a href="/opengl-avance/04-shadow-mapping/utilisation-shadow-map/">
+                <span>Utilisation de la Shadow Map     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+      
+
+      
+        
+      
+      
+      
+
+      <li class="dd-item  parent" data-nav-id="/opengl-avance/05-post-processing/">
+        <a href="/opengl-avance/05-post-processing/">
+          <span>
+            
+              <b>5. </b>
+            
+             Post-Processing
+            
+           </span>
+        </a>
+        
+        <ul>
+          
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/05-post-processing/introduction/">
+              <a href="/opengl-avance/05-post-processing/introduction/">
+                <span>Introduction     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/05-post-processing/gamma-correction/">
+              <a href="/opengl-avance/05-post-processing/gamma-correction/">
+                <span>Gamma correction     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item active" data-nav-id="/opengl-avance/05-post-processing/extraction-contours/">
+              <a href="/opengl-avance/05-post-processing/extraction-contours/">
+                <span>Extraction de contours     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/opengl-avance/05-post-processing/depth-of-field/">
+              <a href="/opengl-avance/05-post-processing/depth-of-field/">
+                <span>Depth of field     </i></span>
+              </a>
+            </li>
+          
+          
+        </ul>
+        
+      </li>
+      
+      
+    </ul>
+    <hr>
+     
+    <section id="footer">
+      <p>TDs écris par <a href="http://laurentnoel.fr/">Laurent Noël</a></p>
+    </section>
+  </div>
+</nav>
+
+        <section id="body">
+        <div id="overlay"></div>
+
+        <div class="padding highlightable">
+
+            <div id="top-bar">
+              
+              <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                  <span id="sidebar-toggle-span">
+                      <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                        <i class="fa fa-bars"></i>
+                      </a>
+                  </span>
+                
+                <span id="toc-menu"><a href=""><i class="fa fa-list-alt"></i></a></span>
+                
+                
+                
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                    
+                    
+                <a href="/opengl-avance/05-post-processing/" itemprop="url"><span itemprop="title">Post-Processing</span></a> <i class="fa fa-angle-right"></i>
+                    
+                  
+                
+                <span itemprop="title"> Extraction de contours</span>
+              </div>
+              
+                  <div class="progress">
+    <div class="wrapper">
+
+    </div>
+</div>
+
+              
+
+            </div>
+            
+    	        <div id="body-inner">
+                
+                <h1>Extraction de contours</h1>
+                
+
+<p>Lorem Ipsum</p>
+
+
+      
+      </div>
+    </div>
+
+    <div id="navigation">
+        <a class="nav nav-prev" href="/prev/path"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="/next/path" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+    </div>
+
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="https://celeborn2bealive.github.io/opengl-avance//js/clipboard.min.js"></script>
+    <script src="https://celeborn2bealive.github.io/opengl-avance//js/perfect-scrollbar.min.js"></script>
+    <script src="https://celeborn2bealive.github.io/opengl-avance//js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="https://celeborn2bealive.github.io/opengl-avance//js/jquery.sticky-kit.min.js"></script>
+    <script src="https://celeborn2bealive.github.io/opengl-avance//js/featherlight.min.js"></script>
+    <script src="https://celeborn2bealive.github.io/opengl-avance//js/html5shiv-printshiv.min.js"></script>
+    <script src="https://celeborn2bealive.github.io/opengl-avance//js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="https://celeborn2bealive.github.io/opengl-avance//js/modernizr.custom.71422.js"></script>
+    <script src="https://celeborn2bealive.github.io/opengl-avance//js/learn.js"></script>
+    <script src="https://celeborn2bealive.github.io/opengl-avance//js/hugo-learn.js"></script>
+    
+
+  </body>
+</html>
+

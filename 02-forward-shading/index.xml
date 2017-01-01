@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>02-forward-shading-rsses on OpenGL Avancé</title>
+    <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/index.xml</link>
+    <description>Recent content in 02-forward-shading-rsses on OpenGL Avancé</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>fr</language>
+    <lastBuildDate>Thu, 29 Dec 2016 11:57:33 +0100</lastBuildDate>
+    <atom:link href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Forward Shading (Rappels)</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/</link>
+      <pubDate>Thu, 29 Dec 2016 11:57:33 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/</guid>
+      <description>
+
+&lt;h1 id=&#34;forward-shading-rappels&#34;&gt;Forward Shading (Rappels)&lt;/h1&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Pipeline de rendu</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/pipeline/</link>
+      <pubDate>Thu, 29 Dec 2016 12:15:45 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/pipeline/</guid>
+      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Geometrie</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/geometrie/</link>
+      <pubDate>Thu, 29 Dec 2016 12:18:05 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/geometrie/</guid>
+      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Shaders</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/shaders/</link>
+      <pubDate>Thu, 29 Dec 2016 12:20:05 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/shaders/</guid>
+      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Transformations</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/transformations/</link>
+      <pubDate>Thu, 29 Dec 2016 12:20:24 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/transformations/</guid>
+      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Lighting</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/lighting/</link>
+      <pubDate>Thu, 29 Dec 2016 12:21:21 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/lighting/</guid>
+      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Textures</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/textures/</link>
+      <pubDate>Thu, 29 Dec 2016 12:21:29 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/textures/</guid>
+      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Chargement de modèles OBJ</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/load-obj/</link>
+      <pubDate>Thu, 29 Dec 2016 12:22:16 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/load-obj/</guid>
+      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

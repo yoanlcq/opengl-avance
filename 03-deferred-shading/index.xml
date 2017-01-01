@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>03-deferred-shading-rsses on OpenGL Avancé</title>
+    <link>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/index.xml</link>
+    <description>Recent content in 03-deferred-shading-rsses on OpenGL Avancé</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>fr</language>
+    <lastBuildDate>Thu, 29 Dec 2016 12:02:34 +0100</lastBuildDate>
+    <atom:link href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Deferred Shading</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/</link>
+      <pubDate>Thu, 29 Dec 2016 12:02:34 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/</guid>
+      <description>
+
+&lt;h1 id=&#34;deferred-shading&#34;&gt;Deferred Shading&lt;/h1&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Pipeline de rendu</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/pipeline/</link>
+      <pubDate>Thu, 29 Dec 2016 12:27:04 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/pipeline/</guid>
+      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Geometry pass</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/geometry-pass/</link>
+      <pubDate>Thu, 29 Dec 2016 12:27:23 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/geometry-pass/</guid>
+      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Shading pass</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/shading-pass/</link>
+      <pubDate>Thu, 29 Dec 2016 12:27:28 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/shading-pass/</guid>
+      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

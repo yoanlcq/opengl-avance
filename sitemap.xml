@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/</loc>
+    <lastmod>2016-12-29T12:09:46+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/</loc>
+    <lastmod>2016-12-29T12:09:46+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/</loc>
+    <lastmod>2016-12-29T12:09:35+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/</loc>
+    <lastmod>2016-12-29T12:02:34+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/</loc>
+    <lastmod>2016-12-29T11:57:33+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/01-introduction/</loc>
+    <lastmod>2016-12-29T11:33:37+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/introduction/</loc>
+    <lastmod>2016-12-29T12:35:23+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/introduction/</loc>
+    <lastmod>2016-12-29T12:29:08+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/pipeline/</loc>
+    <lastmod>2016-12-29T12:27:04+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/pipeline/</loc>
+    <lastmod>2016-12-29T12:15:45+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/01-introduction/objectifs/</loc>
+    <lastmod>2016-12-29T11:34:23+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/gamma-correction/</loc>
+    <lastmod>2016-12-29T12:36:04+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/creation-shadow-map/</loc>
+    <lastmod>2016-12-29T12:29:25+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/geometry-pass/</loc>
+    <lastmod>2016-12-29T12:27:23+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/geometrie/</loc>
+    <lastmod>2016-12-29T12:18:05+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/01-introduction/code-template/</loc>
+    <lastmod>2016-12-29T11:36:02+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/extraction-contours/</loc>
+    <lastmod>2016-12-29T12:36:20+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/utilisation-shadow-map/</loc>
+    <lastmod>2016-12-29T12:29:31+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/shading-pass/</loc>
+    <lastmod>2016-12-29T12:27:28+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/01-introduction/lib-externes/</loc>
+    <lastmod>2016-12-29T12:24:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/shaders/</loc>
+    <lastmod>2016-12-29T12:20:05+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/depth-of-field/</loc>
+    <lastmod>2016-12-29T12:36:32+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/transformations/</loc>
+    <lastmod>2016-12-29T12:20:24+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/01-introduction/projet/</loc>
+    <lastmod>2016-12-29T11:50:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/lighting/</loc>
+    <lastmod>2016-12-29T12:21:21+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/01-introduction/liens/</loc>
+    <lastmod>2016-12-29T11:50:45+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/textures/</loc>
+    <lastmod>2016-12-29T12:21:29+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/load-obj/</loc>
+    <lastmod>2016-12-29T12:22:16+01:00</lastmod>
+  </url>
+  
+</urlset>
