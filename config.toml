@@ -1,4 +1,5 @@
-baseurl = "http://replace-this-with-your-hugo-site.com/"
+baseURL = "https://Celeborn2BeAlive.github.io/opengl-avance/"
+canonifyURLs = true
 title = "OpenGL Avancé"
-languageCode = "en-us"
+languageCode = "fr"
 theme = "hugo-theme-learn"
