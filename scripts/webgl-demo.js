@@ -22,7 +22,7 @@ var perspectiveMatrix;
 //
 // Called when the canvas is created to get the ball rolling.
 //
-function start() {
+function start(pathToImages) {
   canvas = document.getElementById("glcanvas");
 
   initWebGL(canvas);      // Initialize the GL context
@@ -47,7 +47,7 @@ function start() {
 
     // Next, load and set up the textures we'll be using.
 
-    initTextures();
+    initTextures(pathToImages);
 
     // Set up to draw the scene periodically.
 
@@ -213,11 +213,11 @@ function initBuffers() {
 // the texture images. The handleTextureLoaded() callback will finish
 // the job; it gets called each time a texture finishes loading.
 //
-function initTextures() {
+function initTextures(pathToImages) {
   cubeTexture = gl.createTexture();
   cubeImage = new Image();
   cubeImage.onload = function() { handleTextureLoaded(cubeImage, cubeTexture); }
-  cubeImage.src = "../images/opengl-logo-2k.png";
+  cubeImage.src = pathToImages + "/opengl-logo-2k.png";
 }
 
 function handleTextureLoaded(image, texture) {
