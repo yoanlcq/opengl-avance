@@ -81,10 +81,7 @@ endif()
 
 target_link_libraries(
     template
-    ${OPENGL_LIBRARIES}
-    glfw
-    glmlv
-    stdc++fs
+    ${LIBRARIES}
 )
 
 source_group ("glsl" REGULAR_EXPRESSION "*.glsl")
