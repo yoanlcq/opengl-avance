@@ -19,6 +19,8 @@ public:
     int run();
 private:
     fs::path m_AppPath;
+    std::string m_AppName;
+    std::string m_ImGuiIniFilename;
     fs::path m_ShadersRootPath;
 
     size_t m_nWindowWidth = 1280;
@@ -36,6 +38,7 @@ int main(int argc, char** argv)
 Application::Application(int argc, char** argv)
 {
     m_AppPath = fs::path{ argv[0] };
+    m_AppName = m_AppPath.stem().string();
     auto appDir = m_AppPath.parent_path();
 
     if (!glfwInit()) {
@@ -72,6 +75,8 @@ Application::Application(int argc, char** argv)
 
     // Setup ImGui binding
     ImGui_ImplGlfwGL3_Init(m_pWindow, true);
+    m_ImGuiIniFilename = m_AppName + ".imgui.ini";
+    ImGui::GetIO().IniFilename = m_ImGuiIniFilename.c_str();
 }
 
 Application::~Application()

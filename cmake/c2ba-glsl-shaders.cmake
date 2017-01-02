@@ -34,15 +34,9 @@ macro(c2ba_add_shader_directory src_directory dst_directory)
             list(GET files ${idx} file)
             list(GET relative_files ${idx} relative_file)
 
-            if(MSVC)
-                set(SHADER_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}//\$\(Configuration\)/${dst_directory}/${relative_file})
-            else()
-                set(SHADER_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/${dst_directory}/${relative_file})
-            endif()
-
             add_custom_command(
-                OUTPUT ${SHADER_OUTPUT_PATH}
-                COMMAND ${CMAKE_COMMAND} -E copy ${file} ${SHADER_OUTPUT_PATH}
+                OUTPUT ${dst_directory}/${relative_file}
+                COMMAND ${CMAKE_COMMAND} -E copy ${file} ${dst_directory}
                 MAIN_DEPENDENCY ${file}
             )
         endforeach()

@@ -22,8 +22,18 @@ find_package(OpenGL REQUIRED)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 include(c2ba-glsl-shaders)
 include(c2ba-copy-dll-post-build)
+
+if(MSVC)
+    set(SHADER_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin/\$\(Configuration\)/shaders)
+else()
+    set(SHADER_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin/shaders)
+endif()
 
 include_directories(
     glmlv
@@ -40,12 +50,20 @@ include_directories(
 file(
     GLOB_RECURSE
     GLMLV_LIB_FILES
-    lib/*.cpp lib/*.hpp
+    lib/*.cpp lib/*.hpp lib/*.glsl
 )
 
 add_library(
     glmlv
     ${GLMLV_LIB_FILES}
+)
+
+c2ba_add_shader_directory(${CMAKE_CURRENT_SOURCE_DIR}/lib/shaders ${SHADER_OUTPUT_PATH}/glmlv)
+
+install(
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib/shaders/
+    DESTINATION shaders/glmlv
+    FILES_MATCHING PATTERN "*.glsl"
 )
 
 set(
@@ -55,17 +73,10 @@ set(
     third-party/${IMGUI_DIR}/imgui_draw.cpp
 )
 
-file(
-    GLOB_RECURSE
-    SRC_FILES
-    apps/*.cpp apps/*.hpp apps/*.glsl
-)
-
-add_executable(
-    template
-    ${SRC_FILES}
-    third-party/${GLAD_DIR}/src/glad.c
+set(
+    THIRD_PARTY_SRC_FILES
     ${IMGUI_SRC_FILES}
+    third-party/${GLAD_DIR}/src/glad.c
 )
 
 set(
@@ -79,15 +90,40 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     set(LIBRARIES ${LIBRARIES} stdc++fs)
 endif()
 
-target_link_libraries(
-    template
-    ${LIBRARIES}
-)
-
-source_group ("glsl" REGULAR_EXPRESSION "*.glsl")
+source_group ("glsl" REGULAR_EXPRESSION "*/*.glsl")
 source_group ("third-party" REGULAR_EXPRESSION "third-party/*.*")
 
-install(
-    TARGETS template
-    DESTINATION bin
-)
+file(GLOB APP_DIRECTORIES "apps/*")
+foreach(DIR ${APP_DIRECTORIES})
+    get_filename_component(APP ${DIR} NAME)
+
+    file(
+        GLOB_RECURSE
+        SRC_FILES
+        apps/${APP}/*.cpp apps/${APP}/*.hpp apps/${APP}/*.glsl
+    )
+
+    add_executable(
+        ${APP}
+        ${SRC_FILES}
+        ${THIRD_PARTY_SRC_FILES}
+    )
+
+    target_link_libraries(
+        ${APP}
+        ${LIBRARIES}
+    )
+
+    install(
+        TARGETS ${APP}
+        DESTINATION .
+    )
+
+    c2ba_add_shader_directory(${DIR}/shaders ${SHADER_OUTPUT_PATH}/${APP})
+
+    install(
+        DIRECTORY ${DIR}/shaders/
+        DESTINATION shaders/${APP}
+        FILES_MATCHING PATTERN "*.glsl"
+    )
+endforeach()
