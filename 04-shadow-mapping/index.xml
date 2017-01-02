@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>04-shadow-mapping-rsses on OpenGL Avancé</title>
-    <link>https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/index.xml</link>
-    <description>Recent content in 04-shadow-mapping-rsses on OpenGL Avancé</description>
+    <title>04-shadow-mappings on OpenGL Avancé</title>
+    <link>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/index.xml</link>
+    <description>Recent content in 04-shadow-mappings on OpenGL Avancé</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>fr</language>
     <lastBuildDate>Thu, 29 Dec 2016 12:09:46 +0100</lastBuildDate>
-    <atom:link href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Shadow Mapping</title>
