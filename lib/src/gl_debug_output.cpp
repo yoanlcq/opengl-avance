@@ -3,6 +3,7 @@
 #include <array>
 #include <tuple>
 #include <iostream>
+#include <algorithm>
 #include <imgui.h>
 
 namespace glmlv

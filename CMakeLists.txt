@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 2.8)
 
 project(opengl)
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+    add_definitions(
+        -std=c++14
+    )
+endif()
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set(IMGUI_DIR imgui-1.49)
@@ -62,11 +68,23 @@ add_executable(
     ${IMGUI_SRC_FILES}
 )
 
+set(
+    LIBRARIES
+    ${OPENGL_LIBRARIES}
+    glfw
+    glmlv
+)
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(LIBRARIES ${LIBRARIES} stdc++fs)
+endif()
+
 target_link_libraries(
     template
     ${OPENGL_LIBRARIES}
     glfw
     glmlv
+    stdc++fs
 )
 
 source_group ("glsl" REGULAR_EXPRESSION "*.glsl")
