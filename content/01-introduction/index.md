@@ -1,5 +1,4 @@
 +++
-prev = "/prev/path"
 next = "/01-introduction/objectifs"
 chapter = true
 icon = "<b>1. </b>"
