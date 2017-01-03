@@ -4,10 +4,45 @@
 #include <tuple>
 #include <iostream>
 #include <algorithm>
+#include <unordered_map>
 #include <imgui.h>
 
 namespace glmlv
 {
+
+static const std::unordered_map<GLenum, const char *> sourceEnumToString =
+{
+    { GL_DEBUG_SOURCE_API , "API" },
+    { GL_DEBUG_SOURCE_WINDOW_SYSTEM , "WINDOW_SYSTEM" },
+    { GL_DEBUG_SOURCE_SHADER_COMPILER , "SHADER_COMPILER" },
+    { GL_DEBUG_SOURCE_THIRD_PARTY , "THIRD_PARTY" },
+    { GL_DEBUG_SOURCE_APPLICATION , "APPLICATION" },
+    { GL_DEBUG_SOURCE_OTHER , "OTHER" }
+};
+
+static const std::unordered_map<GLenum, const char *> typeEnumToString =
+{
+    { GL_DEBUG_TYPE_ERROR , "ERROR" },
+    { GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR , "DEPRECATED_BEHAVIOR" },
+    { GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR , "UNDEFINED_BEHAVIOR" },
+    { GL_DEBUG_TYPE_PORTABILITY , "PORTABILITY" },
+    { GL_DEBUG_TYPE_PERFORMANCE , "PERFORMANCE" },
+    { GL_DEBUG_TYPE_OTHER , "OTHER" }
+};
+
+static const std::unordered_map<GLenum, const char *> severityEnumToString =
+{
+    { GL_DEBUG_SEVERITY_HIGH , "HIGH" },
+    { GL_DEBUG_SEVERITY_MEDIUM , "MEDIUM" },
+    { GL_DEBUG_SEVERITY_LOW , "LOW" },
+    { GL_DEBUG_SEVERITY_NOTIFICATION , "NOTIFICATION" }
+};
+
+// List of message type to ignore for GL Debug Output
+static const std::vector<std::tuple<GLenum, GLenum, GLenum>> ignoreList =
+{
+    std::make_tuple(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION) // Ignore all notifications
+};
 
 static std::array<std::tuple<const char *, bool, GLenum>, 6> sourceSelector =
 {
@@ -45,68 +80,26 @@ void initGLDebugOutput()
     glDebugMessageCallback((GLDEBUGPROCARB)logGLDebugInfo, nullptr);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
-    for (auto & t : sourceSelector) {
-        glDebugMessageControl(std::get<2>(t), GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, std::get<1>(t));
+    for (const auto & tuple : ignoreList) {
+        glDebugMessageControl(std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple), 0, nullptr, GL_FALSE);
     }
-
-    for (auto & t : typeSelector) {
-        glDebugMessageControl(GL_DONT_CARE, std::get<2>(t), GL_DONT_CARE, 0, nullptr, std::get<1>(t));
-    }
-
-    for (auto & t : severitySelector) {
-        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, std::get<2>(t), 0, nullptr, std::get<1>(t));
-    }
-}
-
-void showGLDebugOutputsWindow()
-{
-    ImGui::Begin("OpenGL Debug Outputs");
-
-    if (ImGui::CollapsingHeader("Source"))
-    {
-        for (auto & t : sourceSelector) {
-            if (ImGui::Checkbox(std::get<0>(t), &std::get<1>(t))) {
-                glDebugMessageControl(std::get<2>(t), GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, std::get<1>(t));
-            }
-        }
-    }
-
-    if (ImGui::CollapsingHeader("Type"))
-    {
-        for (auto & t : typeSelector) {
-            if (ImGui::Checkbox(std::get<0>(t), &std::get<1>(t))) {
-                glDebugMessageControl(GL_DONT_CARE, std::get<2>(t), GL_DONT_CARE, 0, nullptr, std::get<1>(t));
-            }
-        }
-    }
-
-    if (ImGui::CollapsingHeader("Severity"))
-    {
-        for (auto & t : severitySelector) {
-            if (ImGui::Checkbox(std::get<0>(t), &std::get<1>(t))) {
-                glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, std::get<2>(t), 0, nullptr, std::get<1>(t));
-            }
-        }
-    }
-
-    ImGui::End();
 }
 
 void logGLDebugInfo(GLenum source, GLenum type, GLuint id, GLenum severity,
     GLsizei length, const GLchar* message, GLvoid* userParam)
 {
-    const auto findStr = [&](GLenum value, const auto & selector)
+    const auto findStr = [](GLenum value, const auto & map)
     {
-        const auto it = find_if(begin(sourceSelector), end(sourceSelector), [source](const auto & t) { return std::get<2>(t) == source; });
-        if (it == end(sourceSelector)) {
+        const auto it = map.find(value);
+        if (it == end(map)) {
             return "UNDEFINED";
         }
-        return std::get<0>(*it);
+        return (*it).second;
     };
 
-    const auto sourceStr = findStr(source, sourceSelector);
-    const auto typeStr = findStr(type, typeSelector);
-    const auto severityStr = findStr(severity, severitySelector);
+    const auto sourceStr = findStr(source, sourceEnumToString);
+    const auto typeStr = findStr(type, typeEnumToString);
+    const auto severityStr = findStr(severity, severityEnumToString);
 
     std::clog << "OpenGL: " << message << " [source=" << sourceStr << " type=" << typeStr << " severity=" << severityStr << " id=" << id << "]\n\n";
 }

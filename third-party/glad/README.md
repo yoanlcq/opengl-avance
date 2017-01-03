@@ -1,1 +1,1 @@
-Generated with http://glad.dav1d.de/#profile=compatibility&api=gl%3D4.4&api=gles1%3Dnone&api=gles2%3Dnone&api=glsc2%3Dnone&extensions=GL_EXT_direct_state_access&language=c&specification=gl&loader=on
+http://glad.dav1d.de/#profile=core&api=gl%3D4.4&api=gles1%3Dnone&api=gles2%3Dnone&api=glsc2%3Dnone&extensions=GL_ARB_direct_state_access&language=c&specification=gl&loader=on

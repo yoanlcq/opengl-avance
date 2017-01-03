@@ -10,8 +10,7 @@
 #include <glmlv/imgui_impl_glfw_gl3.hpp>
 
 // GL3W/GLFW
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <glmlv/glfw.hpp>
 #ifdef _WIN32
 #undef APIENTRY
 #define GLFW_EXPOSE_NATIVE_WIN32
