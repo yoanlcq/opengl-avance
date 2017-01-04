@@ -77,6 +77,11 @@ public:
         glfwSwapBuffers(m_pWindow);
     }
 
+    GLFWwindow* window()
+    {
+        return m_pWindow;
+    }
+
 private:
     GLFWwindow* m_pWindow = nullptr;
 };

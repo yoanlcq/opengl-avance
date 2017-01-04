@@ -23,6 +23,7 @@ set(GLFW_DIR glfw-3.2.1)
 set(GLM_DIR glm-0.9.8.3)
 set(GLAD_DIR glad)
 set(JSON_DIR json-2.0.9)
+set(STB_DIR stb)
 
 add_subdirectory(third-party/${GLFW_DIR})
 
@@ -54,6 +55,7 @@ include_directories(
     third-party/${GLAD_DIR}/include
     third-party/${JSON_DIR}
     third-party/${IMGUI_DIR}
+    third-party/${STB_DIR}
     lib/include
 )
 

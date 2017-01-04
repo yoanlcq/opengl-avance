@@ -99,7 +99,7 @@ Application::Application(int argc, char** argv):
     // Here we load and compile shaders from the library
     m_program = glmlv::compileProgram({ m_ShadersRootPath / "glmlv" / "position2_color3.vs.glsl", m_ShadersRootPath / "glmlv" / "color3.fs.glsl" });
 
-    // Here we use glGetAttribLocation(program, attribname) to obtain attrib locations
+    // Here we use glGetAttribLocation(program, attribname) to obtain attrib locations; We could also directly use locations if they are set in the vertex shader (cf. triangle app)
     const GLint positionAttrLocation = glGetAttribLocation(m_program.glId(), "aPosition");
     const GLint colorAttrLocation = glGetAttribLocation(m_program.glId(), "aColor");
 
