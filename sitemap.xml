@@ -22,7 +22,7 @@
   </url>
   
   <url>
-    <loc>https://celeborn2bealive.github.io/opengl-avance/01-introduction/objectifs/</loc>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/01-introduction/introduction/</loc>
     <lastmod>2016-12-29T11:34:23+01:00</lastmod>
   </url>
   
@@ -77,6 +77,11 @@
   </url>
   
   <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/01-introduction/lib-interne/</loc>
+    <lastmod>2017-01-03T22:29:22+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/depth-of-field/</loc>
     <lastmod>2016-12-29T12:36:32+01:00</lastmod>
   </url>
@@ -87,13 +92,13 @@
   </url>
   
   <url>
-    <loc>https://celeborn2bealive.github.io/opengl-avance/01-introduction/projet/</loc>
-    <lastmod>2016-12-29T11:50:50+01:00</lastmod>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/lighting/</loc>
+    <lastmod>2016-12-29T12:21:21+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/lighting/</loc>
-    <lastmod>2016-12-29T12:21:21+01:00</lastmod>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/01-introduction/projet/</loc>
+    <lastmod>2016-12-29T11:50:50+01:00</lastmod>
   </url>
   
   <url>
@@ -109,6 +114,11 @@
   <url>
     <loc>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/load-obj/</loc>
     <lastmod>2016-12-29T12:22:16+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/plus-loin/</loc>
+    <lastmod>2017-01-04T00:58:16+01:00</lastmod>
   </url>
   
   <url>

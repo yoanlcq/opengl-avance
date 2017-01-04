@@ -30,6 +30,12 @@
         border-bottom: 4px solid #E0E0E0;
         padding: 1rem;
     }
+
+    code.has-jax {font: inherit;
+              font-size: 100%;
+              background: inherit;
+              border: inherit;
+              color: #515151;}
 </style>
   </head>
   <body class="" data-url="/02-forward-shading/pipeline/">
@@ -74,6 +80,36 @@
 <script>
     start('https:\/\/celeborn2bealive.github.io\/opengl-avance\/' + 'images/');
 </script>
+
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
     </div>
     
 </div>
@@ -101,7 +137,7 @@
             
               <b>1. </b>
             
-             Introduction
+             Mise en place
             
            </span>
         </a>
@@ -111,9 +147,9 @@
           
           
           
-            <li class="dd-item " data-nav-id="/01-introduction/objectifs/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/objectifs/">
-                <span>Objectifs     </i></span>
+            <li class="dd-item " data-nav-id="/01-introduction/introduction/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/">
+                <span>Introduction     </i></span>
               </a>
             </li>
           
@@ -130,6 +166,14 @@
             <li class="dd-item " data-nav-id="/01-introduction/lib-externes/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-externes/">
                 <span>Bibliotheques externes     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/01-introduction/lib-interne/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-interne/">
+                <span>Bibliotheque interne (glmlv)     </i></span>
               </a>
             </li>
           
@@ -230,6 +274,14 @@
             <li class="dd-item " data-nav-id="/02-forward-shading/load-obj/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/load-obj/">
                 <span>Chargement de modèles OBJ     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/02-forward-shading/plus-loin/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/plus-loin/">
+                <span>Aller plus loin     </i></span>
               </a>
             </li>
           
@@ -464,7 +516,23 @@
                 <h1>Pipeline de rendu</h1>
                 
 
-<p>Lorem Ipsum</p>
+<p>Le <a href="https://www.wikiwand.com/fr/Forward_Rendering"><strong>forward shading</strong></a> (ou <strong>forward rendering</strong>) est le rendu &ldquo;classique&rdquo; OpenGL que vous avez normalement vu l&rsquo;année dernière. Cette partie est donc une série d&rsquo;exercices pour implémenter rapidement un forward renderer afin de se remettre tranquilement dans le bain.</p>
+
+<p>Pour chaque objet de la scène, un forward renderer fait passer la géométrie de l&rsquo;objet dans un Vertex Shader afin de projeter les sommets à l&rsquo;écran, la carte graphique rasterise les triangles projetés pour produire des fragments qui sont illuminés dans le fragment shader afin de calculer leur couleur.</p>
+
+<p>Cette approche à le mérite d&rsquo;être simple mais introduit un coup supplémentaire lorsque beaucoup de fragments sont occultés: on paye le coup d&rsquo;illumination de ces derniers alors qu&rsquo;ils sont finalement discardés par le test de profondeur. Le TD suivant vous fera implémenter un <strong>deferred renderer</strong>, qui palie à ce problème.</p>
+
+<p><a href="https://gamedevelopment.tutsplus.com/articles/forward-rendering-vs-deferred-rendering--gamedev-12342">Voir également cet article</a> qui explique le principe des deux approches.</p>
+
+<p>L&rsquo;objectif à la fin de ce premier TP est de pouvoir charger une scène 3D en OBJ constituée de modèles texturées, et pouvoir naviguer dedans en vue FPS.</p>
+
+<p>Commencez par dupliquer le repertoire <em>apps/template</em> et renommez le <em>forward-renderer</em>. Vous partirez du code de ce dossier. N&rsquo;oubliez pas de <strong>relancer CMake</strong> pour prendre en compte la nouvelle application. Il faudra églament relancer CMake à chaque ajout de fichier source ou shader. Pour faire cela rapidement, se placer dans le dossier de build et lancer simplement la commande <strong>&ldquo;cmake .&rdquo;</strong>.</p>
+
+<div class="notices warning" ><p>Les instructions de ce premier TP seront concises car ce sont des exercices de rappel.
+Attachez vous à utiliser des fonctions de l&rsquo;extension direct_state_access afin de moderniser votre code.
+N&rsquo;hésitez pas à prendre exemple sur les applications déjà présente dans le template, et à vous aidez <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/liens/">des liens</a>.</p>
+</div>
+
 
 
       
@@ -472,8 +540,8 @@
     </div>
 
     <div id="navigation">
-        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/prev/path"> <i class="fa fa-chevron-left"></i></a>
-        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/next/path" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/geometrie/" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
     </div>
 
     </section>

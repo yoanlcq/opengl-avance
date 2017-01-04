@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="https://Celeborn2BeAlive.github.io/opengl-avance/images/favicon.png" type="image/x-icon" />
 
     
-    <title>Utilisation de la Shadow Map</title>
+    <title>Aller plus loin</title>
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/nucleus.css" rel="stylesheet">
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/font-awesome.min.css" rel="stylesheet">
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/hybrid.css" rel="stylesheet">
@@ -38,7 +38,7 @@
               color: #515151;}
 </style>
   </head>
-  <body class="" data-url="/04-shadow-mapping/utilisation-shadow-map/">
+  <body class="" data-url="/02-forward-shading/plus-loin/">
     <nav id="sidebar">
   <div id="header-wrapper">
     <div id="header">
@@ -207,7 +207,7 @@ MathJax.Hub.Config({
       
       
 
-      <li class="dd-item  " data-nav-id="/02-forward-shading/">
+      <li class="dd-item  parent" data-nav-id="/02-forward-shading/">
         <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/">
           <span>
             
@@ -279,7 +279,7 @@ MathJax.Hub.Config({
           
           
           
-            <li class="dd-item " data-nav-id="/02-forward-shading/plus-loin/">
+            <li class="dd-item active" data-nav-id="/02-forward-shading/plus-loin/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/plus-loin/">
                 <span>Aller plus loin     </i></span>
               </a>
@@ -351,7 +351,7 @@ MathJax.Hub.Config({
       
       
 
-      <li class="dd-item  parent" data-nav-id="/04-shadow-mapping/">
+      <li class="dd-item  " data-nav-id="/04-shadow-mapping/">
         <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/">
           <span>
             
@@ -383,7 +383,7 @@ MathJax.Hub.Config({
           
           
           
-            <li class="dd-item active" data-nav-id="/04-shadow-mapping/utilisation-shadow-map/">
+            <li class="dd-item " data-nav-id="/04-shadow-mapping/utilisation-shadow-map/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/utilisation-shadow-map/">
                 <span>Utilisation de la Shadow Map     </i></span>
               </a>
@@ -486,24 +486,33 @@ MathJax.Hub.Config({
                   
                 
                   
-                
-                  
-                
-                  
                     
                     
-                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/" itemprop="url"><span itemprop="title">Shadow Mapping</span></a> <i class="fa fa-angle-right"></i>
+                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/" itemprop="url"><span itemprop="title">Forward Shading (Rappels)</span></a> <i class="fa fa-angle-right"></i>
                     
                   
                 
                   
                 
-                <span itemprop="title"> Utilisation de la Shadow Map</span>
+                  
+                
+                  
+                
+                <span itemprop="title"> Aller plus loin</span>
               </div>
               
                   <div class="progress">
     <div class="wrapper">
-
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#modèle-de-shading">Modèle de Shading</a></li>
+<li><a href="#normal-mapping">Normal Mapping</a></li>
+<li><a href="#plusieurs-lights">Plusieurs Lights</a></li>
+</ul></li>
+</ul>
+</nav>
     </div>
 </div>
 
@@ -513,10 +522,36 @@ MathJax.Hub.Config({
             
     	        <div id="body-inner">
                 
-                <h1>Utilisation de la Shadow Map</h1>
+                <h1>Aller plus loin</h1>
                 
 
-<p>Lorem Ipsum</p>
+
+
+<p>Voici plusieurs choses améliorable pour rendre notre forward renderer plus interessant:</p>
+
+<h2 id="modèle-de-shading">Modèle de Shading</h2>
+
+<p>Améliorer le modèle de shading utilisé pour utiliser le modèle de Blinn-Phong plutot qu&rsquo;un simple modèle Diffus (voir <a href="http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&amp;teaching=opengl&amp;teaching_section=tds&amp;td=td8#intro">cet ancien TD</a> pour les équations).</p>
+
+<p>Cela implique de rajouter des variables uniformes pour le coefficient speculaire, la texture speculaire, l&rsquo;exposant de shininess et la texture de shininess.</p>
+
+<p>Il faut également charger toutes ces données depuis l&rsquo;OBJ, ainsi que les textures associées.</p>
+
+<h2 id="normal-mapping">Normal Mapping</h2>
+
+<p>Ajouter une texture de normales dans le fragment shader et faire le necessaire pour charger la texture de normales de chaque objet.</p>
+
+<p>L&rsquo;utiliser à la place de <em>uViewSpaceNormal</em> pour calculer l&rsquo;illumination.</p>
+
+<p>Vous pouvez vous réferer à <a href="http://ogldev.atspace.co.uk/www/tutorial26/tutorial26.html">ce tutorial</a>.</p>
+
+<h2 id="plusieurs-lights">Plusieurs Lights</h2>
+
+<p>Actuellement le shader ne gère que deux lumières, c&rsquo;est un peu triste.</p>
+
+<p>Utilisez les <a href="https://www.khronos.org/opengl/wiki/Shader_Storage_Buffer_Object">Shader Storage Buffer Objects</a> pour accéder à des tableau de directions, positions et intensités depuis le fragment shader, correspondant à un nombre arbitraire de directional et point lights (stockez leur nombre dans des uniforms).</p>
+
+<p>Bouclez sur ces lights et accumulez la contribution de chacune avant de l&rsquo;écrire dans la variable de sortie <em>fFragColor</em>.</p>
 
 
       
@@ -524,8 +559,8 @@ MathJax.Hub.Config({
     </div>
 
     <div id="navigation">
-        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/prev/path"> <i class="fa fa-chevron-left"></i></a>
-        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/next/path" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/load-obj"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
     </div>
 
     </section>

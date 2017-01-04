@@ -30,6 +30,12 @@
         border-bottom: 4px solid #E0E0E0;
         padding: 1rem;
     }
+
+    code.has-jax {font: inherit;
+              font-size: 100%;
+              background: inherit;
+              border: inherit;
+              color: #515151;}
 </style>
   </head>
   <body class="" data-url="/02-forward-shading/lighting/">
@@ -74,6 +80,36 @@
 <script>
     start('https:\/\/celeborn2bealive.github.io\/opengl-avance\/' + 'images/');
 </script>
+
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
     </div>
     
 </div>
@@ -101,7 +137,7 @@
             
               <b>1. </b>
             
-             Introduction
+             Mise en place
             
            </span>
         </a>
@@ -111,9 +147,9 @@
           
           
           
-            <li class="dd-item " data-nav-id="/01-introduction/objectifs/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/objectifs/">
-                <span>Objectifs     </i></span>
+            <li class="dd-item " data-nav-id="/01-introduction/introduction/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/">
+                <span>Introduction     </i></span>
               </a>
             </li>
           
@@ -130,6 +166,14 @@
             <li class="dd-item " data-nav-id="/01-introduction/lib-externes/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-externes/">
                 <span>Bibliotheques externes     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/01-introduction/lib-interne/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-interne/">
+                <span>Bibliotheque interne (glmlv)     </i></span>
               </a>
             </li>
           
@@ -230,6 +274,14 @@
             <li class="dd-item " data-nav-id="/02-forward-shading/load-obj/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/load-obj/">
                 <span>Chargement de modèles OBJ     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/02-forward-shading/plus-loin/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/plus-loin/">
+                <span>Aller plus loin     </i></span>
               </a>
             </li>
           
@@ -451,7 +503,15 @@
               
                   <div class="progress">
     <div class="wrapper">
-
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#fragment-shader">Fragment Shader</a></li>
+<li><a href="#application">Application</a></li>
+</ul></li>
+</ul>
+</nav>
     </div>
 </div>
 
@@ -464,7 +524,44 @@
                 <h1>Lighting</h1>
                 
 
-<p>Lorem Ipsum</p>
+
+
+<h2 id="fragment-shader">Fragment Shader</h2>
+
+<p>Implémenter un modèle d&rsquo;illumination diffuse dans le fragment shader <em>forward-renderer.fs.glsl</em></p>
+
+<ul>
+<li>Ajouter des variables uniform <em>vec3 uDirectionalLightDir</em> et <em>vec3 uDirectionalLightIntensity</em> destinés à stocker les paramètres d&rsquo;une lumière directionnelle (en espace view)</li>
+<li>Ajouter des variables uniform <em>vec3 uPointLightPosition</em> et <em>vec3 uPointLightIntensity</em> destinés à stocker les paramètres d&rsquo;une lumière ponctuelle (en espace view)</li>
+<li>Ajouter une variable uniform <em>vec3 uKd</em> destiné à stocker la couleur diffuse de l&rsquo;objet en cours de rendu</li>
+<li>Dans le main, utiliser ces variables ainsi que les attributs du fragment pour calculer la couleur du fragment:</li>
+</ul>
+
+<pre><code class="language-glsl">float distToPointLight = length(uPointLightPosition - vViewSpacePosition);
+vec3 dirToPointLight = (uPointLightPosition - vViewSpacePosition) / distToPointLight;
+fColor = uKd * (uDirectionalLightIntensity * dot(vViewSpaceNormal, uDirectionalLightDir) + uPointLightIntensity * dot(vViewSpaceNormal, dirToPointLight) / (distToPointLight * distToPointLight))
+</code></pre>
+
+<h2 id="application">Application</h2>
+
+<p>A l&rsquo;initialisation:</p>
+
+<ul>
+<li>Récupérer les locations des nouvelles uniform</li>
+</ul>
+
+<p>Au rendu:</p>
+
+<ul>
+<li>Envoyer les différente uniformes avant le rendu de chaque objet (les lights doivent être partagé)</li>
+<li>Faire en sortie de pouvoir régler les paramètres des lights et la couleur diffuse des objets depuis la GUI</li>
+</ul>
+
+<p>Fonctions GL à utiliser:</p>
+
+<ul>
+<li>glUniform3f</li>
+</ul>
 
 
       
@@ -472,8 +569,8 @@
     </div>
 
     <div id="navigation">
-        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/prev/path"> <i class="fa fa-chevron-left"></i></a>
-        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/next/path" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/transformations"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/textures" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
     </div>
 
     </section>

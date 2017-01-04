@@ -27,7 +27,23 @@
       <pubDate>Thu, 29 Dec 2016 12:15:45 +0100</pubDate>
       
       <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/pipeline/</guid>
-      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+      <description>&lt;p&gt;Le &lt;a href=&#34;https://www.wikiwand.com/fr/Forward_Rendering&#34;&gt;&lt;strong&gt;forward shading&lt;/strong&gt;&lt;/a&gt; (ou &lt;strong&gt;forward rendering&lt;/strong&gt;) est le rendu &amp;ldquo;classique&amp;rdquo; OpenGL que vous avez normalement vu l&amp;rsquo;année dernière. Cette partie est donc une série d&amp;rsquo;exercices pour implémenter rapidement un forward renderer afin de se remettre tranquilement dans le bain.&lt;/p&gt;
+
+&lt;p&gt;Pour chaque objet de la scène, un forward renderer fait passer la géométrie de l&amp;rsquo;objet dans un Vertex Shader afin de projeter les sommets à l&amp;rsquo;écran, la carte graphique rasterise les triangles projetés pour produire des fragments qui sont illuminés dans le fragment shader afin de calculer leur couleur.&lt;/p&gt;
+
+&lt;p&gt;Cette approche à le mérite d&amp;rsquo;être simple mais introduit un coup supplémentaire lorsque beaucoup de fragments sont occultés: on paye le coup d&amp;rsquo;illumination de ces derniers alors qu&amp;rsquo;ils sont finalement discardés par le test de profondeur. Le TD suivant vous fera implémenter un &lt;strong&gt;deferred renderer&lt;/strong&gt;, qui palie à ce problème.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://gamedevelopment.tutsplus.com/articles/forward-rendering-vs-deferred-rendering--gamedev-12342&#34;&gt;Voir également cet article&lt;/a&gt; qui explique le principe des deux approches.&lt;/p&gt;
+
+&lt;p&gt;L&amp;rsquo;objectif à la fin de ce premier TP est de pouvoir charger une scène 3D en OBJ constituée de modèles texturées, et pouvoir naviguer dedans en vue FPS.&lt;/p&gt;
+
+&lt;p&gt;Commencez par dupliquer le repertoire &lt;em&gt;apps/template&lt;/em&gt; et renommez le &lt;em&gt;forward-renderer&lt;/em&gt;. Vous partirez du code de ce dossier. N&amp;rsquo;oubliez pas de &lt;strong&gt;relancer CMake&lt;/strong&gt; pour prendre en compte la nouvelle application. Il faudra églament relancer CMake à chaque ajout de fichier source ou shader. Pour faire cela rapidement, se placer dans le dossier de build et lancer simplement la commande &lt;strong&gt;&amp;ldquo;cmake .&amp;rdquo;&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;div class=&#34;notices warning&#34; &gt;&lt;p&gt;Les instructions de ce premier TP seront concises car ce sont des exercices de rappel.
+Attachez vous à utiliser des fonctions de l&amp;rsquo;extension direct_state_access afin de moderniser votre code.
+N&amp;rsquo;hésitez pas à prendre exemple sur les applications déjà présente dans le template, et à vous aidez &lt;a href=&#34;https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/liens/&#34;&gt;des liens&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+
 </description>
     </item>
     
@@ -37,7 +53,51 @@
       <pubDate>Thu, 29 Dec 2016 12:18:05 +0100</pubDate>
       
       <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/geometrie/</guid>
-      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+      <description>&lt;p&gt;Vous allez commencer par dessiner des cubes et spheres en 3D. La lib &lt;em&gt;glmlv&lt;/em&gt; contient deux fonctions makeCube() et makeSphere() (simple_geometry.hpp) permettant de construire des tableaux de sommets et indices pour ces deux forme simple.&lt;/p&gt;
+
+&lt;p&gt;A l&amp;rsquo;initialisation (constructeur de Application):&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Utiliser ces fonctions pour construire la géométrie d&amp;rsquo;une sphere et d&amp;rsquo;un cube.&lt;/li&gt;
+&lt;li&gt;Pour chacune de ces formes, construire un VBO, un VAO et un IBO et les remplir correctement.&lt;/li&gt;
+&lt;li&gt;Activer le depth test&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Dans la boucle de rendu (Application::run):&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Adapter l&amp;rsquo;appel à glClear pour aussi nettoyer le depth buffer&lt;/li&gt;
+&lt;li&gt;Pour chaque objet: binder le VAO, dessiner l&amp;rsquo;objet&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Fonctions OpenGL à utiliser à l&amp;rsquo;initialisation:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;glCreateBuffers&lt;/li&gt;
+&lt;li&gt;glCreateVertexArrays&lt;/li&gt;
+&lt;li&gt;glNamedBufferStorage&lt;/li&gt;
+&lt;li&gt;glVertexArrayVertexBuffer&lt;/li&gt;
+&lt;li&gt;glVertexArrayAttribBinding&lt;/li&gt;
+&lt;li&gt;glEnableVertexArrayAttrib&lt;/li&gt;
+&lt;li&gt;glVertexArrayAttribFormat&lt;/li&gt;
+&lt;li&gt;glVertexArrayElementBuffer&lt;/li&gt;
+&lt;li&gt;glEnable(GL_DEPTH_TEST)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Fonctions OpenGL à utiliser au rendu:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;glBindVertexArray&lt;/li&gt;
+&lt;li&gt;glDrawElements (le nombre de sommets à dessiner est le nombre d&amp;rsquo;elements dans l&amp;rsquo;indexBuffer)&lt;/li&gt;
+&lt;li&gt;glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Voir le programme &lt;em&gt;quad&lt;/em&gt; du template pour un exemple simple en 2D.&lt;/p&gt;
+
+&lt;div class=&#34;notices note&#34; &gt;&lt;p&gt;A l&amp;rsquo;initialisation du VAO, il faut utiliser pour attribut de vertex (position, normal, texCoords) un entier correspondant à la location de cet attribut dans le vertex shader.
+Le VS n&amp;rsquo;est pas encore écrit mais on peut déjà choisir les location (le plus simple: position en 0, normal en 1 et texCoords en 2).&lt;/p&gt;
+&lt;/div&gt;
+
 </description>
     </item>
     
@@ -47,7 +107,33 @@
       <pubDate>Thu, 29 Dec 2016 12:20:05 +0100</pubDate>
       
       <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/shaders/</guid>
-      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+      <description>
+
+&lt;p&gt;Créez un sous-dossier &lt;em&gt;shader&lt;/em&gt; dans le dossier de l&amp;rsquo;application &lt;em&gt;foward-renderer&lt;/em&gt; et créez le fichiers &lt;em&gt;forward.vs.glsl&lt;/em&gt; et &lt;em&gt;forward.fs.glsl&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Voir les différents shaders des applications déjà présente pour vous aider.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&amp;amp;teaching=opengl&amp;amp;teaching_section=tds&amp;amp;td=td5&#34;&gt;Ce TD de l&amp;rsquo;année précedente&lt;/a&gt; explique également la théorie.&lt;/p&gt;
+
+&lt;h2 id=&#34;le-vertex-shader&#34;&gt;Le Vertex Shader&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Le vertex shader doit prendre en entrée une position (vec3 aPosition), une normale (vec3 aNormal) et des texCoords (vec2 aTexCoords)&lt;/li&gt;
+&lt;li&gt;N&amp;rsquo;oubliez pas de définir les locations des attributs&lt;/li&gt;
+&lt;li&gt;Ajouter des variable uniformes &lt;em&gt;mat4 uModelViewProjMatrix&lt;/em&gt;, &lt;em&gt;mat4 uModelViewMatrix&lt;/em&gt;, &lt;em&gt;mat4 uNormalMatrix&lt;/em&gt; correspondant aux matrices standard en 3D&lt;/li&gt;
+&lt;li&gt;Ajouter des variables out &lt;em&gt;vec3 vViewSpacePosition&lt;/em&gt;, &lt;em&gt;vec3 vViewSpaceNormal&lt;/em&gt;, &lt;em&gt;vec3 vTexCoords&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Dans le main du shader, remplir les différentes variables out et la variable &lt;em&gt;gl_Position&lt;/em&gt; en respectant le pseudo-code suivant et en faisant les convertions de type necessaires:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;vViewSpacePosition = uModelViewMatrix * aPosition
+vViewSpaceNormal = uNormalMatrix * aNormal
+vTexCoords = aTexCoords
+gl_Position = uModelViewProjMatrix * aPosition
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;le-fragment-shader&#34;&gt;Le Fragment Shader&lt;/h2&gt;
+
+&lt;p&gt;En attendant d&amp;rsquo;implémenter un modèle d&amp;rsquo;illumination, faite en sorte que le fragment shader affiche les normales des objets.&lt;/p&gt;
 </description>
     </item>
     
@@ -57,7 +143,57 @@
       <pubDate>Thu, 29 Dec 2016 12:20:24 +0100</pubDate>
       
       <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/transformations/</guid>
-      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+      <description>
+
+&lt;h2 id=&#34;sans-caméra&#34;&gt;Sans Caméra&lt;/h2&gt;
+
+&lt;p&gt;Dans le code C++ de l&amp;rsquo;application, à l&amp;rsquo;initialisation:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Charger et compiler les shaders (glmlv::compileProgram)&lt;/li&gt;
+&lt;li&gt;Récupérer les locations des variables uniform&lt;/li&gt;
+&lt;li&gt;Appeler .use() sur le programme GLSL compilé&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Au rendu:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Construire une matrice projection, une matrice view et deux matrices model (une pour le cube et une pour la sphere)&lt;/li&gt;
+&lt;li&gt;Envoyez les combinaisons de ces matrices dans les uniform correspondante avant le rendu de chaque objet&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;A ce stade, vous devriez avoir un rendu correct de vos objets si vous vous arrangez pour bien construire les matrices (ne pas oublier qu&amp;rsquo;OpenGL &amp;ldquo;voit&amp;rdquo; du coté négatif de l&amp;rsquo;axe Z de l&amp;rsquo;espace view).&lt;/p&gt;
+
+&lt;p&gt;Fonctions glm à utiliser (header &lt;em&gt;glm/gtc/matrix_transform.hpp&lt;/em&gt;):&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;perspective&lt;/li&gt;
+&lt;li&gt;translate&lt;/li&gt;
+&lt;li&gt;rotate&lt;/li&gt;
+&lt;li&gt;scale&lt;/li&gt;
+&lt;li&gt;lookAt&lt;/li&gt;
+&lt;li&gt;inverse et transpose (pour construire la normal matrix)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Fonctions OpenGL à utiliser:&lt;/p&gt;
+
+&lt;p&gt;A l&amp;rsquo;initialisation:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;glGetUniformLocation&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Au rendu:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;glUniformMatrix4fv&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Aide: &lt;a href=&#34;http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&amp;amp;teaching=opengl&amp;amp;teaching_section=tds&amp;amp;td=td6#intro&#34;&gt;TD de l&amp;rsquo;année précédente&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;avec-caméra&#34;&gt;Avec Caméra&lt;/h2&gt;
+
+&lt;p&gt;Utiliser la classe &lt;em&gt;ViewController&lt;/em&gt; de &lt;em&gt;glmlv&lt;/em&gt; afin de construire une view matrix qui se controle en mode FPS.&lt;/p&gt;
 </description>
     </item>
     
@@ -67,7 +203,44 @@
       <pubDate>Thu, 29 Dec 2016 12:21:21 +0100</pubDate>
       
       <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/lighting/</guid>
-      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+      <description>
+
+&lt;h2 id=&#34;fragment-shader&#34;&gt;Fragment Shader&lt;/h2&gt;
+
+&lt;p&gt;Implémenter un modèle d&amp;rsquo;illumination diffuse dans le fragment shader &lt;em&gt;forward-renderer.fs.glsl&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Ajouter des variables uniform &lt;em&gt;vec3 uDirectionalLightDir&lt;/em&gt; et &lt;em&gt;vec3 uDirectionalLightIntensity&lt;/em&gt; destinés à stocker les paramètres d&amp;rsquo;une lumière directionnelle (en espace view)&lt;/li&gt;
+&lt;li&gt;Ajouter des variables uniform &lt;em&gt;vec3 uPointLightPosition&lt;/em&gt; et &lt;em&gt;vec3 uPointLightIntensity&lt;/em&gt; destinés à stocker les paramètres d&amp;rsquo;une lumière ponctuelle (en espace view)&lt;/li&gt;
+&lt;li&gt;Ajouter une variable uniform &lt;em&gt;vec3 uKd&lt;/em&gt; destiné à stocker la couleur diffuse de l&amp;rsquo;objet en cours de rendu&lt;/li&gt;
+&lt;li&gt;Dans le main, utiliser ces variables ainsi que les attributs du fragment pour calculer la couleur du fragment:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;float distToPointLight = length(uPointLightPosition - vViewSpacePosition);
+vec3 dirToPointLight = (uPointLightPosition - vViewSpacePosition) / distToPointLight;
+fColor = uKd * (uDirectionalLightIntensity * dot(vViewSpaceNormal, uDirectionalLightDir) + uPointLightIntensity * dot(vViewSpaceNormal, dirToPointLight) / (distToPointLight * distToPointLight))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;application&#34;&gt;Application&lt;/h2&gt;
+
+&lt;p&gt;A l&amp;rsquo;initialisation:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Récupérer les locations des nouvelles uniform&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Au rendu:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Envoyer les différente uniformes avant le rendu de chaque objet (les lights doivent être partagé)&lt;/li&gt;
+&lt;li&gt;Faire en sortie de pouvoir régler les paramètres des lights et la couleur diffuse des objets depuis la GUI&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Fonctions GL à utiliser:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;glUniform3f&lt;/li&gt;
+&lt;/ul&gt;
 </description>
     </item>
     
@@ -77,7 +250,52 @@
       <pubDate>Thu, 29 Dec 2016 12:21:29 +0100</pubDate>
       
       <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/textures/</guid>
-      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+      <description>
+
+&lt;h2 id=&#34;fragment-shader&#34;&gt;Fragment Shader&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Ajouter une variable uniform &lt;em&gt;sampler2D uKdSampler&lt;/em&gt;, destiné à pointer sur une texture des couleurs diffuses pour l&amp;rsquo;objet en cours de rendu.&lt;/li&gt;
+&lt;li&gt;Dans le main, utiliser la fonction GLSL &lt;a href=&#34;http://docs.gl/sl4/texture&#34;&gt;&lt;em&gt;texture&lt;/em&gt;&lt;/a&gt; afin de lire le sampler en utiliser les tex coords du fragment.&lt;/li&gt;
+&lt;li&gt;Multiplier la valeur lue avec la variable uKd pour obtenir le coefficient diffus final de l&amp;rsquo;objet, à utiliser pour l&amp;rsquo;illumination&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;application&#34;&gt;Application&lt;/h2&gt;
+
+&lt;p&gt;A l&amp;rsquo;initialisation&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Charger deux images de votre choix à utiliser en temps que texture diffuse de chacun de nos objets&lt;/li&gt;
+&lt;li&gt;Construire deux texture objects OpenGL et envoyer les pixel des deux images chargés dans ces texture objects&lt;/li&gt;
+&lt;li&gt;Construire un sampler object OpenGL&lt;/li&gt;
+&lt;li&gt;Récuperer la location de l&amp;rsquo;uniform &lt;em&gt;sampler2D uKdSampler&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Au rendu&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Binder la texture sur la texture unit 0&lt;/li&gt;
+&lt;li&gt;Binder le sampler sur la sampler unit 0&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Fonctions GL à utiliser:&lt;/p&gt;
+
+&lt;p&gt;A l&amp;rsquo;initialisation:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;glCreateTextures&lt;/li&gt;
+&lt;li&gt;glTextureParameteri&lt;/li&gt;
+&lt;li&gt;glTextureStorage2D&lt;/li&gt;
+&lt;li&gt;glCreateSamplers&lt;/li&gt;
+&lt;li&gt;glSamplerParameteri&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Au rendu:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;glBindSamplers&lt;/li&gt;
+&lt;li&gt;glBindTextureUnit&lt;/li&gt;
+&lt;/ul&gt;
 </description>
     </item>
     
@@ -87,7 +305,55 @@
       <pubDate>Thu, 29 Dec 2016 12:22:16 +0100</pubDate>
       
       <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/load-obj/</guid>
-      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+      <description>&lt;p&gt;Utiliser la lib &lt;em&gt;tinyobjloader&lt;/em&gt; (déjà include dans le template) pour remplacer votre sphere et cube par une liste d&amp;rsquo;objets chargés depuis un OBJ.&lt;/p&gt;
+
+&lt;p&gt;Utiliser la doc et exemples de &lt;a href=&#34;http://syoyo.github.io/tinyobjloader/&#34;&gt;la page github de la lib&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;En iterant sur les materiaux, charger uniquement la texture diffuse et le coefficient diffus de chaque objet.&lt;/p&gt;
+
+&lt;p&gt;Faites en sorte que chaque objet soit affiché avec la bonne couleur diffuse.&lt;/p&gt;
+
+&lt;div class=&#34;notices note&#34; &gt;&lt;p&gt;Un OBJ ne stocke pas directement les textures mais seulement le chemin (relatif à l&amp;rsquo;OBJ) de chaque texture. Il faut donc les charger ensuite en utilisant la fonction glmlv::readImage.&lt;/p&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;Vous pouvez obtenir différents modèles OBJ sur &lt;a href=&#34;http://graphics.cs.williams.edu/data/meshes.xml&#34;&gt;cette page&lt;/a&gt; (je vous conseille de commencer par essayer avec Crytek-Sponza).&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Aller plus loin</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/plus-loin/</link>
+      <pubDate>Wed, 04 Jan 2017 00:58:16 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/plus-loin/</guid>
+      <description>
+
+&lt;p&gt;Voici plusieurs choses améliorable pour rendre notre forward renderer plus interessant:&lt;/p&gt;
+
+&lt;h2 id=&#34;modèle-de-shading&#34;&gt;Modèle de Shading&lt;/h2&gt;
+
+&lt;p&gt;Améliorer le modèle de shading utilisé pour utiliser le modèle de Blinn-Phong plutot qu&amp;rsquo;un simple modèle Diffus (voir &lt;a href=&#34;http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&amp;amp;teaching=opengl&amp;amp;teaching_section=tds&amp;amp;td=td8#intro&#34;&gt;cet ancien TD&lt;/a&gt; pour les équations).&lt;/p&gt;
+
+&lt;p&gt;Cela implique de rajouter des variables uniformes pour le coefficient speculaire, la texture speculaire, l&amp;rsquo;exposant de shininess et la texture de shininess.&lt;/p&gt;
+
+&lt;p&gt;Il faut également charger toutes ces données depuis l&amp;rsquo;OBJ, ainsi que les textures associées.&lt;/p&gt;
+
+&lt;h2 id=&#34;normal-mapping&#34;&gt;Normal Mapping&lt;/h2&gt;
+
+&lt;p&gt;Ajouter une texture de normales dans le fragment shader et faire le necessaire pour charger la texture de normales de chaque objet.&lt;/p&gt;
+
+&lt;p&gt;L&amp;rsquo;utiliser à la place de &lt;em&gt;uViewSpaceNormal&lt;/em&gt; pour calculer l&amp;rsquo;illumination.&lt;/p&gt;
+
+&lt;p&gt;Vous pouvez vous réferer à &lt;a href=&#34;http://ogldev.atspace.co.uk/www/tutorial26/tutorial26.html&#34;&gt;ce tutorial&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;plusieurs-lights&#34;&gt;Plusieurs Lights&lt;/h2&gt;
+
+&lt;p&gt;Actuellement le shader ne gère que deux lumières, c&amp;rsquo;est un peu triste.&lt;/p&gt;
+
+&lt;p&gt;Utilisez les &lt;a href=&#34;https://www.khronos.org/opengl/wiki/Shader_Storage_Buffer_Object&#34;&gt;Shader Storage Buffer Objects&lt;/a&gt; pour accéder à des tableau de directions, positions et intensités depuis le fragment shader, correspondant à un nombre arbitraire de directional et point lights (stockez leur nombre dans des uniforms).&lt;/p&gt;
+
+&lt;p&gt;Bouclez sur ces lights et accumulez la contribution de chacune avant de l&amp;rsquo;écrire dans la variable de sortie &lt;em&gt;fFragColor&lt;/em&gt;.&lt;/p&gt;
 </description>
     </item>
     

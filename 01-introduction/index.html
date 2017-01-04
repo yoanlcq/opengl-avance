@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="https://Celeborn2BeAlive.github.io/opengl-avance/images/favicon.png" type="image/x-icon" />
 
     
-    <title>Introduction</title>
+    <title>Mise en place</title>
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/nucleus.css" rel="stylesheet">
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/font-awesome.min.css" rel="stylesheet">
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/hybrid.css" rel="stylesheet">
@@ -30,6 +30,12 @@
         border-bottom: 4px solid #E0E0E0;
         padding: 1rem;
     }
+
+    code.has-jax {font: inherit;
+              font-size: 100%;
+              background: inherit;
+              border: inherit;
+              color: #515151;}
 </style>
   </head>
   <body class="" data-url="/01-introduction/">
@@ -74,6 +80,36 @@
 <script>
     start('https:\/\/celeborn2bealive.github.io\/opengl-avance\/' + 'images/');
 </script>
+
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
     </div>
     
 </div>
@@ -101,7 +137,7 @@
             
               <b>1. </b>
             
-             Introduction
+             Mise en place
             
            </span>
         </a>
@@ -111,9 +147,9 @@
           
           
           
-            <li class="dd-item " data-nav-id="/01-introduction/objectifs/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/objectifs/">
-                <span>Objectifs     </i></span>
+            <li class="dd-item " data-nav-id="/01-introduction/introduction/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/">
+                <span>Introduction     </i></span>
               </a>
             </li>
           
@@ -130,6 +166,14 @@
             <li class="dd-item " data-nav-id="/01-introduction/lib-externes/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-externes/">
                 <span>Bibliotheques externes     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/01-introduction/lib-interne/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-interne/">
+                <span>Bibliotheque interne (glmlv)     </i></span>
               </a>
             </li>
           
@@ -230,6 +274,14 @@
             <li class="dd-item " data-nav-id="/02-forward-shading/load-obj/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/load-obj/">
                 <span>Chargement de modèles OBJ     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/02-forward-shading/plus-loin/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/plus-loin/">
+                <span>Aller plus loin     </i></span>
               </a>
             </li>
           
@@ -442,7 +494,7 @@
                 
                   
                 
-                <span itemprop="title"> Introduction</span>
+                <span itemprop="title"> Mise en place</span>
               </div>
               
 
@@ -455,7 +507,7 @@
 
 
 
-<h1 id="introduction">Introduction</h1>
+<h1 id="mise-en-place">Mise en place</h1>
 
 
       
@@ -466,7 +518,7 @@
 
     <div id="navigation">
         
-        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/objectifs" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
     </div>
 
     </section>

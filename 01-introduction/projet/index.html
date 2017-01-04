@@ -30,6 +30,12 @@
         border-bottom: 4px solid #E0E0E0;
         padding: 1rem;
     }
+
+    code.has-jax {font: inherit;
+              font-size: 100%;
+              background: inherit;
+              border: inherit;
+              color: #515151;}
 </style>
   </head>
   <body class="" data-url="/01-introduction/projet/">
@@ -74,6 +80,36 @@
 <script>
     start('https:\/\/celeborn2bealive.github.io\/opengl-avance\/' + 'images/');
 </script>
+
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
     </div>
     
 </div>
@@ -101,7 +137,7 @@
             
               <b>1. </b>
             
-             Introduction
+             Mise en place
             
            </span>
         </a>
@@ -111,9 +147,9 @@
           
           
           
-            <li class="dd-item " data-nav-id="/01-introduction/objectifs/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/objectifs/">
-                <span>Objectifs     </i></span>
+            <li class="dd-item " data-nav-id="/01-introduction/introduction/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/">
+                <span>Introduction     </i></span>
               </a>
             </li>
           
@@ -130,6 +166,14 @@
             <li class="dd-item " data-nav-id="/01-introduction/lib-externes/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-externes/">
                 <span>Bibliotheques externes     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/01-introduction/lib-interne/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-interne/">
+                <span>Bibliotheque interne (glmlv)     </i></span>
               </a>
             </li>
           
@@ -230,6 +274,14 @@
             <li class="dd-item " data-nav-id="/02-forward-shading/load-obj/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/load-obj/">
                 <span>Chargement de modèles OBJ     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/02-forward-shading/plus-loin/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/plus-loin/">
+                <span>Aller plus loin     </i></span>
               </a>
             </li>
           
@@ -434,7 +486,7 @@
                   
                     
                     
-                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/" itemprop="url"><span itemprop="title">Introduction</span></a> <i class="fa fa-angle-right"></i>
+                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/" itemprop="url"><span itemprop="title">Mise en place</span></a> <i class="fa fa-angle-right"></i>
                     
                   
                 
@@ -464,21 +516,25 @@
                 <h1>Projet</h1>
                 
 
-<p>L&rsquo;objectif du projet est de développer une demo courte implémentant une ou plusieurs techniques vues en TP, ainsi qu&rsquo;une méthode non vue en TD, ou d&rsquo;un article de recherche. Le choix de l&rsquo;article est libre mais vous devez me le proposer avant afin que je valide. Si vous n&rsquo;avez pas d&rsquo;idées, voici une liste d&rsquo;articles possibles:</p>
+<div class="notices note" ><p>Cette page n&rsquo;est pas terminée, j&rsquo;ajouterais des informations concernant les projet au cours du mois.</p>
+</div>
+
+
+<p>L&rsquo;objectif du projet est de développer une demo courte implémentant une ou plusieurs techniques vues en TP, ainsi qu&rsquo;une ou plusieurs méthodes non vue en TD, potentiellement issues d&rsquo;articles de recherche. Le choix de l&rsquo;article est libre mais vous devez me le proposer avant afin que je valide. Si vous n&rsquo;avez pas d&rsquo;idées, voici une liste de méthodes/articles possibles:</p>
 
 <ul>
 <li>Shadow Volumes</li>
 <li>Normal Mapping</li>
-<li>Screen Space Ambiant Occlusion</li>
-<li>Rendu temps réel d&rsquo;objets diffus avec une env map grace aux harmoniques spheriques (<a href="http://cseweb.ucsd.edu/~ravir/papers/envmap/">http://cseweb.ucsd.edu/~ravir/papers/envmap/</a>)</li>
-<li>Reflective shadow mapping (<a href="http://www.klayge.org/material/3_12/GI/rsm.pdf">http://www.klayge.org/material/3_12/GI/rsm.pdf</a>)</li>
-<li>Imperfect shadow maps (<a href="http://resources.mpi-inf.mpg.de/ImperfectShadowMaps/ISM.pdf">http://resources.mpi-inf.mpg.de/ImperfectShadowMaps/ISM.pdf</a>)</li>
-<li>Clustered Shading (<a href="http://www.cse.chalmers.se/~uffe/clustered_shading_preprint.pdf">http://www.cse.chalmers.se/~uffe/clustered_shading_preprint.pdf</a>)</li>
-<li>Screen Space Ray Tracing (<a href="http://jcgt.org/published/0003/04/04/">http://jcgt.org/published/0003/04/04/</a>)</li>
-<li>Virtual Spherical Gaussian Lights for Real-time Glossy Indirect Illumination (<a href="http://www.jp.square-enix.com/tech/library/pdf/Virtual%20Spherical%20Gaussian%20Lights%20for%20Real-Time%20Glossy%20Indirect%20Illumination.pdf">http://www.jp.square-enix.com/tech/library/pdf/Virtual%20Spherical%20Gaussian%20Lights%20for%20Real-Time%20Glossy%20Indirect%20Illumination.pdf</a>)</li>
+<li>Screen Space Ambient Occlusion</li>
+<li><a href="http://cseweb.ucsd.edu/~ravir/papers/envmap/">Rendu temps réel d&rsquo;objets diffus avec une env map grace aux harmoniques spheriques</a></li>
+<li><a href="http://www.klayge.org/material/3_12/GI/rsm.pdf">Reflective shadow mapping</a></li>
+<li><a href="http://resources.mpi-inf.mpg.de/ImperfectShadowMaps/ISM.pdf">Imperfect shadow maps</a></li>
+<li><a href="http://www.cse.chalmers.se/~uffe/clustered_shading_preprint.pdf">Clustered Shading</a></li>
+<li><a href="http://jcgt.org/published/0003/04/04/">Screen Space Ray Tracing</a></li>
+<li><a href="http://www.jp.square-enix.com/tech/library/pdf/Virtual%20Spherical%20Gaussian%20Lights%20for%20Real-Time%20Glossy%20Indirect%20Illumination.pdf">Virtual Spherical Gaussian Lights for Real-time Glossy Indirect Illumination</a></li>
 </ul>
 
-<p>Des endroit ou trouver des articles:</p>
+<p>Des sites où trouver des articles:</p>
 
 <ul>
 <li><a href="http://jcgt.org/read.html?reload=1">http://jcgt.org/read.html?reload=1</a></li>

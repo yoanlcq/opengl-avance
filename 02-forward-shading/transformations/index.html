@@ -30,6 +30,12 @@
         border-bottom: 4px solid #E0E0E0;
         padding: 1rem;
     }
+
+    code.has-jax {font: inherit;
+              font-size: 100%;
+              background: inherit;
+              border: inherit;
+              color: #515151;}
 </style>
   </head>
   <body class="" data-url="/02-forward-shading/transformations/">
@@ -74,6 +80,36 @@
 <script>
     start('https:\/\/celeborn2bealive.github.io\/opengl-avance\/' + 'images/');
 </script>
+
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
     </div>
     
 </div>
@@ -101,7 +137,7 @@
             
               <b>1. </b>
             
-             Introduction
+             Mise en place
             
            </span>
         </a>
@@ -111,9 +147,9 @@
           
           
           
-            <li class="dd-item " data-nav-id="/01-introduction/objectifs/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/objectifs/">
-                <span>Objectifs     </i></span>
+            <li class="dd-item " data-nav-id="/01-introduction/introduction/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/">
+                <span>Introduction     </i></span>
               </a>
             </li>
           
@@ -130,6 +166,14 @@
             <li class="dd-item " data-nav-id="/01-introduction/lib-externes/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-externes/">
                 <span>Bibliotheques externes     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/01-introduction/lib-interne/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-interne/">
+                <span>Bibliotheque interne (glmlv)     </i></span>
               </a>
             </li>
           
@@ -230,6 +274,14 @@
             <li class="dd-item " data-nav-id="/02-forward-shading/load-obj/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/load-obj/">
                 <span>Chargement de modèles OBJ     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/02-forward-shading/plus-loin/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/plus-loin/">
+                <span>Aller plus loin     </i></span>
               </a>
             </li>
           
@@ -451,7 +503,15 @@
               
                   <div class="progress">
     <div class="wrapper">
-
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#sans-caméra">Sans Caméra</a></li>
+<li><a href="#avec-caméra">Avec Caméra</a></li>
+</ul></li>
+</ul>
+</nav>
     </div>
 </div>
 
@@ -464,7 +524,57 @@
                 <h1>Transformations</h1>
                 
 
-<p>Lorem Ipsum</p>
+
+
+<h2 id="sans-caméra">Sans Caméra</h2>
+
+<p>Dans le code C++ de l&rsquo;application, à l&rsquo;initialisation:</p>
+
+<ul>
+<li>Charger et compiler les shaders (glmlv::compileProgram)</li>
+<li>Récupérer les locations des variables uniform</li>
+<li>Appeler .use() sur le programme GLSL compilé</li>
+</ul>
+
+<p>Au rendu:</p>
+
+<ul>
+<li>Construire une matrice projection, une matrice view et deux matrices model (une pour le cube et une pour la sphere)</li>
+<li>Envoyez les combinaisons de ces matrices dans les uniform correspondante avant le rendu de chaque objet</li>
+</ul>
+
+<p>A ce stade, vous devriez avoir un rendu correct de vos objets si vous vous arrangez pour bien construire les matrices (ne pas oublier qu&rsquo;OpenGL &ldquo;voit&rdquo; du coté négatif de l&rsquo;axe Z de l&rsquo;espace view).</p>
+
+<p>Fonctions glm à utiliser (header <em>glm/gtc/matrix_transform.hpp</em>):</p>
+
+<ul>
+<li>perspective</li>
+<li>translate</li>
+<li>rotate</li>
+<li>scale</li>
+<li>lookAt</li>
+<li>inverse et transpose (pour construire la normal matrix)</li>
+</ul>
+
+<p>Fonctions OpenGL à utiliser:</p>
+
+<p>A l&rsquo;initialisation:</p>
+
+<ul>
+<li>glGetUniformLocation</li>
+</ul>
+
+<p>Au rendu:</p>
+
+<ul>
+<li>glUniformMatrix4fv</li>
+</ul>
+
+<p>Aide: <a href="http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&amp;teaching=opengl&amp;teaching_section=tds&amp;td=td6#intro">TD de l&rsquo;année précédente</a></p>
+
+<h2 id="avec-caméra">Avec Caméra</h2>
+
+<p>Utiliser la classe <em>ViewController</em> de <em>glmlv</em> afin de construire une view matrix qui se controle en mode FPS.</p>
 
 
       
@@ -472,8 +582,8 @@
     </div>
 
     <div id="navigation">
-        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/prev/path"> <i class="fa fa-chevron-left"></i></a>
-        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/next/path" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/shaders/"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/lighting/" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
     </div>
 
     </section>

@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="https://Celeborn2BeAlive.github.io/opengl-avance/images/favicon.png" type="image/x-icon" />
 
     
-    <title>Utilisation de la Shadow Map</title>
+    <title>Bibliotheque interne (glmlv)</title>
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/nucleus.css" rel="stylesheet">
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/font-awesome.min.css" rel="stylesheet">
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/hybrid.css" rel="stylesheet">
@@ -38,7 +38,7 @@
               color: #515151;}
 </style>
   </head>
-  <body class="" data-url="/04-shadow-mapping/utilisation-shadow-map/">
+  <body class="" data-url="/01-introduction/lib-interne/">
     <nav id="sidebar">
   <div id="header-wrapper">
     <div id="header">
@@ -131,7 +131,7 @@ MathJax.Hub.Config({
       
       
 
-      <li class="dd-item  " data-nav-id="/01-introduction/">
+      <li class="dd-item  parent" data-nav-id="/01-introduction/">
         <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/">
           <span>
             
@@ -171,7 +171,7 @@ MathJax.Hub.Config({
           
           
           
-            <li class="dd-item " data-nav-id="/01-introduction/lib-interne/">
+            <li class="dd-item active" data-nav-id="/01-introduction/lib-interne/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-interne/">
                 <span>Bibliotheque interne (glmlv)     </i></span>
               </a>
@@ -351,7 +351,7 @@ MathJax.Hub.Config({
       
       
 
-      <li class="dd-item  parent" data-nav-id="/04-shadow-mapping/">
+      <li class="dd-item  " data-nav-id="/04-shadow-mapping/">
         <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/">
           <span>
             
@@ -383,7 +383,7 @@ MathJax.Hub.Config({
           
           
           
-            <li class="dd-item active" data-nav-id="/04-shadow-mapping/utilisation-shadow-map/">
+            <li class="dd-item " data-nav-id="/04-shadow-mapping/utilisation-shadow-map/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/utilisation-shadow-map/">
                 <span>Utilisation de la Shadow Map     </i></span>
               </a>
@@ -484,21 +484,21 @@ MathJax.Hub.Config({
                 
                 
                   
-                
-                  
-                
-                  
-                
-                  
                     
                     
-                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/" itemprop="url"><span itemprop="title">Shadow Mapping</span></a> <i class="fa fa-angle-right"></i>
+                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/" itemprop="url"><span itemprop="title">Mise en place</span></a> <i class="fa fa-angle-right"></i>
                     
                   
                 
                   
                 
-                <span itemprop="title"> Utilisation de la Shadow Map</span>
+                  
+                
+                  
+                
+                  
+                
+                <span itemprop="title"> Bibliotheque interne (glmlv)</span>
               </div>
               
                   <div class="progress">
@@ -513,10 +513,22 @@ MathJax.Hub.Config({
             
     	        <div id="body-inner">
                 
-                <h1>Utilisation de la Shadow Map</h1>
+                <h1>Bibliotheque interne (glmlv)</h1>
                 
 
-<p>Lorem Ipsum</p>
+<p>La bibliothèque interne, dont le code est situé dans le repertoire <em>lib</em> du template, est destiné à contenir le code partagé entre les applications. <strong>Les classes et fonctions réutilisables doivent donc y être placées</strong>.</p>
+
+<p>Le template de base contient déjà plusieurs fichiers dans la lib:</p>
+
+<ul>
+<li>filesystem.hpp <em>Inclut une bibliothèque de manipulation du système de fichier (soit la lib experimentale de la std, soit la lib de boost si cmake a été appelé avec l&rsquo;option -DGLMLV_USE_BOOST_FILESYSTEM)</em></li>
+<li>gl_debug_output.cpp/hpp <em>Définit la fonction initGLDebugOutput() permettant d&rsquo;activer les message de debug d&rsquo;OpenGL</em></li>
+<li>glfw.hpp <em>Inclut simplement les header de GLFW et glad dans le bon ordre afin d&rsquo;éviter des erreurs de compil</em></li>
+<li>GLFWHandle.hpp <em>Définit la classe GLFWHandle qui initialise GLFW, ouvre une fenetre, initialise OpenGL avec glad et initialise ImGUI dans son constructeur</em></li>
+<li>GLProgram.hpp, GLShader.hpp <em>Définissent des classes et fonction helpers pour charger, compiler et linker des shaders GLSL</em></li>
+<li>Image2DRGBA.hpp <em>Définit la classe Image2DRGBA et des fonctions de lecture/écriture d&rsquo;image en surcouche de la lib stb</em></li>
+<li>imgui_impl_glfw_gl3.hpp/.cpp <em>Définit les fonctions de dessin et d&rsquo;interaction avec l&rsquo;utilisateurs nécessaires au bon fonctionnement de ImGui</em></li>
+</ul>
 
 
       
@@ -524,8 +536,8 @@ MathJax.Hub.Config({
     </div>
 
     <div id="navigation">
-        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/prev/path"> <i class="fa fa-chevron-left"></i></a>
-        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/next/path" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-externes/"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/projet/" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
     </div>
 
     </section>

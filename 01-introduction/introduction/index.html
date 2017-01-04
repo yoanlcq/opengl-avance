@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="https://Celeborn2BeAlive.github.io/opengl-avance/images/favicon.png" type="image/x-icon" />
 
     
-    <title>Utilisation de la Shadow Map</title>
+    <title>Introduction</title>
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/nucleus.css" rel="stylesheet">
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/font-awesome.min.css" rel="stylesheet">
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/hybrid.css" rel="stylesheet">
@@ -38,7 +38,7 @@
               color: #515151;}
 </style>
   </head>
-  <body class="" data-url="/04-shadow-mapping/utilisation-shadow-map/">
+  <body class="" data-url="/01-introduction/introduction/">
     <nav id="sidebar">
   <div id="header-wrapper">
     <div id="header">
@@ -131,7 +131,7 @@ MathJax.Hub.Config({
       
       
 
-      <li class="dd-item  " data-nav-id="/01-introduction/">
+      <li class="dd-item  parent" data-nav-id="/01-introduction/">
         <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/">
           <span>
             
@@ -147,7 +147,7 @@ MathJax.Hub.Config({
           
           
           
-            <li class="dd-item " data-nav-id="/01-introduction/introduction/">
+            <li class="dd-item active" data-nav-id="/01-introduction/introduction/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/">
                 <span>Introduction     </i></span>
               </a>
@@ -351,7 +351,7 @@ MathJax.Hub.Config({
       
       
 
-      <li class="dd-item  parent" data-nav-id="/04-shadow-mapping/">
+      <li class="dd-item  " data-nav-id="/04-shadow-mapping/">
         <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/">
           <span>
             
@@ -383,7 +383,7 @@ MathJax.Hub.Config({
           
           
           
-            <li class="dd-item active" data-nav-id="/04-shadow-mapping/utilisation-shadow-map/">
+            <li class="dd-item " data-nav-id="/04-shadow-mapping/utilisation-shadow-map/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/utilisation-shadow-map/">
                 <span>Utilisation de la Shadow Map     </i></span>
               </a>
@@ -484,26 +484,43 @@ MathJax.Hub.Config({
                 
                 
                   
-                
-                  
-                
-                  
-                
-                  
                     
                     
-                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/" itemprop="url"><span itemprop="title">Shadow Mapping</span></a> <i class="fa fa-angle-right"></i>
+                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/" itemprop="url"><span itemprop="title">Mise en place</span></a> <i class="fa fa-angle-right"></i>
                     
                   
                 
                   
                 
-                <span itemprop="title"> Utilisation de la Shadow Map</span>
+                  
+                
+                  
+                
+                  
+                
+                <span itemprop="title"> Introduction</span>
               </div>
               
                   <div class="progress">
     <div class="wrapper">
-
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#objectifs">Objectifs</a></li>
+<li><a href="#prérequis">Prérequis</a></li>
+<li><a href="#quelle-version-d-opengl">Quelle version d&rsquo;OpenGL ?</a>
+<ul>
+<li>
+<ul>
+<li><a href="#example-1-creating-a-buffer-object-without-polluting-the-opengl-states">Example 1: Creating a buffer object without polluting the OpenGL states</a></li>
+<li><a href="#example-2-creating-a-vertex-array-object-without-polluting-the-opengl-states">Example 2: Creating a vertex array object without polluting the OpenGL states</a></li>
+<li><a href="#example-3-querying-the-bound-texture-to-a-texture-image-unit-for-debugging">Example 3: Querying the bound texture to a texture image unit for debugging</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
     </div>
 </div>
 
@@ -513,10 +530,171 @@ MathJax.Hub.Config({
             
     	        <div id="body-inner">
                 
-                <h1>Utilisation de la Shadow Map</h1>
+                <h1>Introduction</h1>
                 
 
-<p>Lorem Ipsum</p>
+
+
+<h2 id="objectifs">Objectifs</h2>
+
+<ul>
+<li>Approfondir les connaissances en OpenGL Moderne</li>
+<li>Premières implémentations de techniques avancées</li>
+<li><strong>Projet</strong>: implémentation d&rsquo;articles de recherche</li>
+</ul>
+
+<h2 id="prérequis">Prérequis</h2>
+
+<ul>
+<li>Bonne connaissance du <a href="https://www.khronos.org/opengl/wiki/Rendering_Pipeline_Overview">pipeline de rendu OpenGL</a></li>
+<li>Maitrise des <a href="http://laurentnoel.fr/index.php?section=teaching&amp;teaching=opengl&amp;teaching_section=tds">TDs des années précédentes</a></li>
+</ul>
+
+<h2 id="quelle-version-d-opengl">Quelle version d&rsquo;OpenGL ?</h2>
+
+<p>La version installée sur les machines de la fac est la 4.4, nous prendrons donc cette version comme base.
+En plus de cela, le template de code que j&rsquo;ai préparé charge l&rsquo;extension <strong>GL_ARB_direct_state_access</strong>, dont les fonctions sont passées en OpenGL Core dans la version 4.5.</p>
+
+<p>Cette extension est très pratique car elle permet d&rsquo;éviter de binder les objets OpenGL pour les manipuler (on passe aux fonctions directement l&rsquo;identifiant de l&rsquo;objet), et donc d&rsquo;éviter les erreurs liées au mécanisme de binding. Je vous conseille donc de l&rsquo;utiliser autant que possible.</p>
+
+<p><a href="https://www.opengl.org/registry/specs/ARB/direct_state_access.txt">Lien vers le document de référence</a>.</p>
+
+<p>Voici des exemples de code en version OpenGL 3 classique et en version Direct State Access (directement tiré du document):</p>
+
+<h4 id="example-1-creating-a-buffer-object-without-polluting-the-opengl-states">Example 1: Creating a buffer object without polluting the OpenGL states</h4>
+
+<pre><code class="language-cpp">// Bind to Create
+GLuint CreateBuffer()
+{
+  // Save the previous bound buffer
+  GLuint restoreBuffer = 0;
+  glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &amp;restoreBuffer);
+
+  // Reserve the buffer name and create the buffer object
+  uint buffer = 0;
+  glGenBuffers(1, &amp;buffer);
+  glBindBuffer(GL_ARRAY_BUFFER, buffer);
+
+  // Restaure the previous bound buffer to avoid polluting
+  // the rendering states
+  glBindBuffer(GL_ARRAY_BUFFER, restoreBuffer);
+
+  return buffer;
+}
+
+// Direct State Access
+GLuint CreateBuffer()
+{
+  GLuint buffer = 0;
+  glCreateBuffer(1, &amp;buffer);
+
+  return buffer;
+}
+</code></pre>
+
+<h4 id="example-2-creating-a-vertex-array-object-without-polluting-the-opengl-states">Example 2: Creating a vertex array object without polluting the OpenGL states</h4>
+
+<pre><code class="language-cpp">// OpenGL 3.0 Bind to Create for vertex array object
+GLuint CreateVertexArray(GLuint BufferName[])
+{
+  // Save the previous bound vertex array and array buffer
+  GLuint restoreVertexArray = 0;
+  glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &amp;restoreVertexArray);
+  GLuint restoreBuffer = 0;
+  glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &amp;restoreBuffer);
+
+  glGenVertexArrays(1, &amp;VertexArrayName);
+  glBindVertexArray(VertexArrayName);
+    glEnableVertexAttribArray(semantic::attr::POSITION);
+    glEnableVertexAttribArray(semantic::attr::TEXCOORD);
+
+    glBindBuffer(GL_ARRAY_BUFFER, BufferName[buffer::VERTEX]);
+    glVertexAttribPointer(semantic::attr::POSITION, 2, GL_FLOAT, GL_FALSE, sizeof(glf::vertex_v2fv2f), BUFFER_OFFSET(0));
+    glVertexAttribPointer(semantic::attr::TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(glf::vertex_v2fv2f), BUFFER_OFFSET(sizeof(glm::vec2)));
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, BufferName[buffer::ELEMENT]);
+
+  // The GL_ARRAY_BUFFER_BINDING is a context state, not a vertex array state.
+  glBindBuffer(GL_ARRAY_BUFFER, restoreBuffer);
+  glBindVertexArray(restoreVertexArray);
+
+  return vertexArrayName;
+}
+
+// OpenGL 4.3 Bind to Create for vertex array object
+GLuint CreateVertexArray(GLuint BufferName[])
+{
+  // Save the previous bound vertex array
+  GLuint restoreVertexArray = 0;
+  glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &amp;restoreVertexArray);
+
+  GLuint vertexArrayName = 0;
+  glGenVertexArrays(1, &amp;vertexArrayName);
+  glBindVertexArray(VertexArrayName);
+    glEnableVertexAttribArray(semantic::attr::POSITION);
+    glEnableVertexAttribArray(semantic::attr::TEXCOORD);
+
+    glVertexAttribBinding(semantic::attr::POSITION, 0);
+    glVertexAttribFormat(semantic::attr::POSITION, 2, GL_FLOAT, GL_FALSE, 0);
+
+    glVertexAttribBinding(semantic::attr::TEXCOORD, 0);
+    glVertexAttribFormat(semantic::attr::TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, BufferName[buffer::ELEMENT]);
+    glBindVertexBuffer(0, BufferName[buffer::VERTEX], 0, 0);
+  glBindVertexArray(restoreVertexArray);
+
+  return vertexArrayName;
+}
+
+// Direct State Access
+GLuint CreateVertexArray(GLuint BufferName[])
+{
+  GLuint vertexArrayName = 0;
+  glCreateVertexArrays(1, &amp;vertexArrayName);
+
+  glEnableVertexAttribArray(VertexArrayName, semantic::attr::POSITION);
+  glEnableVertexAttribArray(VertexArrayName, semantic::attr::TEXCOORD);
+
+  glVertexArrayAttribBinding(VertexArrayName, semantic::attr::POSITION, 0);
+  glVertexArrayAttribFormat(VertexArrayName, semantic::attr::POSITION, 2, GL_FLOAT, GL_FALSE, 0);
+
+  glVertexArrayAttribBinding(VertexArrayName, semantic::attr::TEXCOORD, 0);
+  glVertexArrayAttribFormat(VertexArrayName, semantic::attr::TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2);
+
+  glVertexArrayElementBuffer(VertexArrayName, BufferName[buffer::ELEMENT]);
+  glVertexArrayVertexBuffer(VertexArrayName, 0, BufferName[buffer::VERTEX], 0, 0);
+
+  return vertexArrayName;
+}
+</code></pre>
+
+<h4 id="example-3-querying-the-bound-texture-to-a-texture-image-unit-for-debugging">Example 3: Querying the bound texture to a texture image unit for debugging</h4>
+
+<pre><code class="language-cpp">// Select to query
+// We need the &lt;target&gt; or we need to loop over all the possible targets
+GLuint GetBoundTexture(GLenum target, GLuint unit)
+{
+  GLuint restore = 0;
+  glGetIntegerv(GL_ACTIVE_TEXTURE, &amp;restore);
+
+  glActiveTexture(unit);
+
+  GLuint name = 0;
+  glGetIntegerv(target, &amp;name);
+
+  glActiveTexture(restore);
+}
+
+// Direct State Access
+// target_binding is e.g. GL_TEXTURE_BINDING_2D for the 2D texture
+GLuint GetBoundTexture(GLenum target_binding, GLuint unit)
+{
+  GLuint name = 0;
+  glGetIntegeri_v(target_binding, unit, &amp;name);
+  return name;
+}
+</code></pre>
 
 
       
@@ -524,8 +702,8 @@ MathJax.Hub.Config({
     </div>
 
     <div id="navigation">
-        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/prev/path"> <i class="fa fa-chevron-left"></i></a>
-        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/next/path" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/code-template" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
     </div>
 
     </section>

@@ -30,6 +30,12 @@
         border-bottom: 4px solid #E0E0E0;
         padding: 1rem;
     }
+
+    code.has-jax {font: inherit;
+              font-size: 100%;
+              background: inherit;
+              border: inherit;
+              color: #515151;}
 </style>
   </head>
   <body class="" data-url="/02-forward-shading/geometrie/">
@@ -74,6 +80,36 @@
 <script>
     start('https:\/\/celeborn2bealive.github.io\/opengl-avance\/' + 'images/');
 </script>
+
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
     </div>
     
 </div>
@@ -101,7 +137,7 @@
             
               <b>1. </b>
             
-             Introduction
+             Mise en place
             
            </span>
         </a>
@@ -111,9 +147,9 @@
           
           
           
-            <li class="dd-item " data-nav-id="/01-introduction/objectifs/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/objectifs/">
-                <span>Objectifs     </i></span>
+            <li class="dd-item " data-nav-id="/01-introduction/introduction/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/">
+                <span>Introduction     </i></span>
               </a>
             </li>
           
@@ -130,6 +166,14 @@
             <li class="dd-item " data-nav-id="/01-introduction/lib-externes/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-externes/">
                 <span>Bibliotheques externes     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/01-introduction/lib-interne/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-interne/">
+                <span>Bibliotheque interne (glmlv)     </i></span>
               </a>
             </li>
           
@@ -230,6 +274,14 @@
             <li class="dd-item " data-nav-id="/02-forward-shading/load-obj/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/load-obj/">
                 <span>Chargement de modèles OBJ     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/02-forward-shading/plus-loin/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/plus-loin/">
+                <span>Aller plus loin     </i></span>
               </a>
             </li>
           
@@ -464,7 +516,51 @@
                 <h1>Geometrie</h1>
                 
 
-<p>Lorem Ipsum</p>
+<p>Vous allez commencer par dessiner des cubes et spheres en 3D. La lib <em>glmlv</em> contient deux fonctions makeCube() et makeSphere() (simple_geometry.hpp) permettant de construire des tableaux de sommets et indices pour ces deux forme simple.</p>
+
+<p>A l&rsquo;initialisation (constructeur de Application):</p>
+
+<ul>
+<li>Utiliser ces fonctions pour construire la géométrie d&rsquo;une sphere et d&rsquo;un cube.</li>
+<li>Pour chacune de ces formes, construire un VBO, un VAO et un IBO et les remplir correctement.</li>
+<li>Activer le depth test</li>
+</ul>
+
+<p>Dans la boucle de rendu (Application::run):</p>
+
+<ul>
+<li>Adapter l&rsquo;appel à glClear pour aussi nettoyer le depth buffer</li>
+<li>Pour chaque objet: binder le VAO, dessiner l&rsquo;objet</li>
+</ul>
+
+<p>Fonctions OpenGL à utiliser à l&rsquo;initialisation:</p>
+
+<ul>
+<li>glCreateBuffers</li>
+<li>glCreateVertexArrays</li>
+<li>glNamedBufferStorage</li>
+<li>glVertexArrayVertexBuffer</li>
+<li>glVertexArrayAttribBinding</li>
+<li>glEnableVertexArrayAttrib</li>
+<li>glVertexArrayAttribFormat</li>
+<li>glVertexArrayElementBuffer</li>
+<li>glEnable(GL_DEPTH_TEST)</li>
+</ul>
+
+<p>Fonctions OpenGL à utiliser au rendu:</p>
+
+<ul>
+<li>glBindVertexArray</li>
+<li>glDrawElements (le nombre de sommets à dessiner est le nombre d&rsquo;elements dans l&rsquo;indexBuffer)</li>
+<li>glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)</li>
+</ul>
+
+<p>Voir le programme <em>quad</em> du template pour un exemple simple en 2D.</p>
+
+<div class="notices note" ><p>A l&rsquo;initialisation du VAO, il faut utiliser pour attribut de vertex (position, normal, texCoords) un entier correspondant à la location de cet attribut dans le vertex shader.
+Le VS n&rsquo;est pas encore écrit mais on peut déjà choisir les location (le plus simple: position en 0, normal en 1 et texCoords en 2).</p>
+</div>
+
 
 
       
@@ -472,8 +568,8 @@
     </div>
 
     <div id="navigation">
-        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/prev/path"> <i class="fa fa-chevron-left"></i></a>
-        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/next/path" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/pipeline"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/shaders/" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
     </div>
 
     </section>

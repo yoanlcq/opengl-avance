@@ -30,6 +30,12 @@
         border-bottom: 4px solid #E0E0E0;
         padding: 1rem;
     }
+
+    code.has-jax {font: inherit;
+              font-size: 100%;
+              background: inherit;
+              border: inherit;
+              color: #515151;}
 </style>
   </head>
   <body class="" data-url="/02-forward-shading/shaders/">
@@ -74,6 +80,36 @@
 <script>
     start('https:\/\/celeborn2bealive.github.io\/opengl-avance\/' + 'images/');
 </script>
+
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
     </div>
     
 </div>
@@ -101,7 +137,7 @@
             
               <b>1. </b>
             
-             Introduction
+             Mise en place
             
            </span>
         </a>
@@ -111,9 +147,9 @@
           
           
           
-            <li class="dd-item " data-nav-id="/01-introduction/objectifs/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/objectifs/">
-                <span>Objectifs     </i></span>
+            <li class="dd-item " data-nav-id="/01-introduction/introduction/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/">
+                <span>Introduction     </i></span>
               </a>
             </li>
           
@@ -130,6 +166,14 @@
             <li class="dd-item " data-nav-id="/01-introduction/lib-externes/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-externes/">
                 <span>Bibliotheques externes     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/01-introduction/lib-interne/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-interne/">
+                <span>Bibliotheque interne (glmlv)     </i></span>
               </a>
             </li>
           
@@ -230,6 +274,14 @@
             <li class="dd-item " data-nav-id="/02-forward-shading/load-obj/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/load-obj/">
                 <span>Chargement de modèles OBJ     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/02-forward-shading/plus-loin/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/plus-loin/">
+                <span>Aller plus loin     </i></span>
               </a>
             </li>
           
@@ -451,7 +503,15 @@
               
                   <div class="progress">
     <div class="wrapper">
-
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#le-vertex-shader">Le Vertex Shader</a></li>
+<li><a href="#le-fragment-shader">Le Fragment Shader</a></li>
+</ul></li>
+</ul>
+</nav>
     </div>
 </div>
 
@@ -464,7 +524,33 @@
                 <h1>Shaders</h1>
                 
 
-<p>Lorem Ipsum</p>
+
+
+<p>Créez un sous-dossier <em>shader</em> dans le dossier de l&rsquo;application <em>foward-renderer</em> et créez le fichiers <em>forward.vs.glsl</em> et <em>forward.fs.glsl</em>.</p>
+
+<p>Voir les différents shaders des applications déjà présente pour vous aider.</p>
+
+<p><a href="http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&amp;teaching=opengl&amp;teaching_section=tds&amp;td=td5">Ce TD de l&rsquo;année précedente</a> explique également la théorie.</p>
+
+<h2 id="le-vertex-shader">Le Vertex Shader</h2>
+
+<ul>
+<li>Le vertex shader doit prendre en entrée une position (vec3 aPosition), une normale (vec3 aNormal) et des texCoords (vec2 aTexCoords)</li>
+<li>N&rsquo;oubliez pas de définir les locations des attributs</li>
+<li>Ajouter des variable uniformes <em>mat4 uModelViewProjMatrix</em>, <em>mat4 uModelViewMatrix</em>, <em>mat4 uNormalMatrix</em> correspondant aux matrices standard en 3D</li>
+<li>Ajouter des variables out <em>vec3 vViewSpacePosition</em>, <em>vec3 vViewSpaceNormal</em>, <em>vec3 vTexCoords</em></li>
+<li>Dans le main du shader, remplir les différentes variables out et la variable <em>gl_Position</em> en respectant le pseudo-code suivant et en faisant les convertions de type necessaires:</li>
+</ul>
+
+<pre><code>vViewSpacePosition = uModelViewMatrix * aPosition
+vViewSpaceNormal = uNormalMatrix * aNormal
+vTexCoords = aTexCoords
+gl_Position = uModelViewProjMatrix * aPosition
+</code></pre>
+
+<h2 id="le-fragment-shader">Le Fragment Shader</h2>
+
+<p>En attendant d&rsquo;implémenter un modèle d&rsquo;illumination, faite en sorte que le fragment shader affiche les normales des objets.</p>
 
 
       
@@ -472,8 +558,8 @@
     </div>
 
     <div id="navigation">
-        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/prev/path"> <i class="fa fa-chevron-left"></i></a>
-        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/next/path" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/geometrie"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/transformations" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
     </div>
 
     </section>

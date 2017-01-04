@@ -30,6 +30,12 @@
         border-bottom: 4px solid #E0E0E0;
         padding: 1rem;
     }
+
+    code.has-jax {font: inherit;
+              font-size: 100%;
+              background: inherit;
+              border: inherit;
+              color: #515151;}
 </style>
   </head>
   <body class="" data-url="/01-introduction/liens/">
@@ -74,6 +80,36 @@
 <script>
     start('https:\/\/celeborn2bealive.github.io\/opengl-avance\/' + 'images/');
 </script>
+
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
     </div>
     
 </div>
@@ -101,7 +137,7 @@
             
               <b>1. </b>
             
-             Introduction
+             Mise en place
             
            </span>
         </a>
@@ -111,9 +147,9 @@
           
           
           
-            <li class="dd-item " data-nav-id="/01-introduction/objectifs/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/objectifs/">
-                <span>Objectifs     </i></span>
+            <li class="dd-item " data-nav-id="/01-introduction/introduction/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/">
+                <span>Introduction     </i></span>
               </a>
             </li>
           
@@ -130,6 +166,14 @@
             <li class="dd-item " data-nav-id="/01-introduction/lib-externes/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-externes/">
                 <span>Bibliotheques externes     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/01-introduction/lib-interne/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-interne/">
+                <span>Bibliotheque interne (glmlv)     </i></span>
               </a>
             </li>
           
@@ -230,6 +274,14 @@
             <li class="dd-item " data-nav-id="/02-forward-shading/load-obj/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/load-obj/">
                 <span>Chargement de modèles OBJ     </i></span>
+              </a>
+            </li>
+          
+          
+          
+            <li class="dd-item " data-nav-id="/02-forward-shading/plus-loin/">
+              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/plus-loin/">
+                <span>Aller plus loin     </i></span>
               </a>
             </li>
           
@@ -434,7 +486,7 @@
                   
                     
                     
-                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/" itemprop="url"><span itemprop="title">Introduction</span></a> <i class="fa fa-angle-right"></i>
+                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/" itemprop="url"><span itemprop="title">Mise en place</span></a> <i class="fa fa-angle-right"></i>
                     
                   
                 
@@ -464,21 +516,20 @@
                 <h1>Liens</h1>
                 
 
-<p>Voici une liste de liens utiles pour OpenGL:</p>
+<p>Le plus important, à toujours avoir sous le coude:</p>
 
 <ul>
-<li><a href="http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&amp;teaching=opengl&amp;teaching_section=tds">http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&amp;teaching=opengl&amp;teaching_section=tds</a> Les TDs d&rsquo;OpenGL 3+ en Imac 2</li>
-<li><a href="http://ogldev.atspace.co.uk/">http://ogldev.atspace.co.uk/</a> Des tutoriaux OpenGL 3+</li>
-<li><a href="http://www.g-truc.net/project-0026.html#menu">http://www.g-truc.net/project-0026.html#menu</a> Une énorme liste d&rsquo;exemples de code OpenGL</li>
-<li><a href="http://github.prideout.net/modern-opengl-prezo/">http://github.prideout.net/modern-opengl-prezo/</a> La philosophie OpenGL moderne</li>
+<li><a href="https://www.khronos.org/opengl/wiki/Main_Page">Le Wiki OpenGL</a></li>
+<li><a href="http://docs.gl/">Une version digeste de la documentation OpenGL/GLSL</a></li>
+<li><a href="https://www.khronos.org/files/opengl44-quick-reference-card.pdf">La reference card OpenGL 4.4</a></li>
 </ul>
 
-<p>A avoir toujours sous la main:</p>
+<p>Et quelques liens utiles pour OpenGL:</p>
 
 <ul>
-<li><a href="https://www.khronos.org/opengl/wiki/Main_Page">https://www.khronos.org/opengl/wiki/Main_Page</a> Le Wiki OpenGL</li>
-<li><a href="http://docs.gl/">http://docs.gl/</a> Une version digeste de la documentation OpenGL/GLSL</li>
-<li><a href="https://www.khronos.org/files/opengl44-quick-reference-card.pdf">https://www.khronos.org/files/opengl44-quick-reference-card.pdf</a> La reference card OpenGL 4.4</li>
+<li><a href="http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&amp;teaching=opengl&amp;teaching_section=tds">Mes TDs OpenGL 3+ écris pour les Imacs 2</a></li>
+<li><a href="http://ogldev.atspace.co.uk/">Des tutoriaux OpenGL 3+</a></li>
+<li><a href="https://github.com/g-truc/ogl-samples/tree/master/tests">Une énorme liste d&rsquo;exemples de code OpenGL</a></li>
 </ul>
 
 
