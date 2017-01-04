@@ -36,7 +36,7 @@ macro(c2ba_add_shader_directory src_directory dst_directory)
 
             add_custom_command(
                 OUTPUT ${dst_directory}/${relative_file}
-                COMMAND ${CMAKE_COMMAND} -E copy ${file} ${dst_directory}
+                COMMAND ${CMAKE_COMMAND} -E copy ${file} ${dst_directory}/${relative_file}
                 MAIN_DEPENDENCY ${file}
             )
         endforeach()
