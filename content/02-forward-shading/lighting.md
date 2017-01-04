@@ -1,11 +1,39 @@
 +++
 title = "Lighting"
 weight = 5
-prev = "/prev/path"
-next = "/next/path"
+prev = "/02-forward-shading/transformations"
+next = "/02-forward-shading/textures"
 toc = true
 date = "2016-12-29T12:21:21+01:00"
 
 +++
 
-Lorem Ipsum
+## Fragment Shader
+
+Implémenter un modèle d'illumination diffuse dans le fragment shader *forward-renderer.fs.glsl*
+
+- Ajouter des variables uniform *vec3 uDirectionalLightDir* et *vec3 uDirectionalLightIntensity* destinés à stocker les paramètres d'une lumière directionnelle (en espace view)
+- Ajouter des variables uniform *vec3 uPointLightPosition* et *vec3 uPointLightIntensity* destinés à stocker les paramètres d'une lumière ponctuelle (en espace view)
+- Ajouter une variable uniform *vec3 uKd* destiné à stocker la couleur diffuse de l'objet en cours de rendu
+- Dans le main, utiliser ces variables ainsi que les attributs du fragment pour calculer la couleur du fragment:
+
+```glsl
+float distToPointLight = length(uPointLightPosition - vViewSpacePosition);
+vec3 dirToPointLight = (uPointLightPosition - vViewSpacePosition) / distToPointLight;
+fColor = uKd * (uDirectionalLightIntensity * dot(vViewSpaceNormal, uDirectionalLightDir) + uPointLightIntensity * dot(vViewSpaceNormal, dirToPointLight) / (distToPointLight * distToPointLight))
+```
+
+## Application
+
+A l'initialisation:
+
+- Récupérer les locations des nouvelles uniform
+
+Au rendu:
+
+- Envoyer les différente uniformes avant le rendu de chaque objet (les lights doivent être partagé)
+- Faire en sortie de pouvoir régler les paramètres des lights et la couleur diffuse des objets depuis la GUI
+
+Fonctions GL à utiliser:
+
+- glUniform3f

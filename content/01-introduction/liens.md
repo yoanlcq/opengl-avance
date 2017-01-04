@@ -8,15 +8,14 @@ next = "/02-forward-shading/"
 
 +++
 
-Voici une liste de liens utiles pour OpenGL:
+Le plus important, à toujours avoir sous le coude:
 
-- http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&teaching=opengl&teaching_section=tds Les TDs d'OpenGL 3+ en Imac 2
-- http://ogldev.atspace.co.uk/ Des tutoriaux OpenGL 3+
-- http://www.g-truc.net/project-0026.html#menu Une énorme liste d'exemples de code OpenGL
-- http://github.prideout.net/modern-opengl-prezo/ La philosophie OpenGL moderne
+- [Le Wiki OpenGL] (https://www.khronos.org/opengl/wiki/Main_Page)
+- [Une version digeste de la documentation OpenGL/GLSL] (http://docs.gl/)
+- [La reference card OpenGL 4.4] (https://www.khronos.org/files/opengl44-quick-reference-card.pdf)
 
-A avoir toujours sous la main:
+Et quelques liens utiles pour OpenGL:
 
-- https://www.khronos.org/opengl/wiki/Main_Page Le Wiki OpenGL
-- http://docs.gl/ Une version digeste de la documentation OpenGL/GLSL
-- https://www.khronos.org/files/opengl44-quick-reference-card.pdf La reference card OpenGL 4.4
+- [Mes TDs OpenGL 3+ écris pour les Imacs 2] (http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&teaching=opengl&teaching_section=tds)
+- [Des tutoriaux OpenGL 3+] (http://ogldev.atspace.co.uk/)
+- [Une énorme liste d'exemples de code OpenGL] (https://github.com/g-truc/ogl-samples/tree/master/tests)

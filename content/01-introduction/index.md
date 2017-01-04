@@ -1,11 +1,11 @@
 +++
-next = "/01-introduction/objectifs"
+next = "/01-introduction/introduction"
 chapter = true
 icon = "<b>1. </b>"
 date = "2016-12-29T11:33:37+01:00"
-title = "Introduction"
+title = "Mise en place"
 weight = 0
 
 +++
 
-# Introduction
+# Mise en place
