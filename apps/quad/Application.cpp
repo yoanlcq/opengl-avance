@@ -72,7 +72,7 @@ Application::Application(int argc, char** argv):
     m_ImGuiIniFilename{ m_AppName + ".imgui.ini" },
     m_ShadersRootPath{ m_AppPath.parent_path() / "shaders" }
 {
-    glCreateBuffers(1, &m_quadVBO);
+    glGenBuffers(1, &m_quadVBO);
 
     Vertex quadVertices[] = {
         Vertex { glm::vec2(-0.5, -0.5), glm::vec3(1, 0, 0) },
@@ -81,20 +81,26 @@ Application::Application(int argc, char** argv):
         Vertex { glm::vec2(-0.5, 0.5), glm::vec3(1, 1, 1) }
     };
 
-    glNamedBufferStorage(m_quadVBO, sizeof(quadVertices), quadVertices, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, m_quadVBO);
 
-    glCreateBuffers(1, &m_quadIBO);
+    glBufferStorage(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glGenBuffers(1, &m_quadIBO);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_quadIBO);
 
     GLuint quadIndices[] = {
         0, 1, 2, // First triangle
         0, 2, 3 // Second triangle
     };
 
-    glNamedBufferStorage(m_quadIBO, sizeof(quadIndices), quadIndices, 0);
+    glBufferStorage(GL_ARRAY_BUFFER, sizeof(quadIndices), quadIndices, 0);
 
-    glCreateVertexArrays(1, &m_quadVAO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    const GLint vboBindingIndex = 0; // Arbitrary choice between 0 and glGetIntegerv(GL_MAX_VERTEX_ATTRIB_BINDINGS)
+    glGenVertexArrays(1, &m_quadVAO);
 
     // Here we load and compile shaders from the library
     m_program = glmlv::compileProgram({ m_ShadersRootPath / "glmlv" / "position2_color3.vs.glsl", m_ShadersRootPath / "glmlv" / "color3.fs.glsl" });
@@ -103,17 +109,21 @@ Application::Application(int argc, char** argv):
     const GLint positionAttrLocation = glGetAttribLocation(m_program.glId(), "aPosition");
     const GLint colorAttrLocation = glGetAttribLocation(m_program.glId(), "aColor");
 
-    glVertexArrayVertexBuffer(m_quadVAO, vboBindingIndex, m_quadVBO, 0, sizeof(Vertex));
+    glBindVertexArray(m_quadVAO);
 
-    glVertexArrayAttribBinding(m_quadVAO, positionAttrLocation, vboBindingIndex);
-    glEnableVertexArrayAttrib(m_quadVAO, positionAttrLocation);
-    glVertexArrayAttribFormat(m_quadVAO, positionAttrLocation, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, position));
+    glBindBuffer(GL_ARRAY_BUFFER, m_quadVBO);
 
-    glVertexArrayAttribBinding(m_quadVAO, colorAttrLocation, vboBindingIndex);
-    glEnableVertexArrayAttrib(m_quadVAO, colorAttrLocation);
-    glVertexArrayAttribFormat(m_quadVAO, colorAttrLocation, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, color));
+    glEnableVertexAttribArray(positionAttrLocation);
+    glVertexAttribPointer(positionAttrLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*) offsetof(Vertex, position));
 
-    glVertexArrayElementBuffer(m_quadVAO, m_quadIBO);
+    glEnableVertexAttribArray(colorAttrLocation);
+    glVertexAttribPointer(colorAttrLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*) offsetof(Vertex, color));
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_quadIBO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
 
     m_program.use();
 }

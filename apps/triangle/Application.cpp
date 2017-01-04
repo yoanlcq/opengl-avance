@@ -72,7 +72,7 @@ Application::Application(int argc, char** argv):
     m_ImGuiIniFilename{ m_AppName + ".imgui.ini" },
     m_ShadersRootPath{ m_AppPath.parent_path() / "shaders" }
 {
-    glCreateBuffers(1, &m_triangleVBO);
+    glGenBuffers(1, &m_triangleVBO);
 
     Vertex triangleVertices[] = {
         Vertex { glm::vec2(-0.5, -0.5), glm::vec3(1, 0, 0) },
@@ -80,25 +80,31 @@ Application::Application(int argc, char** argv):
         Vertex { glm::vec2(0, 0.5), glm::vec3(0, 0, 1) }
     };
 
-    glNamedBufferStorage(m_triangleVBO, sizeof(triangleVertices), triangleVertices, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, m_triangleVBO);
 
-    glCreateVertexArrays(1, &m_triangleVAO);
+    glBufferStorage(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, 0);
 
-    const GLint triangleVBOBindingIndex = 0; // Arbitrary choice between 0 and glGetIntegerv(GL_MAX_VERTEX_ATTRIB_BINDINGS)
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glGenVertexArrays(1, &m_triangleVAO);
 
     // Vertex attrib locations are defined in the vertex shader (we can also use glGetAttribLocation(program, attribname) with attribute names after program compilation in order to get these numbers)
     const GLint positionAttrLocation = 0;
     const GLint colorAttrLocation = 1;
 
-    glVertexArrayVertexBuffer(m_triangleVAO, triangleVBOBindingIndex, m_triangleVBO, 0, sizeof(Vertex));
+    glBindVertexArray(m_triangleVAO);
 
-    glVertexArrayAttribBinding(m_triangleVAO, positionAttrLocation, triangleVBOBindingIndex);
-    glEnableVertexArrayAttrib(m_triangleVAO, positionAttrLocation);
-    glVertexArrayAttribFormat(m_triangleVAO, positionAttrLocation, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, position));
+    glBindBuffer(GL_ARRAY_BUFFER, m_triangleVBO);
 
-    glVertexArrayAttribBinding(m_triangleVAO, colorAttrLocation, triangleVBOBindingIndex);
-    glEnableVertexArrayAttrib(m_triangleVAO, colorAttrLocation);
-    glVertexArrayAttribFormat(m_triangleVAO, colorAttrLocation, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, color));
+    glEnableVertexAttribArray(positionAttrLocation);
+    glVertexAttribPointer(positionAttrLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*) offsetof(Vertex, position));
+
+    glEnableVertexAttribArray(colorAttrLocation);
+    glVertexAttribPointer(colorAttrLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*) offsetof(Vertex, color));
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
 
     m_program = glmlv::compileProgram({ m_ShadersRootPath / m_AppName / "triangle.vs.glsl", m_ShadersRootPath / m_AppName / "triangle.fs.glsl" });
     m_program.use();
