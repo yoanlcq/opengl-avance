@@ -102,57 +102,54 @@ Application::Application(int argc, char** argv):
     const GLint normalAttrLocation = 1;
     const GLint texCoordsAttrLocation = 2;
 
-    glCreateBuffers(1, &m_cubeVBO);
-    glCreateBuffers(1, &m_cubeIBO);
-    glCreateBuffers(1, &m_sphereVBO);
-    glCreateBuffers(1, &m_sphereIBO);
+    glGenBuffers(1, &m_cubeVBO);
+    glGenBuffers(1, &m_cubeIBO);
+    glGenBuffers(1, &m_sphereVBO);
+    glGenBuffers(1, &m_sphereIBO);
 
     m_cubeGeometry = glmlv::makeCube();
     m_sphereGeometry = glmlv::makeSphere(32);
 
-    glNamedBufferStorage(m_cubeVBO, m_cubeGeometry.vertexBuffer.size() * sizeof(glmlv::Vertex3f3f2f), m_cubeGeometry.vertexBuffer.data(), 0);
-    glNamedBufferStorage(m_sphereVBO, m_sphereGeometry.vertexBuffer.size() * sizeof(glmlv::Vertex3f3f2f), m_sphereGeometry.vertexBuffer.data(), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, m_cubeVBO);
+    glBufferStorage(GL_ARRAY_BUFFER, m_cubeGeometry.vertexBuffer.size() * sizeof(glmlv::Vertex3f3f2f), m_cubeGeometry.vertexBuffer.data(), 0);
 
-    glNamedBufferStorage(m_cubeIBO, m_cubeGeometry.indexBuffer.size() * sizeof(uint32_t), m_cubeGeometry.indexBuffer.data(), 0);
-    glNamedBufferStorage(m_sphereIBO, m_sphereGeometry.indexBuffer.size() * sizeof(uint32_t), m_sphereGeometry.indexBuffer.data(), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, m_sphereVBO);
+    glBufferStorage(GL_ARRAY_BUFFER, m_sphereGeometry.vertexBuffer.size() * sizeof(glmlv::Vertex3f3f2f), m_sphereGeometry.vertexBuffer.data(), 0);
 
-    // Cube
-    glCreateVertexArrays(1, &m_cubeVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_cubeIBO);
+    glBufferStorage(GL_ARRAY_BUFFER, m_cubeGeometry.indexBuffer.size() * sizeof(uint32_t), m_cubeGeometry.indexBuffer.data(), 0);
 
-    glVertexArrayVertexBuffer(m_cubeVAO, vboBindingIndex, m_cubeVBO, 0, sizeof(glmlv::Vertex3f3f2f));
+    glBindBuffer(GL_ARRAY_BUFFER, m_sphereIBO);
+    glBufferStorage(GL_ARRAY_BUFFER, m_sphereGeometry.indexBuffer.size() * sizeof(uint32_t), m_sphereGeometry.indexBuffer.data(), 0);
 
-    glVertexArrayAttribBinding(m_cubeVAO, positionAttrLocation, vboBindingIndex);
-    glEnableVertexArrayAttrib(m_cubeVAO, positionAttrLocation);
-    glVertexArrayAttribFormat(m_cubeVAO, positionAttrLocation, 3, GL_FLOAT, GL_FALSE, offsetof(glmlv::Vertex3f3f2f, position));
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glVertexArrayAttribBinding(m_cubeVAO, normalAttrLocation, vboBindingIndex);
-    glEnableVertexArrayAttrib(m_cubeVAO, normalAttrLocation);
-    glVertexArrayAttribFormat(m_cubeVAO, normalAttrLocation, 3, GL_FLOAT, GL_FALSE, offsetof(glmlv::Vertex3f3f2f, normal));
+    // Lets use a lambda to factorize VAO initialization:
+    const auto initVAO = [positionAttrLocation, normalAttrLocation, texCoordsAttrLocation](GLuint& vao, GLuint vbo, GLuint ibo)
+    {
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
 
-    glVertexArrayAttribBinding(m_cubeVAO, texCoordsAttrLocation, vboBindingIndex);
-    glEnableVertexArrayAttrib(m_cubeVAO, texCoordsAttrLocation);
-    glVertexArrayAttribFormat(m_cubeVAO, texCoordsAttrLocation, 2, GL_FLOAT, GL_FALSE, offsetof(glmlv::Vertex3f3f2f, texCoords));
+        // We tell OpenGL what vertex attributes our VAO is describing:
+        glEnableVertexAttribArray(positionAttrLocation);
+        glEnableVertexAttribArray(normalAttrLocation);
+        glEnableVertexAttribArray(texCoordsAttrLocation);
 
-    glVertexArrayElementBuffer(m_cubeVAO, m_cubeIBO);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo); // We bind the VBO because the next 3 calls will read what VBO is bound in order to know where the data is stored
 
-    // Sphere
-    glCreateVertexArrays(1, &m_sphereVAO);
+        glVertexAttribPointer(positionAttrLocation, 3, GL_FLOAT, GL_FALSE, sizeof(glmlv::Vertex3f3f2f), (const GLvoid*)offsetof(glmlv::Vertex3f3f2f, position));
+        glVertexAttribPointer(normalAttrLocation, 3, GL_FLOAT, GL_FALSE, sizeof(glmlv::Vertex3f3f2f), (const GLvoid*)offsetof(glmlv::Vertex3f3f2f, normal));
+        glVertexAttribPointer(texCoordsAttrLocation, 2, GL_FLOAT, GL_FALSE, sizeof(glmlv::Vertex3f3f2f), (const GLvoid*)offsetof(glmlv::Vertex3f3f2f, texCoords));
 
-    glVertexArrayVertexBuffer(m_sphereVAO, vboBindingIndex, m_sphereVBO, 0, sizeof(glmlv::Vertex3f3f2f));
+        glBindBuffer(GL_ARRAY_BUFFER, 0); // We can unbind the VBO because OpenGL has "written" in the VAO what VBO it needs to read when the VAO will be drawn
 
-    glVertexArrayAttribBinding(m_sphereVAO, positionAttrLocation, vboBindingIndex);
-    glEnableVertexArrayAttrib(m_sphereVAO, positionAttrLocation);
-    glVertexArrayAttribFormat(m_sphereVAO, positionAttrLocation, 3, GL_FLOAT, GL_FALSE, offsetof(glmlv::Vertex3f3f2f, position));
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo); // Binding the IBO to GL_ELEMENT_ARRAY_BUFFER while a VAO is bound "writes" it in the VAO for usage when the VAO will be drawn
 
-    glVertexArrayAttribBinding(m_sphereVAO, normalAttrLocation, vboBindingIndex);
-    glEnableVertexArrayAttrib(m_sphereVAO, normalAttrLocation);
-    glVertexArrayAttribFormat(m_sphereVAO, normalAttrLocation, 3, GL_FLOAT, GL_FALSE, offsetof(glmlv::Vertex3f3f2f, normal));
+        glBindVertexArray(0);
+    };
 
-    glVertexArrayAttribBinding(m_sphereVAO, texCoordsAttrLocation, vboBindingIndex);
-    glEnableVertexArrayAttrib(m_sphereVAO, texCoordsAttrLocation);
-    glVertexArrayAttribFormat(m_sphereVAO, texCoordsAttrLocation, 2, GL_FLOAT, GL_FALSE, offsetof(glmlv::Vertex3f3f2f, texCoords));
-
-    glVertexArrayElementBuffer(m_sphereVAO, m_sphereIBO);
+    initVAO(m_cubeVAO, m_cubeVBO, m_cubeIBO);
+    initVAO(m_sphereVAO, m_sphereVBO, m_sphereIBO);
 
     glEnable(GL_DEPTH_TEST);
 
