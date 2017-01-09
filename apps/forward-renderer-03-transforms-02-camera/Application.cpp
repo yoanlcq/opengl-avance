@@ -22,12 +22,35 @@ int Application::run()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        const auto projMatrix = glm::perspective(70.f, float(viewportSize.x) / viewportSize.y, 0.01f, 100.f);
+        const auto viewMatrix = m_viewController.getViewMatrix();
+
         {
+            const auto modelMatrix = glm::rotate(glm::translate(glm::mat4(1), glm::vec3(-2, 0, 0)), 0.2f * float(seconds), glm::vec3(0, 1, 0));
+
+            const auto mvMatrix = viewMatrix * modelMatrix;
+            const auto mvpMatrix = projMatrix * mvMatrix;
+            const auto normalMatrix = glm::transpose(glm::inverse(mvMatrix));
+
+            glUniformMatrix4fv(m_uModelViewProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(mvpMatrix));
+            glUniformMatrix4fv(m_uModelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(mvMatrix));
+            glUniformMatrix4fv(m_uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(normalMatrix));
+
             glBindVertexArray(m_cubeVAO);
             glDrawElements(GL_TRIANGLES, m_cubeGeometry.indexBuffer.size(), GL_UNSIGNED_INT, nullptr);
         }
 
         {
+            const auto modelMatrix = glm::rotate(glm::translate(glm::mat4(1), glm::vec3(2, 0, 0)), 0.2f * float(seconds), glm::vec3(0, 1, 0));
+
+            const auto mvMatrix = viewMatrix * modelMatrix;
+            const auto mvpMatrix = projMatrix * mvMatrix;
+            const auto normalMatrix = glm::transpose(glm::inverse(mvMatrix));
+
+            glUniformMatrix4fv(m_uModelViewProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(mvpMatrix));
+            glUniformMatrix4fv(m_uModelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(mvMatrix));
+            glUniformMatrix4fv(m_uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(normalMatrix));
+
             glBindVertexArray(m_sphereVAO);
             glDrawElements(GL_TRIANGLES, m_sphereGeometry.indexBuffer.size(), GL_UNSIGNED_INT, nullptr);
         }
@@ -57,7 +80,7 @@ int Application::run()
         auto ellapsedTime = glfwGetTime() - seconds;
         auto guiHasFocus = ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
         if (!guiHasFocus) {
-            // Nothing to do for now
+            m_viewController.update(float(ellapsedTime));
         }
     }
 
@@ -129,4 +152,11 @@ Application::Application(int argc, char** argv):
     initVAO(m_sphereVAO, m_sphereVBO, m_sphereIBO);
 
     glEnable(GL_DEPTH_TEST);
+
+    m_program = glmlv::compileProgram({ m_ShadersRootPath / m_AppName / "forward.vs.glsl", m_ShadersRootPath / m_AppName / "forward.fs.glsl" });
+    m_program.use();
+
+    m_uModelViewProjMatrixLocation = glGetUniformLocation(m_program.glId(), "uModelViewProjMatrix");
+    m_uModelViewMatrixLocation = glGetUniformLocation(m_program.glId(), "uModelViewMatrix");
+    m_uNormalMatrixLocation = glGetUniformLocation(m_program.glId(), "uNormalMatrix");
 }

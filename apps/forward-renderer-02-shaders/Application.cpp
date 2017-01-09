@@ -57,7 +57,7 @@ int Application::run()
         auto ellapsedTime = glfwGetTime() - seconds;
         auto guiHasFocus = ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
         if (!guiHasFocus) {
-            // Nothing to do for now
+            // Nothing for now
         }
     }
 

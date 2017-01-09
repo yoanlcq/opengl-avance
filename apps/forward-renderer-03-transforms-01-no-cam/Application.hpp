@@ -32,4 +32,10 @@ private:
     GLuint m_sphereVBO = 0;
     GLuint m_sphereIBO = 0;
     GLuint m_sphereVAO = 0;
+
+    glmlv::GLProgram m_program;
+
+    GLint m_uModelViewProjMatrixLocation;
+    GLint m_uModelViewMatrixLocation;
+    GLint m_uNormalMatrixLocation;
 };
