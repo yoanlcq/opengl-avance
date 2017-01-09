@@ -159,4 +159,6 @@ Application::Application(int argc, char** argv):
     m_uModelViewProjMatrixLocation = glGetUniformLocation(m_program.glId(), "uModelViewProjMatrix");
     m_uModelViewMatrixLocation = glGetUniformLocation(m_program.glId(), "uModelViewMatrix");
     m_uNormalMatrixLocation = glGetUniformLocation(m_program.glId(), "uNormalMatrix");
+
+    m_viewController.setViewMatrix(glm::lookAt(glm::vec3(0, 0, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
 }
