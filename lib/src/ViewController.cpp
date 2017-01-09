@@ -10,9 +10,9 @@ namespace glmlv
 bool ViewController::update(float elapsedTime) 
 {
 
-    auto m_FrontVector = -vec3(m_RcpViewMatrix[2]);
-    auto m_LeftVector = -vec3(m_RcpViewMatrix[0]);
-    auto m_UpVector = vec3(m_RcpViewMatrix[1]);
+    auto frontVector = -vec3(m_RcpViewMatrix[2]);
+    auto leftVector = -vec3(m_RcpViewMatrix[0]);
+    auto upVector = vec3(m_RcpViewMatrix[1]);
     auto position = vec3(m_RcpViewMatrix[3]);
 
     bool hasMoved = false;
@@ -21,11 +21,11 @@ bool ViewController::update(float elapsedTime)
     float lateralAngleDelta = 0.f;
 
     if (glfwGetKey(m_pWindow, GLFW_KEY_W)) {
-        localTranslationVector += m_fSpeed * elapsedTime * m_FrontVector;
+        localTranslationVector += m_fSpeed * elapsedTime * frontVector;
     }
 
     if (glfwGetKey(m_pWindow, GLFW_KEY_A)) {
-        localTranslationVector += m_fSpeed * elapsedTime * m_LeftVector;
+        localTranslationVector += m_fSpeed * elapsedTime * leftVector;
     }
 
     if (glfwGetKey(m_pWindow, GLFW_KEY_Q)) {
@@ -37,19 +37,19 @@ bool ViewController::update(float elapsedTime)
     }
 
     if (glfwGetKey(m_pWindow, GLFW_KEY_S)) {
-        localTranslationVector -= m_fSpeed * elapsedTime * m_FrontVector;
+        localTranslationVector -= m_fSpeed * elapsedTime * frontVector;
     }
 
     if (glfwGetKey(m_pWindow, GLFW_KEY_D)) {
-        localTranslationVector -= m_fSpeed * elapsedTime * m_LeftVector;
+        localTranslationVector -= m_fSpeed * elapsedTime * leftVector;
     }
 
     if (glfwGetKey(m_pWindow, GLFW_KEY_UP)) {
-        localTranslationVector += m_fSpeed * elapsedTime * m_UpVector;
+        localTranslationVector += m_fSpeed * elapsedTime * upVector;
     }
 
     if (glfwGetKey(m_pWindow, GLFW_KEY_DOWN)) {
-        localTranslationVector -= m_fSpeed * elapsedTime * m_UpVector;
+        localTranslationVector -= m_fSpeed * elapsedTime * upVector;
     }
 
     position += localTranslationVector;
@@ -89,12 +89,12 @@ bool ViewController::update(float elapsedTime)
         }
     }
 
-    m_FrontVector = -vec3(newRcpViewMatrix[2]);
-    m_LeftVector = -vec3(newRcpViewMatrix[0]);
-    m_UpVector = cross(m_FrontVector, m_LeftVector);
+    frontVector = -vec3(newRcpViewMatrix[2]);
+    leftVector = -vec3(newRcpViewMatrix[0]);
+    upVector = cross(frontVector, leftVector);
 
     if (hasMoved) {
-        setViewMatrix(lookAt(position, position + m_FrontVector, m_UpVector));
+        setViewMatrix(lookAt(position, position + frontVector, upVector));
     }
 
     return hasMoved;
