@@ -41,11 +41,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 include(c2ba-glsl-shaders)
 include(c2ba-copy-dll-post-build)
+include(c2ba-assets-directory)
 
 if(MSVC)
     set(SHADER_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin/\$\(Configuration\)/shaders)
+    set(ASSET_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin/\$\(Configuration\)/assets)
 else()
     set(SHADER_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin/shaders)
+    set(ASSET_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin/assets)
 endif()
 
 include_directories(
@@ -68,7 +71,7 @@ endif()
 file(
     GLOB_RECURSE
     GLMLV_LIB_FILES
-    lib/*.cpp lib/*.hpp lib/*.glsl
+    lib/*.cpp lib/*.hpp lib/*.glsl lib/assets/*
 )
 
 add_library(
@@ -77,6 +80,7 @@ add_library(
 )
 
 c2ba_add_shader_directory(${CMAKE_CURRENT_SOURCE_DIR}/lib/shaders ${SHADER_OUTPUT_PATH}/glmlv)
+c2ba_add_assets_directory(${CMAKE_CURRENT_SOURCE_DIR}/lib/assets ${ASSET_OUTPUT_PATH}/glmlv)
 
 install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib/shaders/
@@ -122,7 +126,7 @@ foreach(DIR ${APP_DIRECTORIES})
     file(
         GLOB_RECURSE
         SRC_FILES
-        apps/${APP}/*.cpp apps/${APP}/*.hpp apps/${APP}/*.glsl
+        apps/${APP}/*.cpp apps/${APP}/*.hpp apps/${APP}/*.glsl apps/${APP}/assets/*
     )
 
     add_executable(
@@ -142,10 +146,18 @@ foreach(DIR ${APP_DIRECTORIES})
     )
 
     c2ba_add_shader_directory(${DIR}/shaders ${SHADER_OUTPUT_PATH}/${APP})
+    c2ba_add_assets_directory(${DIR}/assets ${ASSET_OUTPUT_PATH}/${APP})
 
     install(
         DIRECTORY ${DIR}/shaders/
         DESTINATION shaders/${APP}
         FILES_MATCHING PATTERN "*.glsl"
     )
+
+    if(EXISTS ${DIR}/assets/)
+        install(
+            DIRECTORY ${DIR}/assets/
+            DESTINATION assets/${APP}
+        )
+    endif()
 endforeach()
