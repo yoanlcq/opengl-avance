@@ -89,16 +89,16 @@ Application::Application(int argc, char** argv):
 
     glGenBuffers(1, &m_quadIBO);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_quadIBO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_quadIBO);
 
     GLuint quadIndices[] = {
         0, 1, 2, // First triangle
         0, 2, 3 // Second triangle
     };
 
-    glBufferStorage(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices), quadIndices, 0);
+    glBufferStorage(GL_ARRAY_BUFFER, sizeof(quadIndices), quadIndices, 0);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glGenVertexArrays(1, &m_quadVAO);
 
