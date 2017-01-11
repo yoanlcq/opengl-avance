@@ -509,7 +509,8 @@ MathJax.Hub.Config({
 <ul>
 <li><a href="#objectifs">Objectifs</a></li>
 <li><a href="#prérequis">Prérequis</a></li>
-<li><a href="#quelle-version-d-opengl">Quelle version d&rsquo;OpenGL ?</a>
+<li><a href="#quelle-version-d-opengl">Quelle version d&rsquo;OpenGL ?</a></li>
+<li><a href="#direct-state-access">Direct State Access</a>
 <ul>
 <li>
 <ul>
@@ -554,6 +555,12 @@ MathJax.Hub.Config({
 
 <p>La version installée sur les machines de la fac est la 4.4, nous prendrons donc cette version comme base.
 En plus de cela, le template de code que j&rsquo;ai préparé charge l&rsquo;extension <strong>GL_ARB_direct_state_access</strong>, dont les fonctions sont passées en OpenGL Core dans la version 4.5.</p>
+
+<h2 id="direct-state-access">Direct State Access</h2>
+
+<div class="notices warning" ><p>Cette extension n&rsquo;est pas disponible sur toutes les cartes graphiques. En particulier les machines de la FAC n&rsquo;en sont pas equipées entièrement (il y a l&rsquo;extension <strong>GL_EXT_direct_state_access</strong> qui n&rsquo;est que partielle). Si vous n&rsquo;y avez pas accès, ne l&rsquo;utilisez pas: cette extension ne fournit que des facilités de programmation, pas de fonctionnalité en plus.</p>
+</div>
+
 
 <p>Cette extension est très pratique car elle permet d&rsquo;éviter de binder les objets OpenGL pour les manipuler (on passe aux fonctions directement l&rsquo;identifiant de l&rsquo;objet), et donc d&rsquo;éviter les erreurs liées au mécanisme de binding. Je vous conseille donc de l&rsquo;utiliser autant que possible.</p>
 

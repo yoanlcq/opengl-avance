@@ -508,6 +508,7 @@ MathJax.Hub.Config({
 <li>
 <ul>
 <li><a href="#téléchargement">Téléchargement</a></li>
+<li><a href="#branches-du-repo">Branches du repo</a></li>
 <li><a href="#compilation">Compilation</a>
 <ul>
 <li><a href="#linux">Linux</a></li>
@@ -537,6 +538,22 @@ MathJax.Hub.Config({
 
 <p>Clonez, forkez sur votre compte Github ou téléchargez le <a href="https://github.com/Celeborn2BeAlive/opengl-avance">repository sur github</a> (fork de préférence, plus facile de partager le code avec moi ensuite)</p>
 
+<h2 id="branches-du-repo">Branches du repo</h2>
+
+<p>Principales:</p>
+
+<ul>
+<li>master <em>Code de base + apps d&rsquo;exemple en OpenGL 3</em></li>
+<li>master-direct-state-access <em>Code de base + apps d&rsquo;exemple en OpenGL 4.5 (avec DSA)</em></li>
+</ul>
+
+<p>Corrections:</p>
+
+<ul>
+<li>cheat <em>Correction des TDs en OpenGL 3</em></li>
+<li>cheat-direct-state-access <em>Correction des TDs en OpenGL OpenGL 4.5 (avec DSA)</em></li>
+</ul>
+
 <h2 id="compilation">Compilation</h2>
 
 <ul>
@@ -551,7 +568,7 @@ MathJax.Hub.Config({
 <ol>
 <li>Créer un repertoire <em>opengl-avance-build</em> à coté du repertoire <em>opengl-avance</em> (correspondant au clone du repo)</li>
 <li>Se placer dans <em>opengl-avance-build</em></li>
-<li>Sur un PC ou GCC 5+ est installé, taper la commande <strong>cmake ../opengl-avance</strong>. Si uniquement GCC 4.9.2 est disponible (machines de la FAC), taper la commande <strong>cmake -DGLMLV_USE_BOOST_FILESYSTEM ../opengl-avance</strong></li>
+<li>Sur un PC ou GCC 5+ est installé, taper la commande <strong>cmake ../opengl-avance</strong>. Si uniquement GCC 4.9.2 est disponible (machines de la FAC), taper la commande <strong>cmake -DGLMLV_USE_BOOST_FILESYSTEM=ON ../opengl-avance</strong></li>
 <li>Compiler avec <strong>make -j</strong></li>
 </ol>
 

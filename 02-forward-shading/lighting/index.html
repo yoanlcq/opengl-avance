@@ -539,7 +539,7 @@ MathJax.Hub.Config({
 
 <pre><code class="language-glsl">float distToPointLight = length(uPointLightPosition - vViewSpacePosition);
 vec3 dirToPointLight = (uPointLightPosition - vViewSpacePosition) / distToPointLight;
-fColor = uKd * (uDirectionalLightIntensity * dot(vViewSpaceNormal, uDirectionalLightDir) + uPointLightIntensity * dot(vViewSpaceNormal, dirToPointLight) / (distToPointLight * distToPointLight))
+fColor = uKd * (uDirectionalLightIntensity * max(0.0, dot(vViewSpaceNormal, uDirectionalLightDir)) + uPointLightIntensity * max(0.0, dot(vViewSpaceNormal, dirToPointLight)) / (distToPointLight * distToPointLight))
 </code></pre>
 
 <h2 id="application">Application</h2>

@@ -93,6 +93,12 @@ N&amp;rsquo;hésitez pas à prendre exemple sur les applications déjà présent
 &lt;p&gt;La version installée sur les machines de la fac est la 4.4, nous prendrons donc cette version comme base.
 En plus de cela, le template de code que j&amp;rsquo;ai préparé charge l&amp;rsquo;extension &lt;strong&gt;GL_ARB_direct_state_access&lt;/strong&gt;, dont les fonctions sont passées en OpenGL Core dans la version 4.5.&lt;/p&gt;
 
+&lt;h2 id=&#34;direct-state-access&#34;&gt;Direct State Access&lt;/h2&gt;
+
+&lt;div class=&#34;notices warning&#34; &gt;&lt;p&gt;Cette extension n&amp;rsquo;est pas disponible sur toutes les cartes graphiques. En particulier les machines de la FAC n&amp;rsquo;en sont pas equipées entièrement (il y a l&amp;rsquo;extension &lt;strong&gt;GL_EXT_direct_state_access&lt;/strong&gt; qui n&amp;rsquo;est que partielle). Si vous n&amp;rsquo;y avez pas accès, ne l&amp;rsquo;utilisez pas: cette extension ne fournit que des facilités de programmation, pas de fonctionnalité en plus.&lt;/p&gt;
+&lt;/div&gt;
+
+
 &lt;p&gt;Cette extension est très pratique car elle permet d&amp;rsquo;éviter de binder les objets OpenGL pour les manipuler (on passe aux fonctions directement l&amp;rsquo;identifiant de l&amp;rsquo;objet), et donc d&amp;rsquo;éviter les erreurs liées au mécanisme de binding. Je vous conseille donc de l&amp;rsquo;utiliser autant que possible.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://www.opengl.org/registry/specs/ARB/direct_state_access.txt&#34;&gt;Lien vers le document de référence&lt;/a&gt;.&lt;/p&gt;
@@ -291,17 +297,66 @@ GLuint GetBoundTexture(GLenum target_binding, GLuint unit)
 
 &lt;p&gt;Fonctions OpenGL à utiliser à l&amp;rsquo;initialisation:&lt;/p&gt;
 
-&lt;ul&gt;
-&lt;li&gt;glCreateBuffers&lt;/li&gt;
-&lt;li&gt;glCreateVertexArrays&lt;/li&gt;
-&lt;li&gt;glNamedBufferStorage&lt;/li&gt;
-&lt;li&gt;glVertexArrayVertexBuffer&lt;/li&gt;
-&lt;li&gt;glVertexArrayAttribBinding&lt;/li&gt;
-&lt;li&gt;glEnableVertexArrayAttrib&lt;/li&gt;
-&lt;li&gt;glVertexArrayAttribFormat&lt;/li&gt;
-&lt;li&gt;glVertexArrayElementBuffer&lt;/li&gt;
-&lt;li&gt;glEnable(GL_DEPTH_TEST)&lt;/li&gt;
-&lt;/ul&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Sans DSA&lt;/th&gt;
+&lt;th&gt;DSA&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;glGenBuffers&lt;/td&gt;
+&lt;td&gt;glCreateBuffers&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glGenVertexArrays&lt;/td&gt;
+&lt;td&gt;glCreateVertexArrays&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glBindBuffer(GL_ARRAY_BUFFER, vboID)&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glBufferStorage&lt;/td&gt;
+&lt;td&gt;glNamedBufferStorage&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;glVertexArrayVertexBuffer&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;glVertexArrayAttribBinding&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glEnableVertexAttribArray&lt;/td&gt;
+&lt;td&gt;glEnableVertexArrayAttrib&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glVertexAttribPointer&lt;/td&gt;
+&lt;td&gt;glVertexArrayAttribFormat&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboID)&lt;/td&gt;
+&lt;td&gt;glVertexArrayElementBuffer&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glEnable(GL_DEPTH_TEST)&lt;/td&gt;
+&lt;td&gt;glEnable(GL_DEPTH_TEST)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 
 &lt;p&gt;Fonctions OpenGL à utiliser au rendu:&lt;/p&gt;
 
@@ -332,6 +387,22 @@ Le VS n&amp;rsquo;est pas encore écrit mais on peut déjà choisir les location
 
 &lt;p&gt;Clonez, forkez sur votre compte Github ou téléchargez le &lt;a href=&#34;https://github.com/Celeborn2BeAlive/opengl-avance&#34;&gt;repository sur github&lt;/a&gt; (fork de préférence, plus facile de partager le code avec moi ensuite)&lt;/p&gt;
 
+&lt;h2 id=&#34;branches-du-repo&#34;&gt;Branches du repo&lt;/h2&gt;
+
+&lt;p&gt;Principales:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;master &lt;em&gt;Code de base + apps d&amp;rsquo;exemple en OpenGL 3&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;master-direct-state-access &lt;em&gt;Code de base + apps d&amp;rsquo;exemple en OpenGL 4.5 (avec DSA)&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Corrections:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;cheat &lt;em&gt;Correction des TDs en OpenGL 3&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;cheat-direct-state-access &lt;em&gt;Correction des TDs en OpenGL OpenGL 4.5 (avec DSA)&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
 &lt;h2 id=&#34;compilation&#34;&gt;Compilation&lt;/h2&gt;
 
 &lt;ul&gt;
@@ -346,7 +417,7 @@ Le VS n&amp;rsquo;est pas encore écrit mais on peut déjà choisir les location
 &lt;ol&gt;
 &lt;li&gt;Créer un repertoire &lt;em&gt;opengl-avance-build&lt;/em&gt; à coté du repertoire &lt;em&gt;opengl-avance&lt;/em&gt; (correspondant au clone du repo)&lt;/li&gt;
 &lt;li&gt;Se placer dans &lt;em&gt;opengl-avance-build&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;Sur un PC ou GCC 5+ est installé, taper la commande &lt;strong&gt;cmake ../opengl-avance&lt;/strong&gt;. Si uniquement GCC 4.9.2 est disponible (machines de la FAC), taper la commande &lt;strong&gt;cmake -DGLMLV_USE_BOOST_FILESYSTEM ../opengl-avance&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Sur un PC ou GCC 5+ est installé, taper la commande &lt;strong&gt;cmake ../opengl-avance&lt;/strong&gt;. Si uniquement GCC 4.9.2 est disponible (machines de la FAC), taper la commande &lt;strong&gt;cmake -DGLMLV_USE_BOOST_FILESYSTEM=ON ../opengl-avance&lt;/strong&gt;&lt;/li&gt;
 &lt;li&gt;Compiler avec &lt;strong&gt;make -j&lt;/strong&gt;&lt;/li&gt;
 &lt;/ol&gt;
 

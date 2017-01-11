@@ -72,17 +72,66 @@ N&amp;rsquo;hésitez pas à prendre exemple sur les applications déjà présent
 
 &lt;p&gt;Fonctions OpenGL à utiliser à l&amp;rsquo;initialisation:&lt;/p&gt;
 
-&lt;ul&gt;
-&lt;li&gt;glCreateBuffers&lt;/li&gt;
-&lt;li&gt;glCreateVertexArrays&lt;/li&gt;
-&lt;li&gt;glNamedBufferStorage&lt;/li&gt;
-&lt;li&gt;glVertexArrayVertexBuffer&lt;/li&gt;
-&lt;li&gt;glVertexArrayAttribBinding&lt;/li&gt;
-&lt;li&gt;glEnableVertexArrayAttrib&lt;/li&gt;
-&lt;li&gt;glVertexArrayAttribFormat&lt;/li&gt;
-&lt;li&gt;glVertexArrayElementBuffer&lt;/li&gt;
-&lt;li&gt;glEnable(GL_DEPTH_TEST)&lt;/li&gt;
-&lt;/ul&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Sans DSA&lt;/th&gt;
+&lt;th&gt;DSA&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;glGenBuffers&lt;/td&gt;
+&lt;td&gt;glCreateBuffers&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glGenVertexArrays&lt;/td&gt;
+&lt;td&gt;glCreateVertexArrays&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glBindBuffer(GL_ARRAY_BUFFER, vboID)&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glBufferStorage&lt;/td&gt;
+&lt;td&gt;glNamedBufferStorage&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;glVertexArrayVertexBuffer&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;glVertexArrayAttribBinding&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glEnableVertexAttribArray&lt;/td&gt;
+&lt;td&gt;glEnableVertexArrayAttrib&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glVertexAttribPointer&lt;/td&gt;
+&lt;td&gt;glVertexArrayAttribFormat&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboID)&lt;/td&gt;
+&lt;td&gt;glVertexArrayElementBuffer&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glEnable(GL_DEPTH_TEST)&lt;/td&gt;
+&lt;td&gt;glEnable(GL_DEPTH_TEST)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 
 &lt;p&gt;Fonctions OpenGL à utiliser au rendu:&lt;/p&gt;
 
@@ -218,7 +267,7 @@ gl_Position = uModelViewProjMatrix * aPosition
 
 &lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;float distToPointLight = length(uPointLightPosition - vViewSpacePosition);
 vec3 dirToPointLight = (uPointLightPosition - vViewSpacePosition) / distToPointLight;
-fColor = uKd * (uDirectionalLightIntensity * dot(vViewSpaceNormal, uDirectionalLightDir) + uPointLightIntensity * dot(vViewSpaceNormal, dirToPointLight) / (distToPointLight * distToPointLight))
+fColor = uKd * (uDirectionalLightIntensity * max(0.0, dot(vViewSpaceNormal, uDirectionalLightDir)) + uPointLightIntensity * max(0.0, dot(vViewSpaceNormal, dirToPointLight)) / (distToPointLight * distToPointLight))
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;application&#34;&gt;Application&lt;/h2&gt;
@@ -265,9 +314,9 @@ fColor = uKd * (uDirectionalLightIntensity * dot(vViewSpaceNormal, uDirectionalL
 &lt;p&gt;A l&amp;rsquo;initialisation&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Charger deux images de votre choix à utiliser en temps que texture diffuse de chacun de nos objets&lt;/li&gt;
+&lt;li&gt;Charger deux images de votre choix à utiliser en temps que texture diffuse de chacun de nos objets (utiliser la classe glmlv::Image2DRGBA et la fonction glmlv::readImage)&lt;/li&gt;
 &lt;li&gt;Construire deux texture objects OpenGL et envoyer les pixel des deux images chargés dans ces texture objects&lt;/li&gt;
-&lt;li&gt;Construire un sampler object OpenGL&lt;/li&gt;
+&lt;li&gt;Construire un sampler object OpenGL et fixer les paramètres GL_TEXTURE_MIN_FILTER et GL_TEXTURE_MAG_FILTER à GL_LINEAR pour ce sampler&lt;/li&gt;
 &lt;li&gt;Récuperer la location de l&amp;rsquo;uniform &lt;em&gt;sampler2D uKdSampler&lt;/em&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -275,27 +324,91 @@ fColor = uKd * (uDirectionalLightIntensity * dot(vViewSpaceNormal, uDirectionalL
 
 &lt;ul&gt;
 &lt;li&gt;Binder la texture sur la texture unit 0&lt;/li&gt;
-&lt;li&gt;Binder le sampler sur la sampler unit 0&lt;/li&gt;
+&lt;li&gt;Binder le sampler sur la texture unit 0&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;Fonctions GL à utiliser:&lt;/p&gt;
 
 &lt;p&gt;A l&amp;rsquo;initialisation:&lt;/p&gt;
 
-&lt;ul&gt;
-&lt;li&gt;glCreateTextures&lt;/li&gt;
-&lt;li&gt;glTextureParameteri&lt;/li&gt;
-&lt;li&gt;glTextureStorage2D&lt;/li&gt;
-&lt;li&gt;glCreateSamplers&lt;/li&gt;
-&lt;li&gt;glSamplerParameteri&lt;/li&gt;
-&lt;/ul&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Sans DSA&lt;/th&gt;
+&lt;th&gt;DSA&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;glActiveTexture(GL_TEXTURE0)&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glGenTextures&lt;/td&gt;
+&lt;td&gt;glCreateTextures&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glBindTexture(GL_TEXTURE_2D, texID)&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glTexStorage2D&lt;/td&gt;
+&lt;td&gt;glTextureStorage2D&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glTexSubImage2D&lt;/td&gt;
+&lt;td&gt;glTextureSubImage2D&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glGenSamplers&lt;/td&gt;
+&lt;td&gt;glCreateSamplers&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glSamplerParameteri&lt;/td&gt;
+&lt;td&gt;glSamplerParameteri&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 
 &lt;p&gt;Au rendu:&lt;/p&gt;
 
-&lt;ul&gt;
-&lt;li&gt;glBindSamplers&lt;/li&gt;
-&lt;li&gt;glBindTextureUnit&lt;/li&gt;
-&lt;/ul&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Sans DSA&lt;/th&gt;
+&lt;th&gt;DSA&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;glActiveTexture(GL_TEXTURE0)&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glUniform1i(location, 0)&lt;/td&gt;
+&lt;td&gt;glUniform1i(location, 0)&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glBindSampler(0, samplerID)&lt;/td&gt;
+&lt;td&gt;glBindSampler(0, samplerID)&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;glBindTexture(GL_TEXTURE_2D, texID)&lt;/td&gt;
+&lt;td&gt;glBindTextureUnit(0, texID)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 </description>
     </item>
     
