@@ -23,15 +23,18 @@ Dans la boucle de rendu (Application::run):
 
 Fonctions OpenGL à utiliser à l'initialisation:
 
-- glCreateBuffers
-- glCreateVertexArrays
-- glNamedBufferStorage
-- glVertexArrayVertexBuffer
-- glVertexArrayAttribBinding
-- glEnableVertexArrayAttrib
-- glVertexArrayAttribFormat
-- glVertexArrayElementBuffer
-- glEnable(GL_DEPTH_TEST)
+| Sans DSA                             | DSA |
+| ------------------------------------ | ----------- |
+| glGenBuffers                         | glCreateBuffers |
+| glGenVertexArrays                    | glCreateVertexArrays |
+| glBindBuffer(GL_ARRAY_BUFFER, vboID) |
+| glBufferStorage                      | glNamedBufferStorage |
+|                                      | glVertexArrayVertexBuffer |
+|                                      | glVertexArrayAttribBinding |
+| glEnableVertexAttribArray            | glEnableVertexArrayAttrib |
+| glVertexAttribPointer                | glVertexArrayAttribFormat |
+| glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboID) | glVertexArrayElementBuffer |
+| glEnable(GL_DEPTH_TEST)              | glEnable(GL_DEPTH_TEST) |
 
 Fonctions OpenGL à utiliser au rendu:
 

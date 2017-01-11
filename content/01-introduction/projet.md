@@ -4,7 +4,7 @@ toc = true
 date = "2016-12-29T11:50:50+01:00"
 title = "Projet"
 weight = 5
-prev = "/01-introduction/lib-externes"
+prev = "/01-introduction/lib-interne"
 
 +++
 

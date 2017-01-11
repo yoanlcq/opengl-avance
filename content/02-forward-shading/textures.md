@@ -18,27 +18,35 @@ date = "2016-12-29T12:21:29+01:00"
 
 A l'initialisation
 
-- Charger deux images de votre choix à utiliser en temps que texture diffuse de chacun de nos objets
+- Charger deux images de votre choix à utiliser en temps que texture diffuse de chacun de nos objets (utiliser la classe glmlv::Image2DRGBA et la fonction glmlv::readImage)
 - Construire deux texture objects OpenGL et envoyer les pixel des deux images chargés dans ces texture objects
-- Construire un sampler object OpenGL
+- Construire un sampler object OpenGL et fixer les paramètres GL_TEXTURE_MIN_FILTER et GL_TEXTURE_MAG_FILTER à GL_LINEAR pour ce sampler
 - Récuperer la location de l'uniform *sampler2D uKdSampler*
 
 Au rendu
 
 - Binder la texture sur la texture unit 0
-- Binder le sampler sur la sampler unit 0
+- Binder le sampler sur la texture unit 0
 
 Fonctions GL à utiliser:
 
 A l'initialisation:
 
-- glCreateTextures
-- glTextureParameteri
-- glTextureStorage2D
-- glCreateSamplers
-- glSamplerParameteri
+| Sans DSA                             | DSA |
+| ------------------------------------ | ----------- |
+| glActiveTexture(GL_TEXTURE0) | |
+| glGenTextures                         | glCreateTextures |
+| glBindTexture(GL_TEXTURE_2D, texID) | |
+| glTexStorage2D                    | glTextureStorage2D |
+| glTexSubImage2D                      | glTextureSubImage2D |
+| glGenSamplers | glCreateSamplers |
+| glSamplerParameteri | glSamplerParameteri |
 
 Au rendu:
 
-- glBindSamplers
-- glBindTextureUnit
+| Sans DSA                             | DSA |
+| ------------------------------------ | ----------- |
+| glActiveTexture(GL_TEXTURE0) |  |
+| glUniform1i(location, 0) | glUniform1i(location, 0) |
+| glBindSampler(0, samplerID) | glBindSampler(0, samplerID) |
+| glBindTexture(GL_TEXTURE_2D, texID) | glBindTextureUnit(0, texID) |

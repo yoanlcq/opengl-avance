@@ -20,7 +20,7 @@ Implémenter un modèle d'illumination diffuse dans le fragment shader *forward-
 ```glsl
 float distToPointLight = length(uPointLightPosition - vViewSpacePosition);
 vec3 dirToPointLight = (uPointLightPosition - vViewSpacePosition) / distToPointLight;
-fColor = uKd * (uDirectionalLightIntensity * dot(vViewSpaceNormal, uDirectionalLightDir) + uPointLightIntensity * dot(vViewSpaceNormal, dirToPointLight) / (distToPointLight * distToPointLight))
+fColor = uKd * (uDirectionalLightIntensity * max(0.0, dot(vViewSpaceNormal, uDirectionalLightDir)) + uPointLightIntensity * max(0.0, dot(vViewSpaceNormal, dirToPointLight)) / (distToPointLight * distToPointLight))
 ```
 
 ## Application

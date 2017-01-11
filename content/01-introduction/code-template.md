@@ -12,6 +12,18 @@ date = "2016-12-29T11:36:02+01:00"
 
 Clonez, forkez sur votre compte Github ou téléchargez le [repository sur github](https://github.com/Celeborn2BeAlive/opengl-avance) (fork de préférence, plus facile de partager le code avec moi ensuite)
 
+## Branches du repo
+
+Principales:
+
+- master *Code de base + apps d'exemple en OpenGL 3*
+- master-direct-state-access *Code de base + apps d'exemple en OpenGL 4.5 (avec DSA)*
+
+Corrections:
+
+- cheat *Correction des TDs en OpenGL 3*
+- cheat-direct-state-access *Correction des TDs en OpenGL OpenGL 4.5 (avec DSA)*
+
 ## Compilation
 
 - Avec CMake
@@ -23,7 +35,7 @@ En console:
 
 1. Créer un repertoire *opengl-avance-build* à coté du repertoire *opengl-avance* (correspondant au clone du repo)
 2. Se placer dans *opengl-avance-build*
-3. Sur un PC ou GCC 5+ est installé, taper la commande **cmake ../opengl-avance**. Si uniquement GCC 4.9.2 est disponible (machines de la FAC), taper la commande **cmake -DGLMLV_USE_BOOST_FILESYSTEM ../opengl-avance**
+3. Sur un PC ou GCC 5+ est installé, taper la commande **cmake ../opengl-avance**. Si uniquement GCC 4.9.2 est disponible (machines de la FAC), taper la commande **cmake -DGLMLV_USE_BOOST_FILESYSTEM=ON ../opengl-avance**
 4. Compiler avec **make -j**
 
 Les executables sont compilés dans le repertoire *bin* du dossier de build

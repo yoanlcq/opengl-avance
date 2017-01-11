@@ -24,6 +24,12 @@ toc = true
 La version installée sur les machines de la fac est la 4.4, nous prendrons donc cette version comme base.
 En plus de cela, le template de code que j'ai préparé charge l'extension **GL_ARB_direct_state_access**, dont les fonctions sont passées en OpenGL Core dans la version 4.5.
 
+## Direct State Access ##
+
+{{% notice warning %}}
+Cette extension n'est pas disponible sur toutes les cartes graphiques. En particulier les machines de la FAC n'en sont pas equipées entièrement (il y a l'extension **GL_EXT_direct_state_access** qui n'est que partielle). Si vous n'y avez pas accès, ne l'utilisez pas: cette extension ne fournit que des facilités de programmation, pas de fonctionnalité en plus.
+{{% /notice %}}
+
 Cette extension est très pratique car elle permet d'éviter de binder les objets OpenGL pour les manipuler (on passe aux fonctions directement l'identifiant de l'objet), et donc d'éviter les erreurs liées au mécanisme de binding. Je vous conseille donc de l'utiliser autant que possible.
 
 [Lien vers le document de référence](https://www.opengl.org/registry/specs/ARB/direct_state_access.txt).
