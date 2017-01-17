@@ -58,6 +58,8 @@ public:
         return const_cast<unsigned char*>((*this)(x, y));
     }
 
+    void flipY(); // Flip the image along its y axis
+
 private:
     friend Image2DRGBA readImage(const fs::path& path);
 
