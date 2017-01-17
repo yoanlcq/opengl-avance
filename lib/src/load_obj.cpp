@@ -121,7 +121,7 @@ void loadObj(const fs::path & objPath, const fs::path & mtlBaseDir, ObjData & da
             const auto completePath = mtlBaseDir / texturePath;
             std::clog << "Loading image " << completePath << std::endl;
             data.textures.emplace_back(readImage(completePath));
-            //data.textures.back().flipY();
+            data.textures.back().flipY();
         }
     }
 
