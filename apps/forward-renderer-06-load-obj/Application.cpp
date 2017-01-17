@@ -87,7 +87,7 @@ int Application::run()
                 bindMaterial(material);
                 currentMaterial = &material;
             }
-            glDrawElements(GL_TRIANGLES, shape.indexCount * 3, GL_UNSIGNED_INT, (const GLvoid*) (shape.indexOffset * sizeof(GLuint)));
+            glDrawElements(GL_TRIANGLES, shape.indexCount, GL_UNSIGNED_INT, (const GLvoid*) (shape.indexOffset * sizeof(GLuint)));
         }
 
         for (GLuint i : {0, 1, 2, 3})
@@ -102,6 +102,13 @@ int Application::run()
             ImGui::ColorEditMode(ImGuiColorEditMode_RGB);
             if (ImGui::ColorEdit3("clearColor", clearColor)) {
                 glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);
+            }
+            if (ImGui::Button("Sort shapes wrt materialID"))
+            {
+                std::sort(begin(m_shapes), end(m_shapes), [&](auto lhs, auto rhs)
+                {
+                    return lhs.materialID < rhs.materialID;
+                });
             }
             if (ImGui::CollapsingHeader("Directional Light"))
             {
@@ -185,7 +192,6 @@ Application::Application(int argc, char** argv):
             shape.indexCount = data.indexCountPerShape[shapeID];
             shape.indexOffset = indexOffset;
             shape.materialID = data.materialIDPerShape[shapeID];
-
             indexOffset += shape.indexCount;
         }
 
@@ -193,7 +199,7 @@ Application::Application(int argc, char** argv):
         glBindTexture(GL_TEXTURE_2D, m_WhiteTexture);
         glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB32F, 1, 1);
         glm::vec4 white(1.f, 1.f, 1.f, 1.f);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &white);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_FLOAT, &white);
         glBindTexture(GL_TEXTURE_2D, 0);
 
         // Upload all textures to the GPU
@@ -225,8 +231,14 @@ Application::Application(int argc, char** argv):
             m_SceneMaterials.emplace_back(newMaterial);
         }
 
+        m_DefaultMaterial.Ka = glm::vec3(0);
         m_DefaultMaterial.Kd = glm::vec3(1);
+        m_DefaultMaterial.Ks = glm::vec3(1);
+        m_DefaultMaterial.shininess = 32.f;
+        m_DefaultMaterial.KaTextureId = m_WhiteTexture;
         m_DefaultMaterial.KdTextureId = m_WhiteTexture;
+        m_DefaultMaterial.KsTextureId = m_WhiteTexture;
+        m_DefaultMaterial.shininessTextureId = m_WhiteTexture;
     }
 
     // Fill VAO
