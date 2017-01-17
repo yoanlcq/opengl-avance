@@ -37,6 +37,20 @@ Image2DRGBA::Image2DRGBA(size_t width, size_t height, unsigned char r, unsigned 
     }
 }
 
+void Image2DRGBA::flipY()
+{
+    unsigned char * pFirstLine = m_pData.get();
+    unsigned char * pLastLine = m_pData.get() + (m_nHeight - 1) * m_nWidth * 4;
+
+    while (pFirstLine < pLastLine)
+    {
+        for (size_t x = 0; x < m_nWidth * 4; ++x)
+            std::swap(pFirstLine[x], pLastLine[x]);
+        pFirstLine += m_nWidth * 4;
+        pLastLine -= m_nWidth * 4;
+    }
+}
+
 Image2DRGBA readImage(const fs::path& path)
 {
     Image2DRGBA image;
