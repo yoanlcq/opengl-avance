@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <unordered_set>
+#include <algorithm>
 
 #include <imgui.h>
 #include <glmlv/imgui_impl_glfw_gl3.hpp>
@@ -46,10 +47,8 @@ int Application::run()
         glUniformMatrix4fv(m_uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(normalMatrix));
 
         // Same sampler for all texture units
-        glBindSampler(0, m_textureSampler);
-        glBindSampler(1, m_textureSampler);
-        glBindSampler(2, m_textureSampler);
-        glBindSampler(3, m_textureSampler);
+        for (GLuint i : {0, 1, 2, 3})
+            glBindSampler(i, m_textureSampler);
 
         // Set texture unit of each sampler
         glUniform1i(m_uKaSamplerLocation, 0);
@@ -91,7 +90,7 @@ int Application::run()
         }
 
         for (GLuint i : {0, 1, 2, 3})
-            glBindSampler(0, m_textureSampler);
+            glBindSampler(i, 0);
 
         // GUI code:
         ImGui_ImplGlfwGL3_NewFrame();
