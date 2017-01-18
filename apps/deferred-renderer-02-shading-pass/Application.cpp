@@ -20,6 +20,9 @@ int Application::run()
     {
         const auto seconds = glfwGetTime();
 
+        const auto projMatrix = glm::perspective(70.f, float(m_nWindowWidth) / m_nWindowHeight, 0.01f * m_SceneSize, m_SceneSize);
+        const auto viewMatrix = m_viewController.getViewMatrix();
+
         // Geometry pass
         {
             m_geometryPassProgram.use();
@@ -27,9 +30,6 @@ int Application::run()
 
             glViewport(0, 0, m_nWindowWidth, m_nWindowHeight);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            const auto projMatrix = glm::perspective(70.f, float(m_nWindowWidth) / m_nWindowHeight, 0.01f * m_SceneSize, m_SceneSize);
-            const auto viewMatrix = m_viewController.getViewMatrix();
 
             const auto modelMatrix = glm::mat4();
 
@@ -89,6 +89,7 @@ int Application::run()
             for (GLuint i : {0, 1, 2, 3})
                 glBindSampler(0, m_textureSampler);
         
+            glBindVertexArray(0);
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         }
 
@@ -97,12 +98,42 @@ int Application::run()
         glViewport(0, 0, viewportSize.x, viewportSize.y);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, m_GBufferFBO);
-        glReadBuffer(GL_COLOR_ATTACHMENT0 + m_CurrentlyDisplayed);
-        glBlitFramebuffer(0, 0, m_nWindowWidth, m_nWindowHeight,
-            0, 0, m_nWindowWidth, m_nWindowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        if (m_CurrentlyDisplayed == GDepth) // Beauty
+        {
+            // Shading pass
+            {
+                m_shadingPassProgram.use();
 
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+                glUniform3fv(m_uDirectionalLightDirLocation, 1, glm::value_ptr(glm::vec3(viewMatrix * glm::vec4(glm::normalize(m_DirLightDirection), 0))));
+                glUniform3fv(m_uDirectionalLightIntensityLocation, 1, glm::value_ptr(m_DirLightColor * m_DirLightIntensity));
+
+                glUniform3fv(m_uPointLightPositionLocation, 1, glm::value_ptr(glm::vec3(viewMatrix * glm::vec4(m_PointLightPosition, 1))));
+                glUniform3fv(m_uPointLightIntensityLocation, 1, glm::value_ptr(m_PointLightColor * m_PointLightIntensity));
+
+                for (int32_t i = GPosition; i < GDepth; ++i)
+                {
+                    glActiveTexture(GL_TEXTURE0 + i);
+                    glBindTexture(GL_TEXTURE_2D, m_GBufferTextures[i]);
+
+                    glUniform1i(m_uGBufferSamplerLocations[i], i);
+                }
+
+                glBindVertexArray(m_TriangleVAO);
+                glDrawArrays(GL_TRIANGLES, 0, 3);
+                glBindVertexArray(0);
+            }
+        }
+        else
+        {
+            // GBuffer display
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, m_GBufferFBO);
+            glReadBuffer(GL_COLOR_ATTACHMENT0 + m_CurrentlyDisplayed);
+            glBlitFramebuffer(0, 0, m_nWindowWidth, m_nWindowHeight,
+                0, 0, m_nWindowWidth, m_nWindowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+        }
+        
 
         // GUI code:
         ImGui_ImplGlfwGL3_NewFrame();
@@ -121,9 +152,26 @@ int Application::run()
                     return lhs.materialID < rhs.materialID;
                 });
             }
+            if (ImGui::CollapsingHeader("Directional Light"))
+            {
+                ImGui::ColorEdit3("DirLightColor", glm::value_ptr(m_DirLightColor));
+                ImGui::DragFloat("DirLightIntensity", &m_DirLightIntensity, 0.1f, 0.f, 100.f);
+                if (ImGui::DragFloat("Phi Angle", &m_DirLightPhiAngleDegrees, 1.0f, 0.0f, 360.f) ||
+                    ImGui::DragFloat("Theta Angle", &m_DirLightThetaAngleDegrees, 1.0f, 0.0f, 180.f)) {
+                    m_DirLightDirection = computeDirectionVector(glm::radians(m_DirLightPhiAngleDegrees), glm::radians(m_DirLightThetaAngleDegrees));
+                }
+            }
+
+            if (ImGui::CollapsingHeader("Point Light"))
+            {
+                ImGui::ColorEdit3("PointLightColor", glm::value_ptr(m_PointLightColor));
+                ImGui::DragFloat("PointLightIntensity", &m_PointLightIntensity, 0.1f, 0.f, 16000.f);
+                ImGui::InputFloat3("Position", glm::value_ptr(m_PointLightPosition));
+            }
+
             if (ImGui::CollapsingHeader("GBuffer"))
             {
-                for (int32_t i = GPosition; i < GDepth; ++i)
+                for (int32_t i = GPosition; i < GBufferTextureCount; ++i)
                 {
                     if (ImGui::RadioButton(m_GBufferTexNames[i], m_CurrentlyDisplayed == i))
                         m_CurrentlyDisplayed = GBufferTextureType(i);
@@ -197,6 +245,20 @@ Application::Application(int argc, char** argv):
     }
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+    glGenBuffers(1, &m_TriangleVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_TriangleVBO);
+
+    GLfloat data[] = { -1, -1, 3, -1, -1, 3 };
+    glBufferStorage(GL_ARRAY_BUFFER, sizeof(data), data, 0);
+
+    glGenVertexArrays(1, &m_TriangleVAO);
+    glBindVertexArray(m_TriangleVAO);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
 void Application::initScene()
@@ -330,4 +392,18 @@ void Application::initShadersData()
     m_uKdSamplerLocation = glGetUniformLocation(m_geometryPassProgram.glId(), "uKdSampler");
     m_uKsSamplerLocation = glGetUniformLocation(m_geometryPassProgram.glId(), "uKsSampler");
     m_uShininessSamplerLocation = glGetUniformLocation(m_geometryPassProgram.glId(), "uShininessSampler");
+
+    m_shadingPassProgram = glmlv::compileProgram({ m_ShadersRootPath / m_AppName / "shadingPass.vs.glsl", m_ShadersRootPath / m_AppName / "shadingPass.fs.glsl" });
+
+    m_uGBufferSamplerLocations[GPosition] = glGetUniformLocation(m_shadingPassProgram.glId(), "uGPosition");
+    m_uGBufferSamplerLocations[GNormal] = glGetUniformLocation(m_shadingPassProgram.glId(), "uGNormal");
+    m_uGBufferSamplerLocations[GAmbient] = glGetUniformLocation(m_shadingPassProgram.glId(), "uGAmbient");
+    m_uGBufferSamplerLocations[GDiffuse] = glGetUniformLocation(m_shadingPassProgram.glId(), "uGDiffuse");
+    m_uGBufferSamplerLocations[GGlossyShininess] = glGetUniformLocation(m_shadingPassProgram.glId(), "uGGlossyShininess");
+
+    m_uDirectionalLightDirLocation = glGetUniformLocation(m_shadingPassProgram.glId(), "uDirectionalLightDir");
+    m_uDirectionalLightIntensityLocation = glGetUniformLocation(m_shadingPassProgram.glId(), "uDirectionalLightIntensity");
+
+    m_uPointLightPositionLocation = glGetUniformLocation(m_shadingPassProgram.glId(), "uPointLightPosition");
+    m_uPointLightIntensityLocation = glGetUniformLocation(m_shadingPassProgram.glId(), "uPointLightIntensity");
 }
