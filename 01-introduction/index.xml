@@ -499,12 +499,13 @@ int main(int argc, char** argv)
 &lt;/div&gt;
 
 
-&lt;p&gt;L&amp;rsquo;objectif du projet est de développer une demo courte implémentant une ou plusieurs techniques vues en TP, ainsi qu&amp;rsquo;une ou plusieurs méthodes non vue en TD, potentiellement issues d&amp;rsquo;articles de recherche. Le choix de l&amp;rsquo;article est libre mais vous devez me le proposer avant afin que je valide. Si vous n&amp;rsquo;avez pas d&amp;rsquo;idées, voici une liste de méthodes/articles possibles:&lt;/p&gt;
+&lt;p&gt;L&amp;rsquo;objectif du projet est de développer une demo courte (c&amp;rsquo;est à dire une animation codée) implémentant une ou plusieurs techniques vues en TP, ainsi qu&amp;rsquo;une ou plusieurs méthodes non vue en TD, potentiellement issues d&amp;rsquo;articles de recherche. Le choix de l&amp;rsquo;article est libre mais vous devez me le proposer avant afin que je valide. Si vous n&amp;rsquo;avez pas d&amp;rsquo;idées, voici une liste de méthodes/articles possibles:&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Shadow Volumes&lt;/li&gt;
-&lt;li&gt;Normal Mapping&lt;/li&gt;
+&lt;li&gt;Normal Mapping (pas suffisant seul, à combiner avec d&amp;rsquo;autres choses)&lt;/li&gt;
 &lt;li&gt;Screen Space Ambient Occlusion&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://fr.slideshare.net/takahiroharada/forward-34779335&#34;&gt;Forward +&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://cseweb.ucsd.edu/~ravir/papers/envmap/&#34;&gt;Rendu temps réel d&amp;rsquo;objets diffus avec une env map grace aux harmoniques spheriques&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://www.klayge.org/material/3_12/GI/rsm.pdf&#34;&gt;Reflective shadow mapping&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://resources.mpi-inf.mpg.de/ImperfectShadowMaps/ISM.pdf&#34;&gt;Imperfect shadow maps&lt;/a&gt;&lt;/li&gt;

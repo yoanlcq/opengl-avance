@@ -418,19 +418,94 @@ fColor = uKd * (uDirectionalLightIntensity * max(0.0, dot(vViewSpaceNormal, uDir
       <pubDate>Thu, 29 Dec 2016 12:22:16 +0100</pubDate>
       
       <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/load-obj/</guid>
-      <description>&lt;p&gt;Utiliser la lib &lt;em&gt;tinyobjloader&lt;/em&gt; (déjà include dans le template) pour remplacer votre sphere et cube par une liste d&amp;rsquo;objets chargés depuis un OBJ.&lt;/p&gt;
+      <description>
 
-&lt;p&gt;Utiliser la doc et exemples de &lt;a href=&#34;http://syoyo.github.io/tinyobjloader/&#34;&gt;la page github de la lib&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;En iterant sur les materiaux, charger uniquement la texture diffuse et le coefficient diffus de chaque objet.&lt;/p&gt;
-
-&lt;p&gt;Faites en sorte que chaque objet soit affiché avec la bonne couleur diffuse.&lt;/p&gt;
-
-&lt;div class=&#34;notices note&#34; &gt;&lt;p&gt;Un OBJ ne stocke pas directement les textures mais seulement le chemin (relatif à l&amp;rsquo;OBJ) de chaque texture. Il faut donc les charger ensuite en utilisant la fonction glmlv::readImage.&lt;/p&gt;
+&lt;div class=&#34;notices note&#34; &gt;&lt;p&gt;Vous pouvez obtenir différents modèles OBJ sur &lt;a href=&#34;http://graphics.cs.williams.edu/data/meshes.xml&#34;&gt;cette page&lt;/a&gt; (je vous conseille de commencer par essayer avec Crytek-Sponza).&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;p&gt;Vous pouvez obtenir différents modèles OBJ sur &lt;a href=&#34;http://graphics.cs.williams.edu/data/meshes.xml&#34;&gt;cette page&lt;/a&gt; (je vous conseille de commencer par essayer avec Crytek-Sponza).&lt;/p&gt;
+&lt;div class=&#34;notices warning&#34; &gt;&lt;p&gt;Il faut puller la dernière version du repo afin de récupérer la fonction &lt;strong&gt;loadObj&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;Utiliser la fonction suivante de la lib pour charger un modèle OBJ:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;void glmlv::loadObj(const glmlv::fs::path &amp;amp; objPath, glmlv::ObjData &amp;amp; data);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Celle ci charge le fichier dont le chemin est passé en paramètre (pensez à mettre le modèle dans le repertoire &lt;em&gt;assets&lt;/em&gt;).
+Elle remplit une structure de type &lt;strong&gt;glmlv::ObjData&lt;/strong&gt; contenant les informations suivantes:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;struct ObjData
+{
+    size_t shapeCount; // Nombre d&#39;objets dans l&#39;OBJ
+    size_t materialCount; // Nombre de matériaux
+    // Point min et max de la bounding box de l&#39;OBJ:
+    glm::vec3 bboxMin;
+    glm::vec3 bboxMax;
+    std::vector&amp;lt;Vertex3f3f2f&amp;gt; vertexBuffer; // Tableau de sommets
+    std::vector&amp;lt;uint32_t&amp;gt; indexBuffer; // Tableau d&#39;indices
+    std::vector&amp;lt;uint32_t&amp;gt; indexCountPerShape; // Nombre d&#39;indices par objet
+
+    std::vector&amp;lt;int32_t&amp;gt; materialIDPerShape; // Index de materiaux de chaque objet (pointe dans le tableau materials)
+
+    std::vector&amp;lt;PhongMaterial&amp;gt; materials; // Tableau des materiaux
+    std::vector&amp;lt;Image2DRGBA&amp;gt; textures; // Tableau dex textures référencées par les materiaux
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Les tableaux vertexBuffer et indexBuffer doivent être utilisés pour remplir un VBO et un IBO à binder sur un VAO pour le rendu.&lt;/p&gt;
+
+&lt;p&gt;Les champs bboxMin et bboxMax permettent de connaitre les dimensions de la scene afin d&amp;rsquo;adapter la vitesse de la caméra et la matrice de projection. Par exemple:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;ObjData data;
+loadObj(path, data);
+
+const auto sceneDiagonalSize = glm::length(data.bboxMax - data.bboxMin);
+m_viewController.setSpeed(sceneDiagonalSize * 0.1f); // 10% de la scene parcouru par seconde
+
+const auto projMatrix = glm::perspective(70.f, float(viewportSize.x) / viewportSize.y, 0.01f * m_SceneSize, m_SceneSize); // near = 1% de la taille de la scene, far = 100%
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Le tableau indexCountPerShape doit être utilisé lors du rendu pour dessiner chacun des objets:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;glBindVertexArray(m_SceneVAO);
+auto indexOffset = 0;
+for (const auto indexCount: indexCountPerShape)
+{
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, (const GLvoid*) (indexOffset * sizeof(GLuint)));
+    indexOffset += indexCount
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Dans le code ci-dessus, l&amp;rsquo;index offset permet de dire à OpenGL ou se trouve les indices du i-ème objet dans le tableau d&amp;rsquo;indices.&lt;/p&gt;
+
+&lt;p&gt;Le tableau textures contient les textures référencées dans l&amp;rsquo;OBJ. Après chargement de l&amp;rsquo;OBJ, il faut créer une texture OpenGL pour chacune.&lt;/p&gt;
+
+&lt;p&gt;Le tableau materials contient l&amp;rsquo;ensemble des materiaux référencés dans la scène. La fonction loadObj ne charge que les données de matériaux nécessaires à un modèle de shading de Blinn-Phong (Ambiant + Diffus + Glossy).&lt;/p&gt;
+
+&lt;p&gt;Finalement, le tableau materialIDPerShape indique le materiau de chaque objet (l&amp;rsquo;index d&amp;rsquo;un élement du tableau materials).&lt;/p&gt;
+
+&lt;p&gt;A noter que si un objet n&amp;rsquo;a pas de matériau, -1 sera placé à sa position dans materialIDPerShape.
+De la même manière, si un champs texture n&amp;rsquo;est pas renseigné pour un matériaux, alors il est mis à -1.&lt;/p&gt;
+
+&lt;p&gt;Il faut donc, après avoir appelé cette fonction, initialiser toutes les données GPU (un VBO, un IBO, un VAO, des textures object, un texture sampler, les uniform location, le programme GLSL) afin de pouvoir dessiner la scène dans la boucle de rendu.&lt;/p&gt;
+
+&lt;p&gt;Comme pour les exercices précédent, il est conseillé d&amp;rsquo;y aller par étape. D&amp;rsquo;abord afficher uniquement les normales des objets 3D, puis afficher la couleur diffuse, puis faire l&amp;rsquo;illumination.&lt;/p&gt;
+
+&lt;h2 id=&#34;modèle-de-shading&#34;&gt;Modèle de Shading&lt;/h2&gt;
+
+&lt;p&gt;Améliorer le modèle de shading utilisé pour utiliser le modèle de Blinn-Phong plutot qu&amp;rsquo;un simple modèle Diffus (voir &lt;a href=&#34;http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&amp;amp;teaching=opengl&amp;amp;teaching_section=tds&amp;amp;td=td8#intro&#34;&gt;cet ancien TD&lt;/a&gt; pour les équations).&lt;/p&gt;
+
+&lt;p&gt;Cela implique de rajouter des variables uniformes pour le coefficient speculaire, la texture speculaire, l&amp;rsquo;exposant de shininess et la texture de shininess.&lt;/p&gt;
+
+&lt;p&gt;Vous pouvez également rajouter le terme ambiant en addition.&lt;/p&gt;
+
+&lt;p&gt;Toutes les informations necessaires sont chargés dans les matériaux de ObjData.&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;notices note&#34; &gt;&lt;p&gt;Si vous bloquez sur un element du TP, vous pouvez puller la branche &lt;em&gt;cheat&lt;/em&gt; du repo et regarder le code de l&amp;rsquo;application &lt;em&gt;forward-renderer-06-load-obj&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/p&gt;
 </description>
     </item>
     
@@ -443,14 +518,6 @@ fColor = uKd * (uDirectionalLightIntensity * max(0.0, dot(vViewSpaceNormal, uDir
       <description>
 
 &lt;p&gt;Voici plusieurs choses améliorable pour rendre notre forward renderer plus interessant:&lt;/p&gt;
-
-&lt;h2 id=&#34;modèle-de-shading&#34;&gt;Modèle de Shading&lt;/h2&gt;
-
-&lt;p&gt;Améliorer le modèle de shading utilisé pour utiliser le modèle de Blinn-Phong plutot qu&amp;rsquo;un simple modèle Diffus (voir &lt;a href=&#34;http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&amp;amp;teaching=opengl&amp;amp;teaching_section=tds&amp;amp;td=td8#intro&#34;&gt;cet ancien TD&lt;/a&gt; pour les équations).&lt;/p&gt;
-
-&lt;p&gt;Cela implique de rajouter des variables uniformes pour le coefficient speculaire, la texture speculaire, l&amp;rsquo;exposant de shininess et la texture de shininess.&lt;/p&gt;
-
-&lt;p&gt;Il faut également charger toutes ces données depuis l&amp;rsquo;OBJ, ainsi que les textures associées.&lt;/p&gt;
 
 &lt;h2 id=&#34;normal-mapping&#34;&gt;Normal Mapping&lt;/h2&gt;
 

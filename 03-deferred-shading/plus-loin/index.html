@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="https://Celeborn2BeAlive.github.io/opengl-avance/images/favicon.png" type="image/x-icon" />
 
     
-    <title>Pipeline de rendu</title>
+    <title>Aller plus loin</title>
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/nucleus.css" rel="stylesheet">
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/font-awesome.min.css" rel="stylesheet">
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/hybrid.css" rel="stylesheet">
@@ -38,7 +38,7 @@
               color: #515151;}
 </style>
   </head>
-  <body class="" data-url="/02-forward-shading/pipeline/">
+  <body class="" data-url="/03-deferred-shading/plus-loin/">
     <nav id="sidebar">
   <div id="header-wrapper">
     <div id="header">
@@ -207,7 +207,7 @@ MathJax.Hub.Config({
       
       
 
-      <li class="dd-item  parent" data-nav-id="/02-forward-shading/">
+      <li class="dd-item  " data-nav-id="/02-forward-shading/">
         <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/">
           <span>
             
@@ -223,7 +223,7 @@ MathJax.Hub.Config({
           
           
           
-            <li class="dd-item active" data-nav-id="/02-forward-shading/pipeline/">
+            <li class="dd-item " data-nav-id="/02-forward-shading/pipeline/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/pipeline/">
                 <span>Pipeline de rendu     </i></span>
               </a>
@@ -299,7 +299,7 @@ MathJax.Hub.Config({
       
       
 
-      <li class="dd-item  " data-nav-id="/03-deferred-shading/">
+      <li class="dd-item  parent" data-nav-id="/03-deferred-shading/">
         <a href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/">
           <span>
             
@@ -339,7 +339,7 @@ MathJax.Hub.Config({
           
           
           
-            <li class="dd-item " data-nav-id="/03-deferred-shading/plus-loin/">
+            <li class="dd-item active" data-nav-id="/03-deferred-shading/plus-loin/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/plus-loin/">
                 <span>Aller plus loin     </i></span>
               </a>
@@ -494,9 +494,11 @@ MathJax.Hub.Config({
                   
                 
                   
+                
+                  
                     
                     
-                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/" itemprop="url"><span itemprop="title">Forward Shading (Rappels)</span></a> <i class="fa fa-angle-right"></i>
+                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/" itemprop="url"><span itemprop="title">Deferred Shading</span></a> <i class="fa fa-angle-right"></i>
                     
                   
                 
@@ -504,14 +506,26 @@ MathJax.Hub.Config({
                 
                   
                 
-                  
-                
-                <span itemprop="title"> Pipeline de rendu</span>
+                <span itemprop="title"> Aller plus loin</span>
               </div>
               
                   <div class="progress">
     <div class="wrapper">
-
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#compute-shader-pour-la-shading-pass">Compute Shader pour la Shading Pass</a></li>
+<li><a href="#light-culling-simple">Light Culling simple</a></li>
+<li><a href="#conclusion-et-forward">Conclusion et Forward +</a>
+<ul>
+<li><a href="#forward">Forward</a></li>
+<li><a href="#deferred">Deferred</a></li>
+<li><a href="#forward-1">Forward +</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
     </div>
 </div>
 
@@ -521,26 +535,71 @@ MathJax.Hub.Config({
             
     	        <div id="body-inner">
                 
-                <h1>Pipeline de rendu</h1>
+                <h1>Aller plus loin</h1>
                 
 
-<p>Le <a href="https://www.wikiwand.com/fr/Forward_Rendering"><strong>forward shading</strong></a> (ou <strong>forward rendering</strong>) est le rendu &ldquo;classique&rdquo; OpenGL que vous avez normalement vu l&rsquo;année dernière. Cette partie est donc une série d&rsquo;exercices pour implémenter rapidement un forward renderer afin de se remettre tranquilement dans le bain.</p>
 
-<p>Pour chaque objet de la scène, un forward renderer fait passer la géométrie de l&rsquo;objet dans un Vertex Shader afin de projeter les sommets à l&rsquo;écran, la carte graphique rasterise les triangles projetés pour produire des fragments qui sont illuminés dans le fragment shader afin de calculer leur couleur.</p>
 
-<p>Cette approche à le mérite d&rsquo;être simple mais introduit un coup supplémentaire lorsque beaucoup de fragments sont occultés: on paye le coup d&rsquo;illumination de ces derniers alors qu&rsquo;ils sont finalement discardés par le test de profondeur. Le TD suivant vous fera implémenter un <strong>deferred renderer</strong>, qui palie à ce problème.</p>
+<p>Voici plusieurs choses améliorable pour rendre notre deferred renderer plus interessant:</p>
 
-<p><a href="https://gamedevelopment.tutsplus.com/articles/forward-rendering-vs-deferred-rendering--gamedev-12342">Voir également cet article</a> qui explique le principe des deux approches.</p>
+<h2 id="compute-shader-pour-la-shading-pass">Compute Shader pour la Shading Pass</h2>
 
-<p>L&rsquo;objectif à la fin de ce premier TP est de pouvoir charger une scène 3D en OBJ constituée de modèles texturées, et pouvoir naviguer dedans en vue FPS.</p>
+<p>Dessiner un quad pour la shading pass, c&rsquo;est en réalité se compliquer la vie pour rien. Tout ce qu&rsquo;on veut c&rsquo;est traiter chacun des pixels du GBuffer, en parallèle sur GPU. D&rsquo;une certaine manière, ce qu&rsquo;on aimerait faire c&rsquo;est un genre de kernel Cuda.</p>
 
-<p>Commencez par dupliquer le repertoire <em>apps/template</em> et renommez le <em>forward-renderer</em>. Vous partirez du code de ce dossier. N&rsquo;oubliez pas de <strong>relancer CMake</strong> pour prendre en compte la nouvelle application. Il faudra églament relancer CMake à chaque ajout de fichier source ou shader. Pour faire cela rapidement, se placer dans le dossier de build et lancer simplement la commande <strong>&ldquo;cmake .&rdquo;</strong>.</p>
+<p>Ca tombe bien, les compute shaders (dispo depuis OpenGL 4.3) permettent exactement de faire ça.</p>
 
-<div class="notices warning" ><p>Les instructions de ce premier TP seront concises car ce sont des exercices de rappel.
-Attachez vous à utiliser des fonctions de l&rsquo;extension direct_state_access afin de moderniser votre code.
-N&rsquo;hésitez pas à prendre exemple sur les applications déjà présente dans le template, et à vous aidez <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/liens/">des liens</a>.</p>
+<p>Trouvez vous un tuto sur le net sur les compute shaders et essayez d&rsquo;adapter votre shading pass pour utiliser un CS plutot que dessin quad + VS + FS.</p>
+
+<h2 id="light-culling-simple">Light Culling simple</h2>
+
+<p>Il est assez facile en deferred de faire le rendu de la contribution de plusieurs lights en accumulant le résultat de plusieurs shading pass.</p>
+
+<p>De plus, avec des lights dont l&rsquo;interaction est limités dans l&rsquo;espace (point light avec un radius par exemple), il est possible de remplacer le dessin du Quad par une forme quelquonque qui vient couvrir en espace ecran la forme du volume projeté de la light. On traite ainsi moins de pixels a chaque shading pass et on gagne du temps. Les <a href="http://ogldev.atspace.co.uk/www/tutorial36/tutorial36.html">parties 2 et 3</a> du tutorial d&rsquo;ogldev détaillent cette méthode. Implémentez là.</p>
+
+<div class="notices warning" ><p>Ces deux exercices sont un peu antagonistes. Dans le premier on remplace le dessin du Quad par l&rsquo;execution d&rsquo;un compute shader.
+Dans le deuxième on remplace le dessin du Quad par des dessins de différents formes.</p>
 </div>
 
+
+<h2 id="conclusion-et-forward">Conclusion et Forward +</h2>
+
+<p>Ces deux premiers TPs vous ont permis d&rsquo;implémenter les deux pipelines de rendu temps réel les plus utilisé: forward et deferred.</p>
+
+<p>Ils ont tous les deux des avantages et inconvénients:</p>
+
+<h3 id="forward">Forward</h3>
+
+<p>Avantages:
+- Simple a mettre en oeuvre, un seul programme GLSL
+- Accès aux propriétés de l&rsquo;objet en cours de rendu au moment de l&rsquo;illumination via les uniforms
+- Possibilité d&rsquo;exploiter les techniques d&rsquo;anti-aliasing du GPU</p>
+
+<p>Désavantages:
+- Potentiellement beaucoup de fragment traités puis occultés
+- Pas d&rsquo;information globale sur l&rsquo;ensemble de la géométrie visible (en tout cas pas sans précalcul)</p>
+
+<h3 id="deferred">Deferred</h3>
+
+<p>Avantages:
+- Possibilité d&rsquo;utiliser le GBuffer pour faire du light culling, post-process ou autre
+- Shading pass seulement sur les fragments non occultés -&gt; gain de perfs si shading pass couteuse (souvent le cas)</p>
+
+<p>Désavantages:
+- Gourmand en mémoire et bande passante (grosse résolution = grosses textures à sortir, vive la 4K et la VR !)
+- Pour avoir accès a des informations sur les objets à rendre dans la shading pass, il faut les écrire dans des textures -&gt; difficile de mélanger différent modèles de shading sur un meme rendu
+- Par defaut, impossible de rendre des objets transparents</p>
+
+<h3 id="forward-1">Forward +</h3>
+
+<p>Une autre méthode a été développé par AMD, appelé Forward + (<a href="http://www.gdcvault.com/play/1016435/Forward-Rendering-Pipeline-for-Modern">voir ici</a> et <a href="http://fr.slideshare.net/takahiroharada/forward-34779335">la</a>), qui tente d&rsquo;obtenir les avantages des deux méthodes sans les inconvénients.</p>
+
+<p>Sans trop entrer dans les détails, voici le fonctionnement général de l&rsquo;algo:</p>
+
+<ul>
+<li>depth pré-pass: rendu uniquement du depth buffer</li>
+<li>light culling: utilisation du depth buffer pour associer les lights à des tiles de pixels</li>
+<li>lighting: rendu en forward, mais utilisation du depth buffer précalculé pour discard les fragments occultés, + utilisation des lights associés aux tiles de pixels</li>
+</ul>
 
 
       
@@ -548,8 +607,8 @@ N&rsquo;hésitez pas à prendre exemple sur les applications déjà présente da
     </div>
 
     <div id="navigation">
-        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/"> <i class="fa fa-chevron-left"></i></a>
-        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/geometrie/" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/shading-pass/"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
     </div>
 
     </section>
