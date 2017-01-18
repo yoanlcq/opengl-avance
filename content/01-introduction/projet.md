@@ -12,11 +12,12 @@ prev = "/01-introduction/lib-interne"
 Cette page n'est pas terminée, j'ajouterais des informations concernant les projet au cours du mois.
 {{% /notice %}}
 
-L'objectif du projet est de développer une demo courte implémentant une ou plusieurs techniques vues en TP, ainsi qu'une ou plusieurs méthodes non vue en TD, potentiellement issues d'articles de recherche. Le choix de l'article est libre mais vous devez me le proposer avant afin que je valide. Si vous n'avez pas d'idées, voici une liste de méthodes/articles possibles:
+L'objectif du projet est de développer une demo courte (c'est à dire une animation codée) implémentant une ou plusieurs techniques vues en TP, ainsi qu'une ou plusieurs méthodes non vue en TD, potentiellement issues d'articles de recherche. Le choix de l'article est libre mais vous devez me le proposer avant afin que je valide. Si vous n'avez pas d'idées, voici une liste de méthodes/articles possibles:
 
 - Shadow Volumes
-- Normal Mapping
+- Normal Mapping (pas suffisant seul, à combiner avec d'autres choses)
 - Screen Space Ambient Occlusion
+- [Forward +](http://fr.slideshare.net/takahiroharada/forward-34779335)
 - [Rendu temps réel d'objets diffus avec une env map grace aux harmoniques spheriques] (http://cseweb.ucsd.edu/~ravir/papers/envmap/)
 - [Reflective shadow mapping] (http://www.klayge.org/material/3_12/GI/rsm.pdf)
 - [Imperfect shadow maps] (http://resources.mpi-inf.mpg.de/ImperfectShadowMaps/ISM.pdf)
