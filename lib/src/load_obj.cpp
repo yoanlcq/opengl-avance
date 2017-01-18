@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <string>
+#include <algorithm>
 
 namespace glmlv
 {
@@ -117,11 +118,21 @@ void loadObj(const fs::path & objPath, const fs::path & mtlBaseDir, ObjData & da
     {
         if (!texturePath.empty())
         {
-            textureIdMap[texturePath] = textureIdOffset + textureIdMap.size();
-            const auto completePath = mtlBaseDir / texturePath;
-            std::clog << "Loading image " << completePath << std::endl;
-            data.textures.emplace_back(readImage(completePath));
-            data.textures.back().flipY();
+            auto newTexturePath = texturePath;
+            std::replace(begin(newTexturePath), end(newTexturePath), '\\', '/');
+            const auto completePath = mtlBaseDir / newTexturePath;
+            if (fs::exists(completePath))
+            {
+                std::clog << "Loading image " << completePath << std::endl;
+                data.textures.emplace_back(readImage(completePath));
+                data.textures.back().flipY();
+
+                textureIdMap[texturePath] = textureIdOffset + textureIdMap.size();
+            }
+            else
+            {
+                std::clog << "'Warning: image " << completePath << " not found" << std::endl;
+            }
         }
     }
 
