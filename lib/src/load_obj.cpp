@@ -127,7 +127,8 @@ void loadObj(const fs::path & objPath, const fs::path & mtlBaseDir, ObjData & da
                 data.textures.emplace_back(readImage(completePath));
                 data.textures.back().flipY();
 
-                textureIdMap[texturePath] = textureIdOffset + textureIdMap.size();
+                const auto localTexId = textureIdMap.size();
+                textureIdMap[texturePath] = textureIdOffset + localTexId;
             }
             else
             {
