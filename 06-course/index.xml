@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>06-courses on OpenGL Avancé</title>
+    <link>https://celeborn2bealive.github.io/opengl-avance/06-course/index.xml</link>
+    <description>Recent content in 06-courses on OpenGL Avancé</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>fr</language>
+    <lastBuildDate>Thu, 19 Jan 2017 23:48:14 +0100</lastBuildDate>
+    <atom:link href="https://celeborn2bealive.github.io/opengl-avance/06-course/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Cours</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/06-course/</link>
+      <pubDate>Thu, 19 Jan 2017 23:48:14 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/06-course/</guid>
+      <description>
+
+&lt;h1 id=&#34;cours&#34;&gt;Cours&lt;/h1&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Qu&#39;est ce que OpenGL ?</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/06-course/opengl-context/</link>
+      <pubDate>Thu, 19 Jan 2017 23:51:42 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/06-course/opengl-context/</guid>
+      <description>
+
+&lt;p&gt;OpenGL est une &lt;a href=&#34;https://www.wikiwand.com/en/Application_programming_interface&#34;&gt;API&lt;/a&gt; permettant d&amp;rsquo;effectuer du calcul parallèle sur GPU, principalement orienté sur la rasterisation de primitives simples (points, lignes et triangles) afin de les afficher dans une image.&lt;/p&gt;
+
+&lt;p&gt;OpenGL &lt;strong&gt;n&amp;rsquo;est pas&lt;/strong&gt; une bibliothèque, mais simplement une &lt;a href=&#34;https://www.opengl.org/registry/doc/glspec45.core.pdf&#34;&gt;spécification&lt;/a&gt; de fonctions permettant l&amp;rsquo;utilisation d&amp;rsquo;effectuer différent de taches de manière asynchrones, souvent centrées autour de la programmation graphique.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.khronos.org/&#34;&gt;Khronos&lt;/a&gt; est le groupe chargé d&amp;rsquo;établir la spécification de chaque version d&amp;rsquo;OpenGL. Plusieurs &lt;a href=&#34;https://www.khronos.org/members/list&#34;&gt;entreprises/universités/personnes&lt;/a&gt; font partie de ce groupe afin de faire avancer la spécification et s&amp;rsquo;adapter à l&amp;rsquo;évolution de l&amp;rsquo;architecture du hardware.&lt;/p&gt;
+
+&lt;p&gt;Les constructeurs de cartes graphiques implémentent ensuite cette spécification à travers un driver. Ainsi, pour faire de l&amp;rsquo;OpenGL sur sa carte graphique, il suffit d&amp;rsquo;installer un driver récent depuis le site du constructeur ou depuis le gestionnaire de paquet.&lt;/p&gt;
+
+&lt;p&gt;Il est tout à fait possible d&amp;rsquo;implémenter l&amp;rsquo;ensemble des fonctions OpenGL dans une bibliothèque tournant sur CPU, c&amp;rsquo;est par exemple le cas de &lt;a href=&#34;http://www.mesa3d.org/&#34;&gt;MESA&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;contexte-opengl&#34;&gt;Contexte OpenGL&lt;/h2&gt;
+
+&lt;p&gt;Le contexte OpenGL stocke l&amp;rsquo;ensemble des données OpenGL pour votre application (ensemble des variables d&amp;rsquo;état, tel que le status d&amp;rsquo;activation du depth test, et les objets créés).&lt;/p&gt;
+
+&lt;p&gt;La création du contexte OpenGL se fait le plus souvent à l&amp;rsquo;ouverture d&amp;rsquo;une fenêtre, par la bibliothèque bas niveau de gestion de fenêtre du systeme (X ou Wayland sous Linux, &lt;a href=&#34;https://www.khronos.org/opengl/wiki/Creating_an_OpenGL_Context_(WGL)&#34;&gt;la Win32 API sous Windows&lt;/a&gt;, etc.).&lt;/p&gt;
+
+&lt;p&gt;On n&amp;rsquo;a généralement pas à s&amp;rsquo;en occuper puisqu&amp;rsquo;il est courant de passer par une lib plus haur niveau de fenêtrage (SDL, GLFW, Qt, &amp;hellip;).&lt;/p&gt;
+
+&lt;p&gt;Plus d&amp;rsquo;informations sur le Wiki:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/OpenGL_Context&#34;&gt;https://www.khronos.org/opengl/wiki/OpenGL_Context&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Core_And_Compatibility_in_Contexts&#34;&gt;https://www.khronos.org/opengl/wiki/Core_And_Compatibility_in_Contexts&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Get_Context_Info&#34;&gt;https://www.khronos.org/opengl/wiki/Get_Context_Info&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;calcul-asynchrone&#34;&gt;Calcul Asynchrone&lt;/h2&gt;
+
+&lt;p&gt;Il est important de bien comprendre que les fonction de rendu (glDraw*) OpenGL sont généralement asynchrone. Cela signifie qu&amp;rsquo;elles ne sont pas executées immédiatement mais placées dans une command queue en attendant d&amp;rsquo;être executées par le GPU.&lt;/p&gt;
+
+&lt;p&gt;Cela permet au driver d&amp;rsquo;optimiser l&amp;rsquo;utilisation du GPU, et à l&amp;rsquo;application de pouvoir faire autre chose pendant que le GPU calcule.&lt;/p&gt;
+
+&lt;p&gt;La synchronisation entre CPU et GPU peut se faire implicitement via l&amp;rsquo;appel à certaines fonctions qui necessitent que le rendu soit terminé (glfwSwapBuffers), ou explicitement à l&amp;rsquo;aide des fonctions glFinish et glFlush.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Synchronization&#34;&gt;https://www.khronos.org/opengl/wiki/Synchronization&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;chargement-des-fonctions-opengl-core-profile&#34;&gt;Chargement des fonctions OpenGL Core Profile&lt;/h2&gt;
+
+&lt;p&gt;OpenGL a un fonctionnement un peu particulier dans le sens ou il n&amp;rsquo;existe pas de header déclarant l&amp;rsquo;ensemble des fonctions OpenGL du core profile (i.e. OpenGL 3+).&lt;/p&gt;
+
+&lt;p&gt;Le header GL.h ne déclare qu&amp;rsquo;un nombre restreint de fonctions, principalement celles du compatibility profiles, dépréciées (glBegin, glEnd, glVertex3f, etc.).&lt;/p&gt;
+
+&lt;p&gt;Pour pouvoir appeler les fonctions OpenGL 3+, il faut demander à la lib de fenetrage bas niveau des pointeurs de fonctions sur chacune de celles que l&amp;rsquo;on veut utiliser.&lt;/p&gt;
+
+&lt;p&gt;Comme c&amp;rsquo;est une tache particulièrement ennuyante, répétitive et ininteressante, on passe généralement par une bibliothèque dediée qui va charger tous les pointeurs de fonction d&amp;rsquo;un coup et nous les exposer dans des variables globales.&lt;/p&gt;
+
+&lt;p&gt;La lib la plus utilisée est sans doute &lt;a href=&#34;http://glew.sourceforge.net/&#34;&gt;GLEW&lt;/a&gt;, mais je vous recommande chaudement &lt;a href=&#34;http://glad.dav1d.de/&#34;&gt;GLAD&lt;/a&gt; qui à les avantages suivants:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;facile à compiler et linker, aussi bien sous windows que sous linux&lt;/li&gt;
+&lt;li&gt;possibilité de customiser entièrement ce qu&amp;rsquo;elle contient via le site (choix de la version d&amp;rsquo;OpenGL, choix du profile, ajout d&amp;rsquo;extensions, etc.)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>OpenGL Extensions</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/06-course/opengl-extensions/</link>
+      <pubDate>Fri, 20 Jan 2017 00:05:53 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/06-course/opengl-extensions/</guid>
+      <description>
+
+&lt;p&gt;Le méchanisme d&amp;rsquo;extensions OpenGL permet aux constructeurs de carte graphique d&amp;rsquo;ajouter à l&amp;rsquo;API des fonctionnalités avancées qui ne sont pas encore présentes dans le Core profile.&lt;/p&gt;
+
+&lt;p&gt;Il est assez standard d&amp;rsquo;utiliser des extensions OpenGL et d&amp;rsquo;adapter son moteur en fonction des extensions disponibles sur la carte graphique de l&amp;rsquo;utilisateur.&lt;/p&gt;
+
+&lt;p&gt;Le nom des extensions suit une nomenclature assez précises. Il y a 3 types d&amp;rsquo;extensions:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Propriétaires: Spécifiques à un seul constructeur. Par exemple les extensions préfixées par GL_NV sont spécifiques aux GPU de NVidia.&lt;/li&gt;
+&lt;li&gt;Génériques: Généralement implémentées par un grand nombre de constructeurs. Préfixées par GL_EXT&lt;/li&gt;
+&lt;li&gt;ARB: Extensions génériques approuvées par l&amp;rsquo;&lt;a href=&#34;https://www.opengl.org/archives/about/arb/&#34;&gt;OpenGL ARB&lt;/a&gt;, destinées à entrer dans le Core profile d&amp;rsquo;une future version d&amp;rsquo;OpenGL.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Les extensions sont détaillées dans un fichier texte dedié assez difficile à lire (exemple: &lt;a href=&#34;https://www.opengl.org/registry/specs/ARB/vertex_array_object.txt&#34;&gt;https://www.opengl.org/registry/specs/ARB/vertex_array_object.txt&lt;/a&gt;) car il mentionne des additions, suppressions ou modifications dans la spécification générale d&amp;rsquo;OpenGL.&lt;/p&gt;
+
+&lt;p&gt;Plus d&amp;rsquo;infos sur le Wiki: &lt;a href=&#34;https://www.khronos.org/opengl/wiki/OpenGL_Extension&#34;&gt;https://www.khronos.org/opengl/wiki/OpenGL_Extension&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Pour savoir si une extension OpenGL est proposée par votre driver, vous pouvez utiliser la commande *glxinfo sous Linux (&lt;em&gt;nvidia-config &amp;ndash;glxinfo&lt;/em&gt; sous certains système) et piper le résultat dans un grep du nom de l&amp;rsquo;extension recherchée. Sous windows vous pouvez passer par un utilitaire tel que &lt;a href=&#34;http://realtech-vr.com/admin/glview&#34;&gt;GLview&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Quelques extensions très interessantes:&lt;/p&gt;
+
+&lt;h2 id=&#34;direct-state-access&#34;&gt;Direct State Access&lt;/h2&gt;
+
+&lt;p&gt;L&amp;rsquo;extension Direct State Access (DSA) (&lt;a href=&#34;https://www.opengl.org/registry/specs/EXT/direct_state_access.txt&#34;&gt;GL_EXT_direct_state_access&lt;/a&gt;, puis &lt;a href=&#34;https://www.opengl.org/registry/specs/ARB/direct_state_access.txt&#34;&gt;GL_ARB_direct_state_access&lt;/a&gt;, puis introduite en Core 4.5) propose une nouvelle manière de modifier/accéder aux objets OpenGL, sans avoir à les binder.&lt;/p&gt;
+
+&lt;p&gt;Cela permet d&amp;rsquo;éviter de se préoccuper de l&amp;rsquo;état global du contexte OpenGL lorsque l&amp;rsquo;on veut manipuler les objets OpenGL et ainsi d&amp;rsquo;éviter un grand nombre d&amp;rsquo;erreurs de programmation.&lt;/p&gt;
+
+&lt;h2 id=&#34;debug-output&#34;&gt;Debug Output&lt;/h2&gt;
+
+&lt;p&gt;L&amp;rsquo;extension Debug Output (&lt;a href=&#34;https://www.opengl.org/registry/specs/ARB/debug_output.txt&#34;&gt;GL_ARB_debug_output&lt;/a&gt;, puis introduite en Core 4.3) à fait beaucoup de bien aux développeurs OpenGL puisqu&amp;rsquo;elle fournit un méchanisme de messages d&amp;rsquo;erreurs bien plus efficace que l&amp;rsquo;ignoble fonction &lt;em&gt;glGetError&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;L&amp;rsquo;idée est de donner une fonction de callback à OpenGL qui sera appelée par l&amp;rsquo;implémentation dès qu&amp;rsquo;une erreur est rencontrée. Il est de plus possible de filtrer de manière assez fine les erreurs/warning à ignorer.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Pipeline de Rendu</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/06-course/gpu-pipeline/</link>
+      <pubDate>Thu, 19 Jan 2017 23:57:26 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/06-course/gpu-pipeline/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Rendering_Pipeline_Overview&#34;&gt;Cette page du wiki&lt;/a&gt; décrit l&amp;rsquo;ensemble du pipeline de rendu OpenGL.&lt;/p&gt;
+
+&lt;p&gt;Le schéma suivant illustre ce pipeline (&lt;a href=&#34;http://www.lighthouse3d.com/2011/03/opengl-4-1-pipeline/&#34;&gt;source&lt;/a&gt;):&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://www.lighthouse3d.com/wp-content/uploads/2011/03/pipeline4.png&#34; alt=&#34;OpenGL Pipeline&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.seas.upenn.edu/~pcozzi/OpenGLInsights/OpenGL44PipelineMap.pdf&#34;&gt;Et ce schéma entre dans le détail de chaque étape&lt;/a&gt; (un joli poster à accrocher au mur :p)&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>OpenGL Objects</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/06-course/opengl-objects/</link>
+      <pubDate>Thu, 19 Jan 2017 23:52:53 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/06-course/opengl-objects/</guid>
+      <description>&lt;p&gt;Les objets OpenGL représentent des conteneurs d&amp;rsquo;état du contexte OpenGL.
+Lorsqu&amp;rsquo;un objet est bindé sur l&amp;rsquo;état correspondant, tous les changement sur cet état sont stocké dans l&amp;rsquo;objet bindé.&lt;/p&gt;
+
+&lt;p&gt;A lire: &lt;a href=&#34;https://www.khronos.org/opengl/wiki/OpenGL_Object&#34;&gt;https://www.khronos.org/opengl/wiki/OpenGL_Object&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Il existe différents types d&amp;rsquo;objets OpenGL, ceux que nous utilisons dans ces TPs étant:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Buffer_Object&#34;&gt;Buffer Object&lt;/a&gt;: représente un tableau de données pouvant être stocké en mémoire GPU.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Vertex_Specification&#34;&gt;Vertex Array Object&lt;/a&gt;: représente la spécification des sommets et leurs rangement aux seins d&amp;rsquo;un ou plusieurs buffer objets.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Texture&#34;&gt;Texture Object&lt;/a&gt;: représente une texture pouvant être stocké en mémoire GPU et pouvant être lue et filtrée depuis les shaders.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Sampler_Object&#34;&gt;Sampler Object&lt;/a&gt;: représente des paramètres de lecture et filtrage de textures.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Framebuffer_Object&#34;&gt;Framebuffer Object&lt;/a&gt;: Représente un ensemble de textures sur lesquels il est possible de dessiner.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/GLSL_Object&#34;&gt;GLSL Objects&lt;/a&gt;: Shaders et programmes GLSL qui peuvent être executés par les stage programmable du GPU.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Buffer Objects</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/06-course/buffer-objects/</link>
+      <pubDate>Thu, 19 Jan 2017 23:55:15 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/06-course/buffer-objects/</guid>
+      <description>&lt;p&gt;Pages du wiki à lire:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Buffer_Object&#34;&gt;Buffer Object&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Buffer_Object_Streaming&#34;&gt;Buffer Object Streaming&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Shader_Storage_Buffer_Object&#34;&gt;Shader Storage Buffer Object&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Uniform_Buffer_Object&#34;&gt;Uniform Buffer Object&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Vertex Array Objects</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/06-course/vertex-array-objects/</link>
+      <pubDate>Thu, 19 Jan 2017 23:55:25 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/06-course/vertex-array-objects/</guid>
+      <description>&lt;p&gt;Pages du wiki à lire:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Vertex_Specification&#34;&gt;Vertex Specification&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Vertex_Specification#Vertex_Array_Object&#34;&gt;Vertex Array Object&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Vertex_Specification#Vertex_Buffer_Object&#34;&gt;Vertex Buffer Object&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Vertex_Specification#Index_buffers&#34;&gt;Index buffers&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Texture et Sampler Objects</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/06-course/textures/</link>
+      <pubDate>Thu, 19 Jan 2017 23:55:40 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/06-course/textures/</guid>
+      <description>&lt;p&gt;Pages du wiki à lire:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Texture&#34;&gt;Texture&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Image_Format&#34;&gt;Image Format&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Sampler_Object&#34;&gt;Sampler Object&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Cubemap_Texture&#34;&gt;Cubemap Texture&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Buffer_Texture&#34;&gt;Buffer Texture&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Array_Texture&#34;&gt;Array Texture&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Framebuffer Objects</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/06-course/framebuffer-objects/</link>
+      <pubDate>Thu, 19 Jan 2017 23:55:49 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/06-course/framebuffer-objects/</guid>
+      <description>&lt;p&gt;Pages du wiki à lire:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Framebuffer_Object&#34;&gt;Framebuffer Object&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Default_Framebuffer&#34;&gt;Default Framebuffer&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Shaders</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/06-course/shaders/</link>
+      <pubDate>Thu, 19 Jan 2017 23:57:43 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/06-course/shaders/</guid>
+      <description>&lt;p&gt;Les shaders sont de cours programmes compilés pour fonctionner sur carte graphique, dans les stages dit programmables du pipeline.&lt;/p&gt;
+
+&lt;p&gt;Plusieurs languages de shading existent mais nous utilisons GLSL dans ces TPs car OpenGL fournie une API et compilation et link pour ce language.&lt;/p&gt;
+
+&lt;p&gt;A lire: &lt;a href=&#34;https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language&#34;&gt;https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Différents types de shaders existent, ceux que nous utilisons dans ces TPs sont:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Vertex_Shader&#34;&gt;Vertex Shaders&lt;/a&gt;: Se charge du calcul par sommet. Généralement il projete le sommet en entrée sur l&amp;rsquo;écran afin que les triangles soit prêt pour la rasterisation.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Fragment_Shader&#34;&gt;Fragment Shaders&lt;/a&gt;: Se charge du calcul par fragment. Les fragments sont générés par la rasterisation à partir des triangles, en interpolant les attributs aux sommets. Lorsqu&amp;rsquo;un fragment n&amp;rsquo;est pas occulté par un autre, il apparait dans un pixel de l&amp;rsquo;image finale, dont la couleur a été calculée par le fragment shader.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Geometry_Shader&#34;&gt;Geometry Shaders&lt;/a&gt;: Shader optionnel qui vient se placer après le vertex shader et avant la rasterisation. Il implémente un calcul par primitive (point, ligne ou triangle) et à la possibilité de générer de nouvelles primitives à partir de sa primitive d&amp;rsquo;entrée.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Compute_Shader&#34;&gt;Compute Shaders&lt;/a&gt;: Petit dernier introduit dans la spécification, le compute shader permet d&amp;rsquo;implémenter un calcul parallèle quelquonque sur GPU, en dehors du pipeline. Il permet de faire du GPGPU en OpenGL, comme en Cuda ou en OpenCL.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

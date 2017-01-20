@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="https://Celeborn2BeAlive.github.io/opengl-avance/images/favicon.png" type="image/x-icon" />
 
     
-    <title>Textures</title>
+    <title>Directional SM - Utilisation</title>
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/nucleus.css" rel="stylesheet">
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/font-awesome.min.css" rel="stylesheet">
     <link href="https://celeborn2bealive.github.io/opengl-avance//css/hybrid.css" rel="stylesheet">
@@ -38,7 +38,7 @@
               color: #515151;}
 </style>
   </head>
-  <body class="" data-url="/02-forward-shading/textures/">
+  <body class="" data-url="/04-shadow-mapping/dir-shadow-map-usage/">
     <nav id="sidebar">
   <div id="header-wrapper">
     <div id="header">
@@ -207,7 +207,7 @@ MathJax.Hub.Config({
       
       
 
-      <li class="dd-item  parent" data-nav-id="/02-forward-shading/">
+      <li class="dd-item  " data-nav-id="/02-forward-shading/">
         <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/">
           <span>
             
@@ -263,7 +263,7 @@ MathJax.Hub.Config({
           
           
           
-            <li class="dd-item active" data-nav-id="/02-forward-shading/textures/">
+            <li class="dd-item " data-nav-id="/02-forward-shading/textures/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/textures/">
                 <span>Textures     </i></span>
               </a>
@@ -359,7 +359,7 @@ MathJax.Hub.Config({
       
       
 
-      <li class="dd-item  " data-nav-id="/04-shadow-mapping/">
+      <li class="dd-item  parent" data-nav-id="/04-shadow-mapping/">
         <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/">
           <span>
             
@@ -391,7 +391,7 @@ MathJax.Hub.Config({
           
           
           
-            <li class="dd-item " data-nav-id="/04-shadow-mapping/dir-shadow-map-usage/">
+            <li class="dd-item active" data-nav-id="/04-shadow-mapping/dir-shadow-map-usage/">
               <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map-usage/">
                 <span>Directional SM - Utilisation     </i></span>
               </a>
@@ -610,9 +610,13 @@ MathJax.Hub.Config({
                   
                 
                   
+                
+                  
+                
+                  
                     
                     
-                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/" itemprop="url"><span itemprop="title">Forward Shading (Rappels)</span></a> <i class="fa fa-angle-right"></i>
+                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/" itemprop="url"><span itemprop="title">Shadow Mapping</span></a> <i class="fa fa-angle-right"></i>
                     
                   
                 
@@ -620,24 +624,12 @@ MathJax.Hub.Config({
                 
                   
                 
-                  
-                
-                  
-                
-                <span itemprop="title"> Textures</span>
+                <span itemprop="title"> Directional SM - Utilisation</span>
               </div>
               
                   <div class="progress">
     <div class="wrapper">
-<nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#fragment-shader">Fragment Shader</a></li>
-<li><a href="#application">Application</a></li>
-</ul></li>
-</ul>
-</nav>
+
     </div>
 </div>
 
@@ -647,119 +639,10 @@ MathJax.Hub.Config({
             
     	        <div id="body-inner">
                 
-                <h1>Textures</h1>
+                <h1>Directional SM - Utilisation</h1>
                 
 
-
-
-<h2 id="fragment-shader">Fragment Shader</h2>
-
-<ul>
-<li>Ajouter une variable uniform <em>sampler2D uKdSampler</em>, destiné à pointer sur une texture des couleurs diffuses pour l&rsquo;objet en cours de rendu.</li>
-<li>Dans le main, utiliser la fonction GLSL <a href="http://docs.gl/sl4/texture"><em>texture</em></a> afin de lire le sampler en utiliser les tex coords du fragment.</li>
-<li>Multiplier la valeur lue avec la variable uKd pour obtenir le coefficient diffus final de l&rsquo;objet, à utiliser pour l&rsquo;illumination</li>
-</ul>
-
-<h2 id="application">Application</h2>
-
-<p>A l&rsquo;initialisation</p>
-
-<ul>
-<li>Charger deux images de votre choix à utiliser en temps que texture diffuse de chacun de nos objets (utiliser la classe glmlv::Image2DRGBA et la fonction glmlv::readImage)</li>
-<li>Construire deux texture objects OpenGL et envoyer les pixel des deux images chargés dans ces texture objects</li>
-<li>Construire un sampler object OpenGL et fixer les paramètres GL_TEXTURE_MIN_FILTER et GL_TEXTURE_MAG_FILTER à GL_LINEAR pour ce sampler</li>
-<li>Récuperer la location de l&rsquo;uniform <em>sampler2D uKdSampler</em></li>
-</ul>
-
-<p>Au rendu</p>
-
-<ul>
-<li>Binder la texture sur la texture unit 0</li>
-<li>Binder le sampler sur la texture unit 0</li>
-</ul>
-
-<p>Fonctions GL à utiliser:</p>
-
-<p>A l&rsquo;initialisation:</p>
-
-<table>
-<thead>
-<tr>
-<th>Sans DSA</th>
-<th>DSA</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td>glActiveTexture(GL_TEXTURE0)</td>
-<td></td>
-</tr>
-
-<tr>
-<td>glGenTextures</td>
-<td>glCreateTextures</td>
-</tr>
-
-<tr>
-<td>glBindTexture(GL_TEXTURE_2D, texID)</td>
-<td></td>
-</tr>
-
-<tr>
-<td>glTexStorage2D</td>
-<td>glTextureStorage2D</td>
-</tr>
-
-<tr>
-<td>glTexSubImage2D</td>
-<td>glTextureSubImage2D</td>
-</tr>
-
-<tr>
-<td>glGenSamplers</td>
-<td>glCreateSamplers</td>
-</tr>
-
-<tr>
-<td>glSamplerParameteri</td>
-<td>glSamplerParameteri</td>
-</tr>
-</tbody>
-</table>
-
-<p>Au rendu:</p>
-
-<table>
-<thead>
-<tr>
-<th>Sans DSA</th>
-<th>DSA</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td>glActiveTexture(GL_TEXTURE0)</td>
-<td></td>
-</tr>
-
-<tr>
-<td>glUniform1i(location, 0)</td>
-<td>glUniform1i(location, 0)</td>
-</tr>
-
-<tr>
-<td>glBindSampler(0, samplerID)</td>
-<td>glBindSampler(0, samplerID)</td>
-</tr>
-
-<tr>
-<td>glBindTexture(GL_TEXTURE_2D, texID)</td>
-<td>glBindTextureUnit(0, texID)</td>
-</tr>
-</tbody>
-</table>
+<p>todo.</p>
 
 
       
@@ -767,8 +650,8 @@ MathJax.Hub.Config({
     </div>
 
     <div id="navigation">
-        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/lighting"> <i class="fa fa-chevron-left"></i></a>
-        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/load-obj" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        <a class="nav nav-prev" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map-creation/"> <i class="fa fa-chevron-left"></i></a>
+        <a class="nav nav-next" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map-creation/" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
     </div>
 
     </section>

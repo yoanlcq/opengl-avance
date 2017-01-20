@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/06-course/opengl-context/</loc>
+    <lastmod>2017-01-19T23:51:42+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/introduction/</loc>
     <lastmod>2016-12-29T12:35:23+01:00</lastmod>
   </url>
@@ -27,13 +32,23 @@
   </url>
   
   <url>
-    <loc>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/gamma-correction/</loc>
-    <lastmod>2016-12-29T12:36:04+01:00</lastmod>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/06-course/opengl-extensions/</loc>
+    <lastmod>2017-01-20T00:05:53+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/creation-shadow-map/</loc>
-    <lastmod>2016-12-29T12:29:25+01:00</lastmod>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/06-course/gpu-pipeline/</loc>
+    <lastmod>2017-01-19T23:57:26+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map-creation/</loc>
+    <lastmod>2017-01-19T23:22:14+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/gamma-correction/</loc>
+    <lastmod>2016-12-29T12:36:04+01:00</lastmod>
   </url>
   
   <url>
@@ -52,13 +67,18 @@
   </url>
   
   <url>
-    <loc>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/extraction-contours/</loc>
-    <lastmod>2016-12-29T12:36:20+01:00</lastmod>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/06-course/opengl-objects/</loc>
+    <lastmod>2017-01-19T23:52:53+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/utilisation-shadow-map/</loc>
-    <lastmod>2016-12-29T12:29:31+01:00</lastmod>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map-usage/</loc>
+    <lastmod>2017-01-19T23:22:21+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/extraction-contours/</loc>
+    <lastmod>2016-12-29T12:36:20+01:00</lastmod>
   </url>
   
   <url>
@@ -77,6 +97,16 @@
   </url>
   
   <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/06-course/buffer-objects/</loc>
+    <lastmod>2017-01-19T23:55:15+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map-creation/</loc>
+    <lastmod>2017-01-19T23:22:33+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://celeborn2bealive.github.io/opengl-avance/01-introduction/lib-interne/</loc>
     <lastmod>2017-01-03T22:29:22+01:00</lastmod>
   </url>
@@ -89,6 +119,16 @@
   <url>
     <loc>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/transformations/</loc>
     <lastmod>2016-12-29T12:20:24+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/06-course/vertex-array-objects/</loc>
+    <lastmod>2017-01-19T23:55:25+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map-usage/</loc>
+    <lastmod>2017-01-19T23:22:38+01:00</lastmod>
   </url>
   
   <url>
@@ -107,13 +147,28 @@
   </url>
   
   <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/06-course/textures/</loc>
+    <lastmod>2017-01-19T23:55:40+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/textures/</loc>
     <lastmod>2016-12-29T12:21:29+01:00</lastmod>
   </url>
   
   <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/06-course/framebuffer-objects/</loc>
+    <lastmod>2017-01-19T23:55:49+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/load-obj/</loc>
     <lastmod>2016-12-29T12:22:16+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/06-course/shaders/</loc>
+    <lastmod>2017-01-19T23:57:43+01:00</lastmod>
   </url>
   
   <url>
@@ -127,6 +182,11 @@
   </url>
   
   <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/06-course/</loc>
+    <lastmod>2017-01-19T23:48:14+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/</loc>
     <lastmod>2016-12-29T12:09:46+01:00</lastmod>
   </url>
@@ -178,12 +238,18 @@
   <url>
     <loc>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/</loc>
     <lastmod>2016-12-29T12:09:35+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/06-course/</loc>
+    <lastmod>2017-01-19T23:48:14+01:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://celeborn2bealive.github.io/opengl-avance/</loc>
-    <lastmod>2016-12-29T12:35:23+01:00</lastmod>
+    <lastmod>2017-01-19T23:51:42+01:00</lastmod>
     <priority>0</priority>
   </url>
   

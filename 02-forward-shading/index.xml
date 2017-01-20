@@ -53,7 +53,11 @@ N&amp;rsquo;hésitez pas à prendre exemple sur les applications déjà présent
       <pubDate>Thu, 29 Dec 2016 12:18:05 +0100</pubDate>
       
       <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/geometrie/</guid>
-      <description>&lt;p&gt;Vous allez commencer par dessiner des cubes et spheres en 3D. La lib &lt;em&gt;glmlv&lt;/em&gt; contient deux fonctions makeCube() et makeSphere() (simple_geometry.hpp) permettant de construire des tableaux de sommets et indices pour ces deux forme simple.&lt;/p&gt;
+      <description>&lt;div class=&#34;notices warning&#34; &gt;&lt;p&gt;Vous aurez un écran noir jusqu&amp;rsquo;a la fin de la première partie de l&amp;rsquo;exercice &lt;a href=&#34;https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/transformations/&#34;&gt;Transformations&lt;/a&gt;: OpenGL demande généralement beaucoup de code d&amp;rsquo;initialisation avant de pouvoir afficher quelque chose.&lt;/p&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;Vous allez commencer par dessiner des cubes et spheres en 3D. La lib &lt;em&gt;glmlv&lt;/em&gt; contient deux fonctions makeCube() et makeSphere() (simple_geometry.hpp) permettant de construire des tableaux de sommets et indices pour ces deux forme simple.&lt;/p&gt;
 
 &lt;p&gt;A l&amp;rsquo;initialisation (constructeur de Application):&lt;/p&gt;
 
@@ -143,10 +147,10 @@ N&amp;rsquo;hésitez pas à prendre exemple sur les applications déjà présent
 
 &lt;p&gt;Voir le programme &lt;em&gt;quad&lt;/em&gt; du template pour un exemple simple en 2D.&lt;/p&gt;
 
-&lt;div class=&#34;notices note&#34; &gt;&lt;p&gt;A l&amp;rsquo;initialisation du VAO, il faut utiliser pour attribut de vertex (position, normal, texCoords) un entier correspondant à la location de cet attribut dans le vertex shader.
+&lt;p&gt;&lt;div class=&#34;notices note&#34; &gt;&lt;p&gt;A l&amp;rsquo;initialisation du VAO, il faut utiliser pour attribut de vertex (position, normal, texCoords) un entier correspondant à la location de cet attribut dans le vertex shader.
 Le VS n&amp;rsquo;est pas encore écrit mais on peut déjà choisir les location (le plus simple: position en 0, normal en 1 et texCoords en 2).&lt;/p&gt;
 &lt;/div&gt;
-
+&lt;/p&gt;
 </description>
     </item>
     

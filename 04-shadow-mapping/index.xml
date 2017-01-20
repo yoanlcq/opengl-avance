@@ -27,27 +27,59 @@
       <pubDate>Thu, 29 Dec 2016 12:29:08 +0100</pubDate>
       
       <guid>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/introduction/</guid>
-      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+      <description>
+
+&lt;h2 id=&#34;principe-général&#34;&gt;Principe général&lt;/h2&gt;
+
+&lt;p&gt;todo.&lt;/p&gt;
+
+&lt;h2 id=&#34;création-de-la-shadow-map&#34;&gt;Création de la Shadow Map&lt;/h2&gt;
+
+&lt;p&gt;todo.&lt;/p&gt;
+
+&lt;h2 id=&#34;utilisation-de-la-shadow-map&#34;&gt;Utilisation de la Shadow Map&lt;/h2&gt;
+
+&lt;p&gt;todo.&lt;/p&gt;
 </description>
     </item>
     
     <item>
-      <title>Création de la Shadow Map</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/creation-shadow-map/</link>
-      <pubDate>Thu, 29 Dec 2016 12:29:25 +0100</pubDate>
+      <title>Directional SM - Création</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map-creation/</link>
+      <pubDate>Thu, 19 Jan 2017 23:22:14 +0100</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/creation-shadow-map/</guid>
-      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+      <guid>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map-creation/</guid>
+      <description>&lt;p&gt;todo.&lt;/p&gt;
 </description>
     </item>
     
     <item>
-      <title>Utilisation de la Shadow Map</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/utilisation-shadow-map/</link>
-      <pubDate>Thu, 29 Dec 2016 12:29:31 +0100</pubDate>
+      <title>Directional SM - Utilisation</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map-usage/</link>
+      <pubDate>Thu, 19 Jan 2017 23:22:21 +0100</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/utilisation-shadow-map/</guid>
-      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
+      <guid>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map-usage/</guid>
+      <description>&lt;p&gt;todo.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Point SM - Création</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map-creation/</link>
+      <pubDate>Thu, 19 Jan 2017 23:22:33 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map-creation/</guid>
+      <description>&lt;p&gt;todo.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Point SM - Utilisation</title>
+      <link>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map-usage/</link>
+      <pubDate>Thu, 19 Jan 2017 23:22:38 +0100</pubDate>
+      
+      <guid>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map-usage/</guid>
+      <description>&lt;p&gt;todo.&lt;/p&gt;
 </description>
     </item>
     
