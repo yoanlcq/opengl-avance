@@ -8,6 +8,10 @@ prev = "/02-forward-shading/pipeline"
 
 +++
 
+{{% notice warning %}}
+Vous aurez un écran noir jusqu'a la fin de la première partie de l'exercice [Transformations](/02-forward-shading/transformations/): OpenGL demande généralement beaucoup de code d'initialisation avant de pouvoir afficher quelque chose.
+{{% /notice %}}
+
 Vous allez commencer par dessiner des cubes et spheres en 3D. La lib *glmlv* contient deux fonctions makeCube() et makeSphere() (simple_geometry.hpp) permettant de construire des tableaux de sommets et indices pour ces deux forme simple.
 
 A l'initialisation (constructeur de Application):
