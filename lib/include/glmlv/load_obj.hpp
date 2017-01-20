@@ -1,3 +1,5 @@
+#pragma once
+
 #include <glmlv/simple_geometry.hpp>
 #include <glmlv/Image2DRGBA.hpp>
 #include <glmlv/filesystem.hpp>
