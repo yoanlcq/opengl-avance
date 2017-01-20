@@ -21,7 +21,7 @@ int Application::run()
     {
         const auto seconds = glfwGetTime();
 
-        const auto projMatrix = glm::perspective(70.f, float(m_nWindowWidth) / m_nWindowHeight, 0.01f * m_SceneSize, m_SceneSize);
+        const auto projMatrix = glm::perspective(70.f, float(m_nWindowWidth) / m_nWindowHeight, 0.01f * m_SceneSizeLength, m_SceneSizeLength);
         const auto viewMatrix = m_viewController.getViewMatrix();
 
         // Geometry pass
@@ -99,7 +99,7 @@ int Application::run()
         glViewport(0, 0, viewportSize.x, viewportSize.y);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        if (m_CurrentlyDisplayed == GDepth) // Beauty
+        if (m_CurrentlyDisplayed == GBufferTextureCount) // Beauty
         {
             // Shading pass
             {
@@ -123,6 +123,39 @@ int Application::run()
                 glDrawArrays(GL_TRIANGLES, 0, 3);
                 glBindVertexArray(0);
             }
+        }
+        else if (m_CurrentlyDisplayed == GDepth)
+        {
+            m_displayDepthProgram.use();
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, m_GBufferTextures[GDepth]);
+
+            glUniform1i(m_uGDepthSamplerLocation, 0);
+
+            glBindVertexArray(m_TriangleVAO);
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+            glBindVertexArray(0);
+        }
+        else if (m_CurrentlyDisplayed == GPosition)
+        {
+            m_displayPositionProgram.use();
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, m_GBufferTextures[GPosition]);
+
+            glUniform1i(m_uGDepthSamplerLocation, 0);
+
+            const auto rcpProjMat = glm::inverse(projMatrix);
+
+            const glm::vec4 frustrumTopRight(1, 1, 1, 1);
+            const auto frustrumTopRight_view = rcpProjMat * frustrumTopRight;
+
+            glUniform3fv(m_uSceneSizeLocation, 1, glm::value_ptr(frustrumTopRight_view / frustrumTopRight_view.w));
+
+            glBindVertexArray(m_TriangleVAO);
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+            glBindVertexArray(0);
         }
         else
         {
@@ -172,7 +205,7 @@ int Application::run()
 
             if (ImGui::CollapsingHeader("GBuffer"))
             {
-                for (int32_t i = GPosition; i < GBufferTextureCount; ++i)
+                for (int32_t i = GPosition; i <= GBufferTextureCount; ++i)
                 {
                     if (ImGui::RadioButton(m_GBufferTexNames[i], m_CurrentlyDisplayed == i))
                         m_CurrentlyDisplayed = GBufferTextureType(i);
@@ -215,7 +248,7 @@ Application::Application(int argc, char** argv):
     initShadersData();
 
     glEnable(GL_DEPTH_TEST);
-    m_viewController.setSpeed(m_SceneSize * 0.1f); // Let's travel 10% of the scene per second
+    m_viewController.setSpeed(m_SceneSizeLength * 0.1f); // Let's travel 10% of the scene per second
 
     // Init GBuffer
     glGenTextures(GBufferTextureCount, m_GBufferTextures);
@@ -236,7 +269,7 @@ Application::Application(int argc, char** argv):
 
     // we will write into 5 textures from the fragment shader
     GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
-    glDrawBuffers(6, drawBuffers);
+    glDrawBuffers(5, drawBuffers);
 
     GLenum status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
 
@@ -271,7 +304,8 @@ void Application::initScene()
         const auto objPath = m_AssetsRootPath / "glmlv" / "models" / "crytek-sponza" / "sponza.obj";
         glmlv::ObjData data;
         loadObj(objPath, data);
-        m_SceneSize = glm::length(data.bboxMax - data.bboxMin);
+        m_SceneSize = data.bboxMax - data.bboxMin;
+        m_SceneSizeLength = glm::length(m_SceneSize);
 
         std::cout << "# of shapes    : " << data.shapeCount << std::endl;
         std::cout << "# of materials : " << data.materialCount << std::endl;
@@ -401,10 +435,19 @@ void Application::initShadersData()
     m_uGBufferSamplerLocations[GAmbient] = glGetUniformLocation(m_shadingPassProgram.glId(), "uGAmbient");
     m_uGBufferSamplerLocations[GDiffuse] = glGetUniformLocation(m_shadingPassProgram.glId(), "uGDiffuse");
     m_uGBufferSamplerLocations[GGlossyShininess] = glGetUniformLocation(m_shadingPassProgram.glId(), "uGGlossyShininess");
-
+    
     m_uDirectionalLightDirLocation = glGetUniformLocation(m_shadingPassProgram.glId(), "uDirectionalLightDir");
     m_uDirectionalLightIntensityLocation = glGetUniformLocation(m_shadingPassProgram.glId(), "uDirectionalLightIntensity");
 
     m_uPointLightPositionLocation = glGetUniformLocation(m_shadingPassProgram.glId(), "uPointLightPosition");
     m_uPointLightIntensityLocation = glGetUniformLocation(m_shadingPassProgram.glId(), "uPointLightIntensity");
+
+    m_displayDepthProgram = glmlv::compileProgram({ m_ShadersRootPath / m_AppName / "shadingPass.vs.glsl", m_ShadersRootPath / m_AppName / "displayDepth.fs.glsl" });
+
+    m_uGDepthSamplerLocation = glGetUniformLocation(m_displayDepthProgram.glId(), "uGDepth");
+
+    m_displayPositionProgram = glmlv::compileProgram({ m_ShadersRootPath / m_AppName / "shadingPass.vs.glsl", m_ShadersRootPath / m_AppName / "displayPosition.fs.glsl" });
+
+    m_uGPositionSamplerLocation = glGetUniformLocation(m_displayPositionProgram.glId(), "uGPosition");
+    m_uSceneSizeLocation = glGetUniformLocation(m_displayPositionProgram.glId(), "uSceneSize");
 }

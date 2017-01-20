@@ -188,7 +188,7 @@ Application::Application(int argc, char** argv):
 
     // we will write into 5 textures from the fragment shader
     GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
-    glDrawBuffers(6, drawBuffers);
+    glDrawBuffers(5, drawBuffers);
 
     GLenum status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
 
