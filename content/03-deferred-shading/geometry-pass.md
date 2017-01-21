@@ -134,7 +134,7 @@ Cela passe par la fonction *glDrawBuffers*, qui prend le nombre de sorties du fr
 
 ```cpp
 GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
-glDrawBuffers(6, drawBuffers);
+glDrawBuffers(5, drawBuffers);
 ```
 
 Ici on va envoyer la sortie *i* du fragment shader vers l'attachment *GL_COLOR_ATTACHMENTi* du FBO.
