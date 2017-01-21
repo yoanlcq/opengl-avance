@@ -793,7 +793,7 @@ Il faut dire à OpenGL comment les locations doivent être connectées aux textu
 <p>Cela passe par la fonction <em>glDrawBuffers</em>, qui prend le nombre de sorties du fragment shader et un tableau de <em>GL_COLOR_ATTACHMENTi</em> afin de faire la liaison. Nous allons faire assez simple:</p>
 
 <pre><code class="language-cpp">GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
-glDrawBuffers(6, drawBuffers);
+glDrawBuffers(5, drawBuffers);
 </code></pre>
 
 <p>Ici on va envoyer la sortie <em>i</em> du fragment shader vers l&rsquo;attachment <em>GL_COLOR_ATTACHMENTi</em> du FBO.
