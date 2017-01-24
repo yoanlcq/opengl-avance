@@ -37,10 +37,10 @@ namespace glmlv
         std::vector<Image2DRGBA> textures;
     };
 
-    void loadObj(const fs::path & objPath, const fs::path & mtlBaseDir, ObjData & data);
+    void loadObj(const fs::path & objPath, const fs::path & mtlBaseDir, ObjData & data, bool loadTextures = true);
 
-    inline void loadObj(const fs::path & objPath, ObjData & data)
+    inline void loadObj(const fs::path & objPath, ObjData & data, bool loadTextures = true)
     {
-        return loadObj(objPath, objPath.parent_path(), data);
+        return loadObj(objPath, objPath.parent_path(), data, loadTextures);
     }
 }
