@@ -23,6 +23,8 @@ int Application::run()
     bool pointSMResolutionDirty = false;
     bool pointSMDirty = true;
 
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS); // Enable filtering between cube map faces
+
     const glm::vec3 cubeMapDir[6] = 
     {
         glm::vec3(1, 0, 0),
@@ -33,14 +35,15 @@ int Application::run()
         glm::vec3(0, 0, -1)
     };
 
+    // These up dirs seems to work but i don't know why
     const glm::vec3 cubeMapUpDirs[6] =
     {
-        glm::vec3(0, 1, 0),
-        glm::vec3(0, 1, 0),
+        glm::vec3(0, -1, 0),
+        glm::vec3(0, -1, 0),
         glm::vec3(0, 0, 1),
-        glm::vec3(0, 0, 1),
-        glm::vec3(0, 1, 0),
-        glm::vec3(0, 1, 0),
+        glm::vec3(0, 0, -1),
+        glm::vec3(0, -1, 0),
+        glm::vec3(0, -1, 0),
     };
 
     // Loop until the user closes the window
@@ -69,6 +72,12 @@ int Application::run()
         for (size_t i = 0; i < 6; ++i)
         {
             pointLightViewProjMatrices[i] = pointLightProjMatrix * pointLightViewMatrices[i];
+        }
+
+        glm::mat4 pointLightViewProjMatrices_shadingPass[6];
+        for (size_t i = 0; i < 6; ++i)
+        {
+            pointLightViewProjMatrices_shadingPass[i] = pointLightProjMatrix * pointLightViewMatrices[i] * rcpViewMatrix;
         }
 
         // Shadow map computation if necessary
@@ -243,6 +252,10 @@ int Application::run()
 
                 glUniformMatrix4fv(m_uDirLightViewProjMatrix_shadingPass, 1, GL_FALSE, glm::value_ptr(dirLightProjMatrix * dirLightViewMatrix * rcpViewMatrix));
 
+                glUniform1fv(m_uPointLightShadowMapBias, 1, &m_DirLightSMBias);
+                glUniformMatrix4fv(m_uPointLightViewProjMatrix_shadingPass, 6, GL_FALSE, glm::value_ptr(pointLightViewProjMatrices_shadingPass[0]));
+                glUniformMatrix4fv(m_uPointLightViewMatrix, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(), -m_PointLightPosition) * rcpViewMatrix));
+
                 for (int32_t i = GPosition; i < GDepth; ++i)
                 {
                     glActiveTexture(GL_TEXTURE0 + i);
@@ -255,6 +268,11 @@ int Application::run()
                 glBindTexture(GL_TEXTURE_2D, m_directionalSMTexture);
                 glBindSampler(GDepth, m_directionalSMSampler);
                 glUniform1i(m_uDirLightShadowMap, GDepth);
+
+                glActiveTexture(GL_TEXTURE0 + GDepth + 1);
+                glBindTexture(GL_TEXTURE_CUBE_MAP, m_pointSMTexture);
+                glBindSampler(GDepth + 1, m_pointSMSampler);
+                glUniform1i(m_uPointLightShadowMap, GDepth + 1);
 
                 glBindVertexArray(m_TriangleVAO);
                 glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -649,6 +667,11 @@ void Application::initShadersData()
     m_uDirLightShadowMapBias = glGetUniformLocation(m_shadingPassProgram.glId(), "uDirLightShadowMapBias");
     m_uDirLightShadowMapSampleCount = glGetUniformLocation(m_shadingPassProgram.glId(), "uDirLightShadowMapSampleCount");
     m_uDirLightShadowMapSpread = glGetUniformLocation(m_shadingPassProgram.glId(), "uDirLightShadowMapSpread");
+
+    m_uPointLightViewMatrix = glGetUniformLocation(m_shadingPassProgram.glId(), "uPointLightViewMatrix");
+    m_uPointLightViewProjMatrix_shadingPass = glGetUniformLocation(m_shadingPassProgram.glId(), "uPointLightViewProjMatrix");
+    m_uPointLightShadowMap = glGetUniformLocation(m_shadingPassProgram.glId(), "uPointLightShadowMap");
+    m_uPointLightShadowMapBias = glGetUniformLocation(m_shadingPassProgram.glId(), "uPointLightShadowMapBias");
 
     m_uDirectionalLightDirLocation = glGetUniformLocation(m_shadingPassProgram.glId(), "uDirectionalLightDir");
     m_uDirectionalLightIntensityLocation = glGetUniformLocation(m_shadingPassProgram.glId(), "uDirectionalLightIntensity");

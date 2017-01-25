@@ -167,6 +167,10 @@ private:
     GLint m_uDirLightShadowMapBias;
     GLint m_uDirLightShadowMapSampleCount;
     GLint m_uDirLightShadowMapSpread;
+    GLint m_uPointLightViewMatrix;
+    GLint m_uPointLightViewProjMatrix_shadingPass; // Suffix because the variable m_uPointLightViewProjMatrix is already used for the uniform of m_directionalSMProgram.
+    GLint m_uPointLightShadowMap;
+    GLint m_uPointLightShadowMapBias;
 
     // Display depth pass uniforms
     GLint m_uGDepthSamplerLocation;

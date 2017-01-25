@@ -21,6 +21,11 @@ uniform float uDirLightShadowMapBias;
 uniform int uDirLightShadowMapSampleCount;
 uniform float uDirLightShadowMapSpread;
 
+uniform mat4 uPointLightViewMatrix;
+uniform mat4 uPointLightViewProjMatrix[6];
+uniform samplerCube uPointLightShadowMap;
+uniform float uPointLightShadowMapBias;
+
 vec2 poissonDisk[16] = vec2[](
     vec2( -0.94201624, -0.39906216 ),
     vec2( 0.94558609, -0.76890725 ),
@@ -95,7 +100,37 @@ void main()
     }
     dirLightVisibility /= dirSampleCountf;
 
+    int face = 0;
+    vec3 pointLightToPos = vec3(uPointLightViewMatrix * vec4(-dirToPointLight, 0));
+    vec3 absDirToPointLight = abs(pointLightToPos);
+    float maxComp = max(absDirToPointLight.x, max(absDirToPointLight.y, absDirToPointLight.z));
+
+    if (maxComp == absDirToPointLight.x)
+    {
+        if (pointLightToPos.x < 0)
+            face = 1;
+    }
+    else if (maxComp == absDirToPointLight.y)
+    {
+        if (pointLightToPos.y >= 0)
+            face = 2;
+        else
+            face = 3;
+    }
+    else
+    {
+        if (pointLightToPos.z >= 0)
+            face = 4;
+        else
+            face = 5;
+    }
+
+    vec4 positionInPointLightScreen = uPointLightViewProjMatrix[face] * vec4(position, 1);
+    vec3 positionInPointLightNDC = vec3(positionInPointLightScreen / positionInPointLightScreen.w) * 0.5 + 0.5;
+    float depthBlockerInPointSpace = texture(uPointLightShadowMap, pointLightToPos).r;
+    float pointLightVisibility = positionInPointLightNDC.z < depthBlockerInPointSpace + uPointLightShadowMapBias ? 1.0 : 0.0;
+
     fColor = ka;
-    fColor += kd * (dirLightVisibility * uDirectionalLightIntensity * max(0.f, dot(normal, uDirectionalLightDir)) + pointLightIncidentLight * max(0., dot(normal, dirToPointLight)));
-    fColor += ks * (dirLightVisibility * uDirectionalLightIntensity * dothDirLight + pointLightIncidentLight * dothPointLight);
+    fColor += kd * (dirLightVisibility * uDirectionalLightIntensity * max(0.f, dot(normal, uDirectionalLightDir)) + pointLightVisibility * pointLightIncidentLight * max(0., dot(normal, dirToPointLight)));
+    fColor += ks * (dirLightVisibility * uDirectionalLightIntensity * dothDirLight + pointLightVisibility * pointLightIncidentLight * dothPointLight);
 }

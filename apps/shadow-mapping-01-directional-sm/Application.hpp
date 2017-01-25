@@ -182,7 +182,7 @@ private:
     glmlv::GLProgram m_directionalSMProgram;
     GLint m_uDirLightViewProjMatrix;
 
-    GLuint m_directionalSMSampler; // One sampler for all our shadow maps
+    GLuint m_directionalSMSampler;
 
     GLuint m_directionalSMFBO;
     GLuint m_directionalSMTexture;
