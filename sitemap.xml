@@ -42,7 +42,7 @@
   </url>
   
   <url>
-    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map-creation/</loc>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map/</loc>
     <lastmod>2017-01-19T23:22:14+01:00</lastmod>
   </url>
   
@@ -72,11 +72,6 @@
   </url>
   
   <url>
-    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map-usage/</loc>
-    <lastmod>2017-01-19T23:22:21+01:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/extraction-contours/</loc>
     <lastmod>2016-12-29T12:36:20+01:00</lastmod>
   </url>
@@ -102,7 +97,7 @@
   </url>
   
   <url>
-    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map-creation/</loc>
+    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map/</loc>
     <lastmod>2017-01-19T23:22:33+01:00</lastmod>
   </url>
   
@@ -124,11 +119,6 @@
   <url>
     <loc>https://celeborn2bealive.github.io/opengl-avance/06-course/vertex-array-objects/</loc>
     <lastmod>2017-01-19T23:55:25+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map-usage/</loc>
-    <lastmod>2017-01-19T23:22:38+01:00</lastmod>
   </url>
   
   <url>
