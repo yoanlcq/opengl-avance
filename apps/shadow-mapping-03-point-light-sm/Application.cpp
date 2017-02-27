@@ -350,7 +350,6 @@ int Application::run()
             glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
         }
         
-
         // GUI code:
         ImGui_ImplGlfwGL3_NewFrame();
 
@@ -528,7 +527,7 @@ void Application::initScene()
     {
         const auto objPath = m_AssetsRootPath / "glmlv" / "models" / "crytek-sponza" / "sponza.obj";
         glmlv::ObjData data;
-        loadObj(objPath, data, false);
+        loadObj(objPath, data);
         m_SceneSize = data.bboxMax - data.bboxMin;
         m_SceneSizeLength = glm::length(m_SceneSize);
         m_SceneCenter = 0.5f * (data.bboxMax + data.bboxMin);
