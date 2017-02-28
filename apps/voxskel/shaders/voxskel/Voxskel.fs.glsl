@@ -16,9 +16,9 @@ uniform float voxelSize;
 uniform int numVoxels;
 
 //Position of the vextex in object coordinates
-in vec3 vertex0;
-in vec3 vertex1;
-in vec3 vertex2;
+flat in vec3 vertex0;
+flat in vec3 vertex1;
+flat in vec3 vertex2;
 
 //Maximum depth range
 in vec2 voxDepthRange;
@@ -54,6 +54,7 @@ bool planeBoxOverlap(in vec3 normal, in float d, in float maxVox)
                 vMax.z = -maxVox;
         }
         if (dot(normal, vMin) + d > 0.0) return false;
+        if (dot(normal, vMax) + d >= 0.0) return true; // Weird bug: need two times the lines or the compiler seems to drop it...
         if (dot(normal, vMax) + d >= 0.0) return true;
         return false;
 }

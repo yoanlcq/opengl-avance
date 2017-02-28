@@ -2,11 +2,12 @@
 
 #include "GLVoxelizerTripiana2009.hpp"
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/io.hpp>
 
 namespace voxskel {
 
 GLVoxelizerTripiana2009::GLVoxelizerTripiana2009(const std::string & shaderRootPath):
-    m_Program(buildProgram(shaderRootPath + "voxskel/Voxskel.vs", shaderRootPath + "voxskel/Voxskel.gs", shaderRootPath + "voxskel/Voxskel.fs")) {
+    m_Program(loadAndBuildProgram(shaderRootPath + "/voxskel/Voxskel.vs.glsl", shaderRootPath + "/voxskel/Voxskel.gs.glsl", shaderRootPath + "/voxskel/Voxskel.fs.glsl")) {
 }
 
 GLVoxelizerTripiana2009::~GLVoxelizerTripiana2009() {
@@ -26,7 +27,7 @@ void GLVoxelizerTripiana2009::initGLState(uint32_t resolution, BBox3f bbox,
     auto m_numRenderTargets = ceil((double)m_res / 128.0);
 
     auto bboxSize = bbox.upper - bbox.lower;
-    auto m_AABCLength = std::max(bboxSize[0], std::max(bboxSize[1], bboxSize[2]));
+    m_AABCLength = std::max(bboxSize[0], std::max(bboxSize[1], bboxSize[2]));
 
     auto m_voxelLength = m_AABCLength / (float)m_res;
 
@@ -59,9 +60,13 @@ void GLVoxelizerTripiana2009::initGLState(uint32_t resolution, BBox3f bbox,
         0.f,
         m_AABCLength);
 
+    projectionMatrix = P;
+
     glm::vec3 position(bboxCenter.x, bboxCenter.y, bboxCenter.z + 0.5 * m_AABCLength);
     glm::vec3 point(bboxCenter.x, bboxCenter.y, bboxCenter.z);
     glm::mat4 V = glm::lookAt(position, point, glm::vec3(0, 1, 0));
+
+    viewMatrix = V;
 
     // Get the MVP Matrix
     glm::mat4 MVPMatrix = P * V;
@@ -73,6 +78,13 @@ void GLVoxelizerTripiana2009::initGLState(uint32_t resolution, BBox3f bbox,
     origBBox.set(m_origBBox);
     numRenderTargets.set(m_numRenderTargets);
     voxelSize.set(m_voxelLength);
+
+    std::cerr << "m_voxelLength = " << m_voxelLength << std::endl;
+    std::cerr << "m_origBBox = " << m_origBBox << std::endl;
+
+    tmporigBBox = m_origBBox;
+    tmpvoxelSize = m_voxelLength;
+    tmpnumVoxels = resolution;
 
     framebuffer.bind(GL_DRAW_FRAMEBUFFER);
 

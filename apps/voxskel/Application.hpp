@@ -10,6 +10,10 @@
 
 #include <limits>
 
+#include "voxskel/GLVoxelFramebuffer.hpp"
+#include "voxskel/GLVoxelGridRenderer.hpp"
+#include "voxskel/GLVoxelizerTripiana2009.hpp"
+
 class Application
 {
 public:
@@ -25,6 +29,7 @@ private:
         return glm::vec3(sinPhi * sinTheta, glm::cos(thetaRadians), cosPhi * sinTheta);
     }
 
+    const size_t m_res = 128;
     const size_t m_nWindowWidth = 1280;
     const size_t m_nWindowHeight = 720;
     glmlv::GLFWHandle m_GLFWHandle{ m_nWindowWidth, m_nWindowHeight, "Template" }; // Note: the handle must be declared before the creation of any object managing OpenGL resource (e.g. GLProgram, GLShader)
@@ -102,4 +107,16 @@ private:
     glm::vec3 m_PointLightPosition = glm::vec3(0, 1, 0);
     glm::vec3 m_PointLightColor = glm::vec3(1, 1, 1);
     float m_PointLightIntensity = 5.f;
+
+    voxskel::GLVoxelFramebuffer m_voxelGridFramebuffer;
+    glm::mat4 m_gridToWorldMatrix;
+
+    voxskel::GLVoxelGridRenderer m_glVoxelGridRenderer{ (m_ShadersRootPath / m_AppName).string() };
+    voxskel::GLVoxelGrid m_glVoxelGrid;
+    voxskel::GLTexture3D m_glVoxelGridColors;
+
+    voxskel::GLVoxelizerTripiana2009 voxelizer{ (m_ShadersRootPath / m_AppName).string() };
+    GLint m_uVoxelSize;
+    GLint m_uOrigBBox;
+    GLint m_uNumVoxels;
 };

@@ -118,4 +118,9 @@ GLProgram buildComputeProgram(CSrc&& src) {
     return buildProgram({ std::move(cs) });;
 }
 
+template<typename VPath, typename GPath, typename FPath>
+GLProgram loadAndBuildProgram(VPath&& vpath, GPath&& gpath, FPath&& fpath) {
+    return buildProgram(loadShaderSource(vpath), loadShaderSource(gpath), loadShaderSource(fpath));
+}
+
 }

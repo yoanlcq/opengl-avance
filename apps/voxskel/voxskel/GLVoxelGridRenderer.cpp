@@ -83,7 +83,7 @@ GLVoxelGridRenderer::GLVoxelGridRenderer(const std::string & shaderRootPath):
 }
 
 GLVoxelGridRenderer::RenderFacesPass::RenderFacesPass(const std::string & shaderRootPath):
-    m_Program(buildProgram(shaderRootPath + "voxskel/CComplex.vs", shaderRootPath + "voxskel/display_voxel_face.gs", shaderRootPath + "voxskel/display_voxel.fs")) {
+    m_Program(loadAndBuildProgram(shaderRootPath + "/voxskel/CComplex.vs.glsl", shaderRootPath + "/voxskel/display_voxel_face.gs.glsl", shaderRootPath + "/voxskel/display_voxel.fs.glsl")) {
 
     m_Program.use();
 

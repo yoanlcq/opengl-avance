@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <iostream>
 #include "glutils/opengl.hpp"
 #include "CubicalComplex3D.hpp"
 
@@ -49,6 +50,21 @@ public:
 
     int getTextureCount() const {
         return m_numTextures;
+    }
+
+    void check() const
+    {
+        std::vector<Vec4i> data(width() * height(), Vec4i{ 0,0,0,0 });
+        bind(GL_READ_FRAMEBUFFER);
+
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        glReadPixels(0, 0, width(), height(), GL_RGBA_INTEGER, GL_INT, data.data());
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+
+        for (auto v : data)
+            std::cerr << v[0] << std::endl;
+
     }
 };
 

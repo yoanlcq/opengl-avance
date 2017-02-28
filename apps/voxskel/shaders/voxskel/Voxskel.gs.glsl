@@ -10,16 +10,18 @@ layout(triangle_strip, max_vertices = 4) out;
 
 in vec4 normal_view[];
 in vec4 position_view[];
+in vec3 normal[];
 
 uniform float halfVoxelSizeNormalized;
 uniform mat4 MVP;
 uniform vec2 halfPixelSize;
 uniform int numVoxels;
 
-out vec3 vertex0;
-out vec3 vertex1;
-out vec3 vertex2;
+flat out vec3 vertex0;
+flat out vec3 vertex1;
+flat out vec3 vertex2;
 out vec2 voxDepthRange;
+out vec3 vViewSpaceNormal;
 
 void main() {
     vec4 triV0, triV1, triV2, AABB;
@@ -36,7 +38,8 @@ void main() {
     triV1 = MVP * gl_in[1].gl_Position;
     triV2 = MVP * gl_in[2].gl_Position;
 
-    depths = vec3(triV0.z, triV1.z, triV2.z);
+    depths = vec3(triV0.z/triV0.w, triV1.z/triV1.w, triV2.z/triV2.w);
+    //depths = vec3(triV0.z, triV1.z, triV2.z);
     AABB = triV0.xyxy;
 
     //if the primitive is out of the viewport, we make sure it will not be displayed
@@ -55,10 +58,36 @@ void main() {
     //if the primitive is in
     else{
             //keep the least and greatest values of x and y between triV0,triV1 and triV2
-            AABB = vec4(min(min(AABB.xy, triV1.xy), triV2.xy), max(max(AABB.zw, triV1.xy), triV2.xy) );
+            AABB = vec4(min(min(triV0.xy, triV1.xy), triV2.xy), max(max(triV0.xy, triV1.xy), triV2.xy) );
 
             //Add the value of halfPixelSize for precision
             AABB += vec4(-halfPixelSize, halfPixelSize);
+
+            //gl_Position = vec4(AABB.xw, ZINSIDECLIP, 1.0);
+            //vViewSpaceNormal = normal[0];
+            //EmitVertex();
+            //gl_Position = vec4(AABB.xy, ZINSIDECLIP, 1.0);
+            //vViewSpaceNormal = normal[1];
+            //EmitVertex();
+            //gl_Position = vec4(AABB.zw, ZINSIDECLIP, 1.0);
+            //vViewSpaceNormal = normal[1];
+            //EmitVertex();
+            //gl_Position = vec4(AABB.zy, ZINSIDECLIP, 1.0);
+            //vViewSpaceNormal = normal[2];
+            //EmitVertex();
+            //return;
+
+            //gl_Position = triV0;
+            //vViewSpaceNormal = normal[0];
+            //EmitVertex();
+            //gl_Position = triV1;
+            //vViewSpaceNormal = normal[1];
+            //EmitVertex();
+            //gl_Position = triV2;
+            //vViewSpaceNormal = normal[1];
+            //EmitVertex();
+            //return;
+
 
             //Keep the least and greatest value of z between triV0, triV1 and triV2
             //voxDepthRange.xy = vec2(++triV0.z * 0.5);
@@ -76,12 +105,16 @@ void main() {
 
             //Create a quad with those values
             gl_Position = vec4(AABB.xw, ZINSIDECLIP, 1.0);
+            vViewSpaceNormal = normal[0];
             EmitVertex();
             gl_Position = vec4(AABB.xy, ZINSIDECLIP, 1.0);
+            vViewSpaceNormal = normal[1];
             EmitVertex();
             gl_Position = vec4(AABB.zw, ZINSIDECLIP, 1.0);
+            vViewSpaceNormal = normal[2];
             EmitVertex();
             gl_Position = vec4(AABB.zy, ZINSIDECLIP, 1.0);
+            vViewSpaceNormal = normal[2];
             EmitVertex();
     }
     EndPrimitive();

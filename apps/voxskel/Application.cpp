@@ -13,6 +13,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/io.hpp>
 
+using namespace voxskel;
+
 int Application::run()
 {
     float clearColor[3] = { 0, 0, 0 };
@@ -30,67 +32,81 @@ int Application::run()
         const auto projMatrix = glm::perspective(70.f, float(viewportSize.x) / viewportSize.y, 0.01f * m_SceneSize, m_SceneSize);
         const auto viewMatrix = m_viewController.getViewMatrix();
 
-        glUniform3fv(m_uDirectionalLightDirLocation, 1, glm::value_ptr(glm::vec3(viewMatrix * glm::vec4(glm::normalize(m_DirLightDirection), 0))));
-        glUniform3fv(m_uDirectionalLightIntensityLocation, 1, glm::value_ptr(m_DirLightColor * m_DirLightIntensity));
+        //const auto projMatrix = voxelizer.projectionMatrix;
+        //const auto viewMatrix = voxelizer.viewMatrix;
 
-        glUniform3fv(m_uPointLightPositionLocation, 1, glm::value_ptr(glm::vec3(viewMatrix * glm::vec4(m_PointLightPosition, 1))));
-        glUniform3fv(m_uPointLightIntensityLocation, 1, glm::value_ptr(m_PointLightColor * m_PointLightIntensity));
+        // Voxel drawing:
+        m_glVoxelGridRenderer.setViewMatrix(viewMatrix);
+        m_glVoxelGridRenderer.setProjectionMatrix(projMatrix);
 
-        const auto modelMatrix = glm::mat4();
+        m_glVoxelGridRenderer.render(m_gridToWorldMatrix, m_glVoxelGrid, m_glVoxelGridColors.glId());
 
-        const auto mvMatrix = viewMatrix * modelMatrix;
-        const auto mvpMatrix = projMatrix * mvMatrix;
-        const auto normalMatrix = glm::transpose(glm::inverse(mvMatrix));
+        //glUniform3fv(m_uOrigBBox, 1, glm::value_ptr(voxelizer.tmporigBBox));
+        //glUniform1fv(m_uVoxelSize, 1, &voxelizer.tmpvoxelSize);
+        //glUniform1iv(m_uNumVoxels, 1, &voxelizer.tmpnumVoxels);
 
-        glUniformMatrix4fv(m_uModelViewProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(mvpMatrix));
-        glUniformMatrix4fv(m_uModelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(mvMatrix));
-        glUniformMatrix4fv(m_uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(normalMatrix));
+        //// Scene drawing:
+        //glUniform3fv(m_uDirectionalLightDirLocation, 1, glm::value_ptr(glm::vec3(viewMatrix * glm::vec4(glm::normalize(m_DirLightDirection), 0))));
+        //glUniform3fv(m_uDirectionalLightIntensityLocation, 1, glm::value_ptr(m_DirLightColor * m_DirLightIntensity));
 
-        // Same sampler for all texture units
-        for (GLuint i : {0, 1, 2, 3})
-            glBindSampler(i, m_textureSampler);
+        //glUniform3fv(m_uPointLightPositionLocation, 1, glm::value_ptr(glm::vec3(viewMatrix * glm::vec4(m_PointLightPosition, 1))));
+        //glUniform3fv(m_uPointLightIntensityLocation, 1, glm::value_ptr(m_PointLightColor * m_PointLightIntensity));
 
-        // Set texture unit of each sampler
-        glUniform1i(m_uKaSamplerLocation, 0);
-        glUniform1i(m_uKdSamplerLocation, 1);
-        glUniform1i(m_uKsSamplerLocation, 2);
-        glUniform1i(m_uShininessSamplerLocation, 3);
+        //const auto modelMatrix = glm::mat4();
 
-        const auto bindMaterial = [&](const PhongMaterial & material)
-        {
-            glUniform3fv(m_uKaLocation, 1, glm::value_ptr(material.Ka));
-            glUniform3fv(m_uKdLocation, 1, glm::value_ptr(material.Kd));
-            glUniform3fv(m_uKsLocation, 1, glm::value_ptr(material.Ks));
-            glUniform1fv(m_uShininessLocation, 1, &material.shininess);
+        //const auto mvMatrix = viewMatrix * modelMatrix;
+        //const auto mvpMatrix = projMatrix * mvMatrix;
+        //const auto normalMatrix = glm::transpose(glm::inverse(mvMatrix));
 
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, material.KaTextureId);
-            glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, material.KdTextureId);
-            glActiveTexture(GL_TEXTURE2);
-            glBindTexture(GL_TEXTURE_2D, material.KsTextureId);
-            glActiveTexture(GL_TEXTURE3);
-            glBindTexture(GL_TEXTURE_2D, material.shininessTextureId);
-        };
+        //glUniformMatrix4fv(m_uModelViewProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(mvpMatrix));
+        //glUniformMatrix4fv(m_uModelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(mvMatrix));
+        //glUniformMatrix4fv(m_uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(normalMatrix));
 
-        glBindVertexArray(m_SceneVAO);
+        //// Same sampler for all texture units
+        //for (GLuint i : {0, 1, 2, 3})
+        //    glBindSampler(i, m_textureSampler);
 
-        const PhongMaterial * currentMaterial = nullptr;
+        //// Set texture unit of each sampler
+        //glUniform1i(m_uKaSamplerLocation, 0);
+        //glUniform1i(m_uKdSamplerLocation, 1);
+        //glUniform1i(m_uKsSamplerLocation, 2);
+        //glUniform1i(m_uShininessSamplerLocation, 3);
 
-        // We draw each shape by specifying how much indices it carries, and with an offset in the global index buffer
-        for (const auto shape : m_shapes)
-        {
-            const auto & material = shape.materialID >= 0 ? m_SceneMaterials[shape.materialID] : m_DefaultMaterial;
-            if (currentMaterial != &material)
-            {
-                bindMaterial(material);
-                currentMaterial = &material;
-            }
-            glDrawElements(GL_TRIANGLES, shape.indexCount, GL_UNSIGNED_INT, (const GLvoid*) (shape.indexOffset * sizeof(GLuint)));
-        }
+        //const auto bindMaterial = [&](const PhongMaterial & material)
+        //{
+        //    glUniform3fv(m_uKaLocation, 1, glm::value_ptr(material.Ka));
+        //    glUniform3fv(m_uKdLocation, 1, glm::value_ptr(material.Kd));
+        //    glUniform3fv(m_uKsLocation, 1, glm::value_ptr(material.Ks));
+        //    glUniform1fv(m_uShininessLocation, 1, &material.shininess);
 
-        for (GLuint i : {0, 1, 2, 3})
-            glBindSampler(i, 0);
+        //    glActiveTexture(GL_TEXTURE0);
+        //    glBindTexture(GL_TEXTURE_2D, material.KaTextureId);
+        //    glActiveTexture(GL_TEXTURE1);
+        //    glBindTexture(GL_TEXTURE_2D, material.KdTextureId);
+        //    glActiveTexture(GL_TEXTURE2);
+        //    glBindTexture(GL_TEXTURE_2D, material.KsTextureId);
+        //    glActiveTexture(GL_TEXTURE3);
+        //    glBindTexture(GL_TEXTURE_2D, material.shininessTextureId);
+        //};
+
+        //glBindVertexArray(m_SceneVAO);
+
+        //const PhongMaterial * currentMaterial = nullptr;
+
+        //// We draw each shape by specifying how much indices it carries, and with an offset in the global index buffer
+        //for (const auto shape : m_shapes)
+        //{
+        //    const auto & material = shape.materialID >= 0 ? m_SceneMaterials[shape.materialID] : m_DefaultMaterial;
+        //    if (currentMaterial != &material)
+        //    {
+        //        bindMaterial(material);
+        //        currentMaterial = &material;
+        //    }
+        //    glDrawElements(GL_TRIANGLES, shape.indexCount, GL_UNSIGNED_INT, (const GLvoid*) (shape.indexOffset * sizeof(GLuint)));
+        //}
+
+        //for (GLuint i : {0, 1, 2, 3})
+        //    glBindSampler(i, 0);
 
         // GUI code:
         ImGui_ImplGlfwGL3_NewFrame();
@@ -161,11 +177,14 @@ Application::Application(int argc, char** argv):
     glGenBuffers(1, &m_SceneVBO);
     glGenBuffers(1, &m_SceneIBO);
 
+    glm::vec3 bboxUpper, bboxLower;
     {
         const auto objPath = m_AssetsRootPath / "glmlv" / "models" / "crytek-sponza" / "sponza.obj";
         glmlv::ObjData data;
-        loadObj(objPath, data);
+        loadObj(objPath, data, false);
         m_SceneSize = glm::length(data.bboxMax - data.bboxMin);
+        bboxUpper = data.bboxMax;
+        bboxLower = data.bboxMin;
 
         std::cout << "# of shapes    : " << data.shapeCount << std::endl;
         std::cout << "# of materials : " << data.materialCount << std::endl;
@@ -270,12 +289,46 @@ Application::Application(int argc, char** argv):
     glSamplerParameteri(m_textureSampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glSamplerParameteri(m_textureSampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+    m_viewController.setSpeed(m_SceneSize * 0.1f); // Let's travel 10% of the scene per second
+
+    voxelizer.initGLState(m_res, { bboxLower, bboxUpper }, m_voxelGridFramebuffer, m_gridToWorldMatrix);
+
+    glBindVertexArray(m_SceneVAO);
+    for (const auto shape : m_shapes)
+    {
+        glDrawElements(GL_TRIANGLES, shape.indexCount, GL_UNSIGNED_INT, (const GLvoid*)(shape.indexOffset * sizeof(GLuint)));
+    }
+    glBindVertexArray(0);
+
+    voxelizer.restoreGLState();
+
+    const auto voxelGrid = getVoxelGrid(m_voxelGridFramebuffer);
+    voxelGrid.forEach([&](auto x, auto y, auto z, auto value)
+    {
+        //if (value)
+        //{
+        //    std::cerr << "ok" << std::endl;
+        //}
+    });
+
+    m_glVoxelGrid.init(voxelGrid);
+
+    m_glVoxelGridColors.setStorage(1, GL_RGB32F, voxelGrid.width(), voxelGrid.height(), voxelGrid.depth());
+    const glm::vec3 white(1.f);
+    m_glVoxelGridColors.clear(0, GL_RGB, GL_FLOAT, &white);
+
     glEnable(GL_DEPTH_TEST);
 
-    m_program = glmlv::compileProgram({ m_ShadersRootPath / m_AppName / "forward.vs.glsl", m_ShadersRootPath / m_AppName / "forward.fs.glsl" });
+   /* m_program = glmlv::compileProgram({ m_ShadersRootPath / m_AppName / "forward.vs.glsl",  m_ShadersRootPath / m_AppName / "forward.fs.glsl" });*/
+    m_program = glmlv::compileProgram({ m_ShadersRootPath / m_AppName / "voxskel" / "Voxskel.vs.glsl", m_ShadersRootPath / m_AppName / "voxskel" / "Voxskel.gs.glsl",  m_ShadersRootPath / m_AppName / "forward.fs.glsl" });
     m_program.use();
 
-    m_uModelViewProjMatrixLocation = glGetUniformLocation(m_program.glId(), "uModelViewProjMatrix");
+    m_uModelViewProjMatrixLocation = glGetUniformLocation(m_program.glId(), "MVP");
+    m_uVoxelSize = glGetUniformLocation(m_program.glId(), "voxelSize");
+    m_uOrigBBox = glGetUniformLocation(m_program.glId(), "origBBox");
+    m_uNumVoxels = glGetUniformLocation(m_program.glId(), "numVoxels");
+
+    //m_uModelViewProjMatrixLocation = glGetUniformLocation(m_program.glId(), "uModelViewProjMatrix");
     m_uModelViewMatrixLocation = glGetUniformLocation(m_program.glId(), "uModelViewMatrix");
     m_uNormalMatrixLocation = glGetUniformLocation(m_program.glId(), "uNormalMatrix");
 
@@ -294,6 +347,4 @@ Application::Application(int argc, char** argv):
     m_uKdSamplerLocation = glGetUniformLocation(m_program.glId(), "uKdSampler");
     m_uKsSamplerLocation = glGetUniformLocation(m_program.glId(), "uKsSampler");
     m_uShininessSamplerLocation = glGetUniformLocation(m_program.glId(), "uShininessSampler");
-
-    m_viewController.setSpeed(m_SceneSize * 0.1f); // Let's travel 10% of the scene per second
 }

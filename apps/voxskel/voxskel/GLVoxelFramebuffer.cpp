@@ -1,6 +1,7 @@
 #include "GLVoxelFramebuffer.hpp"
 #include "VoxelBuffer.hpp"
 
+#include <iostream>
 namespace voxskel {
 
 GLVoxelFramebuffer::GLVoxelFramebuffer(): m_FBO(0), m_renderedTexture(nullptr){

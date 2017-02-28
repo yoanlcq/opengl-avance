@@ -37,6 +37,13 @@ public:
     // Call this method after performing the rendering of the model
     void restoreGLState();
 
+    glm::mat4 projectionMatrix;
+    glm::mat4 viewMatrix;
+    glm::vec3 tmporigBBox;
+    float tmpvoxelSize;
+    float m_AABCLength;
+    int tmpnumVoxels;
+
 private:
     GLProgram m_Program;
 

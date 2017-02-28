@@ -2,6 +2,8 @@
 
 #include "glutils/opengl.hpp"
 
+#include <iostream>
+
 namespace voxskel {
 
 int VoxelBuffer::s_bitmask[] = {
