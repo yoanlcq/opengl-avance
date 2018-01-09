@@ -2,4 +2,9 @@ baseURL = "https://Celeborn2BeAlive.github.io/opengl-avance/"
 canonifyURLs = true
 title = "OpenGL Avancé"
 languageCode = "fr"
-theme = "hugo-theme-learn"
+theme = "c2ba-learning"
+copyright = "Copyright (c) 2017, Laurent NOEL; All rights reserved."
+
+[params]
+    description = "OpenGL Avancé"
+    noCategoryLink = true

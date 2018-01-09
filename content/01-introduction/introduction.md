@@ -8,23 +8,23 @@ toc = true
 
 +++
 
-## Objectifs
+# Objectifs
 
 - Approfondir les connaissances en OpenGL Moderne
 - Premières implémentations de techniques avancées
 - **Projet**: implémentation d'articles de recherche
 
-## Prérequis
+# Prérequis
 
 - Bonne connaissance du [pipeline de rendu OpenGL](https://www.khronos.org/opengl/wiki/Rendering_Pipeline_Overview)
 - Maitrise des [TDs des années précédentes](http://laurentnoel.fr/index.php?section=teaching&teaching=opengl&teaching_section=tds)
 
-## Quelle version d'OpenGL ?
+# Quelle version d'OpenGL ?
 
 La version installée sur les machines de la fac est la 4.4, nous prendrons donc cette version comme base.
 En plus de cela, le template de code que j'ai préparé charge l'extension **GL_ARB_direct_state_access**, dont les fonctions sont passées en OpenGL Core dans la version 4.5.
 
-## Direct State Access ##
+# Direct State Access
 
 {{% notice warning %}}
 Cette extension n'est pas disponible sur toutes les cartes graphiques. En particulier les machines de la FAC n'en sont pas equipées entièrement (il y a l'extension **GL_EXT_direct_state_access** qui n'est que partielle). Si vous n'y avez pas accès, ne l'utilisez pas: cette extension ne fournit que des facilités de programmation, pas de fonctionnalité en plus.
@@ -36,7 +36,7 @@ Cette extension est très pratique car elle permet d'éviter de binder les objet
 
 Voici des exemples de code en version OpenGL 3 classique et en version Direct State Access (directement tiré du document):
 
-#### Example 1: Creating a buffer object without polluting the OpenGL states
+## Example 1: Creating a buffer object without polluting the OpenGL states
 ```cpp
 // Bind to Create
 GLuint CreateBuffer()
@@ -67,7 +67,7 @@ GLuint CreateBuffer()
 }
 ```
 
-#### Example 2: Creating a vertex array object without polluting the OpenGL states
+## Example 2: Creating a vertex array object without polluting the OpenGL states
 
 ```cpp
 // OpenGL 3.0 Bind to Create for vertex array object
@@ -145,7 +145,7 @@ GLuint CreateVertexArray(GLuint BufferName[])
 }
 ```
 
-#### Example 3: Querying the bound texture to a texture image unit for debugging
+## Example 3: Querying the bound texture to a texture image unit for debugging
 
 ```cpp
 // Select to query

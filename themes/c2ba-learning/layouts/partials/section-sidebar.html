@@ -1,0 +1,13 @@
+
+{{ range .Site.Sections }}
+    <ul>
+        <li>
+            <a href="{{ .URL }}">{{ .Title }}</a>
+            <ul {{ if ne $.CurrentSection . }}class="collapse"{{ end }} >
+                {{ range .Data.Pages }}
+                    <li><a href="{{ .URL }}">{{ .Title }}</a></li>
+                {{ end }}
+            </ul>
+        </li>
+    </ul>
+{{ end }}

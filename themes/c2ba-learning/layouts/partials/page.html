@@ -1,0 +1,19 @@
+{{ partial "header.html" . }}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            {{ partial "section-sidebar.html" . }}
+        </div>
+
+        <div class="col-8">
+            {{ .Content }}
+        </div>
+
+        <div class="col">
+            {{ partial "toc-sidebar.html" . }}
+        </div>
+    </div>
+</div>
+
+{{ partial "footer.html" . }}
