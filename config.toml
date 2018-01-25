@@ -4,7 +4,9 @@ title = "OpenGL Avancé"
 languageCode = "fr"
 theme = "c2ba-learning"
 copyright = "Copyright (c) 2017, Laurent NOEL; All rights reserved."
+pygmentsCodeFences = true
+pygmentsOptions = ""
 
 [params]
-    description = "OpenGL Avancé"
+    description = "Sujets de TP pour Imac 3 / Master 2"
     noCategoryLink = true

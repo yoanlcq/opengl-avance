@@ -26,9 +26,9 @@ En plus de cela, le template de code que j'ai préparé charge l'extension **GL_
 
 # Direct State Access
 
-{{% notice warning %}}
+{{< notice "warning" >}}
 Cette extension n'est pas disponible sur toutes les cartes graphiques. En particulier les machines de la FAC n'en sont pas equipées entièrement (il y a l'extension **GL_EXT_direct_state_access** qui n'est que partielle). Si vous n'y avez pas accès, ne l'utilisez pas: cette extension ne fournit que des facilités de programmation, pas de fonctionnalité en plus.
-{{% /notice %}}
+{{< /notice >}}
 
 Cette extension est très pratique car elle permet d'éviter de binder les objets OpenGL pour les manipuler (on passe aux fonctions directement l'identifiant de l'objet), et donc d'éviter les erreurs liées au mécanisme de binding. Je vous conseille donc de l'utiliser autant que possible.
 
@@ -85,8 +85,10 @@ GLuint CreateVertexArray(GLuint BufferName[])
     glEnableVertexAttribArray(semantic::attr::TEXCOORD);
 
     glBindBuffer(GL_ARRAY_BUFFER, BufferName[buffer::VERTEX]);
-    glVertexAttribPointer(semantic::attr::POSITION, 2, GL_FLOAT, GL_FALSE, sizeof(glf::vertex_v2fv2f), BUFFER_OFFSET(0));
-    glVertexAttribPointer(semantic::attr::TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(glf::vertex_v2fv2f), BUFFER_OFFSET(sizeof(glm::vec2)));
+    glVertexAttribPointer(semantic::attr::POSITION, 2, GL_FLOAT, 
+      GL_FALSE, sizeof(glf::vertex_v2fv2f), BUFFER_OFFSET(0));
+    glVertexAttribPointer(semantic::attr::TEXCOORD, 2, GL_FLOAT, 
+      GL_FALSE, sizeof(glf::vertex_v2fv2f), BUFFER_OFFSET(sizeof(glm::vec2)));
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, BufferName[buffer::ELEMENT]);
 
@@ -111,10 +113,12 @@ GLuint CreateVertexArray(GLuint BufferName[])
     glEnableVertexAttribArray(semantic::attr::TEXCOORD);
 
     glVertexAttribBinding(semantic::attr::POSITION, 0);
-    glVertexAttribFormat(semantic::attr::POSITION, 2, GL_FLOAT, GL_FALSE, 0);
+    glVertexAttribFormat(semantic::attr::POSITION, 2, GL_FLOAT, 
+      GL_FALSE, 0);
 
     glVertexAttribBinding(semantic::attr::TEXCOORD, 0);
-    glVertexAttribFormat(semantic::attr::TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2);
+    glVertexAttribFormat(semantic::attr::TEXCOORD, 2, GL_FLOAT, 
+      GL_FALSE, sizeof(float) * 2);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, BufferName[buffer::ELEMENT]);
     glBindVertexBuffer(0, BufferName[buffer::VERTEX], 0, 0);
@@ -133,10 +137,12 @@ GLuint CreateVertexArray(GLuint BufferName[])
   glEnableVertexAttribArray(VertexArrayName, semantic::attr::TEXCOORD);
 
   glVertexArrayAttribBinding(VertexArrayName, semantic::attr::POSITION, 0);
-  glVertexArrayAttribFormat(VertexArrayName, semantic::attr::POSITION, 2, GL_FLOAT, GL_FALSE, 0);
+  glVertexArrayAttribFormat(VertexArrayName, semantic::attr::POSITION, 2, GL_FLOAT, 
+    GL_FALSE, 0);
 
   glVertexArrayAttribBinding(VertexArrayName, semantic::attr::TEXCOORD, 0);
-  glVertexArrayAttribFormat(VertexArrayName, semantic::attr::TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2);
+  glVertexArrayAttribFormat(VertexArrayName, semantic::attr::TEXCOORD, 2, GL_FLOAT, 
+    GL_FALSE, sizeof(float) * 2);
 
   glVertexArrayElementBuffer(VertexArrayName, BufferName[buffer::ELEMENT]);
   glVertexArrayVertexBuffer(VertexArrayName, 0, BufferName[buffer::VERTEX], 0, 0);

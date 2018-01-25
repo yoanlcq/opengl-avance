@@ -1,19 +1,25 @@
 {{ partial "header.html" . }}
 
+<main role="main" class="main-article">
+
 <div class="container-fluid">
     <div class="row">
-        <div class="col">
+        <div class="col side-menu side-menu-left page-content">
             {{ partial "section-sidebar.html" . }}
         </div>
 
-        <div class="col-8">
+        <div class="col middle-content page-content">
+            <h1 class="section-title">{{ .Title }}</h1>
+
             {{ .Content }}
         </div>
 
-        <div class="col">
+        <div class="col side-menu side-menu-right page-content">
             {{ partial "toc-sidebar.html" . }}
         </div>
     </div>
 </div>
+
+</main>
 
 {{ partial "footer.html" . }}
