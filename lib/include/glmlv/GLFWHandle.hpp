@@ -20,7 +20,7 @@ class GLFWHandle
     }
 
 public:
-    GLFWHandle(int width, int height, const char * title)
+    GLFWHandle(size_t width, size_t height, const char * title)
     {
         glfwSetErrorCallback(glfwErrorHandler);
 
@@ -35,7 +35,7 @@ public:
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-        m_pWindow = glfwCreateWindow(int(width), int(height), title, nullptr, nullptr);
+        m_pWindow = glfwCreateWindow(width, height, title, nullptr, nullptr);
         if (!m_pWindow) {
             std::cerr << "Unable to open window.\n";
             glfwTerminate();
@@ -44,7 +44,7 @@ public:
 
         glfwMakeContextCurrent(m_pWindow);
 
-        glfwSwapInterval(0); // No VSync
+        glfwSwapInterval(1); // Erm, do use VSync
 
         if (!gladLoadGL()) {
             std::cerr << "Unable to init OpenGL.\n";
