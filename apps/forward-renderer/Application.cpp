@@ -21,21 +21,51 @@ int Application::run()
 
         using namespace glm;
 
+        vec3 dirLightDir(1,0,1);
+        vec3 dirLightIntensity(1,1,1);
+        vec3 pointLightDir(0,0,1);
+        vec3 pointLightIntensity(1,1,1);
+        glUniform3fv(m_UniformDirectionalLightDirLocation, 1, &dirLightDir[0]);
+        glUniform3fv(m_UniformDirectionalLightIntensityLocation, 1, &dirLightIntensity[0]);
+        glUniform3fv(m_UniformPointLightPositionLocation, 1, &pointLightDir[0]);
+        glUniform3fv(m_UniformPointLightIntensityLocation, 1, &pointLightIntensity[0]);
+
         const float fovy = radians(60.f), near = 0.001, far = 1000, aspect = m_nWindowWidth / float(m_nWindowHeight);
         mat4 proj(perspective(fovy, aspect, near, far));
-        mat4 model(translate(mat4(1), vec3(0,0,-2)));
-        //mat4 view(lookAt(vec3(0,0,0), vec3(0,0,1), vec3(0,1,0)));
         mat4 view = m_ViewController.getViewMatrix();
-        mat4 modelView(view * model);
-        mat4 modelViewProj(proj * modelView);
-        mat4 normalMatrix(transpose(inverse(modelView)));
 
-        glUniformMatrix4fv(m_UniformModelViewProjMatrixLocation, 1, GL_FALSE, &modelViewProj[0][0]);
-        glUniformMatrix4fv(m_UniformModelViewMatrixLocation, 1, GL_FALSE, &modelView[0][0]);
-        glUniformMatrix4fv(m_UniformNormalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
+        {
+            vec3 color(0,1,0);
+            mat4 model(translate(mat4(1), vec3(0,0,-2)));
+            //mat4 view(lookAt(vec3(0,0,0), vec3(0,0,1), vec3(0,1,0)));
+            mat4 modelView(view * model);
+            mat4 modelViewProj(proj * modelView);
+            mat4 normalMatrix(transpose(inverse(modelView)));
 
-        //m_Cube.render();
-        m_Sphere.render();
+            glUniform3fv(m_UniformKdLocation, 1, &color[0]);
+            glUniformMatrix4fv(m_UniformModelViewProjMatrixLocation, 1, GL_FALSE, &modelViewProj[0][0]);
+            glUniformMatrix4fv(m_UniformModelViewMatrixLocation, 1, GL_FALSE, &modelView[0][0]);
+            glUniformMatrix4fv(m_UniformNormalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
+
+            m_Sphere.render();
+        }
+
+        {
+            vec3 color(0,0,1);
+            mat4 model(translate(mat4(1), vec3(-2,0,-2)));
+            //mat4 view(lookAt(vec3(0,0,0), vec3(0,0,1), vec3(0,1,0)));
+            mat4 modelView(view * model);
+            mat4 modelViewProj(proj * modelView);
+            mat4 normalMatrix(transpose(inverse(modelView)));
+
+            glUniform3fv(m_UniformKdLocation, 1, &color[0]);
+            glUniformMatrix4fv(m_UniformModelViewProjMatrixLocation, 1, GL_FALSE, &modelViewProj[0][0]);
+            glUniformMatrix4fv(m_UniformModelViewMatrixLocation, 1, GL_FALSE, &modelView[0][0]);
+            glUniformMatrix4fv(m_UniformNormalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
+
+            m_Cube.render();
+        }
+
 
         // GUI code:
         ImGui_ImplGlfwGL3_NewFrame();
@@ -78,9 +108,14 @@ Application::Application(int argc, char** argv):
     m_ForwardVsPath { m_ShadersRootPath / m_AppName / "forward.vs.glsl" },
     m_ForwardFsPath { m_ShadersRootPath / m_AppName / "forward.fs.glsl" },
     m_ForwardProgram(glmlv::compileProgram({ m_ForwardVsPath.string(), m_ForwardFsPath.string() })),
-    m_UniformModelViewProjMatrixLocation(glGetUniformLocation(m_ForwardProgram.glId(), "uModelViewProjMatrix")),
-    m_UniformModelViewMatrixLocation(glGetUniformLocation(m_ForwardProgram.glId(), "uModelViewMatrix")),
-    m_UniformNormalMatrixLocation(glGetUniformLocation(m_ForwardProgram.glId(), "uNormalMatrix")),
+    m_UniformModelViewProjMatrixLocation      (glGetUniformLocation(m_ForwardProgram.glId(), "uModelViewProjMatrix")),
+    m_UniformModelViewMatrixLocation          (glGetUniformLocation(m_ForwardProgram.glId(), "uModelViewMatrix")),
+    m_UniformNormalMatrixLocation             (glGetUniformLocation(m_ForwardProgram.glId(), "uNormalMatrix")),
+    m_UniformDirectionalLightDirLocation      (glGetUniformLocation(m_ForwardProgram.glId(), "uDirectionalLightDir")),
+    m_UniformDirectionalLightIntensityLocation(glGetUniformLocation(m_ForwardProgram.glId(), "uDirectionalLightIntensity")),
+    m_UniformPointLightPositionLocation       (glGetUniformLocation(m_ForwardProgram.glId(), "uPointLightPosition")),
+    m_UniformPointLightIntensityLocation      (glGetUniformLocation(m_ForwardProgram.glId(), "uPointLightIntensity")),
+    m_UniformKdLocation                       (glGetUniformLocation(m_ForwardProgram.glId(), "uKd")),
     m_Cube(glmlv::makeCube()),
     m_Sphere(glmlv::makeSphere(32)),
     m_ViewController(m_GLFWHandle.window())
@@ -88,9 +123,14 @@ Application::Application(int argc, char** argv):
     ImGui::GetIO().IniFilename = m_ImGuiIniFilename.c_str(); // At exit, ImGUI will store its windows positions in this file
 
 #define CHECK_UNIFORM(u) if(u == -1) { std::cerr << "Warning: " << #u << "equals -1 (is it unused?)" << std::endl; }
-    CHECK_UNIFORM(m_UniformModelViewProjMatrixLocation != -1);
-    CHECK_UNIFORM(m_UniformModelViewMatrixLocation != -1);
-    CHECK_UNIFORM(m_UniformNormalMatrixLocation != -1);
+    CHECK_UNIFORM(m_UniformModelViewProjMatrixLocation);
+    CHECK_UNIFORM(m_UniformModelViewMatrixLocation);
+    CHECK_UNIFORM(m_UniformNormalMatrixLocation);
+    CHECK_UNIFORM(m_UniformDirectionalLightDirLocation);
+    CHECK_UNIFORM(m_UniformDirectionalLightIntensityLocation);
+    CHECK_UNIFORM(m_UniformPointLightPositionLocation);
+    CHECK_UNIFORM(m_UniformPointLightIntensityLocation);
+    CHECK_UNIFORM(m_UniformKdLocation);
 #undef CHECK_UNIFORM
 
     glEnable(GL_DEPTH_TEST);

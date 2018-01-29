@@ -82,7 +82,7 @@ public:
 private:
     const size_t m_nWindowWidth = 1280;
     const size_t m_nWindowHeight = 720;
-    glmlv::GLFWHandle m_GLFWHandle{ m_nWindowWidth, m_nWindowHeight, "Template" }; // Note: the handle must be declared before the creation of any object managing OpenGL resource (e.g. GLProgram, GLShader)
+    glmlv::GLFWHandle m_GLFWHandle{ m_nWindowWidth, m_nWindowHeight, "Forward Rendering" }; // Note: the handle must be declared before the creation of any object managing OpenGL resource (e.g. GLProgram, GLShader)
 
     const glmlv::fs::path m_AppPath;
     const std::string m_AppName;
@@ -94,6 +94,11 @@ private:
     const GLint m_UniformModelViewProjMatrixLocation;
     const GLint m_UniformModelViewMatrixLocation;
     const GLint m_UniformNormalMatrixLocation;
+    const GLint m_UniformDirectionalLightDirLocation;
+    const GLint m_UniformDirectionalLightIntensityLocation;
+    const GLint m_UniformPointLightPositionLocation;
+    const GLint m_UniformPointLightIntensityLocation;
+    const GLint m_UniformKdLocation;
     const Mesh m_Cube, m_Sphere;
     glmlv::ViewController m_ViewController;
 };
