@@ -1,551 +1,77 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>01-introductions on OpenGL Avancé</title>
-    <link>https://celeborn2bealive.github.io/opengl-avance/01-introduction/index.xml</link>
-    <description>Recent content in 01-introductions on OpenGL Avancé</description>
+    <title>Introduction on OpenGL Avancé</title>
+    <link>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/</link>
+    <description>Recent content in Introduction on OpenGL Avancé</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>fr</language>
-    <lastBuildDate>Thu, 29 Dec 2016 11:33:37 +0100</lastBuildDate>
-    <atom:link href="https://celeborn2bealive.github.io/opengl-avance/01-introduction/index.xml" rel="self" type="application/rss+xml" />
+    <copyright>Copyright (c) 2017, Laurent NOEL; All rights reserved.</copyright>
+    <lastBuildDate>Thu, 29 Dec 2016 11:34:23 +0100</lastBuildDate>
     
-    <item>
-      <title>Mise en place</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/01-introduction/</link>
-      <pubDate>Thu, 29 Dec 2016 11:33:37 +0100</pubDate>
-      
-      <guid>https://celeborn2bealive.github.io/opengl-avance/01-introduction/</guid>
-      <description>
-
-&lt;h1 id=&#34;mise-en-place&#34;&gt;Mise en place&lt;/h1&gt;
-</description>
-    </item>
+	<atom:link href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Introduction</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/01-introduction/introduction/</link>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/</link>
       <pubDate>Thu, 29 Dec 2016 11:34:23 +0100</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/01-introduction/introduction/</guid>
-      <description>
-
-&lt;h2 id=&#34;objectifs&#34;&gt;Objectifs&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Approfondir les connaissances en OpenGL Moderne&lt;/li&gt;
-&lt;li&gt;Premières implémentations de techniques avancées&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Projet&lt;/strong&gt;: implémentation d&amp;rsquo;articles de recherche&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;prérequis&#34;&gt;Prérequis&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Bonne connaissance du &lt;a href=&#34;https://www.khronos.org/opengl/wiki/Rendering_Pipeline_Overview&#34;&gt;pipeline de rendu OpenGL&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Maitrise des &lt;a href=&#34;http://laurentnoel.fr/index.php?section=teaching&amp;amp;teaching=opengl&amp;amp;teaching_section=tds&#34;&gt;TDs des années précédentes&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;quelle-version-d-opengl&#34;&gt;Quelle version d&amp;rsquo;OpenGL ?&lt;/h2&gt;
-
-&lt;p&gt;La version installée sur les machines de la fac est la 4.4, nous prendrons donc cette version comme base.
-En plus de cela, le template de code que j&amp;rsquo;ai préparé charge l&amp;rsquo;extension &lt;strong&gt;GL_ARB_direct_state_access&lt;/strong&gt;, dont les fonctions sont passées en OpenGL Core dans la version 4.5.&lt;/p&gt;
-
-&lt;h2 id=&#34;direct-state-access&#34;&gt;Direct State Access&lt;/h2&gt;
-
-&lt;div class=&#34;notices warning&#34; &gt;&lt;p&gt;Cette extension n&amp;rsquo;est pas disponible sur toutes les cartes graphiques. En particulier les machines de la FAC n&amp;rsquo;en sont pas equipées entièrement (il y a l&amp;rsquo;extension &lt;strong&gt;GL_EXT_direct_state_access&lt;/strong&gt; qui n&amp;rsquo;est que partielle). Si vous n&amp;rsquo;y avez pas accès, ne l&amp;rsquo;utilisez pas: cette extension ne fournit que des facilités de programmation, pas de fonctionnalité en plus.&lt;/p&gt;
-&lt;/div&gt;
-
-
-&lt;p&gt;Cette extension est très pratique car elle permet d&amp;rsquo;éviter de binder les objets OpenGL pour les manipuler (on passe aux fonctions directement l&amp;rsquo;identifiant de l&amp;rsquo;objet), et donc d&amp;rsquo;éviter les erreurs liées au mécanisme de binding. Je vous conseille donc de l&amp;rsquo;utiliser autant que possible.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://www.opengl.org/registry/specs/ARB/direct_state_access.txt&#34;&gt;Lien vers le document de référence&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Voici des exemples de code en version OpenGL 3 classique et en version Direct State Access (directement tiré du document):&lt;/p&gt;
-
-&lt;h4 id=&#34;example-1-creating-a-buffer-object-without-polluting-the-opengl-states&#34;&gt;Example 1: Creating a buffer object without polluting the OpenGL states&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;// Bind to Create
-GLuint CreateBuffer()
-{
-  // Save the previous bound buffer
-  GLuint restoreBuffer = 0;
-  glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &amp;amp;restoreBuffer);
-
-  // Reserve the buffer name and create the buffer object
-  uint buffer = 0;
-  glGenBuffers(1, &amp;amp;buffer);
-  glBindBuffer(GL_ARRAY_BUFFER, buffer);
-
-  // Restaure the previous bound buffer to avoid polluting
-  // the rendering states
-  glBindBuffer(GL_ARRAY_BUFFER, restoreBuffer);
-
-  return buffer;
-}
-
-// Direct State Access
-GLuint CreateBuffer()
-{
-  GLuint buffer = 0;
-  glCreateBuffer(1, &amp;amp;buffer);
-
-  return buffer;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;example-2-creating-a-vertex-array-object-without-polluting-the-opengl-states&#34;&gt;Example 2: Creating a vertex array object without polluting the OpenGL states&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;// OpenGL 3.0 Bind to Create for vertex array object
-GLuint CreateVertexArray(GLuint BufferName[])
-{
-  // Save the previous bound vertex array and array buffer
-  GLuint restoreVertexArray = 0;
-  glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &amp;amp;restoreVertexArray);
-  GLuint restoreBuffer = 0;
-  glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &amp;amp;restoreBuffer);
-
-  glGenVertexArrays(1, &amp;amp;VertexArrayName);
-  glBindVertexArray(VertexArrayName);
-    glEnableVertexAttribArray(semantic::attr::POSITION);
-    glEnableVertexAttribArray(semantic::attr::TEXCOORD);
-
-    glBindBuffer(GL_ARRAY_BUFFER, BufferName[buffer::VERTEX]);
-    glVertexAttribPointer(semantic::attr::POSITION, 2, GL_FLOAT, GL_FALSE, sizeof(glf::vertex_v2fv2f), BUFFER_OFFSET(0));
-    glVertexAttribPointer(semantic::attr::TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(glf::vertex_v2fv2f), BUFFER_OFFSET(sizeof(glm::vec2)));
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, BufferName[buffer::ELEMENT]);
-
-  // The GL_ARRAY_BUFFER_BINDING is a context state, not a vertex array state.
-  glBindBuffer(GL_ARRAY_BUFFER, restoreBuffer);
-  glBindVertexArray(restoreVertexArray);
-
-  return vertexArrayName;
-}
-
-// OpenGL 4.3 Bind to Create for vertex array object
-GLuint CreateVertexArray(GLuint BufferName[])
-{
-  // Save the previous bound vertex array
-  GLuint restoreVertexArray = 0;
-  glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &amp;amp;restoreVertexArray);
-
-  GLuint vertexArrayName = 0;
-  glGenVertexArrays(1, &amp;amp;vertexArrayName);
-  glBindVertexArray(VertexArrayName);
-    glEnableVertexAttribArray(semantic::attr::POSITION);
-    glEnableVertexAttribArray(semantic::attr::TEXCOORD);
-
-    glVertexAttribBinding(semantic::attr::POSITION, 0);
-    glVertexAttribFormat(semantic::attr::POSITION, 2, GL_FLOAT, GL_FALSE, 0);
-
-    glVertexAttribBinding(semantic::attr::TEXCOORD, 0);
-    glVertexAttribFormat(semantic::attr::TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, BufferName[buffer::ELEMENT]);
-    glBindVertexBuffer(0, BufferName[buffer::VERTEX], 0, 0);
-  glBindVertexArray(restoreVertexArray);
-
-  return vertexArrayName;
-}
-
-// Direct State Access
-GLuint CreateVertexArray(GLuint BufferName[])
-{
-  GLuint vertexArrayName = 0;
-  glCreateVertexArrays(1, &amp;amp;vertexArrayName);
-
-  glEnableVertexAttribArray(VertexArrayName, semantic::attr::POSITION);
-  glEnableVertexAttribArray(VertexArrayName, semantic::attr::TEXCOORD);
-
-  glVertexArrayAttribBinding(VertexArrayName, semantic::attr::POSITION, 0);
-  glVertexArrayAttribFormat(VertexArrayName, semantic::attr::POSITION, 2, GL_FLOAT, GL_FALSE, 0);
-
-  glVertexArrayAttribBinding(VertexArrayName, semantic::attr::TEXCOORD, 0);
-  glVertexArrayAttribFormat(VertexArrayName, semantic::attr::TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2);
-
-  glVertexArrayElementBuffer(VertexArrayName, BufferName[buffer::ELEMENT]);
-  glVertexArrayVertexBuffer(VertexArrayName, 0, BufferName[buffer::VERTEX], 0, 0);
-
-  return vertexArrayName;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;example-3-querying-the-bound-texture-to-a-texture-image-unit-for-debugging&#34;&gt;Example 3: Querying the bound texture to a texture image unit for debugging&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;// Select to query
-// We need the &amp;lt;target&amp;gt; or we need to loop over all the possible targets
-GLuint GetBoundTexture(GLenum target, GLuint unit)
-{
-  GLuint restore = 0;
-  glGetIntegerv(GL_ACTIVE_TEXTURE, &amp;amp;restore);
-
-  glActiveTexture(unit);
-
-  GLuint name = 0;
-  glGetIntegerv(target, &amp;amp;name);
-
-  glActiveTexture(restore);
-}
-
-// Direct State Access
-// target_binding is e.g. GL_TEXTURE_BINDING_2D for the 2D texture
-GLuint GetBoundTexture(GLenum target_binding, GLuint unit)
-{
-  GLuint name = 0;
-  glGetIntegeri_v(target_binding, unit, &amp;amp;name);
-  return name;
-}
-&lt;/code&gt;&lt;/pre&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/</guid>
+      <description>Objectifs  Approfondir les connaissances en OpenGL Moderne Premières implémentations de techniques avancées Projet: Demo  Prérequis  Bonne connaissance du pipeline de rendu OpenGL Maitrise des TDs des années précédentes Maitrise de base du C++  Quelle version d&amp;rsquo;OpenGL ? La version installée sur les machines de la fac est la 4.4, nous prendrons donc cette version comme base.
+En plus de cela, et si votre carte graphique le permet, il vous sera possible de travailler avec l&amp;rsquo;extension GL_ARB_direct_state_access (DSA) qui simplifie grandement la manipulation d&amp;rsquo;objets OpenGL (pas besoin de binder les objets pour les manipuler).</description>
     </item>
     
     <item>
-      <title>Code template</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/01-introduction/code-template/</link>
-      <pubDate>Thu, 29 Dec 2016 11:36:02 +0100</pubDate>
+      <title>Repo Github</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/repo-github/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/01-introduction/code-template/</guid>
-      <description>
-
-&lt;h2 id=&#34;téléchargement&#34;&gt;Téléchargement&lt;/h2&gt;
-
-&lt;p&gt;Clonez, forkez sur votre compte Github ou téléchargez le &lt;a href=&#34;https://github.com/Celeborn2BeAlive/opengl-avance&#34;&gt;repository sur github&lt;/a&gt; (fork de préférence, plus facile de partager le code avec moi ensuite)&lt;/p&gt;
-
-&lt;h2 id=&#34;branches-du-repo&#34;&gt;Branches du repo&lt;/h2&gt;
-
-&lt;p&gt;Principales:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;master &lt;em&gt;Code de base + apps d&amp;rsquo;exemple en OpenGL 3&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;master-direct-state-access &lt;em&gt;Code de base + apps d&amp;rsquo;exemple en OpenGL 4.5 (avec DSA)&lt;/em&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Corrections:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;cheat &lt;em&gt;Correction des TDs en OpenGL 3&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;cheat-direct-state-access &lt;em&gt;Correction des TDs en OpenGL OpenGL 4.5 (avec DSA)&lt;/em&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;compilation&#34;&gt;Compilation&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Avec CMake&lt;/li&gt;
-&lt;li&gt;Support de GCC 5+ (sans boost), GCC 4.9.2 (boost requis) et Visual Studio 2015 (sans boost)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;linux&#34;&gt;Linux&lt;/h3&gt;
-
-&lt;p&gt;En console:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Créer un repertoire &lt;em&gt;opengl-avance-build&lt;/em&gt; à coté du repertoire &lt;em&gt;opengl-avance&lt;/em&gt; (correspondant au clone du repo)&lt;/li&gt;
-&lt;li&gt;Se placer dans &lt;em&gt;opengl-avance-build&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;Sur un PC ou GCC 5+ est installé, taper la commande &lt;strong&gt;cmake ../opengl-avance&lt;/strong&gt;. Si uniquement GCC 4.9.2 est disponible (machines de la FAC), taper la commande &lt;strong&gt;cmake -DGLMLV_USE_BOOST_FILESYSTEM=ON ../opengl-avance&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;Compiler avec &lt;strong&gt;make -j&lt;/strong&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Les executables sont compilés dans le repertoire &lt;em&gt;bin&lt;/em&gt; du dossier de build&lt;/p&gt;
-
-&lt;h3 id=&#34;windows&#34;&gt;Windows&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Télécharger et installer &lt;a href=&#34;https://cmake.org/download/&#34;&gt;CMake GUI&lt;/a&gt; (Windows win64-x64 Installer ou Windows win32-x86 Installer selon votre CPU) et &lt;a href=&#34;https://www.visualstudio.com/fr/vs/community/&#34;&gt;Visual Studio Community Edition 2015&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Créer un repertoire &lt;em&gt;opengl-avance-build&lt;/em&gt; à coté du repertoire &lt;em&gt;opengl-avance&lt;/em&gt; (correspondant au clone du repo)&lt;/li&gt;
-&lt;li&gt;Lancer CMake GUI, choisir comme repertoire source le clone du repo et comme repertoire de build le dossier que vous avez créé&lt;/li&gt;
-&lt;li&gt;Cliquer sur &lt;strong&gt;Configure&lt;/strong&gt; et choisir comme generateur: &lt;em&gt;Visual Studio 14 2015 Win64&lt;/em&gt; pour un CPU 64-bits, &lt;em&gt;Visual Studio 14 2015&lt;/em&gt; pour un CPU 32-bits (ça existe encore ?)&lt;/li&gt;
-&lt;li&gt;Cliquer sur &lt;strong&gt;Generate&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;Ouvrir la solution Visual Studio &lt;em&gt;opengl.sln&lt;/em&gt; qui a été créée par CMake dans le repertoire de build&lt;/li&gt;
-&lt;li&gt;Dans le panel &lt;em&gt;Explorateur de solutions&lt;/em&gt;, choisir le projet &lt;em&gt;template&lt;/em&gt; comme projet de démarage (clic droit dessus, puis trouver l&amp;rsquo;option)&lt;/li&gt;
-&lt;li&gt;Menu &lt;em&gt;Générer&lt;/em&gt; -&amp;gt; &lt;em&gt;Générer la solution&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;Lancer l&amp;rsquo;application avec F5 (debug) ou Ctrl+F5 (non debug)&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Les executables sont compilés dans les repertoire &lt;em&gt;bin/Debug&lt;/em&gt; et &lt;em&gt;bin/Release&lt;/em&gt; selon la configuration.&lt;/p&gt;
-
-&lt;p&gt;Il est possible de compiler le projet &lt;em&gt;INSTALL&lt;/em&gt; de la solution avec que les executables compilés soit recopiés dans un repertoire d&amp;rsquo;installation. Par défault ce repertoire est &lt;em&gt;C:/Program Files/opengl&lt;/em&gt; mais il est possible de le changer depuis CMake GUI en recherchant la variable &lt;em&gt;CMAKE_INSTALL_PREFIX&lt;/em&gt; et en la modifiant.&lt;/p&gt;
-
-&lt;h2 id=&#34;arborescence&#34;&gt;Arborescence&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;apps &lt;em&gt;Contient le code des executables à compiler&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;cmake &lt;em&gt;Contient des modules cmake&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;lib &lt;em&gt;Contient le code partagé entre les executables&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;third-party &lt;em&gt;Contient des bibliothèques externes&lt;/em&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Chaque sous-repertoire de &lt;em&gt;apps&lt;/em&gt; est compilé en tant qu&amp;rsquo;application indépendant. Ainsi le code du repertoire &lt;em&gt;apps/template&lt;/em&gt; sera compilé en un executable &lt;em&gt;template&lt;/em&gt; (Linux) ou &lt;em&gt;template.exe&lt;/em&gt; (Windows), et le code du repertoire &lt;em&gt;apps/triangle&lt;/em&gt; sera compilé en un executable &lt;em&gt;triangle&lt;/em&gt; (Linux) ou &lt;em&gt;triangle.exe&lt;/em&gt; (Windows).&lt;/p&gt;
-
-&lt;p&gt;Le répertoire &lt;em&gt;lib&lt;/em&gt; est destiné à contenir du code d&amp;rsquo;une lib (nommée &lt;em&gt;glmlv&lt;/em&gt;) partagée entre les executables.&lt;/p&gt;
-
-&lt;p&gt;Afin de garder un code clair, je vous conseille de créer une application différente par theme de TP. Il faudra également créer une application pour le projet.&lt;/p&gt;
-
-&lt;h2 id=&#34;shaders&#34;&gt;Shaders&lt;/h2&gt;
-
-&lt;p&gt;Concernant les shaders GLSL, le processus de compilation se charge de les copier à coté des executables afin qu&amp;rsquo;il soient facilement accessible (de manière relative) par ces derniers. Leur extension doit être &amp;ldquo;.glsl&amp;rdquo; afin qu&amp;rsquo;ils soient reconnu par le CMakeLists.txt, et ils doivent être placés dans un sous repertoire &lt;em&gt;shaders&lt;/em&gt; de l&amp;rsquo;application qui les utilise. Par convention, on suffixera &amp;ldquo;.vs.glsl&amp;rdquo; les vertex shader, &amp;ldquo;.fs.glsl&amp;rdquo; les fragments shaders, &amp;ldquo;.gs.glsl&amp;rdquo; les geometry shaders et &amp;ldquo;.cs.glsl&amp;rdquo; les compute shaders.&lt;/p&gt;
-
-&lt;p&gt;La lib &lt;em&gt;glmlv&lt;/em&gt; peut également contenir des shaders partagés entre les applications, en les plaçant dans le repertoire &lt;em&gt;lib/shaders&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;Par exemple, supposons l&amp;rsquo;arborescence suivante pour les shaders de &lt;em&gt;apps&lt;/em&gt; et &lt;em&gt;libs&lt;/em&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;apps
-
-&lt;ul&gt;
-&lt;li&gt;triangle
-
-&lt;ul&gt;
-&lt;li&gt;shaders
-
-&lt;ul&gt;
-&lt;li&gt;triangle.vs.glsl&lt;/li&gt;
-&lt;li&gt;triangle.fs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;smab
-
-&lt;ul&gt;
-&lt;li&gt;shaders
-
-&lt;ul&gt;
-&lt;li&gt;shadow_mapping
-
-&lt;ul&gt;
-&lt;li&gt;sm.vs.glsl&lt;/li&gt;
-&lt;li&gt;sm.fs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;deferred
-
-&lt;ul&gt;
-&lt;li&gt;gbuffer.vs.glsl&lt;/li&gt;
-&lt;li&gt;gbuffer.fs.glsl&lt;/li&gt;
-&lt;li&gt;shading.vs.glsl&lt;/li&gt;
-&lt;li&gt;shading.fs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;lib
-
-&lt;ul&gt;
-&lt;li&gt;shaders
-
-&lt;ul&gt;
-&lt;li&gt;post-processing
-
-&lt;ul&gt;
-&lt;li&gt;blur.cs.glsl&lt;/li&gt;
-&lt;li&gt;dof.cs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;On a ici deux applications &lt;em&gt;triangle&lt;/em&gt; et &lt;em&gt;smab&lt;/em&gt;, contenant chacune des shaders différents et partageant deux shaders de &lt;em&gt;glmlv&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;Cette arborescence sera reproduite de la manière suivante dans le repertoire de build:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;opengl-avance-build
-
-&lt;ul&gt;
-&lt;li&gt;bin
-
-&lt;ul&gt;
-&lt;li&gt;triangle.exe&lt;/li&gt;
-&lt;li&gt;smab.exe&lt;/li&gt;
-&lt;li&gt;shaders
-
-&lt;ul&gt;
-&lt;li&gt;glmlv
-
-&lt;ul&gt;
-&lt;li&gt;post-processing
-
-&lt;ul&gt;
-&lt;li&gt;blur.cs.glsl&lt;/li&gt;
-&lt;li&gt;dof.cs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;triangle
-
-&lt;ul&gt;
-&lt;li&gt;triangle.vs.glsl&lt;/li&gt;
-&lt;li&gt;triangle.fs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;smab
-
-&lt;ul&gt;
-&lt;li&gt;shadow_mapping
-
-&lt;ul&gt;
-&lt;li&gt;sm.vs.glsl&lt;/li&gt;
-&lt;li&gt;sm.fs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;deferred
-
-&lt;ul&gt;
-&lt;li&gt;gbuffer.vs.glsl&lt;/li&gt;
-&lt;li&gt;gbuffer.fs.glsl&lt;/li&gt;
-&lt;li&gt;shading.vs.glsl&lt;/li&gt;
-&lt;li&gt;shading.fs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;De cette manière, un code comme le suivant accède facilement aux shaders &lt;strong&gt;sans dépendre de l&amp;rsquo;emplacement de ces derniers sur la machine de l&amp;rsquo;utilisateur&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;#include &amp;lt;glmlv/filesystem.hpp&amp;gt;
-
-// Supposons que le code est celui de smab.exe, dont le chemin est C:/toto/tata/bin/smab.exe
-int main(int argc, char** argv)
-{
-    // argv[0] contient toujours le chemin vers l&#39;executable, ici &amp;quot;C:/toto/tata/bin/smab.exe&amp;quot;
-    // On le récupère dans une variable de type glmlv::fs::path permettant de gérer facilement les chemins
-    const auto applicationPath = glmlv::fs::path{ argv[0] };
-
-    // stem() renvoit le nom du fichier sans son extension, i.e. &amp;quot;smab&amp;quot;:
-    const auto appName = applicationPath.stem().string();
-
-    // L&#39;opérateur &#39;/&#39; permet de concatener les chemins de fichier
-    const auto shadersRootPath = applicationPath.parent_path() / &amp;quot;shaders&amp;quot;;
-
-    // Pour les shaders de l&#39;application, on utilise la variable contenant le nom de l&#39;application pour accéder au dossier contenant ses shaders
-    const auto pathToSMVS = shadersRootPath / appName / &amp;quot;shadow_mapping&amp;quot; / &amp;quot;sm.vs.glsl&amp;quot;;
-    const auto pathToSMFS = shadersRootPath / appName / &amp;quot;shadow_mapping&amp;quot; / &amp;quot;sm.fs.glsl&amp;quot;;
-
-    // Pour les shaders de la lib, on cible directement le dossier &amp;quot;glmlv&amp;quot;
-    const auto pathToBlurCS = shadersRootPath / &amp;quot;glmlv&amp;quot; / &amp;quot;post-processing&amp;quot; / &amp;quot;blur.cs.glsl&amp;quot;;
-
-    [...]
-
-    return 0;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;applications-d-exemple&#34;&gt;Applications d&amp;rsquo;exemple&lt;/h2&gt;
-
-&lt;p&gt;Le repertoire &lt;em&gt;apps&lt;/em&gt; contient déjà du code pour plusieurs applications simples. Toutes sont basées sur le template de base &lt;em&gt;template&lt;/em&gt; qui se contente d&amp;rsquo;ouvrir une fenêtre contenant une GUI affichant le framerate et permettant de changer la couleur de fond.&lt;/p&gt;
-
-&lt;p&gt;Ces codes simples sont destinés à vous donner quelques exemple d&amp;rsquo;appels aux fonctions OpenGL, en particulier l&amp;rsquo;utilisation des fonction de l&amp;rsquo;extension direct_state_access.&lt;/p&gt;
-
-&lt;p&gt;Une ressource supplémentaire est &lt;a href=&#34;https://github.com/g-truc/ogl-samples/tree/master/tests&#34;&gt;ce repository GIT&lt;/a&gt; contenant un grand nombre d&amp;rsquo;exemples de code pour l&amp;rsquo;ensemble des features OpenGL.&lt;/p&gt;
-
-&lt;p&gt;Voici une description des apps d&amp;rsquo;exemple:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;triangle &lt;em&gt;Dessine un triangle coloré&lt;/em&gt; (création de VBO, création de VAO, attributs entrelacés, chargement de shaders)&lt;/li&gt;
-&lt;li&gt;triangle_2vbos &lt;em&gt;Pareil mais en utilisant 2 VBOs, un pour les positions, l&amp;rsquo;autre pour les couleurs&lt;/em&gt; (plusieurs VBOs pour un objet, attributs non entrelacés)&lt;/li&gt;
-&lt;li&gt;quad &lt;em&gt;Dessine un quad coloré&lt;/em&gt; (création d&amp;rsquo;IBO, i.e. buffer d&amp;rsquo;index)&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/repo-github/</guid>
+      <description>Git ? Si vous ne connaissez pas, Git est un système distribué de gestion de version: un logiciel permettant d&amp;rsquo;enregistrer au fur à mesure les modifications du code source d&amp;rsquo;un projet, de manière partagé entre plusieurs utilisateur.
+On peut ainsi facilement revenir en arrière, partager du code, controler qui fait quoi, gérer plusieurs versions, etc.
+L&amp;rsquo;objectif de ces TDs n&amp;rsquo;est pas d&amp;rsquo;apprendre à utiliser Git, mais il sera pratique pour moi de suivre votre progression et de récupérer votre projet grace à un repo Git publique.</description>
     </item>
     
     <item>
-      <title>Bibliotheques externes</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/01-introduction/lib-externes/</link>
-      <pubDate>Thu, 29 Dec 2016 12:24:50 +0100</pubDate>
+      <title>Fiche d&#39;information</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/fiche-info/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/01-introduction/lib-externes/</guid>
-      <description>&lt;p&gt;Le template contient plusieurs bibliothèques externes (dans &lt;em&gt;third-party&lt;/em&gt;) afin de vous simplifier la vie:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.glfw.org/&#34;&gt;glfw&lt;/a&gt;: bibliothèque de fenetrage et de gestion d&amp;rsquo;inputs (similaire à la SDL)&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://glm.g-truc.net/&#34;&gt;glm&lt;/a&gt;: bibliothèque de maths &amp;ldquo;à la GLSL&amp;rdquo;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://glad.dav1d.de/&#34;&gt;glad&lt;/a&gt;: bibliothèque pour &amp;ldquo;charger&amp;rdquo; les fonctions OpenGL 3+ (similaire à GLEW)&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/ocornut/imgui&#34;&gt;imgui&lt;/a&gt;: bibliotheque permettant d&amp;rsquo;afficher une interface utilisateur de manière simple et en &amp;ldquo;immediate mode&amp;rdquo;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/nlohmann/json&#34;&gt;json&lt;/a&gt;: bibliotheque pour lire/écrire des fichiers json, pratique pour gérer rapidement des fichiers de config&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/syoyo/tinyobjloader&#34;&gt;tinyobjloader&lt;/a&gt;: bibliotheque pour charger des fichiers OBJ (format simple de scenes 3D)&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/nothings/stb&#34;&gt;stb&lt;/a&gt; contient les header &lt;em&gt;stb_image.h&lt;/em&gt; et &lt;em&gt;stb_image_write.h&lt;/em&gt; de la bibliothèque stb, afin de lire et écrire des images.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Mon objectif n&amp;rsquo;étant pas de vous apprendre à utiliser ces libs, je détaillerais assez peu leurs fonctionnalités dans les TPs. Les liens ci-dessus redirigent vers des documentations assez complètes pour que vous puissiez vous débrouiller :)&lt;/p&gt;
-
-&lt;p&gt;A noter que ImGui fournie une fonction ImGui::ShowTestWindow dont le code montre des exemples d&amp;rsquo;utilisation d&amp;rsquo;a peu près tous les widgets de la lib. Le code de cette fonction est dans le fichier &lt;em&gt;imgui_demo.cpp&lt;/em&gt; du repertoire contenant la lib.&lt;/p&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/fiche-info/</guid>
+      <description>Remplissez cette fiche: https://goo.gl/forms/ffuXJJ1vYCAvUA7s1 ça m&amp;rsquo;aidera.</description>
     </item>
     
     <item>
-      <title>Bibliotheque interne (glmlv)</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/01-introduction/lib-interne/</link>
-      <pubDate>Tue, 03 Jan 2017 22:29:22 +0100</pubDate>
+      <title>Software Development Kit</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/sdk/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/01-introduction/lib-interne/</guid>
-      <description>&lt;p&gt;La bibliothèque interne, dont le code est situé dans le repertoire &lt;em&gt;lib&lt;/em&gt; du template, est destiné à contenir le code partagé entre les applications. &lt;strong&gt;Les classes et fonctions réutilisables doivent donc y être placées&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;Le template de base contient déjà plusieurs fichiers dans la lib:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;filesystem.hpp &lt;em&gt;Inclut une bibliothèque de manipulation du système de fichier (soit la lib experimentale de la std, soit la lib de boost si cmake a été appelé avec l&amp;rsquo;option -DGLMLV_USE_BOOST_FILESYSTEM)&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;gl_debug_output.cpp/hpp &lt;em&gt;Définit la fonction initGLDebugOutput() permettant d&amp;rsquo;activer les message de debug d&amp;rsquo;OpenGL&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;glfw.hpp &lt;em&gt;Inclut simplement les header de GLFW et glad dans le bon ordre afin d&amp;rsquo;éviter des erreurs de compil&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;GLFWHandle.hpp &lt;em&gt;Définit la classe GLFWHandle qui initialise GLFW, ouvre une fenetre, initialise OpenGL avec glad et initialise ImGUI dans son constructeur&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;GLProgram.hpp, GLShader.hpp &lt;em&gt;Définissent des classes et fonction helpers pour charger, compiler et linker des shaders GLSL&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;Image2DRGBA.hpp &lt;em&gt;Définit la classe Image2DRGBA et des fonctions de lecture/écriture d&amp;rsquo;image en surcouche de la lib stb&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;imgui_impl_glfw_gl3.hpp/.cpp &lt;em&gt;Définit les fonctions de dessin et d&amp;rsquo;interaction avec l&amp;rsquo;utilisateurs nécessaires au bon fonctionnement de ImGui&lt;/em&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/sdk/</guid>
+      <description>Le repository que vous avez forké et cloné contient un SDK pour coder les TDs. Cette partie explique comment compiler les applications d&amp;rsquo;exemple, vos futures applications, la structure du repertoire et les spécifité du fichier CMake.
+Compilation  Avec CMake Support de GCC 5+ (sans boost), GCC 4.9.2 (boost requis) et Visual Studio 2015 (sans boost) (devrait aussi fonctionner avec Visual 2017, mais je n&amp;rsquo;ai pas encore testé)  CMake est un logiciel permettant de générer une solution de compilation adaptée au système sur lequel on l&#39;execute.</description>
     </item>
     
     <item>
       <title>Projet</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/01-introduction/projet/</link>
-      <pubDate>Thu, 29 Dec 2016 11:50:50 +0100</pubDate>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/projet/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/01-introduction/projet/</guid>
-      <description>&lt;div class=&#34;notices note&#34; &gt;&lt;p&gt;Cette page n&amp;rsquo;est pas terminée, j&amp;rsquo;ajouterais des informations concernant les projet au cours du mois.&lt;/p&gt;
-&lt;/div&gt;
-
-
-&lt;p&gt;L&amp;rsquo;objectif du projet est de développer une demo courte (c&amp;rsquo;est à dire une animation codée) implémentant une ou plusieurs techniques vues en TP, ainsi qu&amp;rsquo;une ou plusieurs méthodes non vue en TD, potentiellement issues d&amp;rsquo;articles de recherche. Le choix de l&amp;rsquo;article est libre mais vous devez me le proposer avant afin que je valide. Si vous n&amp;rsquo;avez pas d&amp;rsquo;idées, voici une liste de méthodes/articles possibles:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Shadow Volumes&lt;/li&gt;
-&lt;li&gt;Normal Mapping (pas suffisant seul, à combiner avec d&amp;rsquo;autres choses)&lt;/li&gt;
-&lt;li&gt;Screen Space Ambient Occlusion&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://fr.slideshare.net/takahiroharada/forward-34779335&#34;&gt;Forward +&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://cseweb.ucsd.edu/~ravir/papers/envmap/&#34;&gt;Rendu temps réel d&amp;rsquo;objets diffus avec une env map grace aux harmoniques spheriques&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.klayge.org/material/3_12/GI/rsm.pdf&#34;&gt;Reflective shadow mapping&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://resources.mpi-inf.mpg.de/ImperfectShadowMaps/ISM.pdf&#34;&gt;Imperfect shadow maps&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.cse.chalmers.se/~uffe/clustered_shading_preprint.pdf&#34;&gt;Clustered Shading&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://jcgt.org/published/0003/04/04/&#34;&gt;Screen Space Ray Tracing&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.jp.square-enix.com/tech/library/pdf/Virtual%20Spherical%20Gaussian%20Lights%20for%20Real-Time%20Glossy%20Indirect%20Illumination.pdf&#34;&gt;Virtual Spherical Gaussian Lights for Real-time Glossy Indirect Illumination&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Des sites où trouver des articles:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://jcgt.org/read.html?reload=1&#34;&gt;http://jcgt.org/read.html?reload=1&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://kesen.realtimerendering.com/&#34;&gt;http://kesen.realtimerendering.com/&lt;/a&gt; (en particulier les articles de la conférence I3D)&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/projet/</guid>
+      <description>L&amp;rsquo;objectif du projet est de développer une demo, au sens &amp;ldquo;Demoscene&amp;rdquo;, c&amp;rsquo;est à dire une application jouant une animation 3D. Quelques exemples de demo.
+Le thème imposé est le suivant: Star Wars (grosse originalité). Si vous n&amp;rsquo;aimez pas Star Wars, vous n&amp;rsquo;aurez qu&amp;rsquo;à exprimer cette haine dans votre démo, ou le mixer avec un autre thème de votre choix.
+En general les elements d&amp;rsquo;une demo sont procéduraux (générés aléatoirement), mais ce n&amp;rsquo;est pas obligatoire pour le projet (vous pouvez charger des modèles 3D et textures, vous devriez pouvoir trouver facilement des vaisseaux sur le net).</description>
     </item>
     
     <item>
-      <title>Liens</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/01-introduction/liens/</link>
-      <pubDate>Thu, 29 Dec 2016 11:50:45 +0100</pubDate>
+      <title>Liens OpenGL</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/liens/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/01-introduction/liens/</guid>
-      <description>&lt;p&gt;Le plus important, à toujours avoir sous le coude:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Main_Page&#34;&gt;Le Wiki OpenGL&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://docs.gl/&#34;&gt;Une version digeste de la documentation OpenGL/GLSL&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/files/opengl44-quick-reference-card.pdf&#34;&gt;La reference card OpenGL 4.4&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Et quelques liens utiles pour OpenGL:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&amp;amp;teaching=opengl&amp;amp;teaching_section=tds&#34;&gt;Mes TDs OpenGL 3+ écris pour les Imacs 2&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://ogldev.atspace.co.uk/&#34;&gt;Des tutoriaux OpenGL 3+&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.opengl-tutorial.org/fr/&#34;&gt;Plein d&amp;rsquo;autres tutos OpenGL 3+ en francais&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/g-truc/ogl-samples/tree/master/tests&#34;&gt;Une énorme liste d&amp;rsquo;exemples de code OpenGL&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/liens/</guid>
+      <description>Le plus important, à toujours avoir sous le coude:
+ Le Wiki OpenGL Une version digeste de la documentation OpenGL/GLSL La reference card OpenGL 4.4  Et quelques liens utiles pour OpenGL:
+ Mes TDs OpenGL 3+ écris pour les Imacs 2 Des tutoriaux OpenGL 3+ Plein d&amp;rsquo;autres tutos OpenGL 3+ en francais Une énorme liste d&amp;rsquo;exemples de code OpenGL  </description>
     </item>
     
   </channel>

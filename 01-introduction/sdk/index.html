@@ -1,0 +1,516 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>Software Development Kit - OpenGL Avancé</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
+    <style>
+        body
+        {
+          font-family: "Work Sans", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          color: #444444;
+        }
+
+        main
+        {
+          height:100vh;
+          margin-top: 56px;;
+        }
+
+        h1, h2, h3, h4, h5, h6
+        {
+          margin: 2.5rem 0 1.5rem 0;
+        }
+
+        h1.section-title
+        {
+          font-family: "Novacento Sans Wide", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 3.25rem;
+          margin: 1.0rem 0 1.5rem 0;
+          font-weight: 200;
+        }
+
+        main a:hover
+        {
+          text-decoration: none;
+        }
+
+        main table
+        {
+          width: 100%;
+          margin-bottom: 1rem;
+        }
+
+        main img
+        {
+          width: 100%;
+        }
+
+        .jumbotron
+        {
+          background-color: #EEEEEE;
+        }
+
+        .page-content
+        {
+          padding-top: 16px;
+          padding-bottom: 1.5rem;
+        }
+
+        .main-article
+        {
+          margin-left: 15%;
+          margin-right: 15%;
+        }
+
+        .middle-content
+        {
+          text-align: justify;
+        }
+
+        .side-menu
+        {
+          background-color: #EEEEEE;
+          position: fixed;
+          width: 15%;
+          height: 100%;
+          font-size: 1.0em;
+          padding-left: 0px;
+          padding-right: 0px;
+        }
+
+        .side-menu li li
+        {
+          font-size: 0.9em;
+          width: 100%;
+        }
+
+        .side-menu a
+        {
+          color: #555555;
+          font-weight: bold;
+        }
+
+        .side-menu a:hover
+        {
+          color: #CCCCCC;
+          background-color: #343A40;
+        }
+
+        .side-menu-left
+        {
+          left: 0px;
+        }
+
+        .side-menu-right
+        {
+          right: 0px;
+        }
+
+        .highlight
+        {
+          margin-bottom: 1rem;
+        }
+
+        .highlight pre
+        {
+          margin: auto;
+          padding: 1% 5% 1% 5%;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="https://Celeborn2BeAlive.github.io/opengl-avance/">OpenGL Avancé</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+        
+            <li class="nav-item active">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction">Introduction</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline">Forward Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline">Deferred Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction">Shadow Mapping</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction">Post Processing</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context">Cours et Doc</a>
+            </li>
+        
+
+
+
+      
+    </ul>
+  </div>
+</nav>
+
+<main role="main" class="main-article">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col side-menu side-menu-left page-content">
+            <ul class="nav flex-column">
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/">Introduction</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/repo-github/">Repo Github</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/fiche-info/">Fiche d&#39;information</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/sdk/">Software Development Kit</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/projet/">Projet</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/liens/">Liens OpenGL</a>
+        </li>
+    
+</ul>
+        </div>
+
+        <div class="col middle-content page-content">
+            <h1 class="section-title">Software Development Kit</h1>
+
+            
+
+<p>Le repository que vous avez forké et cloné contient un SDK pour coder les TDs. Cette partie explique comment compiler les applications d&rsquo;exemple, vos futures applications, la structure du repertoire et les spécifité du fichier CMake.</p>
+
+<h1 id="compilation">Compilation</h1>
+
+<ul>
+<li>Avec CMake</li>
+<li>Support de GCC 5+ (sans boost), GCC 4.9.2 (boost requis) et Visual Studio 2015 (sans boost) (devrait aussi fonctionner avec Visual 2017, mais je n&rsquo;ai pas encore testé)</li>
+</ul>
+
+<div class="alert alert-info">
+
+CMake est un logiciel permettant de générer une solution de compilation adaptée au système sur lequel on l'execute. Par exemple sous Linux il pourra générer un makefile, sous Windows une solution Visual Studio, etc. CMake permet donc de créer un projet multi-plateforme assez facilement. C'est devenu un standard et la plupart des projets Open Source fournissent un fichier CMakeLists.txt.
+
+</div>
+
+<h2 id="linux">Linux</h2>
+
+<p>En console:</p>
+
+<ol>
+<li>Créer un repertoire <em>opengl-avance-build</em> à coté du repertoire <em>opengl-avance</em> (correspondant au clone du repo)</li>
+<li>Se placer dans <em>opengl-avance-build</em></li>
+<li>Sur un PC ou GCC 5+ est installé, taper la commande <strong>cmake ../opengl-avance</strong>. Si uniquement GCC 4.9.2 est disponible (machines de la FAC), taper la commande <strong>cmake -DGLMLV_USE_BOOST_FILESYSTEM=ON ../opengl-avance</strong></li>
+<li>Compiler avec <strong>make -j</strong></li>
+</ol>
+
+<p>Les executables sont compilés dans le repertoire <em>bin</em> du dossier de build</p>
+
+<h2 id="windows">Windows</h2>
+
+<ol>
+<li>Télécharger et installer <a href="https://cmake.org/download/">CMake GUI</a> (Windows win64-x64 Installer ou Windows win32-x86 Installer selon votre CPU) et <a href="https://www.visualstudio.com/fr/vs/community/">Visual Studio Community Edition 2015</a>.</li>
+<li>Créer un repertoire <em>opengl-avance-build</em> à coté du repertoire <em>opengl-avance</em> (correspondant au clone du repo)</li>
+<li>Lancer CMake GUI, choisir comme repertoire source le clone du repo et comme repertoire de build le dossier que vous avez créé</li>
+<li>Cliquer sur <strong>Configure</strong> et choisir comme generateur: <em>Visual Studio 14 2015 Win64</em> pour un CPU 64-bits, <em>Visual Studio 14 2015</em> pour un CPU 32-bits (ça existe encore ?)</li>
+<li>Cliquer sur <strong>Generate</strong></li>
+<li>Ouvrir la solution Visual Studio <em>opengl.sln</em> qui a été créée par CMake dans le repertoire de build</li>
+<li>Dans le panel <em>Explorateur de solutions</em>, choisir le projet <em>template</em> comme projet de démarage (clic droit dessus, puis trouver l&rsquo;option)</li>
+<li>Menu <em>Générer</em> -&gt; <em>Générer la solution</em></li>
+<li>Lancer l&rsquo;application avec F5 (debug) ou Ctrl+F5 (non debug)</li>
+</ol>
+
+<p>Les executables sont compilés dans les repertoire <em>bin/Debug</em> et <em>bin/Release</em> selon la configuration.</p>
+
+<p>Il est possible de compiler le projet <em>INSTALL</em> de la solution avec que les executables compilés soit recopiés dans un repertoire d&rsquo;installation. Par défault ce repertoire est <em>C:/Program Files/opengl</em> mais il est possible de le changer depuis CMake GUI en recherchant la variable <em>CMAKE_INSTALL_PREFIX</em> et en la modifiant.</p>
+
+<h1 id="arborescence">Arborescence</h1>
+
+<ul>
+<li>apps <em>Contient le code des executables à compiler</em></li>
+<li>cmake <em>Contient des modules cmake</em></li>
+<li>lib <em>Contient le code partagé entre les executables</em></li>
+<li>third-party <em>Contient des bibliothèques externes</em></li>
+</ul>
+
+<p>Chaque sous-repertoire de <em>apps</em> est compilé en tant qu&rsquo;application indépendante. Ainsi le code du repertoire <em>apps/template</em> sera compilé en un executable <em>template</em> (Linux) ou <em>template.exe</em> (Windows), et le code du repertoire <em>apps/triangle</em> sera compilé en un executable <em>triangle</em> (Linux) ou <em>triangle.exe</em> (Windows).</p>
+
+<p>Le répertoire <em>lib</em> est destiné à contenir du code d&rsquo;une lib (nommée <em>glmlv</em>) partagée entre les executables.</p>
+
+<p>Afin de garder un code clair, je vous conseille de créer une application différente par theme de TP. Il faudra également créer une application pour le projet.</p>
+
+<h1 id="applications-d-exemple">Applications d&rsquo;exemple</h1>
+
+<p>Le repertoire <em>apps</em> contient déjà du code pour plusieurs applications simples. Toutes sont basées sur le template de base <em>template</em> qui se contente d&rsquo;ouvrir une fenêtre contenant une GUI affichant le framerate et permettant de changer la couleur de fond.</p>
+
+<p>Ces codes simples sont destinés à vous donner quelques exemple d&rsquo;appels aux fonctions OpenGL, en particulier l&rsquo;utilisation des fonction de l&rsquo;extension direct_state_access sur la branche <em>master-direct-state-access</em>.</p>
+
+<p>Une ressource supplémentaire est <a href="https://github.com/g-truc/ogl-samples/">ce repository GIT</a> contenant un grand nombre d&rsquo;exemples de code pour l&rsquo;ensemble des features OpenGL.</p>
+
+<p>Voici une description des apps d&rsquo;exemple:</p>
+
+<ul>
+<li>triangle <em>Dessine un triangle coloré</em> (création de VBO, création de VAO, attributs entrelacés, chargement de shaders)</li>
+<li>triangle_2vbos <em>Pareil mais en utilisant 2 VBOs, un pour les positions, l&rsquo;autre pour les couleurs</em> (plusieurs VBOs pour un objet, attributs non entrelacés)</li>
+<li>quad <em>Dessine un quad coloré</em> (création d&rsquo;IBO, i.e. buffer d&rsquo;index)</li>
+</ul>
+
+<h2 id="gestion-des-shaders">Gestion des shaders</h2>
+
+<p>Concernant les shaders GLSL, le processus de compilation se charge de les copier à coté des executables afin qu&rsquo;il soient facilement accessible (de manière relative) par ces derniers. Leur extension doit être &ldquo;.glsl&rdquo; afin qu&rsquo;ils soient reconnu par le CMakeLists.txt, et ils doivent être placés dans un sous repertoire <em>shaders</em> de l&rsquo;application qui les utilise. Par convention, on suffixera &ldquo;.vs.glsl&rdquo; les vertex shader, &ldquo;.fs.glsl&rdquo; les fragments shaders, &ldquo;.gs.glsl&rdquo; les geometry shaders et &ldquo;.cs.glsl&rdquo; les compute shaders.</p>
+
+<p>La lib <em>glmlv</em> peut également contenir des shaders partagés entre les applications, en les plaçant dans le repertoire <em>lib/shaders</em>.</p>
+
+<p>Par exemple, supposons l&rsquo;arborescence suivante pour les shaders de <em>apps</em> et <em>libs</em>:</p>
+
+<ul>
+<li>apps
+
+<ul>
+<li>triangle
+
+<ul>
+<li>shaders
+
+<ul>
+<li>triangle.vs.glsl</li>
+<li>triangle.fs.glsl</li>
+</ul></li>
+</ul></li>
+<li>smab
+
+<ul>
+<li>shaders
+
+<ul>
+<li>shadow_mapping
+
+<ul>
+<li>sm.vs.glsl</li>
+<li>sm.fs.glsl</li>
+</ul></li>
+<li>deferred
+
+<ul>
+<li>gbuffer.vs.glsl</li>
+<li>gbuffer.fs.glsl</li>
+<li>shading.vs.glsl</li>
+<li>shading.fs.glsl</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>lib
+
+<ul>
+<li>shaders
+
+<ul>
+<li>post-processing
+
+<ul>
+<li>blur.cs.glsl</li>
+<li>dof.cs.glsl</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p>On a ici deux applications <em>triangle</em> et <em>smab</em>, contenant chacune des shaders différents et partageant deux shaders de <em>glmlv</em>.</p>
+
+<p>Cette arborescence sera reproduite de la manière suivante dans le repertoire de build:</p>
+
+<ul>
+<li>opengl-avance-build
+
+<ul>
+<li>bin
+
+<ul>
+<li>triangle.exe</li>
+<li>smab.exe</li>
+<li>shaders
+
+<ul>
+<li>glmlv
+
+<ul>
+<li>post-processing
+
+<ul>
+<li>blur.cs.glsl</li>
+<li>dof.cs.glsl</li>
+</ul></li>
+</ul></li>
+<li>triangle
+
+<ul>
+<li>triangle.vs.glsl</li>
+<li>triangle.fs.glsl</li>
+</ul></li>
+<li>smab
+
+<ul>
+<li>shadow_mapping
+
+<ul>
+<li>sm.vs.glsl</li>
+<li>sm.fs.glsl</li>
+</ul></li>
+<li>deferred
+
+<ul>
+<li>gbuffer.vs.glsl</li>
+<li>gbuffer.fs.glsl</li>
+<li>shading.vs.glsl</li>
+<li>shading.fs.glsl</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p>De cette manière, un code comme le suivant accède facilement aux shaders <strong>sans dépendre de l&rsquo;emplacement de ces derniers sur la machine de l&rsquo;utilisateur</strong>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">#include</span><span style=""> </span><span style="color:#75715e">&lt;glmlv/filesystem.hpp&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="">
+</span><span style=""></span><span style="color:#75715e">// Supposons que le code est celui de smab.exe, dont le chemin est C:/toto/tata/bin/smab.exe
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">(</span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">argc</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">char</span><span style="color:#f92672">**</span><span style=""> </span><span style="">argv</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// argv[0] contient toujours le chemin vers l&#39;executable, ici &#34;C:/toto/tata/bin/smab.exe&#34;
+</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#75715e">// On le récupère dans une variable de type glmlv::fs::path permettant de gérer facilement les chemins
+</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">applicationPath</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">glmlv</span><span style="color:#f92672">::</span><span style="">fs</span><span style="color:#f92672">::</span><span style="">path</span><span style="">{</span><span style=""> </span><span style="">argv</span><span style="">[</span><span style="color:#ae81ff">0</span><span style="">]</span><span style=""> </span><span style="">};</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// stem() renvoit le nom du fichier sans son extension, i.e. &#34;smab&#34;:
+</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">appName</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">applicationPath</span><span style="">.</span><span style="">stem</span><span style="">().</span><span style="">string</span><span style="">();</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// L&#39;opérateur &#39;/&#39; permet de concatener les chemins de fichier
+</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">shadersRootPath</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">applicationPath</span><span style="">.</span><span style="">parent_path</span><span style="">()</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;shaders&#34;</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// Pour les shaders de l&#39;application, on utilise la variable contenant le
+</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#75715e">// nom de l&#39;application pour accéder au dossier contenant ses shaders
+</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">pathToSMVS</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">shadersRootPath</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">appName</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;shadow_mapping&#34;</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;sm.vs.glsl&#34;</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">pathToSMFS</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">shadersRootPath</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">appName</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;shadow_mapping&#34;</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;sm.fs.glsl&#34;</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// Pour les shaders de la lib, on cible directement le dossier &#34;glmlv&#34;
+</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">pathToBlurCS</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">shadersRootPath</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;glmlv&#34;</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;post-processing&#34;</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="color:#e6db74"></span><span style="color:#e6db74">&#34;blur.cs.glsl&#34;</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="">[...]</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<h1 id="lib-interne-glmlv">Lib interne (glmlv)</h1>
+
+<p>La bibliothèque interne, dont le code est situé dans le repertoire <em>lib</em> du template, est destiné à contenir le code partagé entre les applications. <strong>Les classes et fonctions réutilisables doivent donc y être placées</strong>.</p>
+
+<p>Le template de base contient déjà plusieurs fichiers dans la lib:</p>
+
+<ul>
+<li>filesystem.hpp <em>Inclut une bibliothèque de manipulation du système de fichier (soit la lib experimentale de la std, soit la lib de boost si cmake a été appelé avec l&rsquo;option -DGLMLV_USE_BOOST_FILESYSTEM)</em></li>
+<li>gl_debug_output.cpp/hpp <em>Définit la fonction initGLDebugOutput() permettant d&rsquo;activer les message de debug d&rsquo;OpenGL</em></li>
+<li>glfw.hpp <em>Inclut simplement les header de GLFW et glad dans le bon ordre afin d&rsquo;éviter des erreurs de compil</em></li>
+<li>GLFWHandle.hpp <em>Définit la classe GLFWHandle qui initialise GLFW, ouvre une fenetre, initialise OpenGL avec glad et initialise ImGUI dans son constructeur</em></li>
+<li>GLProgram.hpp, GLShader.hpp <em>Définissent des classes et fonction helpers pour charger, compiler et linker des shaders GLSL</em></li>
+<li>Image2DRGBA.hpp <em>Définit la classe Image2DRGBA et des fonctions de lecture/écriture d&rsquo;image en surcouche de la lib stb</em></li>
+<li>imgui_impl_glfw_gl3.hpp/.cpp <em>Définit les fonctions de dessin et d&rsquo;interaction avec l&rsquo;utilisateurs nécessaires au bon fonctionnement de ImGui</em></li>
+</ul>
+
+<h1 id="libs-externes-third-party">Libs externes (third-party)</h1>
+
+<p>Le template contient plusieurs bibliothèques externes (dans <em>third-party</em>) afin de vous simplifier la vie:</p>
+
+<ul>
+<li><a href="http://www.glfw.org/">glfw</a>: bibliothèque de fenetrage et de gestion d&rsquo;inputs (similaire à la SDL)</li>
+<li><a href="http://glm.g-truc.net/">glm</a>: bibliothèque de maths &ldquo;à la GLSL&rdquo;</li>
+<li><a href="http://glad.dav1d.de/">glad</a>: bibliothèque pour &ldquo;charger&rdquo; les fonctions OpenGL 3+ (similaire à GLEW)</li>
+<li><a href="https://github.com/ocornut/imgui">imgui</a>: bibliotheque permettant d&rsquo;afficher une interface utilisateur de manière simple et en &ldquo;immediate mode&rdquo;</li>
+<li><a href="https://github.com/nlohmann/json">json</a>: bibliotheque pour lire/écrire des fichiers json, pratique pour gérer rapidement des fichiers de config</li>
+<li><a href="https://github.com/syoyo/tinyobjloader">tinyobjloader</a>: bibliotheque pour charger des fichiers OBJ (format simple de scenes 3D)</li>
+<li><a href="https://github.com/nothings/stb">stb</a> contient les header <em>stb_image.h</em> et <em>stb_image_write.h</em> de la bibliothèque stb, afin de lire et écrire des images.</li>
+</ul>
+
+<p>Mon objectif n&rsquo;étant pas de vous apprendre à utiliser ces libs, je détaillerais assez peu leurs fonctionnalités dans les TPs. Les liens ci-dessus redirigent vers des documentations assez complètes pour que vous puissiez vous débrouiller :)</p>
+
+<p>A noter que ImGui fournie une fonction ImGui::ShowTestWindow dont le code montre des exemples d&rsquo;utilisation d&rsquo;a peu près tous les widgets de la lib. Le code de cette fonction est dans le fichier <em>imgui_demo.cpp</em> du repertoire contenant la lib.</p>
+
+        </div>
+
+        <div class="col side-menu side-menu-right page-content">
+            <div class="toc-sidebar">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#compilation">Compilation</a>
+<ul>
+<li><a href="#linux">Linux</a></li>
+<li><a href="#windows">Windows</a></li>
+</ul></li>
+<li><a href="#arborescence">Arborescence</a></li>
+<li><a href="#applications-d-exemple">Applications d&rsquo;exemple</a>
+<ul>
+<li><a href="#gestion-des-shaders">Gestion des shaders</a></li>
+</ul></li>
+<li><a href="#lib-interne-glmlv">Lib interne (glmlv)</a></li>
+<li><a href="#libs-externes-third-party">Libs externes (third-party)</a></li>
+</ul>
+</nav>
+</div>
+        </div>
+    </div>
+</div>
+
+</main>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+
+<script>
+$(".toc-sidebar ul").addClass("nav flex-column");
+$(".toc-sidebar li").addClass("nav-item");
+$(".toc-sidebar a").addClass("nav-link");
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Deferred Renderer on OpenGL Avancé</title>
+    <link>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/</link>
+    <description>Recent content in Deferred Renderer on OpenGL Avancé</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>fr</language>
+    <copyright>Copyright (c) 2017, Laurent NOEL; All rights reserved.</copyright>
+    
+	<atom:link href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Pipeline de rendu</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline/</guid>
+      <description>Un problème ? Un problème bien connu du forward shading est le traitement par le fragment shader de fragments qui ne seront pas visible à l&amp;rsquo;écran. Tous les fragment occultés par d&amp;rsquo;autre fragments sont traités car le fragment shader peut potentiellement modifier la profondeur des fragments et donc les rendre visible. Ainsi, si le fragment shader est complexe, tous ces calculs inutiles peuvent devenir couteux.
+En plus de cela, il est assez difficile en une seule passe de rendu de pouvoir optimiser son algorithme pour faire moins de calcul.</description>
+    </item>
+    
+    <item>
+      <title>Geometry pass</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/geometry-pass/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/geometry-pass/</guid>
+      <description>Comme indiqué en introduction, la première passe de rendu est la Geometry Pass, dont l&amp;rsquo;objectif est de &amp;ldquo;dessiner&amp;rdquo; dans un GBuffer les informations concernant les objets visible à l&amp;rsquo;écran.
+Pour cela, il va falloir créer les textures OpenGL destinées à contenir ces informations, et les attacher à un framebuffer object, qui va permettre d&amp;rsquo;écrire dans ces textures plutot qu&amp;rsquo;a l&amp;rsquo;écran.
+Pour ces TPs, dupliquez l&amp;rsquo;app de l&amp;rsquo;exercice du foward renderer afin d&amp;rsquo;avoir une scene chargée et stockée sur GPU pour être rendue.</description>
+    </item>
+    
+    <item>
+      <title>Shading pass</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/shading-pass/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/shading-pass/</guid>
+      <description>Il faut maintenant coder la shading pass, qui a pour role d&amp;rsquo;illuminer chaque pixel en utilisant les textures du GBuffer qui viennents se substituer aux variables d&amp;rsquo;entrées du fragment shader d&amp;rsquo;un forward renderer.
+Shaders Créez deux nouveaux shaders shadingPass.vs.glsl et shadingPass.fs.glsl.
+Le VS est destiner à traiter un simple quad en 2D couvrant tout l&amp;rsquo;écran, tout ce passera dans le FS. Voici donc le code du VS:
+#version 330layout(location=0)invec2aPosition;voidmain(){gl_Position=vec4(aPosition,0,1);}  Pour le FS c&amp;rsquo;est un peu plus compliqué, mais vous pouvez repartir de celui du forward renderer.</description>
+    </item>
+    
+    <item>
+      <title>Aller plus loin</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/plus-loin/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/plus-loin/</guid>
+      <description>Voici plusieurs choses améliorable pour rendre notre deferred renderer plus interessant:
+Compute Shader pour la Shading Pass Dessiner un quad pour la shading pass, c&amp;rsquo;est en réalité se compliquer la vie pour rien. Tout ce qu&amp;rsquo;on veut c&amp;rsquo;est traiter chacun des pixels du GBuffer, en parallèle sur GPU. D&amp;rsquo;une certaine manière, ce qu&amp;rsquo;on aimerait faire c&amp;rsquo;est un genre de kernel Cuda.
+Ca tombe bien, les compute shaders (dispo depuis OpenGL 4.</description>
+    </item>
+    
+  </channel>
+</rss>

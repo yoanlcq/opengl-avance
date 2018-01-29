@@ -1,632 +1,207 @@
+
+
 <!DOCTYPE html>
-<html lang="en" class="js csstransforms3d">
-  <head>
+<html lang="fr">
+
+<head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="generator" content="Hugo 0.18.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
 
-
-    <link rel="shortcut icon" href="https://Celeborn2BeAlive.github.io/opengl-avance/images/favicon.png" type="image/x-icon" />
+    <title>Introduction - OpenGL Avancé</title>
 
     
-    <title>Introduction</title>
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/nucleus.css" rel="stylesheet">
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/font-awesome.min.css" rel="stylesheet">
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/hybrid.css" rel="stylesheet">
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/featherlight.min.css" rel="stylesheet">
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/perfect-scrollbar.min.css" rel="stylesheet">
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/horsey.css" rel="stylesheet">
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/theme.css" rel="stylesheet">
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/hugo-theme.css" rel="stylesheet">
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/jquery-2.x.min.js"></script>
-    <style type="text/css">:root #header + #content > #left > #rlblock_left
-    {display:none !important;}</style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
     <style>
-    #header-wrapper {
-        background: #F0F0F0;
-        color: #fff;
-        text-align: center;
-        border-bottom: 4px solid #E0E0E0;
-        padding: 1rem;
-    }
+        body
+        {
+          font-family: "Work Sans", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          color: #444444;
+        }
 
-    code.has-jax {font: inherit;
-              font-size: 100%;
-              background: inherit;
-              border: inherit;
-              color: #515151;}
-</style>
-  </head>
-  <body class="" data-url="/04-shadow-mapping/introduction/">
-    <nav id="sidebar">
-  <div id="header-wrapper">
-    <div id="header">
-      
+        main
+        {
+          height:100vh;
+          margin-top: 56px;;
+        }
 
-<script src="https://Celeborn2BeAlive.github.io/opengl-avance/scripts/sylvester.js" type="text/javascript"></script>
-<script src="https://Celeborn2BeAlive.github.io/opengl-avance/scripts/glUtils.js" type="text/javascript"></script>
-<script src="https://Celeborn2BeAlive.github.io/opengl-avance/scripts/webgl-demo.js" type="text/javascript"></script>
+        h1, h2, h3, h4, h5, h6
+        {
+          margin: 2.5rem 0 1.5rem 0;
+        }
 
-<script id="shader-fs" type="x-shader/x-fragment">
-      varying highp vec2 vTextureCoord;
+        h1.section-title
+        {
+          font-family: "Novacento Sans Wide", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 3.25rem;
+          margin: 1.0rem 0 1.5rem 0;
+          font-weight: 200;
+        }
 
-      uniform sampler2D uSampler;
+        main a:hover
+        {
+          text-decoration: none;
+        }
 
-      void main(void) {
-        gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
-      }
-</script>
+        main table
+        {
+          width: 100%;
+          margin-bottom: 1rem;
+        }
 
-    
+        main img
+        {
+          width: 100%;
+        }
 
-<script id="shader-vs" type="x-shader/x-vertex">
-  attribute vec3 aVertexPosition;
-  attribute vec2 aTextureCoord;
+        .jumbotron
+        {
+          background-color: #EEEEEE;
+        }
 
-  uniform mat4 uMVMatrix;
-  uniform mat4 uPMatrix;
+        .page-content
+        {
+          padding-top: 16px;
+          padding-bottom: 1.5rem;
+        }
 
-  varying highp vec2 vTextureCoord;
+        .main-article
+        {
+          margin-left: 15%;
+          margin-right: 15%;
+        }
 
-  void main(void) {
-    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-    vTextureCoord = aTextureCoord;
-  }
-</script>
+        .middle-content
+        {
+          text-align: justify;
+        }
 
-<canvas width = "200" height = "200" id = "glcanvas"></canvas>
+        .side-menu
+        {
+          background-color: #EEEEEE;
+          position: fixed;
+          width: 15%;
+          height: 100%;
+          font-size: 1.0em;
+          padding-left: 0px;
+          padding-right: 0px;
+        }
 
-<script>
-    start('https:\/\/celeborn2bealive.github.io\/opengl-avance\/' + 'images/');
-</script>
+        .side-menu li li
+        {
+          font-size: 0.9em;
+          width: 100%;
+        }
 
-<script type="text/javascript"
-  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
+        .side-menu a
+        {
+          color: #555555;
+          font-weight: bold;
+        }
 
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {
-    inlineMath: [['$','$'], ['\\(','\\)']],
-    displayMath: [['$$','$$'], ['\[','\]']],
-    processEscapes: true,
-    processEnvironments: true,
-    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-    TeX: { equationNumbers: { autoNumber: "AMS" },
-         extensions: ["AMSmath.js", "AMSsymbols.js"] }
-  }
-});
-</script>
+        .side-menu a:hover
+        {
+          color: #CCCCCC;
+          background-color: #343A40;
+        }
 
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    
-    
-    
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i = 0; i < all.length; i += 1) {
-        all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-});
-</script>
-    </div>
-    
-</div>
+        .side-menu-left
+        {
+          left: 0px;
+        }
 
+        .side-menu-right
+        {
+          right: 0px;
+        }
 
-  <div class="highlightable">
-    <ul class="topics">
-      
-      
+        .highlight
+        {
+          margin-bottom: 1rem;
+        }
+
+        .highlight pre
+        {
+          margin: auto;
+          padding: 1% 5% 1% 5%;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="https://Celeborn2BeAlive.github.io/opengl-avance/">OpenGL Avancé</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
         
-      
-      
-      
-      
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction">Introduction</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline">Forward Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline">Deferred Renderer</a>
+            </li>
+        
+            <li class="nav-item active">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction">Shadow Mapping</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction">Post Processing</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context">Cours et Doc</a>
+            </li>
+        
 
-      
-        
-      
-      
-      
 
-      <li class="dd-item  " data-nav-id="/01-introduction/">
-        <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/">
-          <span>
-            
-              <b>1. </b>
-            
-             Mise en place
-            
-           </span>
-        </a>
-        
-        <ul>
-          
-          
-          
-          
-            <li class="dd-item " data-nav-id="/01-introduction/introduction/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/">
-                <span>Introduction     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/01-introduction/code-template/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/code-template/">
-                <span>Code template     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/01-introduction/lib-externes/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-externes/">
-                <span>Bibliotheques externes     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/01-introduction/lib-interne/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-interne/">
-                <span>Bibliotheque interne (glmlv)     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/01-introduction/projet/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/projet/">
-                <span>Projet     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/01-introduction/liens/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/liens/">
-                <span>Liens     </i></span>
-              </a>
-            </li>
-          
-          
-        </ul>
-        
-      </li>
-      
-      
-      
 
-      
-        
-      
-      
-      
-
-      <li class="dd-item  " data-nav-id="/02-forward-shading/">
-        <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/">
-          <span>
-            
-              <b>2. </b>
-            
-             Forward Shading (Rappels)
-            
-           </span>
-        </a>
-        
-        <ul>
-          
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/pipeline/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/pipeline/">
-                <span>Pipeline de rendu     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/geometrie/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/geometrie/">
-                <span>Geometrie     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/shaders/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/shaders/">
-                <span>Shaders     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/transformations/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/transformations/">
-                <span>Transformations     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/lighting/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/lighting/">
-                <span>Lighting     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/textures/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/textures/">
-                <span>Textures     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/load-obj/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/load-obj/">
-                <span>Chargement de modèles OBJ     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/plus-loin/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/plus-loin/">
-                <span>Aller plus loin     </i></span>
-              </a>
-            </li>
-          
-          
-        </ul>
-        
-      </li>
-      
-      
-      
-
-      
-        
-      
-      
-      
-
-      <li class="dd-item  " data-nav-id="/03-deferred-shading/">
-        <a href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/">
-          <span>
-            
-              <b>3. </b>
-            
-             Deferred Shading
-            
-           </span>
-        </a>
-        
-        <ul>
-          
-          
-          
-          
-            <li class="dd-item " data-nav-id="/03-deferred-shading/pipeline/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/pipeline/">
-                <span>Pipeline de rendu     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/03-deferred-shading/geometry-pass/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/geometry-pass/">
-                <span>Geometry pass     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/03-deferred-shading/shading-pass/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/shading-pass/">
-                <span>Shading pass     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/03-deferred-shading/plus-loin/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/plus-loin/">
-                <span>Aller plus loin     </i></span>
-              </a>
-            </li>
-          
-          
-        </ul>
-        
-      </li>
-      
-      
-      
-
-      
-        
-      
-      
-      
-
-      <li class="dd-item  parent" data-nav-id="/04-shadow-mapping/">
-        <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/">
-          <span>
-            
-              <b>4. </b>
-            
-             Shadow Mapping
-            
-           </span>
-        </a>
-        
-        <ul>
-          
-          
-          
-          
-            <li class="dd-item active" data-nav-id="/04-shadow-mapping/introduction/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction/">
-                <span>Introduction     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/04-shadow-mapping/dir-shadow-map/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map/">
-                <span>Directional Shadow Map     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/04-shadow-mapping/point-shadow-map/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map/">
-                <span>Point Shadow Map     </i></span>
-              </a>
-            </li>
-          
-          
-        </ul>
-        
-      </li>
-      
-      
-      
-
-      
-        
-      
-      
-      
-
-      <li class="dd-item  " data-nav-id="/05-post-processing/">
-        <a href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/">
-          <span>
-            
-              <b>5. </b>
-            
-             Post-Processing
-            
-           </span>
-        </a>
-        
-        <ul>
-          
-          
-          
-          
-            <li class="dd-item " data-nav-id="/05-post-processing/introduction/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction/">
-                <span>Introduction     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/05-post-processing/gamma-correction/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/gamma-correction/">
-                <span>Gamma correction     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/05-post-processing/extraction-contours/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/extraction-contours/">
-                <span>Extraction de contours     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/05-post-processing/depth-of-field/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/depth-of-field/">
-                <span>Depth of field     </i></span>
-              </a>
-            </li>
-          
-          
-        </ul>
-        
-      </li>
-      
-      
-      
-
-      
-        
-      
-      
-      
-
-      <li class="dd-item  " data-nav-id="/06-course/">
-        <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/">
-          <span>
-            
-              <b>Annexe.</b>
-            
-             Cours
-            
-           </span>
-        </a>
-        
-        <ul>
-          
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/opengl-context/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context/">
-                <span>Qu&#39;est ce que OpenGL ?     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/opengl-extensions/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-extensions/">
-                <span>OpenGL Extensions     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/gpu-pipeline/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/gpu-pipeline/">
-                <span>Pipeline de Rendu     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/opengl-objects/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-objects/">
-                <span>OpenGL Objects     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/buffer-objects/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/buffer-objects/">
-                <span>Buffer Objects     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/vertex-array-objects/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/vertex-array-objects/">
-                <span>Vertex Array Objects     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/textures/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/textures/">
-                <span>Texture et Sampler Objects     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/framebuffer-objects/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/framebuffer-objects/">
-                <span>Framebuffer Objects     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/shaders/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/shaders/">
-                <span>Shaders     </i></span>
-              </a>
-            </li>
-          
-          
-        </ul>
-        
-      </li>
-      
       
     </ul>
-    <hr>
-     
-    <section id="footer">
-      <p>TDs écris par <a href="http://laurentnoel.fr/">Laurent Noël</a></p>
-    </section>
   </div>
 </nav>
 
-        <section id="body">
-        <div id="overlay"></div>
+<main role="main" class="main-article">
 
-        <div class="padding highlightable">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col side-menu side-menu-left page-content">
+            <ul class="nav flex-column">
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction/">Introduction</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map/">Directional Shadow Map</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map/">Point Shadow Map</a>
+        </li>
+    
+</ul>
+        </div>
 
-            <div id="top-bar">
-              
-              <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
-                  <span id="sidebar-toggle-span">
-                      <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
-                        <i class="fa fa-bars"></i>
-                      </a>
-                  </span>
-                
-                <span id="toc-menu"><a href=""><i class="fa fa-list-alt"></i></a></span>
-                
-                
-                
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                    
-                    
-                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/" itemprop="url"><span itemprop="title">Shadow Mapping</span></a> <i class="fa fa-angle-right"></i>
-                    
-                  
-                
-                  
-                
-                  
-                
-                <span itemprop="title"> Introduction</span>
-              </div>
-              
-                  <div class="progress">
-    <div class="wrapper">
+        <div class="col middle-content page-content">
+            <h1 class="section-title">Introduction</h1>
 
-    </div>
-</div>
-
-              
-
-            </div>
-            
-    	        <div id="body-inner">
-                
-                <h1>Introduction</h1>
-                
-
-<p>Nous avons jusqu&rsquo;a présent calculé l&rsquo;éclairage des lumières sans prise en compte des ombres portées par les objets: la lumière passe à travers&hellip;</p>
+            <p>Nous avons jusqu&rsquo;a présent calculé l&rsquo;éclairage des lumières sans prise en compte des ombres portées par les objets: la lumière passe à travers&hellip;</p>
 
 <p>Pour savoir si un fragment est dans la lumière ou dans l&rsquo;ombre par rapport à une light donnée, il faut savoir si un objet intersecte le rayon connectant le fragment à la lumière. Il y a plusieurs moyens de calculer cette information. Deux méthodes sont principalement utilisées en rendu temps réel: le <a href="https://www.wikiwand.com/en/Shadow_mapping">shadow mapping</a> et les <a href="https://www.wikiwand.com/en/Shadow_volume">shadow volumes</a>.</p>
 
@@ -638,38 +213,36 @@ MathJax.Hub.Config({
 
 <p>Cet algorithme peut être implémenté sur un forward renderer ou sur un deferred renderer. Pour ces TPs nous allons repartir du deferred renderer. Si vous ne l&rsquo;avez pas terminé, vous pouvez le récupérer sur la branche cheat du repository.</p>
 
-<div class="notices note" ><p>Afin de faire vos tests plus rapidement, j&rsquo;ai ajouté un argument à la fonction <em>glmlv::loadObj</em> qui permet d&rsquo;éviter le chargement des textures et donc de lancer plus rapidement l&rsquo;application (mettre l&rsquo;argument à <em>false</em> pour ne pas charger les textures). Il faudra peut être puller la dernière version du repo pour récupérer ce changement.</p>
+<div class="alert alert-info">
+<p>Afin de faire vos tests plus rapidement, j&rsquo;ai ajouté un argument à la fonction <em>glmlv::loadObj</em> qui permet d&rsquo;éviter le chargement des textures et donc de lancer plus rapidement l&rsquo;application (mettre l&rsquo;argument à <em>false</em> pour ne pas charger les textures). Il faudra peut être puller la dernière version du repo pour récupérer ce changement.</p>
+
 </div>
 
+        </div>
 
+        <div class="col side-menu side-menu-right page-content">
+            <div class="toc-sidebar">
 
-      
-      </div>
+</div>
+        </div>
     </div>
+</div>
 
-    <div id="navigation">
-        
-        <a class="nav nav-prev" href="https://celeborn2bealive.github.io/opengl-avance//04-shadow-mapping/"> <i class="fa fa-chevron-left"></i></a>
-        <a class="nav nav-next" href="https://celeborn2bealive.github.io/opengl-avance//04-shadow-mapping/dir-shadow-map" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
-    </div>
+</main>
 
-    </section>
-    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
-      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
-    </div>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/clipboard.min.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/perfect-scrollbar.min.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/perfect-scrollbar.jquery.min.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/jquery.sticky-kit.min.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/featherlight.min.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/html5shiv-printshiv.min.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/highlight.pack.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/modernizr.custom.71422.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/learn.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/hugo-learn.js"></script>
-    
 
-  </body>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+
+<script>
+$(".toc-sidebar ul").addClass("nav flex-column");
+$(".toc-sidebar li").addClass("nav-item");
+$(".toc-sidebar a").addClass("nav-link");
+</script>
+
+
+
+</body>
 </html>
-

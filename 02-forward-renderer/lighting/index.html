@@ -1,0 +1,293 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>Lighting - OpenGL Avancé</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
+    <style>
+        body
+        {
+          font-family: "Work Sans", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          color: #444444;
+        }
+
+        main
+        {
+          height:100vh;
+          margin-top: 56px;;
+        }
+
+        h1, h2, h3, h4, h5, h6
+        {
+          margin: 2.5rem 0 1.5rem 0;
+        }
+
+        h1.section-title
+        {
+          font-family: "Novacento Sans Wide", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 3.25rem;
+          margin: 1.0rem 0 1.5rem 0;
+          font-weight: 200;
+        }
+
+        main a:hover
+        {
+          text-decoration: none;
+        }
+
+        main table
+        {
+          width: 100%;
+          margin-bottom: 1rem;
+        }
+
+        main img
+        {
+          width: 100%;
+        }
+
+        .jumbotron
+        {
+          background-color: #EEEEEE;
+        }
+
+        .page-content
+        {
+          padding-top: 16px;
+          padding-bottom: 1.5rem;
+        }
+
+        .main-article
+        {
+          margin-left: 15%;
+          margin-right: 15%;
+        }
+
+        .middle-content
+        {
+          text-align: justify;
+        }
+
+        .side-menu
+        {
+          background-color: #EEEEEE;
+          position: fixed;
+          width: 15%;
+          height: 100%;
+          font-size: 1.0em;
+          padding-left: 0px;
+          padding-right: 0px;
+        }
+
+        .side-menu li li
+        {
+          font-size: 0.9em;
+          width: 100%;
+        }
+
+        .side-menu a
+        {
+          color: #555555;
+          font-weight: bold;
+        }
+
+        .side-menu a:hover
+        {
+          color: #CCCCCC;
+          background-color: #343A40;
+        }
+
+        .side-menu-left
+        {
+          left: 0px;
+        }
+
+        .side-menu-right
+        {
+          right: 0px;
+        }
+
+        .highlight
+        {
+          margin-bottom: 1rem;
+        }
+
+        .highlight pre
+        {
+          margin: auto;
+          padding: 1% 5% 1% 5%;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="https://Celeborn2BeAlive.github.io/opengl-avance/">OpenGL Avancé</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction">Introduction</a>
+            </li>
+        
+            <li class="nav-item active">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline">Forward Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline">Deferred Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction">Shadow Mapping</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction">Post Processing</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context">Cours et Doc</a>
+            </li>
+        
+
+
+
+      
+    </ul>
+  </div>
+</nav>
+
+<main role="main" class="main-article">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col side-menu side-menu-left page-content">
+            <ul class="nav flex-column">
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline/">Pipeline de rendu</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/geometrie/">Geometrie</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/shaders/">Shaders</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/transformations/">Transformations</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/lighting/">Lighting</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/textures/">Textures</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/load-obj/">Chargement de modèles OBJ</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/plus-loin/">Aller plus loin</a>
+        </li>
+    
+</ul>
+        </div>
+
+        <div class="col middle-content page-content">
+            <h1 class="section-title">Lighting</h1>
+
+            
+
+<h1 id="fragment-shader">Fragment Shader</h1>
+
+<p>Implémenter un modèle d&rsquo;illumination diffuse dans le fragment shader <em>forward-renderer.fs.glsl</em></p>
+
+<ul>
+<li>Ajouter des variables uniform <em>vec3 uDirectionalLightDir</em> et <em>vec3 uDirectionalLightIntensity</em> destinés à stocker les paramètres d&rsquo;une lumière directionnelle (en espace view)</li>
+<li>Ajouter des variables uniform <em>vec3 uPointLightPosition</em> et <em>vec3 uPointLightIntensity</em> destinés à stocker les paramètres d&rsquo;une lumière ponctuelle (en espace view)</li>
+<li>Ajouter une variable uniform <em>vec3 uKd</em> destiné à stocker la couleur diffuse de l&rsquo;objet en cours de rendu</li>
+<li>Dans le main, utiliser ces variables ainsi que les attributs du fragment pour calculer la couleur du fragment:</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-glsl" data-lang="glsl"><span style="color:#66d9ef">float</span><span style=""> </span><span style="">distToPointLight</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">length</span><span style="">(</span><span style="">uPointLightPosition</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="">vViewSpacePosition</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">vec3</span><span style=""> </span><span style="">dirToPointLight</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">(</span><span style="">uPointLightPosition</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="">vViewSpacePosition</span><span style="">)</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">distToPointLight</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">fColor</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">uKd</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">(</span><span style="">uDirectionalLightIntensity</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">max</span><span style="">(</span><span style="color:#ae81ff">0.0</span><span style="">,</span><span style=""> </span><span style="">dot</span><span style="">(</span><span style="">vViewSpaceNormal</span><span style="">,</span><span style=""> </span><span style="">uDirectionalLightDir</span><span style="">))</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">uPointLightIntensity</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">max</span><span style="">(</span><span style="color:#ae81ff">0.0</span><span style="">,</span><span style=""> </span><span style="">dot</span><span style="">(</span><span style="">vViewSpaceNormal</span><span style="">,</span><span style=""> </span><span style="">dirToPointLight</span><span style="">))</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">(</span><span style="">distToPointLight</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">distToPointLight</span><span style="">))</span></code></pre>
+</div>
+<h1 id="application">Application</h1>
+
+<p>A l&rsquo;initialisation:</p>
+
+<ul>
+<li>Récupérer les locations des nouvelles uniform</li>
+</ul>
+
+<p>Au rendu:</p>
+
+<ul>
+<li>Envoyer les différente uniformes avant le rendu de chaque objet (les lights doivent être partagé)</li>
+<li>Faire en sortie de pouvoir régler les paramètres des lights et la couleur diffuse des objets depuis la GUI</li>
+</ul>
+
+<p>Fonctions GL à utiliser:</p>
+
+<ul>
+<li>glUniform3f</li>
+</ul>
+
+        </div>
+
+        <div class="col side-menu side-menu-right page-content">
+            <div class="toc-sidebar">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#fragment-shader">Fragment Shader</a></li>
+<li><a href="#application">Application</a></li>
+</ul>
+</nav>
+</div>
+        </div>
+    </div>
+</div>
+
+</main>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+
+<script>
+$(".toc-sidebar ul").addClass("nav flex-column");
+$(".toc-sidebar li").addClass("nav-item");
+$(".toc-sidebar a").addClass("nav-link");
+</script>
+
+
+
+</body>
+</html>

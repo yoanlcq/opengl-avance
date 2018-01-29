@@ -1,0 +1,276 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>Aller plus loin - OpenGL Avancé</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
+    <style>
+        body
+        {
+          font-family: "Work Sans", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          color: #444444;
+        }
+
+        main
+        {
+          height:100vh;
+          margin-top: 56px;;
+        }
+
+        h1, h2, h3, h4, h5, h6
+        {
+          margin: 2.5rem 0 1.5rem 0;
+        }
+
+        h1.section-title
+        {
+          font-family: "Novacento Sans Wide", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 3.25rem;
+          margin: 1.0rem 0 1.5rem 0;
+          font-weight: 200;
+        }
+
+        main a:hover
+        {
+          text-decoration: none;
+        }
+
+        main table
+        {
+          width: 100%;
+          margin-bottom: 1rem;
+        }
+
+        main img
+        {
+          width: 100%;
+        }
+
+        .jumbotron
+        {
+          background-color: #EEEEEE;
+        }
+
+        .page-content
+        {
+          padding-top: 16px;
+          padding-bottom: 1.5rem;
+        }
+
+        .main-article
+        {
+          margin-left: 15%;
+          margin-right: 15%;
+        }
+
+        .middle-content
+        {
+          text-align: justify;
+        }
+
+        .side-menu
+        {
+          background-color: #EEEEEE;
+          position: fixed;
+          width: 15%;
+          height: 100%;
+          font-size: 1.0em;
+          padding-left: 0px;
+          padding-right: 0px;
+        }
+
+        .side-menu li li
+        {
+          font-size: 0.9em;
+          width: 100%;
+        }
+
+        .side-menu a
+        {
+          color: #555555;
+          font-weight: bold;
+        }
+
+        .side-menu a:hover
+        {
+          color: #CCCCCC;
+          background-color: #343A40;
+        }
+
+        .side-menu-left
+        {
+          left: 0px;
+        }
+
+        .side-menu-right
+        {
+          right: 0px;
+        }
+
+        .highlight
+        {
+          margin-bottom: 1rem;
+        }
+
+        .highlight pre
+        {
+          margin: auto;
+          padding: 1% 5% 1% 5%;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="https://Celeborn2BeAlive.github.io/opengl-avance/">OpenGL Avancé</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction">Introduction</a>
+            </li>
+        
+            <li class="nav-item active">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline">Forward Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline">Deferred Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction">Shadow Mapping</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction">Post Processing</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context">Cours et Doc</a>
+            </li>
+        
+
+
+
+      
+    </ul>
+  </div>
+</nav>
+
+<main role="main" class="main-article">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col side-menu side-menu-left page-content">
+            <ul class="nav flex-column">
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline/">Pipeline de rendu</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/geometrie/">Geometrie</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/shaders/">Shaders</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/transformations/">Transformations</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/lighting/">Lighting</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/textures/">Textures</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/load-obj/">Chargement de modèles OBJ</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/plus-loin/">Aller plus loin</a>
+        </li>
+    
+</ul>
+        </div>
+
+        <div class="col middle-content page-content">
+            <h1 class="section-title">Aller plus loin</h1>
+
+            
+
+<p>Voici plusieurs choses améliorable pour rendre notre forward renderer plus interessant:</p>
+
+<h1 id="normal-mapping">Normal Mapping</h1>
+
+<p>Ajouter une texture de normales dans le fragment shader et faire le necessaire pour charger la texture de normales de chaque objet.</p>
+
+<p>L&rsquo;utiliser à la place de <em>uViewSpaceNormal</em> pour calculer l&rsquo;illumination.</p>
+
+<p>Vous pouvez vous réferer à <a href="http://ogldev.atspace.co.uk/www/tutorial26/tutorial26.html">ce tutorial</a>.</p>
+
+<h1 id="plusieurs-lights">Plusieurs Lights</h1>
+
+<p>Actuellement le shader ne gère que deux lumières, c&rsquo;est un peu triste.</p>
+
+<p>Utilisez les <a href="https://www.khronos.org/opengl/wiki/Shader_Storage_Buffer_Object">Shader Storage Buffer Objects</a> pour accéder à des tableau de directions, positions et intensités depuis le fragment shader, correspondant à un nombre arbitraire de directional et point lights (stockez leur nombre dans des uniforms).</p>
+
+<p>Bouclez sur ces lights et accumulez la contribution de chacune avant de l&rsquo;écrire dans la variable de sortie <em>fFragColor</em>.</p>
+
+        </div>
+
+        <div class="col side-menu side-menu-right page-content">
+            <div class="toc-sidebar">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#normal-mapping">Normal Mapping</a></li>
+<li><a href="#plusieurs-lights">Plusieurs Lights</a></li>
+</ul>
+</nav>
+</div>
+        </div>
+    </div>
+</div>
+
+</main>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+
+<script>
+$(".toc-sidebar ul").addClass("nav flex-column");
+$(".toc-sidebar li").addClass("nav-item");
+$(".toc-sidebar a").addClass("nav-link");
+</script>
+
+
+
+</body>
+</html>

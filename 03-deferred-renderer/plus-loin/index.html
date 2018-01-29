@@ -1,0 +1,310 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>Aller plus loin - OpenGL Avancé</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
+    <style>
+        body
+        {
+          font-family: "Work Sans", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          color: #444444;
+        }
+
+        main
+        {
+          height:100vh;
+          margin-top: 56px;;
+        }
+
+        h1, h2, h3, h4, h5, h6
+        {
+          margin: 2.5rem 0 1.5rem 0;
+        }
+
+        h1.section-title
+        {
+          font-family: "Novacento Sans Wide", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 3.25rem;
+          margin: 1.0rem 0 1.5rem 0;
+          font-weight: 200;
+        }
+
+        main a:hover
+        {
+          text-decoration: none;
+        }
+
+        main table
+        {
+          width: 100%;
+          margin-bottom: 1rem;
+        }
+
+        main img
+        {
+          width: 100%;
+        }
+
+        .jumbotron
+        {
+          background-color: #EEEEEE;
+        }
+
+        .page-content
+        {
+          padding-top: 16px;
+          padding-bottom: 1.5rem;
+        }
+
+        .main-article
+        {
+          margin-left: 15%;
+          margin-right: 15%;
+        }
+
+        .middle-content
+        {
+          text-align: justify;
+        }
+
+        .side-menu
+        {
+          background-color: #EEEEEE;
+          position: fixed;
+          width: 15%;
+          height: 100%;
+          font-size: 1.0em;
+          padding-left: 0px;
+          padding-right: 0px;
+        }
+
+        .side-menu li li
+        {
+          font-size: 0.9em;
+          width: 100%;
+        }
+
+        .side-menu a
+        {
+          color: #555555;
+          font-weight: bold;
+        }
+
+        .side-menu a:hover
+        {
+          color: #CCCCCC;
+          background-color: #343A40;
+        }
+
+        .side-menu-left
+        {
+          left: 0px;
+        }
+
+        .side-menu-right
+        {
+          right: 0px;
+        }
+
+        .highlight
+        {
+          margin-bottom: 1rem;
+        }
+
+        .highlight pre
+        {
+          margin: auto;
+          padding: 1% 5% 1% 5%;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="https://Celeborn2BeAlive.github.io/opengl-avance/">OpenGL Avancé</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction">Introduction</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline">Forward Renderer</a>
+            </li>
+        
+            <li class="nav-item active">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline">Deferred Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction">Shadow Mapping</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction">Post Processing</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context">Cours et Doc</a>
+            </li>
+        
+
+
+
+      
+    </ul>
+  </div>
+</nav>
+
+<main role="main" class="main-article">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col side-menu side-menu-left page-content">
+            <ul class="nav flex-column">
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline/">Pipeline de rendu</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/geometry-pass/">Geometry pass</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/shading-pass/">Shading pass</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/plus-loin/">Aller plus loin</a>
+        </li>
+    
+</ul>
+        </div>
+
+        <div class="col middle-content page-content">
+            <h1 class="section-title">Aller plus loin</h1>
+
+            
+
+<p>Voici plusieurs choses améliorable pour rendre notre deferred renderer plus interessant:</p>
+
+<h1 id="compute-shader-pour-la-shading-pass">Compute Shader pour la Shading Pass</h1>
+
+<p>Dessiner un quad pour la shading pass, c&rsquo;est en réalité se compliquer la vie pour rien. Tout ce qu&rsquo;on veut c&rsquo;est traiter chacun des pixels du GBuffer, en parallèle sur GPU. D&rsquo;une certaine manière, ce qu&rsquo;on aimerait faire c&rsquo;est un genre de kernel Cuda.</p>
+
+<p>Ca tombe bien, les compute shaders (dispo depuis OpenGL 4.3) permettent exactement de faire ça.</p>
+
+<p>Trouvez vous un tuto sur le net sur les compute shaders et essayez d&rsquo;adapter votre shading pass pour utiliser un CS plutot que dessin quad + VS + FS.</p>
+
+<h1 id="light-culling-simple">Light Culling simple</h1>
+
+<p>Il est assez facile en deferred de faire le rendu de la contribution de plusieurs lights en accumulant le résultat de plusieurs shading pass.</p>
+
+<p>De plus, avec des lights dont l&rsquo;interaction est limités dans l&rsquo;espace (point light avec un radius par exemple), il est possible de remplacer le dessin du Quad par une forme quelquonque qui vient couvrir en espace ecran la forme du volume projeté de la light. On traite ainsi moins de pixels a chaque shading pass et on gagne du temps. Les <a href="http://ogldev.atspace.co.uk/www/tutorial36/tutorial36.html">parties 2 et 3</a> du tutorial d&rsquo;ogldev détaillent cette méthode. Implémentez là.</p>
+
+<div class="alert alert-warning">
+<p>Ces deux exercices sont un peu antagonistes. Dans le premier on remplace le dessin du Quad par l&rsquo;execution d&rsquo;un compute shader.
+Dans le deuxième on remplace le dessin du Quad par des dessins de différents formes.</p>
+
+</div>
+
+<h1 id="conclusion-et-forward">Conclusion et Forward+</h1>
+
+<p>Ces deux premiers TPs vous ont permis d&rsquo;implémenter les deux pipelines de rendu temps réel les plus utilisé: forward et deferred.</p>
+
+<p>Ils ont tous les deux des avantages et inconvénients:</p>
+
+<h2 id="forward">Forward</h2>
+
+<p>Avantages:
+- Simple a mettre en oeuvre, un seul programme GLSL
+- Accès aux propriétés de l&rsquo;objet en cours de rendu au moment de l&rsquo;illumination via les uniforms
+- Possibilité d&rsquo;exploiter les techniques d&rsquo;anti-aliasing du GPU</p>
+
+<p>Désavantages:
+- Potentiellement beaucoup de fragment traités puis occultés
+- Pas d&rsquo;information globale sur l&rsquo;ensemble de la géométrie visible (en tout cas pas sans précalcul)</p>
+
+<h2 id="deferred">Deferred</h2>
+
+<p>Avantages:
+- Possibilité d&rsquo;utiliser le GBuffer pour faire du light culling, post-process ou autre
+- Shading pass seulement sur les fragments non occultés -&gt; gain de perfs si shading pass couteuse (souvent le cas)</p>
+
+<p>Désavantages:
+- Gourmand en mémoire et bande passante (grosse résolution = grosses textures à sortir, vive la 4K et la VR !)
+- Pour avoir accès a des informations sur les objets à rendre dans la shading pass, il faut les écrire dans des textures -&gt; difficile de mélanger différent modèles de shading sur un meme rendu
+- Par defaut, impossible de rendre des objets transparents</p>
+
+<h2 id="forward-1">Forward+</h2>
+
+<p>Une autre méthode a été développé par AMD, appelé Forward + (<a href="http://www.gdcvault.com/play/1016435/Forward-Rendering-Pipeline-for-Modern">voir ici</a> et <a href="http://fr.slideshare.net/takahiroharada/forward-34779335">la</a>), qui tente d&rsquo;obtenir les avantages des deux méthodes sans les inconvénients.</p>
+
+<p>Sans trop entrer dans les détails, voici le fonctionnement général de l&rsquo;algo:</p>
+
+<ul>
+<li>depth pré-pass: rendu uniquement du depth buffer</li>
+<li>light culling: utilisation du depth buffer pour associer les lights à des tiles de pixels</li>
+<li>lighting: rendu en forward, mais utilisation du depth buffer précalculé pour discard les fragments occultés, + utilisation des lights associés aux tiles de pixels</li>
+</ul>
+
+        </div>
+
+        <div class="col side-menu side-menu-right page-content">
+            <div class="toc-sidebar">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#compute-shader-pour-la-shading-pass">Compute Shader pour la Shading Pass</a></li>
+<li><a href="#light-culling-simple">Light Culling simple</a></li>
+<li><a href="#conclusion-et-forward">Conclusion et Forward+</a>
+<ul>
+<li><a href="#forward">Forward</a></li>
+<li><a href="#deferred">Deferred</a></li>
+<li><a href="#forward-1">Forward+</a></li>
+</ul></li>
+</ul>
+</nav>
+</div>
+        </div>
+    </div>
+</div>
+
+</main>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+
+<script>
+$(".toc-sidebar ul").addClass("nav flex-column");
+$(".toc-sidebar li").addClass("nav-item");
+$(".toc-sidebar a").addClass("nav-link");
+</script>
+
+
+
+</body>
+</html>

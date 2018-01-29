@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Forward Renderer on OpenGL Avancé</title>
+    <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/</link>
+    <description>Recent content in Forward Renderer on OpenGL Avancé</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>fr</language>
+    <copyright>Copyright (c) 2017, Laurent NOEL; All rights reserved.</copyright>
+    <lastBuildDate>Thu, 29 Dec 2016 12:22:16 +0100</lastBuildDate>
+    
+	<atom:link href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Pipeline de rendu</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline/</guid>
+      <description>Le forward shading (ou forward rendering) est le rendu &amp;ldquo;classique&amp;rdquo; OpenGL que vous avez normalement vu l&amp;rsquo;année dernière. Cette partie est donc une série d&amp;rsquo;exercices pour implémenter rapidement un forward renderer afin de se remettre tranquilement dans le bain.
+Pour chaque objet de la scène, un forward renderer &amp;ldquo;envoie&amp;rdquo; la géométrie de l&amp;rsquo;objet dans un vertex shader afin de projeter les sommets à l&amp;rsquo;écran. La carte graphique rasterise alors les triangles projetés pour produire des fragments.</description>
+    </item>
+    
+    <item>
+      <title>Geometrie</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/geometrie/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/geometrie/</guid>
+      <description>Vous aurez un écran noir jusqu&amp;rsquo;a la fin de la première partie de l&amp;rsquo;exercice Transformations: OpenGL demande généralement beaucoup de code d&amp;rsquo;initialisation avant de pouvoir afficher quelque chose.
+ Vous allez commencer par dessiner des cubes et spheres en 3D. La lib glmlv contient deux fonctions makeCube() et makeSphere() (simple_geometry.hpp) permettant de construire des tableaux de sommets et indices pour ces deux forme simple.
+A l&amp;rsquo;initialisation (constructeur de Application):
+ Utiliser ces fonctions pour construire la géométrie d&amp;rsquo;une sphere et d&amp;rsquo;un cube.</description>
+    </item>
+    
+    <item>
+      <title>Shaders</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/shaders/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/shaders/</guid>
+      <description>Créez un sous-dossier shader dans le dossier de l&amp;rsquo;application foward-renderer et créez le fichiers forward.vs.glsl et forward.fs.glsl.
+Voir les différents shaders des applications déjà présente pour vous aider.
+Ce TD de l&amp;rsquo;année précedente explique également la théorie.
+Le Vertex Shader  Le vertex shader doit prendre en entrée une position (vec3 aPosition), une normale (vec3 aNormal) et des texCoords (vec2 aTexCoords) N&amp;rsquo;oubliez pas de définir les locations des attributs Ajouter des variable uniformes mat4 uModelViewProjMatrix, mat4 uModelViewMatrix, mat4 uNormalMatrix correspondant aux matrices standard en 3D Ajouter des variables out vec3 vViewSpacePosition, vec3 vViewSpaceNormal, vec3 vTexCoords Dans le main du shader, remplir les différentes variables out et la variable gl_Position en respectant le pseudo-code suivant et en faisant les convertions de type necessaires:  vViewSpacePosition = uModelViewMatrix * aPosition vViewSpaceNormal = uNormalMatrix * aNormal vTexCoords = aTexCoords gl_Position = uModelViewProjMatrix * aPosition  Le Fragment Shader En attendant d&amp;rsquo;implémenter un modèle d&amp;rsquo;illumination, faite en sorte que le fragment shader affiche les normales des objets.</description>
+    </item>
+    
+    <item>
+      <title>Transformations</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/transformations/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/transformations/</guid>
+      <description>Sans Caméra Dans le code C++ de l&amp;rsquo;application, à l&amp;rsquo;initialisation:
+ Charger et compiler les shaders (glmlv::compileProgram) Récupérer les locations des variables uniform Appeler .use() sur le programme GLSL compilé  Au rendu:
+ Construire une matrice projection, une matrice view et deux matrices model (une pour le cube et une pour la sphere) Envoyez les combinaisons de ces matrices dans les uniform correspondante avant le rendu de chaque objet  A ce stade, vous devriez avoir un rendu correct de vos objets si vous vous arrangez pour bien construire les matrices (ne pas oublier qu&amp;rsquo;OpenGL &amp;ldquo;voit&amp;rdquo; du coté négatif de l&amp;rsquo;axe Z de l&amp;rsquo;espace view).</description>
+    </item>
+    
+    <item>
+      <title>Lighting</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/lighting/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/lighting/</guid>
+      <description>Fragment Shader Implémenter un modèle d&amp;rsquo;illumination diffuse dans le fragment shader forward-renderer.fs.glsl
+ Ajouter des variables uniform vec3 uDirectionalLightDir et vec3 uDirectionalLightIntensity destinés à stocker les paramètres d&amp;rsquo;une lumière directionnelle (en espace view) Ajouter des variables uniform vec3 uPointLightPosition et vec3 uPointLightIntensity destinés à stocker les paramètres d&amp;rsquo;une lumière ponctuelle (en espace view) Ajouter une variable uniform vec3 uKd destiné à stocker la couleur diffuse de l&amp;rsquo;objet en cours de rendu Dans le main, utiliser ces variables ainsi que les attributs du fragment pour calculer la couleur du fragment:  floatdistToPointLight=length(uPointLightPosition-vViewSpacePosition);vec3dirToPointLight=(uPointLightPosition-vViewSpacePosition)/distToPointLight;fColor=uKd*(uDirectionalLightIntensity*max(0.</description>
+    </item>
+    
+    <item>
+      <title>Textures</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/textures/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/textures/</guid>
+      <description>Fragment Shader  Ajouter une variable uniform sampler2D uKdSampler, destiné à pointer sur une texture des couleurs diffuses pour l&amp;rsquo;objet en cours de rendu. Dans le main, utiliser la fonction GLSL texture afin de lire le sampler en utiliser les tex coords du fragment. Multiplier la valeur lue avec la variable uKd pour obtenir le coefficient diffus final de l&amp;rsquo;objet, à utiliser pour l&amp;rsquo;illumination  Application A l&amp;rsquo;initialisation
+ Charger deux images de votre choix à utiliser en temps que texture diffuse de chacun de nos objets (utiliser la classe glmlv::Image2DRGBA et la fonction glmlv::readImage) Construire deux texture objects OpenGL et envoyer les pixel des deux images chargés dans ces texture objects Construire un sampler object OpenGL et fixer les paramètres GL_TEXTURE_MIN_FILTER et GL_TEXTURE_MAG_FILTER à GL_LINEAR pour ce sampler Récuperer la location de l&amp;rsquo;uniform sampler2D uKdSampler  Au rendu</description>
+    </item>
+    
+    <item>
+      <title>Chargement de modèles OBJ</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/load-obj/</link>
+      <pubDate>Thu, 29 Dec 2016 12:22:16 +0100</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/load-obj/</guid>
+      <description>Vous pouvez obtenir différents modèles OBJ sur cette page (je vous conseille de commencer par essayer avec Crytek-Sponza).
+ API Utiliser la fonction suivante de la lib pour charger un modèle OBJ:
+voidglmlv::loadObj(constglmlv::fs::path&amp;amp;objPath,glmlv::ObjData&amp;amp;data);  Celle ci charge le fichier dont le chemin est passé en paramètre (pensez à mettre le modèle dans le repertoire assets). Elle remplit une structure de type glmlv::ObjData contenant les informations suivantes:
+structObjData{size_tshapeCount;// Nombre d&amp;#39;objets dans l&amp;#39;OBJ size_tmaterialCount;// Nombre de matériaux // Point min et max de la bounding box de l&amp;#39;OBJ: glm::vec3bboxMin;glm::vec3bboxMax;std::vector&amp;lt;Vertex3f3f2f&amp;gt;vertexBuffer;// Tableau de sommets std::vector&amp;lt;uint32_t&amp;gt;indexBuffer;// Tableau d&amp;#39;indices std::vector&amp;lt;uint32_t&amp;gt;indexCountPerShape;// Nombre d&amp;#39;indices par objet std::vector&amp;lt;int32_t&amp;gt;materialIDPerShape;// Index de materiaux de chaque objet (pointe dans le tableau materials) std::vector&amp;lt;PhongMaterial&amp;gt;materials;// Tableau des materiaux std::vector&amp;lt;Image2DRGBA&amp;gt;textures;// Tableau dex textures référencées par les materiaux }  Les tableaux vertexBuffer et indexBuffer doivent être utilisés pour remplir un VBO et un IBO à binder sur un VAO pour le rendu.</description>
+    </item>
+    
+    <item>
+      <title>Aller plus loin</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/plus-loin/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/plus-loin/</guid>
+      <description>Voici plusieurs choses améliorable pour rendre notre forward renderer plus interessant:
+Normal Mapping Ajouter une texture de normales dans le fragment shader et faire le necessaire pour charger la texture de normales de chaque objet.
+L&amp;rsquo;utiliser à la place de uViewSpaceNormal pour calculer l&amp;rsquo;illumination.
+Vous pouvez vous réferer à ce tutorial.
+Plusieurs Lights Actuellement le shader ne gère que deux lumières, c&amp;rsquo;est un peu triste.
+Utilisez les Shader Storage Buffer Objects pour accéder à des tableau de directions, positions et intensités depuis le fragment shader, correspondant à un nombre arbitraire de directional et point lights (stockez leur nombre dans des uniforms).</description>
+    </item>
+    
+  </channel>
+</rss>

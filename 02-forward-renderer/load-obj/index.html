@@ -1,0 +1,337 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>Chargement de modèles OBJ - OpenGL Avancé</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
+    <style>
+        body
+        {
+          font-family: "Work Sans", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          color: #444444;
+        }
+
+        main
+        {
+          height:100vh;
+          margin-top: 56px;;
+        }
+
+        h1, h2, h3, h4, h5, h6
+        {
+          margin: 2.5rem 0 1.5rem 0;
+        }
+
+        h1.section-title
+        {
+          font-family: "Novacento Sans Wide", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 3.25rem;
+          margin: 1.0rem 0 1.5rem 0;
+          font-weight: 200;
+        }
+
+        main a:hover
+        {
+          text-decoration: none;
+        }
+
+        main table
+        {
+          width: 100%;
+          margin-bottom: 1rem;
+        }
+
+        main img
+        {
+          width: 100%;
+        }
+
+        .jumbotron
+        {
+          background-color: #EEEEEE;
+        }
+
+        .page-content
+        {
+          padding-top: 16px;
+          padding-bottom: 1.5rem;
+        }
+
+        .main-article
+        {
+          margin-left: 15%;
+          margin-right: 15%;
+        }
+
+        .middle-content
+        {
+          text-align: justify;
+        }
+
+        .side-menu
+        {
+          background-color: #EEEEEE;
+          position: fixed;
+          width: 15%;
+          height: 100%;
+          font-size: 1.0em;
+          padding-left: 0px;
+          padding-right: 0px;
+        }
+
+        .side-menu li li
+        {
+          font-size: 0.9em;
+          width: 100%;
+        }
+
+        .side-menu a
+        {
+          color: #555555;
+          font-weight: bold;
+        }
+
+        .side-menu a:hover
+        {
+          color: #CCCCCC;
+          background-color: #343A40;
+        }
+
+        .side-menu-left
+        {
+          left: 0px;
+        }
+
+        .side-menu-right
+        {
+          right: 0px;
+        }
+
+        .highlight
+        {
+          margin-bottom: 1rem;
+        }
+
+        .highlight pre
+        {
+          margin: auto;
+          padding: 1% 5% 1% 5%;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="https://Celeborn2BeAlive.github.io/opengl-avance/">OpenGL Avancé</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction">Introduction</a>
+            </li>
+        
+            <li class="nav-item active">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline">Forward Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline">Deferred Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction">Shadow Mapping</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction">Post Processing</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context">Cours et Doc</a>
+            </li>
+        
+
+
+
+      
+    </ul>
+  </div>
+</nav>
+
+<main role="main" class="main-article">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col side-menu side-menu-left page-content">
+            <ul class="nav flex-column">
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline/">Pipeline de rendu</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/geometrie/">Geometrie</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/shaders/">Shaders</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/transformations/">Transformations</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/lighting/">Lighting</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/textures/">Textures</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/load-obj/">Chargement de modèles OBJ</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/plus-loin/">Aller plus loin</a>
+        </li>
+    
+</ul>
+        </div>
+
+        <div class="col middle-content page-content">
+            <h1 class="section-title">Chargement de modèles OBJ</h1>
+
+            
+
+<div class="alert alert-info">
+<p>Vous pouvez obtenir différents modèles OBJ sur <a href="http://graphics.cs.williams.edu/data/meshes.xml">cette page</a> (je vous conseille de commencer par essayer avec Crytek-Sponza).</p>
+
+</div>
+
+<h1 id="api">API</h1>
+
+<p>Utiliser la fonction suivante de la lib pour charger un modèle OBJ:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span><span style=""> </span><span style="">glmlv</span><span style="color:#f92672">::</span><span style="">loadObj</span><span style="">(</span><span style="color:#66d9ef">const</span><span style=""> </span><span style="">glmlv</span><span style="color:#f92672">::</span><span style="">fs</span><span style="color:#f92672">::</span><span style="">path</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style=""> </span><span style="">objPath</span><span style="">,</span><span style=""> </span><span style="">glmlv</span><span style="color:#f92672">::</span><span style="">ObjData</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style=""> </span><span style="">data</span><span style="">);</span></code></pre>
+</div>
+<p>Celle ci charge le fichier dont le chemin est passé en paramètre (pensez à mettre le modèle dans le repertoire <em>assets</em>).
+Elle remplit une structure de type <strong>glmlv::ObjData</strong> contenant les informations suivantes:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">struct</span><span style=""> </span><span style="">ObjData</span><span style="">
+</span><span style=""></span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="">size_t</span><span style=""> </span><span style="">shapeCount</span><span style="">;</span><span style=""> </span><span style="color:#75715e">// Nombre d&#39;objets dans l&#39;OBJ
+</span><span style="color:#75715e"></span><span style="">    </span><span style="">size_t</span><span style=""> </span><span style="">materialCount</span><span style="">;</span><span style=""> </span><span style="color:#75715e">// Nombre de matériaux
+</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#75715e">// Point min et max de la bounding box de l&#39;OBJ:
+</span><span style="color:#75715e"></span><span style="">    </span><span style="">glm</span><span style="color:#f92672">::</span><span style="">vec3</span><span style=""> </span><span style="">bboxMin</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="">glm</span><span style="color:#f92672">::</span><span style="">vec3</span><span style=""> </span><span style="">bboxMax</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="">std</span><span style="color:#f92672">::</span><span style="">vector</span><span style="color:#f92672">&lt;</span><span style="">Vertex3f3f2f</span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="">vertexBuffer</span><span style="">;</span><span style=""> </span><span style="color:#75715e">// Tableau de sommets
+</span><span style="color:#75715e"></span><span style="">    </span><span style="">std</span><span style="color:#f92672">::</span><span style="">vector</span><span style="color:#f92672">&lt;</span><span style="">uint32_t</span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="">indexBuffer</span><span style="">;</span><span style=""> </span><span style="color:#75715e">// Tableau d&#39;indices
+</span><span style="color:#75715e"></span><span style="">    </span><span style="">std</span><span style="color:#f92672">::</span><span style="">vector</span><span style="color:#f92672">&lt;</span><span style="">uint32_t</span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="">indexCountPerShape</span><span style="">;</span><span style=""> </span><span style="color:#75715e">// Nombre d&#39;indices par objet
+</span><span style="color:#75715e"></span><span style="">
+</span><span style="">    </span><span style="">std</span><span style="color:#f92672">::</span><span style="">vector</span><span style="color:#f92672">&lt;</span><span style="">int32_t</span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="">materialIDPerShape</span><span style="">;</span><span style=""> </span><span style="color:#75715e">// Index de materiaux de chaque objet (pointe dans le tableau materials)
+</span><span style="color:#75715e"></span><span style="">
+</span><span style="">    </span><span style="">std</span><span style="color:#f92672">::</span><span style="">vector</span><span style="color:#f92672">&lt;</span><span style="">PhongMaterial</span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="">materials</span><span style="">;</span><span style=""> </span><span style="color:#75715e">// Tableau des materiaux
+</span><span style="color:#75715e"></span><span style="">    </span><span style="">std</span><span style="color:#f92672">::</span><span style="">vector</span><span style="color:#f92672">&lt;</span><span style="">Image2DRGBA</span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="">textures</span><span style="">;</span><span style=""> </span><span style="color:#75715e">// Tableau dex textures référencées par les materiaux
+</span><span style="color:#75715e"></span><span style="">}</span></code></pre>
+</div>
+<p>Les tableaux vertexBuffer et indexBuffer doivent être utilisés pour remplir un VBO et un IBO à binder sur un VAO pour le rendu.</p>
+
+<p>Les champs bboxMin et bboxMax permettent de connaitre les dimensions de la scene afin d&rsquo;adapter la vitesse de la caméra et la matrice de projection. Par exemple:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="">ObjData</span><span style=""> </span><span style="">data</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">loadObj</span><span style="">(</span><span style="">path</span><span style="">,</span><span style=""> </span><span style="">data</span><span style="">);</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">sceneDiagonalSize</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">glm</span><span style="color:#f92672">::</span><span style="">length</span><span style="">(</span><span style="">data</span><span style="">.</span><span style="">bboxMax</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="">data</span><span style="">.</span><span style="">bboxMin</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">m_viewController</span><span style="">.</span><span style="">setSpeed</span><span style="">(</span><span style="">sceneDiagonalSize</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#ae81ff">0.1f</span><span style="">);</span><span style=""> </span><span style="color:#75715e">// 10% de la scene parcouru par seconde
+</span><span style="color:#75715e"></span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">projMatrix</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">glm</span><span style="color:#f92672">::</span><span style="">perspective</span><span style="">(</span><span style="color:#ae81ff">70.f</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">float</span><span style="">(</span><span style="">viewportSize</span><span style="">.</span><span style="">x</span><span style="">)</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">viewportSize</span><span style="">.</span><span style="">y</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0.01f</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">m_SceneSize</span><span style="">,</span><span style=""> </span><span style="">m_SceneSize</span><span style="">);</span><span style=""> </span><span style="color:#f92672">//</span><span style=""> </span><span style="">near</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="color:#f92672">%</span><span style=""> </span><span style="">de</span><span style=""> </span><span style="">la</span><span style=""> </span><span style="">taille</span><span style=""> </span><span style="">de</span><span style=""> </span><span style="">la</span><span style=""> </span><span style="">scene</span><span style="">,</span><span style=""> </span><span style="">far</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">100</span><span style="color:#f92672">%</span></code></pre>
+</div>
+<p>Le tableau indexCountPerShape doit être utilisé lors du rendu pour dessiner chacun des objets:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="">glBindVertexArray</span><span style="">(</span><span style="">m_SceneVAO</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">indexOffset</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">indexCount</span><span style=""></span><span style="">:</span><span style=""> </span><span style="">indexCountPerShape</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="">glDrawElements</span><span style="">(</span><span style="">GL_TRIANGLES</span><span style="">,</span><span style=""> </span><span style="">indexCount</span><span style="">,</span><span style=""> </span><span style="">GL_UNSIGNED_INT</span><span style="">,</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">const</span><span style=""> </span><span style="">GLvoid</span><span style="color:#f92672">*</span><span style="">)</span><span style=""> </span><span style="">(</span><span style="">indexOffset</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#66d9ef">sizeof</span><span style="">(</span><span style="">GLuint</span><span style="">)));</span><span style="">
+</span><span style="">    </span><span style="">indexOffset</span><span style=""> </span><span style="color:#f92672">+=</span><span style=""> </span><span style="">indexCount</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
+<p>Dans le code ci-dessus, l&rsquo;index offset permet de dire à OpenGL ou se trouve les indices du i-ème objet dans le tableau d&rsquo;indices.</p>
+
+<p>Le tableau textures contient les textures référencées dans l&rsquo;OBJ. Après chargement de l&rsquo;OBJ, il faut créer une texture OpenGL pour chacune.</p>
+
+<p>Le tableau materials contient l&rsquo;ensemble des materiaux référencés dans la scène. La fonction loadObj ne charge que les données de matériaux nécessaires à un modèle de shading de Blinn-Phong (Ambiant + Diffus + Glossy).</p>
+
+<p>Finalement, le tableau materialIDPerShape indique le materiau de chaque objet (l&rsquo;index d&rsquo;un élement du tableau materials).</p>
+
+<p>A noter que si un objet n&rsquo;a pas de matériau, -1 sera placé à sa position dans materialIDPerShape.
+De la même manière, si un champs texture n&rsquo;est pas renseigné pour un matériaux, alors il est mis à -1.</p>
+
+<p>Il faut donc, après avoir appelé cette fonction, initialiser toutes les données GPU (un VBO, un IBO, un VAO, des textures object, un texture sampler, les uniform location, le programme GLSL) afin de pouvoir dessiner la scène dans la boucle de rendu.</p>
+
+<p>Comme pour les exercices précédent, il est conseillé d&rsquo;y aller par étape. D&rsquo;abord afficher uniquement les normales des objets 3D, puis afficher la couleur diffuse, puis faire l&rsquo;illumination.</p>
+
+<h1 id="modèle-de-shading">Modèle de Shading</h1>
+
+<p>Améliorer le modèle de shading utilisé pour utiliser le modèle de Blinn-Phong plutot qu&rsquo;un simple modèle Diffus (voir <a href="http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&amp;teaching=opengl&amp;teaching_section=tds&amp;td=td8#intro">cet ancien TD</a> pour les équations).</p>
+
+<p>Cela implique de rajouter des variables uniformes pour le coefficient speculaire, la texture speculaire, l&rsquo;exposant de shininess et la texture de shininess.</p>
+
+<p>Vous pouvez également rajouter le terme ambiant en addition.</p>
+
+<p>Toutes les informations necessaires sont chargés dans les matériaux de ObjData.</p>
+
+<p><div class="alert alert-info">
+<p>Si vous bloquez sur un element du TP, vous pouvez puller la branche <em>cheat</em> du repo et regarder le code de l&rsquo;application <em>forward-renderer-06-load-obj</em>.</p>
+
+</div></p>
+
+        </div>
+
+        <div class="col side-menu side-menu-right page-content">
+            <div class="toc-sidebar">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#api">API</a></li>
+<li><a href="#modèle-de-shading">Modèle de Shading</a></li>
+</ul>
+</nav>
+</div>
+        </div>
+    </div>
+</div>
+
+</main>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+
+<script>
+$(".toc-sidebar ul").addClass("nav flex-column");
+$(".toc-sidebar li").addClass("nav-item");
+$(".toc-sidebar a").addClass("nav-link");
+</script>
+
+
+
+</body>
+</html>

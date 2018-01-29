@@ -1,0 +1,471 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>Geometry pass - OpenGL Avancé</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
+    <style>
+        body
+        {
+          font-family: "Work Sans", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          color: #444444;
+        }
+
+        main
+        {
+          height:100vh;
+          margin-top: 56px;;
+        }
+
+        h1, h2, h3, h4, h5, h6
+        {
+          margin: 2.5rem 0 1.5rem 0;
+        }
+
+        h1.section-title
+        {
+          font-family: "Novacento Sans Wide", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 3.25rem;
+          margin: 1.0rem 0 1.5rem 0;
+          font-weight: 200;
+        }
+
+        main a:hover
+        {
+          text-decoration: none;
+        }
+
+        main table
+        {
+          width: 100%;
+          margin-bottom: 1rem;
+        }
+
+        main img
+        {
+          width: 100%;
+        }
+
+        .jumbotron
+        {
+          background-color: #EEEEEE;
+        }
+
+        .page-content
+        {
+          padding-top: 16px;
+          padding-bottom: 1.5rem;
+        }
+
+        .main-article
+        {
+          margin-left: 15%;
+          margin-right: 15%;
+        }
+
+        .middle-content
+        {
+          text-align: justify;
+        }
+
+        .side-menu
+        {
+          background-color: #EEEEEE;
+          position: fixed;
+          width: 15%;
+          height: 100%;
+          font-size: 1.0em;
+          padding-left: 0px;
+          padding-right: 0px;
+        }
+
+        .side-menu li li
+        {
+          font-size: 0.9em;
+          width: 100%;
+        }
+
+        .side-menu a
+        {
+          color: #555555;
+          font-weight: bold;
+        }
+
+        .side-menu a:hover
+        {
+          color: #CCCCCC;
+          background-color: #343A40;
+        }
+
+        .side-menu-left
+        {
+          left: 0px;
+        }
+
+        .side-menu-right
+        {
+          right: 0px;
+        }
+
+        .highlight
+        {
+          margin-bottom: 1rem;
+        }
+
+        .highlight pre
+        {
+          margin: auto;
+          padding: 1% 5% 1% 5%;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="https://Celeborn2BeAlive.github.io/opengl-avance/">OpenGL Avancé</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction">Introduction</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline">Forward Renderer</a>
+            </li>
+        
+            <li class="nav-item active">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline">Deferred Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction">Shadow Mapping</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction">Post Processing</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context">Cours et Doc</a>
+            </li>
+        
+
+
+
+      
+    </ul>
+  </div>
+</nav>
+
+<main role="main" class="main-article">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col side-menu side-menu-left page-content">
+            <ul class="nav flex-column">
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline/">Pipeline de rendu</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/geometry-pass/">Geometry pass</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/shading-pass/">Shading pass</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/plus-loin/">Aller plus loin</a>
+        </li>
+    
+</ul>
+        </div>
+
+        <div class="col middle-content page-content">
+            <h1 class="section-title">Geometry pass</h1>
+
+            
+
+<p>Comme indiqué en introduction, la première passe de rendu est la Geometry Pass, dont l&rsquo;objectif est de &ldquo;dessiner&rdquo; dans un GBuffer les informations concernant les objets visible à l&rsquo;écran.</p>
+
+<p>Pour cela, il va falloir créer les textures OpenGL destinées à contenir ces informations, et les attacher à un <strong>framebuffer object</strong>, qui va permettre d&rsquo;écrire dans ces textures plutot qu&rsquo;a l&rsquo;écran.</p>
+
+<p>Pour ces TPs, dupliquez l&rsquo;app de l&rsquo;exercice du foward renderer afin d&rsquo;avoir une scene chargée et stockée sur GPU pour être rendue.
+Nommez la nouvelle app &ldquo;deferred-renderer&rdquo;.</p>
+
+<h1 id="shaders">Shaders</h1>
+
+<p>Nous allons commencer par les shaders car c&rsquo;est le plus simple.
+Renommez les shaders <em>forward.vs.glsl</em> et <em>forward.fs.glsl</em> en <em>geometryPass.vs.glsl</em> et <em>geometryPass.fs.glsl</em>.</p>
+
+<p>Il faut ensuite modifier le fragment shader (plus exactement le simplifier).</p>
+
+<p>Tout d&rsquo;abors modifier les sorties. On avait:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-glsl" data-lang="glsl"><span style="color:#66d9ef">out</span><span style=""> </span><span style="color:#66d9ef">vec3</span><span style=""> </span><span style="">fColor</span><span style="">;</span></code></pre>
+</div>
+<p>a remplacer par:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-glsl" data-lang="glsl"><span style="">layout</span><span style="">(</span><span style="">location</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="color:#66d9ef">out</span><span style=""> </span><span style="color:#66d9ef">vec3</span><span style=""> </span><span style="">fPosition</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">layout</span><span style="">(</span><span style="">location</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">)</span><span style=""> </span><span style="color:#66d9ef">out</span><span style=""> </span><span style="color:#66d9ef">vec3</span><span style=""> </span><span style="">fNormal</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">layout</span><span style="">(</span><span style="">location</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="">)</span><span style=""> </span><span style="color:#66d9ef">out</span><span style=""> </span><span style="color:#66d9ef">vec3</span><span style=""> </span><span style="">fAmbient</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">layout</span><span style="">(</span><span style="">location</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">3</span><span style="">)</span><span style=""> </span><span style="color:#66d9ef">out</span><span style=""> </span><span style="color:#66d9ef">vec3</span><span style=""> </span><span style="">fDiffuse</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">layout</span><span style="">(</span><span style="">location</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">4</span><span style="">)</span><span style=""> </span><span style="color:#66d9ef">out</span><span style=""> </span><span style="color:#66d9ef">vec4</span><span style=""> </span><span style="">fGlossyShininess</span><span style="">;</span></code></pre>
+</div>
+<p>On va donc écrire dans 5 textures en tout.</p>
+
+<p>Dans le main du shader, remplacez tout le code d&rsquo;illumination par des écritures dans les variables de sortie. Ne pas oublier de normaliser <em>vViewSpaceNormal</em> avant de l&rsquo;écrire dans <em>fNormal</em>.</p>
+
+<p>A noter que l&rsquo;on écrit pas les texCoords en sortie car on ne les utilise que pour lire les coefficients ambiant, diffus et glossy des textures de l&rsquo;objet en cours de rendu. Les texCoords ne sont donc pas necessaire à la Shading Pass puisqu&rsquo;on écrit directement ces coefficients dans des textures du GBuffer.</p>
+
+<p>Les variables de sortie de matériaux doivent stocker la multiplication du coefficient associé avec la valeur lue dans la texture. Par exemple:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-glsl" data-lang="glsl"><span style="color:#66d9ef">uniform</span><span style=""> </span><span style="color:#66d9ef">vec3</span><span style=""> </span><span style="">uKd</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">uniform</span><span style=""> </span><span style="color:#66d9ef">sampler2D</span><span style=""> </span><span style="">uKdSampler</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="">[...]</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#75715e">// Dans le main:</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">vec3</span><span style=""> </span><span style="">kd</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">uKd</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#66d9ef">vec3</span><span style="">(</span><span style="">texture</span><span style="">(</span><span style="">uKdSampler</span><span style="">,</span><span style=""> </span><span style="">vTexCoords</span><span style="">));</span><span style="">
+</span><span style=""></span><span style="">fDiffuse</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">kd</span><span style="">;</span></code></pre>
+</div>
+<p>Enfin, il faut packer la shininess dans le canal alpha de la variable de sortie <em>fGlossyShininess</em>.</p>
+
+<p>Dans le code de Application, chargez ces shaders pour tester leur compilation.</p>
+
+<h1 id="textures-du-gbuffer">Textures du GBuffer</h1>
+
+<p>Dans la classe Application, déclarez un tableau de <em>GLuint</em> pour stocker les texture objects, ainsi que l&rsquo;enum suivant:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">enum</span><span style=""> </span><span style="">GBufferTextureType</span><span style="">
+</span><span style=""></span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="">GPosition</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="">GNormal</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="">GAmbient</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="">GDiffuse</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="">GGlossyShininess</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="">GDepth</span><span style="">,</span><span style=""> </span><span style="color:#75715e">// On doit créer une texture de depth mais on écrit pas directement dedans dans le FS. OpenGL le fait pour nous (et l&#39;utilise).
+</span><span style="color:#75715e"></span><span style="">    </span><span style="">GBufferTextureCount</span><span style="">
+</span><span style=""></span><span style="">};</span><span style="">
+</span><span style=""></span><span style="">GLuint</span><span style=""> </span><span style="">m_GBufferTextures</span><span style="">[</span><span style="">GBufferTextureCount</span><span style="">];</span></code></pre>
+</div>
+<p>Dans le constructeur, créer et initialiser ces textures avec comme dimension la taille de la fenêtre.</p>
+
+<div class="alert alert-note">
+<p>Vous pouvez créer toutes les textures en un seul appel à glGenTextures (ou glCreateTextures en DSA) car nos identifiants sont stockés dans un tableau. Il suffit de passer à la fonction le nombre de textures à créer.</p>
+
+</div>
+
+<p>Le format à passer à <em>glTexStorage2D</em> dépend du type de texture, vous pouvez utiliser le tableau suivant, en correspondance avec l&rsquo;enum:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">const</span><span style=""> </span><span style="">GLenum</span><span style=""> </span><span style="">m_GBufferTextureFormat</span><span style="">[</span><span style="">GBufferTextureCount</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">{</span><span style=""> </span><span style="">GL_RGB32F</span><span style="">,</span><span style=""> </span><span style="">GL_RGB32F</span><span style="">,</span><span style=""> </span><span style="">GL_RGB32F</span><span style="">,</span><span style=""> </span><span style="">GL_RGB32F</span><span style="">,</span><span style=""> </span><span style="">GL_RGBA32F</span><span style="">,</span><span style=""> </span><span style="">GL_DEPTH_COMPONENT32F</span><span style=""> </span><span style="">};</span></code></pre>
+</div>
+<p>Il est inutile de remplir les textures avec <em>glTexSubImage2D</em> car elles sont destinées à être remplies par le fragment shader.</p>
+
+<p>Fonctions GL à utiliser:</p>
+
+<table>
+<thead>
+<tr>
+<th>Sans DSA</th>
+<th>DSA</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>glGenTextures</td>
+<td>glCreateTextures</td>
+</tr>
+
+<tr>
+<td>glBindTexture(GL_TEXTURE_2D, texID)</td>
+<td></td>
+</tr>
+
+<tr>
+<td>glTexStorage2D</td>
+<td>glTextureStorage2D</td>
+</tr>
+</tbody>
+</table>
+
+<h1 id="framebuffer-object">Framebuffer object</h1>
+
+<p>Déclarez une variable <em>GLuint m_FBO</em> dans la classe Application.</p>
+
+<p>Dans le constructeur, après création des texture objects, créez le FBO (<em>glGenFramebuffers</em>) et bindez le sur la cible <em>GL_DRAW_FRAMEBUFFER</em>.</p>
+
+<p>Il faut ensuite attacher toutes nos textures au FBO en utilisant la fonction <em>glFramebufferTexture2D</em>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="">glFramebufferTexture2D</span><span style="">(</span><span style=""> </span><span style="">GLenum</span><span style=""> </span><span style="">target</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="">GLenum</span><span style=""> </span><span style="">attachment</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="">GLenum</span><span style=""> </span><span style="">textarget</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="">GLuint</span><span style=""> </span><span style="">texture</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="">GLint</span><span style=""> </span><span style="">level</span><span style="">);</span></code></pre>
+</div>
+<p>La target est la cible sur laquelle est bindée de FBO (<em>GL_DRAW_FRAMEBUFFER</em>).</p>
+
+<p>L&rsquo;attachment est un point d&rsquo;attache de la forme <em>GL_COLOR_ATTACHMENT0 + i</em>, ou <em>i</em> est l&rsquo;index de la texture dans son tableau (de <em>GPosition</em> à <em>GGlossyShininess</em>).
+Pour la texture de profondeur (<em>GDepth</em>), elle doit être attachée sur le point <em>GL_DEPTH_ATTACHMENT</em>.</p>
+
+<p>Dans notre cas, <em>textarget</em> doit être mis à <em>GL_TEXTURE_2D</em> car toutes nos textures sont 2D (on pourrait aussi faire le rendu dans des layers de textures 3D, il faudrait alors changer ce paramètre).</p>
+
+<p>Enfin, <em>level</em> doit être mis à 0 (c&rsquo;est le niveau de mipmap dans lequel dessiner).</p>
+
+<p>Une fois les textures attachées, il faut indiquer à OpenGL une association &ldquo;sortie du fragment shader&rdquo; vers texture.
+Comme vous le verrez au prochain exercice, le fragment shader peut avoir plusieurs sorties indicées avec des <em>layout(location = i)</em> (de la meme manière que les entrée du vertex shader).
+Il faut dire à OpenGL comment les locations doivent être connectées aux textures du FBO.</p>
+
+<p>Cela passe par la fonction <em>glDrawBuffers</em>, qui prend le nombre de sorties du fragment shader et un tableau de <em>GL_COLOR_ATTACHMENTi</em> afin de faire la liaison. Nous allons faire assez simple:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="">GLenum</span><span style=""> </span><span style="">drawBuffers</span><span style="">[]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">{</span><span style=""> </span><span style="">GL_COLOR_ATTACHMENT0</span><span style="">,</span><span style=""> </span><span style="">GL_COLOR_ATTACHMENT1</span><span style="">,</span><span style=""> </span><span style="">GL_COLOR_ATTACHMENT2</span><span style="">,</span><span style=""> </span><span style="">GL_COLOR_ATTACHMENT3</span><span style="">,</span><span style=""> </span><span style="">GL_COLOR_ATTACHMENT4</span><span style=""> </span><span style="">};</span><span style="">
+</span><span style=""></span><span style="">glDrawBuffers</span><span style="">(</span><span style="color:#ae81ff">5</span><span style="">,</span><span style=""> </span><span style="">drawBuffers</span><span style="">);</span></code></pre>
+</div>
+<p>Ici on va envoyer la sortie <em>i</em> du fragment shader vers l&rsquo;attachment <em>GL_COLOR_ATTACHMENTi</em> du FBO.
+C&rsquo;est ce qui parait le plus logique mais, si on voulait, on pourrait tout à fait envoyer la sortie 3 du fragment shader vers la texture attachée sur GL_COLOR_ATTACHMENT0, par exemple.</p>
+
+<p>Utilisez ensuite la fonction <em>glCheckFramebufferStatus</em> afin de vérifier si le framebuffer créé est correct (si ce n&rsquo;est pas le cas, bon debug !).</p>
+
+<p>Enfin débindez le framebuffer de la cible <em>GL_DRAW_FRAMEBUFFER</em>.</p>
+
+<p>Fonctions GL à utiliser:</p>
+
+<table>
+<thead>
+<tr>
+<th>Sans DSA</th>
+<th>DSA</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>glGenFramebuffers</td>
+<td>glCreateFramebuffers</td>
+</tr>
+
+<tr>
+<td>glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo)</td>
+<td></td>
+</tr>
+
+<tr>
+<td>glFramebufferTexture2D</td>
+<td>glNamedFramebufferTexture</td>
+</tr>
+
+<tr>
+<td>glDrawBuffers</td>
+<td>glNamedFramebufferDrawBuffers</td>
+</tr>
+
+<tr>
+<td>glCheckFramebufferStatus</td>
+<td>glCheckNamedFramebufferStatus</td>
+</tr>
+</tbody>
+</table>
+
+<h1 id="boucle-de-rendu">Boucle de rendu</h1>
+
+<p>Au rendu assez peu de chose à changer.</p>
+
+<p>Avant de dessiner, binder le framebuffer sur la cible <em>GL_DRAW_FRAMEBUFFER</em>. Cela va indiquer à OpenGL que le fragment shader va écrire dans les textures attachées au FBO.</p>
+
+<p>Il faut également faire un <em>.use()</em> sur le programme correspondant au aux <em>geometryPass.glsl</em></p>
+
+<p>Après le dessin de la scène, débindez le FBO. Voila.</p>
+
+<p>Pour tester que tout fonctionne bien, on peut blitter les textures du GBuffer à l&rsquo;écran.</p>
+
+<p>Après le débind du FBO, rebindez le, cette fois ci sur la cible <em>GL_READ_FRAMEBUFFER</em>.</p>
+
+<p>Utilisez ensuite la fonction <em>glReadBuffer</em>, qui prend en paramètre un <em>GL_COLOR_ATTACHMENT0 + i</em>, correspondant à la texture du GBuffer que vous voulez afficher. Vous pouvez par example afficher la texture de normals en passant <em>GL_COLOR_ATTACHMENT0 + GNormal</em>. Faites ensuite en sorte de pouvoir choisir la texture à afficher via la GUI (avec des boutons radio, <em>ImgGui::RadioButton</em>).</p>
+
+<p>Puis utilisez la fonction <em>glBlitFramebuffer</em> qui permet de &ldquo;copier-coller&rdquo; (avec filtre) une portion du FBO bindé sur <em>GL_READ_FRAMEBUFFER</em> vers le FBO bindé sur <em>GL_DRAW_FRAMEBUFFER</em> (c&rsquo;est à dire l&rsquo;écran, lorsque rien n&rsquo;est bindé dessus).</p>
+
+<p>Finalement, débindez le FBO de <em>GL_READ_FRAMEBUFFER</em>. A noter qu&rsquo;en DSA il n&rsquo;y a rien à binder pour l&rsquo;étape du blit (il faut quand même binder sur <em>GL_DRAW_FRAMEBUFFER</em> avant de dessiner la scène).</p>
+
+<p>Fonctions GL à utiliser:</p>
+
+<table>
+<thead>
+<tr>
+<th>Sans DSA</th>
+<th>DSA</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo)</td>
+<td>glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo)</td>
+</tr>
+
+<tr>
+<td>glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo)</td>
+<td></td>
+</tr>
+
+<tr>
+<td>glReadBuffer</td>
+<td>glNamedFramebufferReadBuffer</td>
+</tr>
+
+<tr>
+<td>glBlitFramebuffer</td>
+<td>glBlitNamedFramebuffer</td>
+</tr>
+</tbody>
+</table>
+
+        </div>
+
+        <div class="col side-menu side-menu-right page-content">
+            <div class="toc-sidebar">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#shaders">Shaders</a></li>
+<li><a href="#textures-du-gbuffer">Textures du GBuffer</a></li>
+<li><a href="#framebuffer-object">Framebuffer object</a></li>
+<li><a href="#boucle-de-rendu">Boucle de rendu</a></li>
+</ul>
+</nav>
+</div>
+        </div>
+    </div>
+</div>
+
+</main>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+
+<script>
+$(".toc-sidebar ul").addClass("nav flex-column");
+$(".toc-sidebar li").addClass("nav-item");
+$(".toc-sidebar a").addClass("nav-link");
+</script>
+
+
+
+</body>
+</html>

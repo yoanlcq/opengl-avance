@@ -1,648 +1,207 @@
+
+
 <!DOCTYPE html>
-<html lang="en" class="js csstransforms3d">
-  <head>
+<html lang="fr">
+
+<head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="generator" content="Hugo 0.18.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
 
-
-    <link rel="shortcut icon" href="https://Celeborn2BeAlive.github.io/opengl-avance/images/favicon.png" type="image/x-icon" />
+    <title>Directional Shadow Map - OpenGL Avancé</title>
 
     
-    <title>Directional Shadow Map</title>
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/nucleus.css" rel="stylesheet">
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/font-awesome.min.css" rel="stylesheet">
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/hybrid.css" rel="stylesheet">
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/featherlight.min.css" rel="stylesheet">
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/perfect-scrollbar.min.css" rel="stylesheet">
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/horsey.css" rel="stylesheet">
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/theme.css" rel="stylesheet">
-    <link href="https://celeborn2bealive.github.io/opengl-avance//css/hugo-theme.css" rel="stylesheet">
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/jquery-2.x.min.js"></script>
-    <style type="text/css">:root #header + #content > #left > #rlblock_left
-    {display:none !important;}</style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
     <style>
-    #header-wrapper {
-        background: #F0F0F0;
-        color: #fff;
-        text-align: center;
-        border-bottom: 4px solid #E0E0E0;
-        padding: 1rem;
-    }
+        body
+        {
+          font-family: "Work Sans", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          color: #444444;
+        }
 
-    code.has-jax {font: inherit;
-              font-size: 100%;
-              background: inherit;
-              border: inherit;
-              color: #515151;}
-</style>
-  </head>
-  <body class="" data-url="/04-shadow-mapping/dir-shadow-map/">
-    <nav id="sidebar">
-  <div id="header-wrapper">
-    <div id="header">
-      
+        main
+        {
+          height:100vh;
+          margin-top: 56px;;
+        }
 
-<script src="https://Celeborn2BeAlive.github.io/opengl-avance/scripts/sylvester.js" type="text/javascript"></script>
-<script src="https://Celeborn2BeAlive.github.io/opengl-avance/scripts/glUtils.js" type="text/javascript"></script>
-<script src="https://Celeborn2BeAlive.github.io/opengl-avance/scripts/webgl-demo.js" type="text/javascript"></script>
+        h1, h2, h3, h4, h5, h6
+        {
+          margin: 2.5rem 0 1.5rem 0;
+        }
 
-<script id="shader-fs" type="x-shader/x-fragment">
-      varying highp vec2 vTextureCoord;
+        h1.section-title
+        {
+          font-family: "Novacento Sans Wide", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 3.25rem;
+          margin: 1.0rem 0 1.5rem 0;
+          font-weight: 200;
+        }
 
-      uniform sampler2D uSampler;
+        main a:hover
+        {
+          text-decoration: none;
+        }
 
-      void main(void) {
-        gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
-      }
-</script>
+        main table
+        {
+          width: 100%;
+          margin-bottom: 1rem;
+        }
 
-    
+        main img
+        {
+          width: 100%;
+        }
 
-<script id="shader-vs" type="x-shader/x-vertex">
-  attribute vec3 aVertexPosition;
-  attribute vec2 aTextureCoord;
+        .jumbotron
+        {
+          background-color: #EEEEEE;
+        }
 
-  uniform mat4 uMVMatrix;
-  uniform mat4 uPMatrix;
+        .page-content
+        {
+          padding-top: 16px;
+          padding-bottom: 1.5rem;
+        }
 
-  varying highp vec2 vTextureCoord;
+        .main-article
+        {
+          margin-left: 15%;
+          margin-right: 15%;
+        }
 
-  void main(void) {
-    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-    vTextureCoord = aTextureCoord;
-  }
-</script>
+        .middle-content
+        {
+          text-align: justify;
+        }
 
-<canvas width = "200" height = "200" id = "glcanvas"></canvas>
+        .side-menu
+        {
+          background-color: #EEEEEE;
+          position: fixed;
+          width: 15%;
+          height: 100%;
+          font-size: 1.0em;
+          padding-left: 0px;
+          padding-right: 0px;
+        }
 
-<script>
-    start('https:\/\/celeborn2bealive.github.io\/opengl-avance\/' + 'images/');
-</script>
+        .side-menu li li
+        {
+          font-size: 0.9em;
+          width: 100%;
+        }
 
-<script type="text/javascript"
-  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
+        .side-menu a
+        {
+          color: #555555;
+          font-weight: bold;
+        }
 
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {
-    inlineMath: [['$','$'], ['\\(','\\)']],
-    displayMath: [['$$','$$'], ['\[','\]']],
-    processEscapes: true,
-    processEnvironments: true,
-    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-    TeX: { equationNumbers: { autoNumber: "AMS" },
-         extensions: ["AMSmath.js", "AMSsymbols.js"] }
-  }
-});
-</script>
+        .side-menu a:hover
+        {
+          color: #CCCCCC;
+          background-color: #343A40;
+        }
 
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    
-    
-    
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i = 0; i < all.length; i += 1) {
-        all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-});
-</script>
-    </div>
-    
-</div>
+        .side-menu-left
+        {
+          left: 0px;
+        }
 
+        .side-menu-right
+        {
+          right: 0px;
+        }
 
-  <div class="highlightable">
-    <ul class="topics">
-      
-      
+        .highlight
+        {
+          margin-bottom: 1rem;
+        }
+
+        .highlight pre
+        {
+          margin: auto;
+          padding: 1% 5% 1% 5%;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="https://Celeborn2BeAlive.github.io/opengl-avance/">OpenGL Avancé</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
         
-      
-      
-      
-      
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction">Introduction</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline">Forward Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline">Deferred Renderer</a>
+            </li>
+        
+            <li class="nav-item active">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction">Shadow Mapping</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction">Post Processing</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context">Cours et Doc</a>
+            </li>
+        
 
-      
-        
-      
-      
-      
 
-      <li class="dd-item  " data-nav-id="/01-introduction/">
-        <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/">
-          <span>
-            
-              <b>1. </b>
-            
-             Mise en place
-            
-           </span>
-        </a>
-        
-        <ul>
-          
-          
-          
-          
-            <li class="dd-item " data-nav-id="/01-introduction/introduction/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/">
-                <span>Introduction     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/01-introduction/code-template/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/code-template/">
-                <span>Code template     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/01-introduction/lib-externes/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-externes/">
-                <span>Bibliotheques externes     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/01-introduction/lib-interne/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/lib-interne/">
-                <span>Bibliotheque interne (glmlv)     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/01-introduction/projet/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/projet/">
-                <span>Projet     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/01-introduction/liens/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/liens/">
-                <span>Liens     </i></span>
-              </a>
-            </li>
-          
-          
-        </ul>
-        
-      </li>
-      
-      
-      
 
-      
-        
-      
-      
-      
-
-      <li class="dd-item  " data-nav-id="/02-forward-shading/">
-        <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/">
-          <span>
-            
-              <b>2. </b>
-            
-             Forward Shading (Rappels)
-            
-           </span>
-        </a>
-        
-        <ul>
-          
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/pipeline/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/pipeline/">
-                <span>Pipeline de rendu     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/geometrie/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/geometrie/">
-                <span>Geometrie     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/shaders/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/shaders/">
-                <span>Shaders     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/transformations/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/transformations/">
-                <span>Transformations     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/lighting/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/lighting/">
-                <span>Lighting     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/textures/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/textures/">
-                <span>Textures     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/load-obj/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/load-obj/">
-                <span>Chargement de modèles OBJ     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/02-forward-shading/plus-loin/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/plus-loin/">
-                <span>Aller plus loin     </i></span>
-              </a>
-            </li>
-          
-          
-        </ul>
-        
-      </li>
-      
-      
-      
-
-      
-        
-      
-      
-      
-
-      <li class="dd-item  " data-nav-id="/03-deferred-shading/">
-        <a href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/">
-          <span>
-            
-              <b>3. </b>
-            
-             Deferred Shading
-            
-           </span>
-        </a>
-        
-        <ul>
-          
-          
-          
-          
-            <li class="dd-item " data-nav-id="/03-deferred-shading/pipeline/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/pipeline/">
-                <span>Pipeline de rendu     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/03-deferred-shading/geometry-pass/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/geometry-pass/">
-                <span>Geometry pass     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/03-deferred-shading/shading-pass/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/shading-pass/">
-                <span>Shading pass     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/03-deferred-shading/plus-loin/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-shading/plus-loin/">
-                <span>Aller plus loin     </i></span>
-              </a>
-            </li>
-          
-          
-        </ul>
-        
-      </li>
-      
-      
-      
-
-      
-        
-      
-      
-      
-
-      <li class="dd-item  parent" data-nav-id="/04-shadow-mapping/">
-        <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/">
-          <span>
-            
-              <b>4. </b>
-            
-             Shadow Mapping
-            
-           </span>
-        </a>
-        
-        <ul>
-          
-          
-          
-          
-            <li class="dd-item " data-nav-id="/04-shadow-mapping/introduction/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction/">
-                <span>Introduction     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item active" data-nav-id="/04-shadow-mapping/dir-shadow-map/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map/">
-                <span>Directional Shadow Map     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/04-shadow-mapping/point-shadow-map/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map/">
-                <span>Point Shadow Map     </i></span>
-              </a>
-            </li>
-          
-          
-        </ul>
-        
-      </li>
-      
-      
-      
-
-      
-        
-      
-      
-      
-
-      <li class="dd-item  " data-nav-id="/05-post-processing/">
-        <a href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/">
-          <span>
-            
-              <b>5. </b>
-            
-             Post-Processing
-            
-           </span>
-        </a>
-        
-        <ul>
-          
-          
-          
-          
-            <li class="dd-item " data-nav-id="/05-post-processing/introduction/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction/">
-                <span>Introduction     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/05-post-processing/gamma-correction/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/gamma-correction/">
-                <span>Gamma correction     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/05-post-processing/extraction-contours/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/extraction-contours/">
-                <span>Extraction de contours     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/05-post-processing/depth-of-field/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/depth-of-field/">
-                <span>Depth of field     </i></span>
-              </a>
-            </li>
-          
-          
-        </ul>
-        
-      </li>
-      
-      
-      
-
-      
-        
-      
-      
-      
-
-      <li class="dd-item  " data-nav-id="/06-course/">
-        <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/">
-          <span>
-            
-              <b>Annexe.</b>
-            
-             Cours
-            
-           </span>
-        </a>
-        
-        <ul>
-          
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/opengl-context/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context/">
-                <span>Qu&#39;est ce que OpenGL ?     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/opengl-extensions/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-extensions/">
-                <span>OpenGL Extensions     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/gpu-pipeline/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/gpu-pipeline/">
-                <span>Pipeline de Rendu     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/opengl-objects/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-objects/">
-                <span>OpenGL Objects     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/buffer-objects/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/buffer-objects/">
-                <span>Buffer Objects     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/vertex-array-objects/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/vertex-array-objects/">
-                <span>Vertex Array Objects     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/textures/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/textures/">
-                <span>Texture et Sampler Objects     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/framebuffer-objects/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/framebuffer-objects/">
-                <span>Framebuffer Objects     </i></span>
-              </a>
-            </li>
-          
-          
-          
-            <li class="dd-item " data-nav-id="/06-course/shaders/">
-              <a href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/shaders/">
-                <span>Shaders     </i></span>
-              </a>
-            </li>
-          
-          
-        </ul>
-        
-      </li>
-      
       
     </ul>
-    <hr>
-     
-    <section id="footer">
-      <p>TDs écris par <a href="http://laurentnoel.fr/">Laurent Noël</a></p>
-    </section>
   </div>
 </nav>
 
-        <section id="body">
-        <div id="overlay"></div>
+<main role="main" class="main-article">
 
-        <div class="padding highlightable">
-
-            <div id="top-bar">
-              
-              <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
-                  <span id="sidebar-toggle-span">
-                      <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
-                        <i class="fa fa-bars"></i>
-                      </a>
-                  </span>
-                
-                <span id="toc-menu"><a href=""><i class="fa fa-list-alt"></i></a></span>
-                
-                
-                
-                
-                  
-                
-                  
-                
-                  
-                
-                  
-                    
-                    
-                <a href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/" itemprop="url"><span itemprop="title">Shadow Mapping</span></a> <i class="fa fa-angle-right"></i>
-                    
-                  
-                
-                  
-                
-                  
-                
-                <span itemprop="title"> Directional Shadow Map</span>
-              </div>
-              
-                  <div class="progress">
-    <div class="wrapper">
-<nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#initialisation">Initialisation</a></li>
-<li><a href="#shaders">Shaders</a></li>
-<li><a href="#création-de-la-shadow-map">Création de la shadow map</a></li>
-<li><a href="#utilisation-de-la-shadow-map">Utilisation de la shadow map</a></li>
-<li><a href="#si-ça-ne-fonctionne-pas">Si ça ne fonctionne pas</a></li>
-<li><a href="#percentage-closest-filtering">Percentage Closest Filtering</a>
-<ul>
-<li><a href="#basique">Basique</a></li>
-<li><a href="#arbitraire">Arbitraire</a></li>
-</ul></li>
-</ul></li>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col side-menu side-menu-left page-content">
+            <ul class="nav flex-column">
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction/">Introduction</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map/">Directional Shadow Map</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map/">Point Shadow Map</a>
+        </li>
+    
 </ul>
-</nav>
-    </div>
-</div>
+        </div>
 
-              
+        <div class="col middle-content page-content">
+            <h1 class="section-title">Directional Shadow Map</h1>
 
-            </div>
             
-    	        <div id="body-inner">
-                
-                <h1>Directional Shadow Map</h1>
-                
-
-
 
 <p>Nous allons commencer par l&rsquo;utilisation du shadow mapping pour une lumière directionnelle, qui est plus simple.</p>
 
@@ -655,16 +214,14 @@ MathJax.Hub.Config({
 <li>Utilisation de la shadow map: A faire dans la shading pass. Il s&rsquo;agit avant d&rsquo;éclairer un fragment vu par la caméra de vérifier s&rsquo;il est visible depuis la light en utilisant la depth map précalculée.</li>
 </ul>
 
-<h2 id="initialisation">Initialisation</h2>
+<h1 id="initialisation">Initialisation</h1>
 
 <p>Dans la classe Application, ajoutez 4 variables:</p>
-
-<pre><code class="language-cpp">GLuint m_directionalSMTexture;
-GLuint m_directionalSMFBO;
-GLuint m_directionalSMSampler;
-int32_t m_nDirectionalSMResolution = 512;
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="">GLuint</span><span style=""> </span><span style="">m_directionalSMTexture</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">GLuint</span><span style=""> </span><span style="">m_directionalSMFBO</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">GLuint</span><span style=""> </span><span style="">m_directionalSMSampler</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">int32_t</span><span style=""> </span><span style="">m_nDirectionalSMResolution</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">512</span><span style="">;</span></code></pre>
+</div>
 <p>La première est destinée à stocker un identifiant de texture OpenGL qui contiendra la depth map selon le point de vue de la light.</p>
 
 <p>La deuxième est destinée à stocker un identifiant de framebuffer OpenGL qui nous permettra de dessiner la depth map.</p>
@@ -680,14 +237,12 @@ int32_t m_nDirectionalSMResolution = 512;
 <p>Vérifiez la validité du framebuffer, puis débindez le framebuffer.</p>
 
 <p>Créez enfin le sampler m_directionalSMSampler avec le code suivant:</p>
-
-<pre><code class="language-cpp">glGenSamplers(1, &amp;m_directionalSMSampler);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="">glGenSamplers</span><span style="">(</span><span style="color:#ae81ff">1</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">m_directionalSMSampler</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">glSamplerParameteri</span><span style="">(</span><span style="">m_directionalSMSampler</span><span style="">,</span><span style=""> </span><span style="">GL_TEXTURE_MIN_FILTER</span><span style="">,</span><span style=""> </span><span style="">GL_LINEAR</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">glSamplerParameteri</span><span style="">(</span><span style="">m_directionalSMSampler</span><span style="">,</span><span style=""> </span><span style="">GL_TEXTURE_MAG_FILTER</span><span style="">,</span><span style=""> </span><span style="">GL_LINEAR</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">glSamplerParameteri</span><span style="">(</span><span style="">m_directionalSMSampler</span><span style="">,</span><span style=""> </span><span style="">GL_TEXTURE_WRAP_S</span><span style="">,</span><span style=""> </span><span style="">GL_CLAMP_TO_BORDER</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">glSamplerParameteri</span><span style="">(</span><span style="">m_directionalSMSampler</span><span style="">,</span><span style=""> </span><span style="">GL_TEXTURE_WRAP_T</span><span style="">,</span><span style=""> </span><span style="">GL_CLAMP_TO_BORDER</span><span style="">);</span></code></pre>
+</div>
 <p>Fonctions GL à utiliser:</p>
 
 <table>
@@ -751,145 +306,129 @@ glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDE
 </tbody>
 </table>
 
-<h2 id="shaders">Shaders</h2>
+<h1 id="shaders">Shaders</h1>
 
 <p>Ajoutez deux nouveaux shaders <em>directionalSM.vs.glsl</em> et <em>directionalSM.fs.glsl</em>.</p>
 
 <p>L&rsquo;objectif du vertex shader est de transformer le sommet d&rsquo;entrée dans l&rsquo;espace de la light. Pour cela, on suppose que l&rsquo;application fournie une matrice ViewProjection adaptée et le code est simplement le suivant:</p>
-
-<pre><code class="language-glsl">// directionalSM.vs.glsl
-#version 330
-
-layout(location = 0) in vec3 aPosition;
-uniform mat4 uDirLightViewProjMatrix;
-
-void main()
-{
-    gl_Position =  uDirLightViewProjMatrix * vec4(aPosition, 1);
-}
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-glsl" data-lang="glsl"><span style="color:#75715e">// directionalSM.vs.glsl</span><span style="">
+</span><span style=""></span><span style="color:#75715e">#version 330</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="">layout</span><span style="">(</span><span style="">location</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style=""> </span><span style="color:#66d9ef">in</span><span style=""> </span><span style="color:#66d9ef">vec3</span><span style=""> </span><span style="">aPosition</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">uniform</span><span style=""> </span><span style="">mat4</span><span style=""> </span><span style="">uDirLightViewProjMatrix</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">void</span><span style=""> </span><span style="">main</span><span style="">()</span><span style="">
+</span><span style=""></span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="">gl_Position</span><span style=""> </span><span style="color:#f92672">=</span><span style="">  </span><span style="">uDirLightViewProjMatrix</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#66d9ef">vec4</span><span style="">(</span><span style="">aPosition</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 <p>Le fragment shader n&rsquo;a rien a faire car tout ce qui nous interesse c&rsquo;est la depth des fragments. Or la depth est directement écrite par la carte graphique dans le depth buffer après l&rsquo;execution du fragment shader. On se contente donc d&rsquo;écrire un fragment shader minimal qui ne sort que du noir:</p>
-
-<pre><code class="language-glsl">// directionalSM.fs.glsl
-#version 330
-out vec3 fColor;
-void main()
-{
-    fColor = vec3(0);
-}
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-glsl" data-lang="glsl"><span style="color:#75715e">// directionalSM.fs.glsl</span><span style="">
+</span><span style=""></span><span style="color:#75715e">#version 330</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">out</span><span style=""> </span><span style="color:#66d9ef">vec3</span><span style=""> </span><span style="">fColor</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">void</span><span style=""> </span><span style="">main</span><span style="">()</span><span style="">
+</span><span style=""></span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="">fColor</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#66d9ef">vec3</span><span style="">(</span><span style="color:#ae81ff">0</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 <p>Dans l&rsquo;application, ajoutez un nouveau programme et une variable pour stocker la location de l&rsquo;uniform <em>uDirLightViewProjMatrix</em>:</p>
-
-<pre><code class="language-cpp">glmlv::GLProgram m_directionalSMProgram;
-GLint m_uDirLightViewProjMatrix;
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="">glmlv</span><span style="color:#f92672">::</span><span style="">GLProgram</span><span style=""> </span><span style="">m_directionalSMProgram</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="">GLint</span><span style=""> </span><span style="">m_uDirLightViewProjMatrix</span><span style="">;</span></code></pre>
+</div>
 <p>Dans le constructor, compilez le programme à partir des deux nouveaux shaders et récupérez à la location avec <em>glGetUniformLocation</em>.</p>
 
-<h2 id="création-de-la-shadow-map">Création de la shadow map</h2>
+<h1 id="création-de-la-shadow-map">Création de la shadow map</h1>
 
 <p>Il faut à présent calculer la shadow map dans la boucle de rendu. Attention: ce calcul necessite un rendu de la scène, qui peut être coûteux. Il faut donc faire attention à ne recalculer la shadow map que si la light change de direction, par exemple en utilisant un booléen. La structure générale de la méthode run() devient donc:</p>
-
-<pre><code class="language-cpp">int Application::run()
-{
-    [...]
-    bool directionalSMDirty = true;
-
-    // Loop until the user closes the window
-    for (auto iterationCount = 0u; !m_GLFWHandle.shouldClose(); ++iterationCount)
-    {
-        [...]
-        if (directionalSMDirty)
-        {
-            // Calcul de la shadow map (**)
-            [...]
-
-            directionalSMDirty = false; // Pas de calcul au prochain tour
-        }
-
-        // Rendu
-        [...]
-
-        // Pseudo code dans le dessin de la GUI:
-        if (directional_light_change)
-        {
-            directionalSMDirty = true; // Il faut recalculer la shadow map
-        }
-        [...]
-    }
-}
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">int</span><span style=""> </span><span style="">Application</span><span style="color:#f92672">::</span><span style="">run</span><span style="">()</span><span style="">
+</span><span style=""></span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="">[...]</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">bool</span><span style=""> </span><span style="">directionalSMDirty</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">true</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// Loop until the user closes the window
+</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">iterationCount</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0u</span><span style="">;</span><span style=""> </span><span style="color:#f92672">!</span><span style="">m_GLFWHandle</span><span style="">.</span><span style="">shouldClose</span><span style="">();</span><span style=""> </span><span style="color:#f92672">++</span><span style="">iterationCount</span><span style="">)</span><span style="">
+</span><span style="">    </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="">[...]</span><span style="">
+</span><span style="">        </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">directionalSMDirty</span><span style="">)</span><span style="">
+</span><span style="">        </span><span style="">{</span><span style="">
+</span><span style="">            </span><span style="color:#75715e">// Calcul de la shadow map (**)
+</span><span style="color:#75715e"></span><span style="">            </span><span style="">[...]</span><span style="">
+</span><span style="">
+</span><span style="">            </span><span style="">directionalSMDirty</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">false</span><span style="">;</span><span style=""> </span><span style="color:#75715e">// Pas de calcul au prochain tour
+</span><span style="color:#75715e"></span><span style="">        </span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">        </span><span style="color:#75715e">// Rendu
+</span><span style="color:#75715e"></span><span style="">        </span><span style="">[...]</span><span style="">
+</span><span style="">
+</span><span style="">        </span><span style="color:#75715e">// Pseudo code dans le dessin de la GUI:
+</span><span style="color:#75715e"></span><span style="">        </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="">(</span><span style="">directional_light_change</span><span style="">)</span><span style="">
+</span><span style="">        </span><span style="">{</span><span style="">
+</span><span style="">            </span><span style="">directionalSMDirty</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">true</span><span style="">;</span><span style=""> </span><span style="color:#75715e">// Il faut recalculer la shadow map
+</span><span style="color:#75715e"></span><span style="">        </span><span style="">}</span><span style="">
+</span><span style="">        </span><span style="">[...]</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 <p>Mettez en place cette structure de code par dessus le code actuel de rendu du deferred.</p>
 
 <p>A la suite du commentaire *// Calcul de la shadow map (*<em>)</em>, ajoutez le code suivant:</p>
-
-<pre><code class="language-cpp">m_directionalSMProgram.use();
-
-glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_directionalSMFBO);
-glViewport(0, 0, m_nDirectionalSMResolution, m_nDirectionalSMResolution);
-glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-glUniformMatrix4fv(m_uDirLightViewProjMatrix, 1, GL_FALSE, glm::value_ptr(dirLightProjMatrix * dirLightViewMatrix));
-
-glBindVertexArray(m_SceneVAO);
-
-// We draw each shape by specifying how much indices it carries, and with an offset in the global index buffer
-for (const auto shape : m_shapes) {
-    glDrawElements(GL_TRIANGLES, shape.indexCount, GL_UNSIGNED_INT, (const GLvoid*)(shape.indexOffset * sizeof(GLuint)));
-}
-
-glBindVertexArray(0);
-
-glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="">m_directionalSMProgram</span><span style="">.</span><span style="">use</span><span style="">();</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="">glBindFramebuffer</span><span style="">(</span><span style="">GL_DRAW_FRAMEBUFFER</span><span style="">,</span><span style=""> </span><span style="">m_directionalSMFBO</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">glViewport</span><span style="">(</span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style=""> </span><span style="">m_nDirectionalSMResolution</span><span style="">,</span><span style=""> </span><span style="">m_nDirectionalSMResolution</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">glClear</span><span style="">(</span><span style="">GL_COLOR_BUFFER_BIT</span><span style=""> </span><span style="color:#f92672">|</span><span style=""> </span><span style="">GL_DEPTH_BUFFER_BIT</span><span style="">);</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="">glUniformMatrix4fv</span><span style="">(</span><span style="">m_uDirLightViewProjMatrix</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">,</span><span style=""> </span><span style="">GL_FALSE</span><span style="">,</span><span style=""> </span><span style="">glm</span><span style="color:#f92672">::</span><span style="">value_ptr</span><span style="">(</span><span style="">dirLightProjMatrix</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">dirLightViewMatrix</span><span style="">));</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="">glBindVertexArray</span><span style="">(</span><span style="">m_SceneVAO</span><span style="">);</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#75715e">// We draw each shape by specifying how much indices it carries, and with an offset in the global index buffer
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">shape</span><span style=""> </span><span style="">:</span><span style=""> </span><span style="">m_shapes</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="">glDrawElements</span><span style="">(</span><span style="">GL_TRIANGLES</span><span style="">,</span><span style=""> </span><span style="">shape</span><span style="">.</span><span style="">indexCount</span><span style="">,</span><span style=""> </span><span style="">GL_UNSIGNED_INT</span><span style="">,</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">const</span><span style=""> </span><span style="">GLvoid</span><span style="color:#f92672">*</span><span style="">)(</span><span style="">shape</span><span style="">.</span><span style="">indexOffset</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#66d9ef">sizeof</span><span style="">(</span><span style="">GLuint</span><span style="">)));</span><span style="">
+</span><span style=""></span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="">glBindVertexArray</span><span style="">(</span><span style="color:#ae81ff">0</span><span style="">);</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="">glBindFramebuffer</span><span style="">(</span><span style="">GL_DRAW_FRAMEBUFFER</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">);</span></code></pre>
+</div>
 <p>Ce code met en place le programme pour dessiner la shadow map, bind le FBO sur lequel la shadow map est attachée, puis dessine la scène. Logiquement, après ce dessin, la texture m_directionalSMTexture (attachée à m_directionalSMFBO) doit contenir la shadow map.</p>
 
 <p>Dans ce code, il vous manque le calcul des deux matrices dirLightProjMatrix et dirLightViewMatrix, qui est le suivant (à faire au début de la boucle de rendu car ces variables serviront aussi à la shading pass):</p>
-
-<pre><code class="language-cpp">static const auto computeDirectionVectorUp = [](float phiRadians, float thetaRadians)
-{
-    const auto cosPhi = glm::cos(phiRadians);
-    const auto sinPhi = glm::sin(phiRadians);
-    const auto cosTheta = glm::cos(thetaRadians);
-    return -glm::normalize(glm::vec3(sinPhi * cosTheta, -glm::sin(thetaRadians), cosPhi * cosTheta));
-};
-
-const auto sceneCenter = 0.5f * (m_BBoxMin + m_BBoxMax);
-const float sceneRadius = m_SceneSizeLength * 0.5f;
-
-const auto dirLightUpVector = computeDirectionVectorUp(glm::radians(m_DirLightPhiAngleDegrees), glm::radians(m_DirLightThetaAngleDegrees));
-const auto dirLightViewMatrix = glm::lookAt(sceneCenter + m_DirLightDirection * sceneRadius, sceneCenter, dirLightUpVector); // Will not work if m_DirLightDirection is colinear to lightUpVector
-const auto dirLightProjMatrix = glm::ortho(-sceneRadius, sceneRadius, -sceneRadius, sceneRadius, 0.01f * sceneRadius, 2.f * sceneRadius);
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">static</span><span style=""> </span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">computeDirectionVectorUp</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">[](</span><span style="color:#66d9ef">float</span><span style=""> </span><span style="">phiRadians</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">float</span><span style=""> </span><span style="">thetaRadians</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">cosPhi</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">glm</span><span style="color:#f92672">::</span><span style="">cos</span><span style="">(</span><span style="">phiRadians</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">sinPhi</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">glm</span><span style="color:#f92672">::</span><span style="">sin</span><span style="">(</span><span style="">phiRadians</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">cosTheta</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">glm</span><span style="color:#f92672">::</span><span style="">cos</span><span style="">(</span><span style="">thetaRadians</span><span style="">);</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#f92672">-</span><span style="">glm</span><span style="color:#f92672">::</span><span style="">normalize</span><span style="">(</span><span style="">glm</span><span style="color:#f92672">::</span><span style="">vec3</span><span style="">(</span><span style="">sinPhi</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">cosTheta</span><span style="">,</span><span style=""> </span><span style="color:#f92672">-</span><span style="">glm</span><span style="color:#f92672">::</span><span style="">sin</span><span style="">(</span><span style="">thetaRadians</span><span style="">),</span><span style=""> </span><span style="">cosPhi</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">cosTheta</span><span style="">));</span><span style="">
+</span><span style=""></span><span style="">};</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">sceneCenter</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0.5f</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">(</span><span style="">m_BBoxMin</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">m_BBoxMax</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">float</span><span style=""> </span><span style="">sceneRadius</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">m_SceneSizeLength</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#ae81ff">0.5f</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">dirLightUpVector</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">computeDirectionVectorUp</span><span style="">(</span><span style="">glm</span><span style="color:#f92672">::</span><span style="">radians</span><span style="">(</span><span style="">m_DirLightPhiAngleDegrees</span><span style="">),</span><span style=""> </span><span style="">glm</span><span style="color:#f92672">::</span><span style="">radians</span><span style="">(</span><span style="">m_DirLightThetaAngleDegrees</span><span style="">));</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">dirLightViewMatrix</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">glm</span><span style="color:#f92672">::</span><span style="">lookAt</span><span style="">(</span><span style="">sceneCenter</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">m_DirLightDirection</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">sceneRadius</span><span style="">,</span><span style=""> </span><span style="">sceneCenter</span><span style="">,</span><span style=""> </span><span style="">dirLightUpVector</span><span style="">);</span><span style=""> </span><span style="color:#75715e">// Will not work if m_DirLightDirection is colinear to lightUpVector
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">dirLightProjMatrix</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">glm</span><span style="color:#f92672">::</span><span style="">ortho</span><span style="">(</span><span style="color:#f92672">-</span><span style="">sceneRadius</span><span style="">,</span><span style=""> </span><span style="">sceneRadius</span><span style="">,</span><span style=""> </span><span style="color:#f92672">-</span><span style="">sceneRadius</span><span style="">,</span><span style=""> </span><span style="">sceneRadius</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0.01f</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">sceneRadius</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">2.f</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">sceneRadius</span><span style="">);</span></code></pre>
+</div>
 <p>La matrice de projection du lumière directionelle est orthographique car une telle lumière voit &ldquo;en parallèle&rdquo; (tous les points sont illuminés selon la même direction). On fait en sorte que la light voit l&rsquo;ensemble de la scène en la plaçant au bord de la bounding sphere de la scène (d&rsquo;ou le calcul du centre et du rayon de la scène). Il vous sera peut être necessaire de stocker m_BBoxMin et m_BBoxMax si ce n&rsquo;est pas déjà fait, qui peuvent être obtenu au moment du chargement de la scène.</p>
 
-<h2 id="utilisation-de-la-shadow-map">Utilisation de la shadow map</h2>
+<h1 id="utilisation-de-la-shadow-map">Utilisation de la shadow map</h1>
 
 <p>Une fois la shadow map calculée, la shading pass peut l&rsquo;utiliser pour calculer la visibilité d&rsquo;un fragment pour la light concernée.</p>
 
 <p>Il faut tout d&rsquo;abord modifier le fragment shader de la shading pass (shadingPass.fs.glsl) afin d&rsquo;utiliser la shadow map.
 Ajoutez les uniform suivantes:</p>
-
-<pre><code class="language-glsl">uniform mat4 uDirLightViewProjMatrix;
-uniform sampler2D uDirLightShadowMap;
-uniform float uDirLightShadowMapBias;
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-glsl" data-lang="glsl"><span style="color:#66d9ef">uniform</span><span style=""> </span><span style="">mat4</span><span style=""> </span><span style="">uDirLightViewProjMatrix</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">uniform</span><span style=""> </span><span style="color:#66d9ef">sampler2D</span><span style=""> </span><span style="">uDirLightShadowMap</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">uniform</span><span style=""> </span><span style="color:#66d9ef">float</span><span style=""> </span><span style="">uDirLightShadowMapBias</span><span style="">;</span></code></pre>
+</div>
 <p>La matrice permet de passer les fragment vus par la caméra dans l&rsquo;espace projeté de la light. Une fois cette projection faite, on peut lire dans la shadow map pour obtenir la depth enregistrée dans le pixel concerné. Cette depth doit alors être comparée à la depth du fragment courant, toujours selon le point de vue de la light, pour savoir s&rsquo;il est visible depuis la light.</p>
 
 <p>Le code est le suivant:</p>
-
-<pre><code class="language-glsl">vec4 positionInDirLightScreen = uDirLightViewProjMatrix * vec4(position, 1);
-vec3 positionInDirLightNDC = vec3(positionInDirLightScreen / positionInDirLightScreen.w) * 0.5 + 0.5;
-float depthBlockerInDirSpace = texture(uDirLightShadowMap, positionInDirLightNDC.xy).r;
-float dirLightVisibility = positionInDirLightNDC.z &lt; depthBlockerInDirSpace + uDirLightShadowMapBias ? 1.0 : 0.0;
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-glsl" data-lang="glsl"><span style="color:#66d9ef">vec4</span><span style=""> </span><span style="">positionInDirLightScreen</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">uDirLightViewProjMatrix</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#66d9ef">vec4</span><span style="">(</span><span style="">position</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">vec3</span><span style=""> </span><span style="">positionInDirLightNDC</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#66d9ef">vec3</span><span style="">(</span><span style="">positionInDirLightScreen</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">positionInDirLightScreen</span><span style="">.</span><span style="">w</span><span style="">)</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#ae81ff">0.5</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#ae81ff">0.5</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">float</span><span style=""> </span><span style="">depthBlockerInDirSpace</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">texture</span><span style="">(</span><span style="">uDirLightShadowMap</span><span style="">,</span><span style=""> </span><span style="">positionInDirLightNDC</span><span style="">.</span><span style="">xy</span><span style="">).</span><span style="">r</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">float</span><span style=""> </span><span style="">dirLightVisibility</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">positionInDirLightNDC</span><span style="">.</span><span style="">z</span><span style=""> </span><span style="color:#f92672">&lt;</span><span style=""> </span><span style="">depthBlockerInDirSpace</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">uDirLightShadowMapBias</span><span style=""> </span><span style="color:#f92672">?</span><span style=""> </span><span style="color:#ae81ff">1.0</span><span style=""> </span><span style="color:#f92672">:</span><span style=""> </span><span style="color:#ae81ff">0.0</span><span style="">;</span></code></pre>
+</div>
 <p>La première ligne applique la matrice pour projeter la position du fragment courant.</p>
 
 <p>La deuxième light homogénise cette position projetée en divisant par la coordonnée &ldquo;w&rdquo;. A l&rsquo;issue de cette opération, toutes les coordonnées sont entre -1 et 1. Afin de pouvoir lire dans la shadow map, on les ramène entre 0 et 1 grace au *0.5 + 0.5. Les coordonnées .xy identifie le pixel à lire dans la shadow map, et la coordonnée .z stocke la depth du fragment selon le point de vue de la light.</p>
@@ -907,12 +446,10 @@ float dirLightVisibility = positionInDirLightNDC.z &lt; depthBlockerInDirSpace +
 <p>Enfin il y a un piège pour la matrice uDirLightViewProjMatrix. Le code est un peu différent de la passe précédente puisqu&rsquo;il ne suffit de pas multiplier dirLightProjMatrix à dirLightViewMatrix pour obtenir cette matrice.</p>
 
 <p>Cela est du au fait que les fragments de la shading pass ne sont pas en espace World mais en espace View de la caméra. Il faut donc qu&rsquo;ils soient repassés en World avant d&rsquo;être transformés dans l&rsquo;espace de la light. Pour cela, il suffit de multiplier à gauche par l&rsquo;inverse de la View matrix de la caméra:</p>
-
-<pre><code class="language-cpp">const auto rcpViewMatrix = m_viewController.getRcpViewMatrix(); // Inverse de la view matrix de la caméra
-glUniformMatrix4fv(m_uDirLightViewProjMatrix_shadingPass, 1, GL_FALSE, glm::value_ptr(dirLightProjMatrix * dirLightViewMatrix * rcpViewMatrix));
-</code></pre>
-
-<h2 id="si-ça-ne-fonctionne-pas">Si ça ne fonctionne pas</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">const</span><span style=""> </span><span style="color:#66d9ef">auto</span><span style=""> </span><span style="">rcpViewMatrix</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">m_viewController</span><span style="">.</span><span style="">getRcpViewMatrix</span><span style="">();</span><span style=""> </span><span style="color:#75715e">// Inverse de la view matrix de la caméra
+</span><span style="color:#75715e"></span><span style="">glUniformMatrix4fv</span><span style="">(</span><span style="">m_uDirLightViewProjMatrix_shadingPass</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">,</span><span style=""> </span><span style="">GL_FALSE</span><span style="">,</span><span style=""> </span><span style="">glm</span><span style="color:#f92672">::</span><span style="">value_ptr</span><span style="">(</span><span style="">dirLightProjMatrix</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">dirLightViewMatrix</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">rcpViewMatrix</span><span style="">));</span></code></pre>
+</div>
+<h1 id="si-ça-ne-fonctionne-pas">Si ça ne fonctionne pas</h1>
 
 <p>A ce stade, votre shadow mapping devrait fonctionner et vous devriez donc voir les ombres portées par les objets de la scène par rapport à la lumière directionnelle.</p>
 
@@ -921,28 +458,26 @@ glUniformMatrix4fv(m_uDirLightViewProjMatrix_shadingPass, 1, GL_FALSE, glm::valu
 <p>Afin de débogguer, une première approche peut être d&rsquo;afficher la depth map vue par la caméra. Malheureusement, la depth map ne peut pas être blittée à l&rsquo;ecran comme les autres textures du GBuffer.</p>
 
 <p>Il faut donc coder un fragment shader dediée à l&rsquo;affichage de la depth map:</p>
-
-<pre><code class="language-glsl">// displayDepth.fs.glsl
-#version 330
-
-uniform sampler2D uGDepth;
-
-out vec3 fColor;
-
-void main()
-{
-    float depth = texelFetch(uGDepth, ivec2(gl_FragCoord.xy), 0).r;
-    fColor = vec3(depth); // Since the depth is between 0 and 1, pow it to darkness its value
-}
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-glsl" data-lang="glsl"><span style="color:#75715e">// displayDepth.fs.glsl</span><span style="">
+</span><span style=""></span><span style="color:#75715e">#version 330</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">uniform</span><span style=""> </span><span style="color:#66d9ef">sampler2D</span><span style=""> </span><span style="">uGDepth</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">out</span><span style=""> </span><span style="color:#66d9ef">vec3</span><span style=""> </span><span style="">fColor</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">void</span><span style=""> </span><span style="">main</span><span style="">()</span><span style="">
+</span><span style=""></span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">float</span><span style=""> </span><span style="">depth</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">texelFetch</span><span style="">(</span><span style="">uGDepth</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">ivec2</span><span style="">(</span><span style="">gl_FragCoord</span><span style="">.</span><span style="">xy</span><span style="">),</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">).</span><span style="">r</span><span style="">;</span><span style="">
+</span><span style="">    </span><span style="">fColor</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#66d9ef">vec3</span><span style="">(</span><span style="">depth</span><span style="">);</span><span style=""> </span><span style="color:#75715e">// Since the depth is between 0 and 1, pow it to darkness its value</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 <p>Ce fragment shader peut être combiné à <em>shadingPass.vs.glsl</em> pour former un programme GLSL. En bindant correctment la depth map à afficher, et en dessinant un triangle sur tout l&rsquo;ecran, on peut ainsi afficher n&rsquo;importance quel depth map (en particulier celle représentant la shadow map de la light).</p>
 
 <p>Voir sur la branche cheat pour un exemple.</p>
 
-<h2 id="percentage-closest-filtering">Percentage Closest Filtering</h2>
+<h1 id="percentage-closest-filtering">Percentage Closest Filtering</h1>
 
-<h3 id="basique">Basique</h3>
+<h2 id="basique">Basique</h2>
 
 <p>L&rsquo;aspect visuel du shadow mapping dépend grandement de la résolution choisie. Pour une résolution de 512, vous avez du constater que le rendu des ombres est très aliasé. Il faut monter à 4096 au moins pour ne plus voir l&rsquo;aliasing à une distance correcte, qui reste très visible en se rapprochant.</p>
 
@@ -951,129 +486,125 @@ void main()
 <p>Cette technique est en partie supportée par le GPU en passant par un sampler de type <em>sampler2DShadow</em> en GLSL.</p>
 
 <p>Dans <em>shadingPass.fs.glsl</em>, remplacez la déclaration des uniformes du shadow mapping par:</p>
-
-<pre><code class="language-glsl">uniform mat4 uDirLightViewProjMatrix;
-uniform sampler2DShadow uDirLightShadowMap;
-uniform float uDirLightShadowMapBias;
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-glsl" data-lang="glsl"><span style="color:#66d9ef">uniform</span><span style=""> </span><span style="">mat4</span><span style=""> </span><span style="">uDirLightViewProjMatrix</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">uniform</span><span style=""> </span><span style="color:#66d9ef">sampler2DShadow</span><span style=""> </span><span style="">uDirLightShadowMap</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">uniform</span><span style=""> </span><span style="color:#66d9ef">float</span><span style=""> </span><span style="">uDirLightShadowMapBias</span><span style="">;</span></code></pre>
+</div>
 <p>Puis remplacez le code de calcul de la visibilité par:</p>
-
-<pre><code class="language-glsl">vec4 positionInDirLightScreen = uDirLightViewProjMatrix * vec4(position, 1); // Compute fragment position in NDC space of light
-vec3 positionInDirLightNDC = vec3(positionInDirLightScreen / positionInDirLightScreen.w) * 0.5 + 0.5; // Homogeneize + put between 0 and 1
-float dirLightVisibility = textureProj(uDirLightShadowMap, vec4(positionInDirLightNDC.xy, positionInDirLightNDC.z - uDirLightShadowMapBias, 1.0), 0.0);
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-glsl" data-lang="glsl"><span style="color:#66d9ef">vec4</span><span style=""> </span><span style="">positionInDirLightScreen</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">uDirLightViewProjMatrix</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#66d9ef">vec4</span><span style="">(</span><span style="">position</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="">);</span><span style=""> </span><span style="color:#75715e">// Compute fragment position in NDC space of light</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">vec3</span><span style=""> </span><span style="">positionInDirLightNDC</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#66d9ef">vec3</span><span style="">(</span><span style="">positionInDirLightScreen</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">positionInDirLightScreen</span><span style="">.</span><span style="">w</span><span style="">)</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#ae81ff">0.5</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#ae81ff">0.5</span><span style="">;</span><span style=""> </span><span style="color:#75715e">// Homogeneize + put between 0 and 1</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">float</span><span style=""> </span><span style="">dirLightVisibility</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">textureProj</span><span style="">(</span><span style="">uDirLightShadowMap</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">vec4</span><span style="">(</span><span style="">positionInDirLightNDC</span><span style="">.</span><span style="">xy</span><span style="">,</span><span style=""> </span><span style="">positionInDirLightNDC</span><span style="">.</span><span style="">z</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="">uDirLightShadowMapBias</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">1.0</span><span style="">),</span><span style=""> </span><span style="color:#ae81ff">0.0</span><span style="">);</span></code></pre>
+</div>
 <p>On utilise donc un <em>sampler2DShadow</em> à la place d&rsquo;un <em>sampler2D</em> et la fonction <em>textureProj</em> à la place de <em>texture</em>. Ce code permet d&rsquo;obtenir un filtrage 2x2 (bilinéaire) sur nos ombres.</p>
 
 <p>Afin que ce shader fonctionne, il faut rajouter deux lignes à l&rsquo;initialisation du sampler m_directionalSMSampler:</p>
-
-<pre><code class="language-cpp">glGenSamplers(1, &amp;m_directionalSMSampler);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE); // Cette ligne
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL) // Et celle ci;
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="">glGenSamplers</span><span style="">(</span><span style="color:#ae81ff">1</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="">m_directionalSMSampler</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">glSamplerParameteri</span><span style="">(</span><span style="">m_directionalSMSampler</span><span style="">,</span><span style=""> </span><span style="">GL_TEXTURE_MIN_FILTER</span><span style="">,</span><span style=""> </span><span style="">GL_LINEAR</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">glSamplerParameteri</span><span style="">(</span><span style="">m_directionalSMSampler</span><span style="">,</span><span style=""> </span><span style="">GL_TEXTURE_MAG_FILTER</span><span style="">,</span><span style=""> </span><span style="">GL_LINEAR</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">glSamplerParameteri</span><span style="">(</span><span style="">m_directionalSMSampler</span><span style="">,</span><span style=""> </span><span style="">GL_TEXTURE_WRAP_S</span><span style="">,</span><span style=""> </span><span style="">GL_CLAMP_TO_BORDER</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">glSamplerParameteri</span><span style="">(</span><span style="">m_directionalSMSampler</span><span style="">,</span><span style=""> </span><span style="">GL_TEXTURE_WRAP_T</span><span style="">,</span><span style=""> </span><span style="">GL_CLAMP_TO_BORDER</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">glSamplerParameteri</span><span style="">(</span><span style="">m_directionalSMSampler</span><span style="">,</span><span style=""> </span><span style="">GL_TEXTURE_COMPARE_MODE</span><span style="">,</span><span style=""> </span><span style="">GL_COMPARE_REF_TO_TEXTURE</span><span style="">);</span><span style=""> </span><span style="color:#75715e">// Cette ligne
+</span><span style="color:#75715e"></span><span style="">glSamplerParameteri</span><span style="">(</span><span style="">m_directionalSMSampler</span><span style="">,</span><span style=""> </span><span style="">GL_TEXTURE_COMPARE_FUNC</span><span style="">,</span><span style=""> </span><span style="">GL_LEQUAL</span><span style="">)</span><span style=""> </span><span style="color:#f92672">//</span><span style=""> </span><span style="">Et</span><span style=""> </span><span style="">celle</span><span style=""> </span><span style="">ci</span><span style="">;</span></code></pre>
+</div>
 <p>Ces lignes définissent le comportement de la fonction <em>textureProj</em> dans le shader.</p>
 
 <p>Une fois ces modifications effectuées, lancez votre application et constatez que les ombres sont un peu floutées.</p>
 
-<h3 id="arbitraire">Arbitraire</h3>
+<h2 id="arbitraire">Arbitraire</h2>
 
 <p>Il est possible d&rsquo;allouer plus loin dans le filtrage des ombres en appliquant un filtre arbitraire lors de la lecture de la shadow map. Cela est plus couteux mais également plus agréable visuellement.</p>
 
 <p>Dans <em>shadingPass.fs.glsl</em>, ajoutez les uniform:</p>
-
-<pre><code class="language-glsl">uniform int uDirLightShadowMapSampleCount;
-uniform float uDirLightShadowMapSpread;
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-glsl" data-lang="glsl"><span style="color:#66d9ef">uniform</span><span style=""> </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">uDirLightShadowMapSampleCount</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">uniform</span><span style=""> </span><span style="color:#66d9ef">float</span><span style=""> </span><span style="">uDirLightShadowMapSpread</span><span style="">;</span></code></pre>
+</div>
 <p>et le code utilitaires (avant le main):</p>
-
-<pre><code class="language-glsl">vec2 poissonDisk[16] = vec2[](
-    vec2( -0.94201624, -0.39906216 ),
-    vec2( 0.94558609, -0.76890725 ),
-    vec2( -0.094184101, -0.92938870 ),
-    vec2( 0.34495938, 0.29387760 ),
-    vec2( -0.91588581, 0.45771432 ),
-    vec2( -0.81544232, -0.87912464 ),
-    vec2( -0.38277543, 0.27676845 ),
-    vec2( 0.97484398, 0.75648379 ),
-    vec2( 0.44323325, -0.97511554 ),
-    vec2( 0.53742981, -0.47373420 ),
-    vec2( -0.26496911, -0.41893023 ),
-    vec2( 0.79197514, 0.19090188 ),
-    vec2( -0.24188840, 0.99706507 ),
-    vec2( -0.81409955, 0.91437590 ),
-    vec2( 0.19984126, 0.78641367 ),
-    vec2( 0.14383161, -0.14100790 )
-);
-
-float random(vec4 seed)
-{
-    float dot_product = dot(seed, vec4(12.9898,78.233,45.164,94.673));
-    return fract(sin(dot_product) * 43758.5453);
-}
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-glsl" data-lang="glsl"><span style="color:#66d9ef">vec2</span><span style=""> </span><span style="">poissonDisk</span><span style="">[</span><span style="color:#ae81ff">16</span><span style="">]</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#66d9ef">vec2</span><span style="">[](</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.94201624</span><span style="">,</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.39906216</span><span style=""> </span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#ae81ff">0.94558609</span><span style="">,</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.76890725</span><span style=""> </span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.094184101</span><span style="">,</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.92938870</span><span style=""> </span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#ae81ff">0.34495938</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0.29387760</span><span style=""> </span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.91588581</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0.45771432</span><span style=""> </span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.81544232</span><span style="">,</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.87912464</span><span style=""> </span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.38277543</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0.27676845</span><span style=""> </span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#ae81ff">0.97484398</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0.75648379</span><span style=""> </span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#ae81ff">0.44323325</span><span style="">,</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.97511554</span><span style=""> </span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#ae81ff">0.53742981</span><span style="">,</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.47373420</span><span style=""> </span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.26496911</span><span style="">,</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.41893023</span><span style=""> </span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#ae81ff">0.79197514</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0.19090188</span><span style=""> </span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.24188840</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0.99706507</span><span style=""> </span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.81409955</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0.91437590</span><span style=""> </span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#ae81ff">0.19984126</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0.78641367</span><span style=""> </span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">vec2</span><span style="">(</span><span style=""> </span><span style="color:#ae81ff">0.14383161</span><span style="">,</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#ae81ff">0.14100790</span><span style=""> </span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">);</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">float</span><span style=""> </span><span style="">random</span><span style="">(</span><span style="color:#66d9ef">vec4</span><span style=""> </span><span style="">seed</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">float</span><span style=""> </span><span style="">dot_product</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">dot</span><span style="">(</span><span style="">seed</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">vec4</span><span style="">(</span><span style="color:#ae81ff">12.9898</span><span style="">,</span><span style="color:#ae81ff">78.233</span><span style="">,</span><span style="color:#ae81ff">45.164</span><span style="">,</span><span style="color:#ae81ff">94.673</span><span style="">));</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">fract</span><span style="">(</span><span style="">sin</span><span style="">(</span><span style="">dot_product</span><span style="">)</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="color:#ae81ff">43758.5453</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 <p>Le tableau poissonDisk definit 16 échantillons d&rsquo;une distribution de poisson 2D centrée en (0,0). La fonction random permet d&rsquo;obtenir un nombre pseudo-aléatoire à partir d&rsquo;une graine.</p>
 
 <p>Dans le main du shader, remplacez le calcul de la visibilité par:</p>
-
-<pre><code class="language-glsl">float dirLightVisibility = 0.0;
-float dirSampleCountf = float(uDirLightShadowMapSampleCount);
-int step = max(1, 16 / uDirLightShadowMapSampleCount);
-for (int i = 0; i &lt; uDirLightShadowMapSampleCount; ++i)
-{
-    // Noisy shadows:
-    int index = int(dirSampleCountf * random(vec4(gl_FragCoord.xyy, i))) % uDirLightShadowMapSampleCount;
-
-    dirLightVisibility += textureProj(uDirLightShadowMap, vec4(positionInDirLightNDC.xy + uDirLightShadowMapSpread * poissonDisk[index], positionInDirLightNDC.z - uDirLightShadowMapBias, 1.0), 0.0);
-}
-dirLightVisibility /= dirSampleCountf;
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-glsl" data-lang="glsl"><span style="color:#66d9ef">float</span><span style=""> </span><span style="">dirLightVisibility</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0.0</span><span style="">;</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">float</span><span style=""> </span><span style="">dirSampleCountf</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#66d9ef">float</span><span style="">(</span><span style="">uDirLightShadowMapSampleCount</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">step</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">max</span><span style="">(</span><span style="color:#ae81ff">1</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">16</span><span style=""> </span><span style="color:#f92672">/</span><span style=""> </span><span style="">uDirLightShadowMapSampleCount</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">for</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">i</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">;</span><span style=""> </span><span style="">i</span><span style=""> </span><span style="color:#f92672">&lt;</span><span style=""> </span><span style="">uDirLightShadowMapSampleCount</span><span style="">;</span><span style=""> </span><span style="color:#f92672">++</span><span style="">i</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#75715e">// Noisy shadows:</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">index</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#66d9ef">int</span><span style="">(</span><span style="">dirSampleCountf</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">random</span><span style="">(</span><span style="color:#66d9ef">vec4</span><span style="">(</span><span style="">gl_FragCoord</span><span style="">.</span><span style="">xyy</span><span style="">,</span><span style=""> </span><span style="">i</span><span style="">)))</span><span style=""> </span><span style="color:#f92672">%</span><span style=""> </span><span style="">uDirLightShadowMapSampleCount</span><span style="">;</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="">dirLightVisibility</span><span style=""> </span><span style="color:#f92672">+=</span><span style=""> </span><span style="">textureProj</span><span style="">(</span><span style="">uDirLightShadowMap</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">vec4</span><span style="">(</span><span style="">positionInDirLightNDC</span><span style="">.</span><span style="">xy</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">uDirLightShadowMapSpread</span><span style=""> </span><span style="color:#f92672">*</span><span style=""> </span><span style="">poissonDisk</span><span style="">[</span><span style="">index</span><span style="">],</span><span style=""> </span><span style="">positionInDirLightNDC</span><span style="">.</span><span style="">z</span><span style=""> </span><span style="color:#f92672">-</span><span style=""> </span><span style="">uDirLightShadowMapBias</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">1.0</span><span style="">),</span><span style=""> </span><span style="color:#ae81ff">0.0</span><span style="">);</span><span style="">
+</span><span style=""></span><span style="">}</span><span style="">
+</span><span style=""></span><span style="">dirLightVisibility</span><span style=""> </span><span style="color:#f92672">/=</span><span style=""> </span><span style="">dirSampleCountf</span><span style="">;</span></code></pre>
+</div>
 <p>Dans le code de l&rsquo;application, faites en sorte de pouvoir setter les deux nouvelles uniforms uDirLightShadowMapSampleCount et uDirLightShadowMapSpread via la GUI. La variable uDirLightShadowMapSpread doit être relativement petite (de l&rsquo;ordre de 0.0005) afin de ne pas trop disperser les ombres.</p>
 
 <p>Essayez ce code. Il devrait vous donner des ombres bruitées mais douces.</p>
 
 <p>Une alternative pour obtenir des ombres floutées plutot que bruitées est de calculer l&rsquo;index dans la boucle avec:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-glsl" data-lang="glsl"><span style="color:#75715e">// Blurred shadows:</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">int</span><span style=""> </span><span style="">index</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">(</span><span style="">i</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">step</span><span style="">)</span><span style=""> </span><span style="color:#f92672">%</span><span style=""> </span><span style="">uDirLightShadowMapSampleCount</span><span style="">;</span></code></pre>
+</div>
+        </div>
 
-<pre><code class="language-glsl">// Blurred shadows:
-int index = (i + step) % uDirLightShadowMapSampleCount;
-</code></pre>
-
-
-      
-      </div>
+        <div class="col side-menu side-menu-right page-content">
+            <div class="toc-sidebar">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#initialisation">Initialisation</a></li>
+<li><a href="#shaders">Shaders</a></li>
+<li><a href="#création-de-la-shadow-map">Création de la shadow map</a></li>
+<li><a href="#utilisation-de-la-shadow-map">Utilisation de la shadow map</a></li>
+<li><a href="#si-ça-ne-fonctionne-pas">Si ça ne fonctionne pas</a></li>
+<li><a href="#percentage-closest-filtering">Percentage Closest Filtering</a>
+<ul>
+<li><a href="#basique">Basique</a></li>
+<li><a href="#arbitraire">Arbitraire</a></li>
+</ul></li>
+</ul>
+</nav>
+</div>
+        </div>
     </div>
+</div>
 
-    <div id="navigation">
-        
-        <a class="nav nav-prev" href="https://celeborn2bealive.github.io/opengl-avance//04-shadow-mapping/introduction/"> <i class="fa fa-chevron-left"></i></a>
-        <a class="nav nav-next" href="https://celeborn2bealive.github.io/opengl-avance//04-shadow-mapping/point-shadow-map" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
-    </div>
+</main>
 
-    </section>
-    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
-      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
-    </div>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/clipboard.min.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/perfect-scrollbar.min.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/perfect-scrollbar.jquery.min.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/jquery.sticky-kit.min.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/featherlight.min.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/html5shiv-printshiv.min.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/highlight.pack.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/modernizr.custom.71422.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/learn.js"></script>
-    <script src="https://celeborn2bealive.github.io/opengl-avance//js/hugo-learn.js"></script>
-    
 
-  </body>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+
+<script>
+$(".toc-sidebar ul").addClass("nav flex-column");
+$(".toc-sidebar li").addClass("nav-item");
+$(".toc-sidebar a").addClass("nav-link");
+</script>
+
+
+
+</body>
 </html>
-

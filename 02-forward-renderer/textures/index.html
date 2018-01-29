@@ -1,0 +1,367 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>Textures - OpenGL Avancé</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
+    <style>
+        body
+        {
+          font-family: "Work Sans", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          color: #444444;
+        }
+
+        main
+        {
+          height:100vh;
+          margin-top: 56px;;
+        }
+
+        h1, h2, h3, h4, h5, h6
+        {
+          margin: 2.5rem 0 1.5rem 0;
+        }
+
+        h1.section-title
+        {
+          font-family: "Novacento Sans Wide", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 3.25rem;
+          margin: 1.0rem 0 1.5rem 0;
+          font-weight: 200;
+        }
+
+        main a:hover
+        {
+          text-decoration: none;
+        }
+
+        main table
+        {
+          width: 100%;
+          margin-bottom: 1rem;
+        }
+
+        main img
+        {
+          width: 100%;
+        }
+
+        .jumbotron
+        {
+          background-color: #EEEEEE;
+        }
+
+        .page-content
+        {
+          padding-top: 16px;
+          padding-bottom: 1.5rem;
+        }
+
+        .main-article
+        {
+          margin-left: 15%;
+          margin-right: 15%;
+        }
+
+        .middle-content
+        {
+          text-align: justify;
+        }
+
+        .side-menu
+        {
+          background-color: #EEEEEE;
+          position: fixed;
+          width: 15%;
+          height: 100%;
+          font-size: 1.0em;
+          padding-left: 0px;
+          padding-right: 0px;
+        }
+
+        .side-menu li li
+        {
+          font-size: 0.9em;
+          width: 100%;
+        }
+
+        .side-menu a
+        {
+          color: #555555;
+          font-weight: bold;
+        }
+
+        .side-menu a:hover
+        {
+          color: #CCCCCC;
+          background-color: #343A40;
+        }
+
+        .side-menu-left
+        {
+          left: 0px;
+        }
+
+        .side-menu-right
+        {
+          right: 0px;
+        }
+
+        .highlight
+        {
+          margin-bottom: 1rem;
+        }
+
+        .highlight pre
+        {
+          margin: auto;
+          padding: 1% 5% 1% 5%;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="https://Celeborn2BeAlive.github.io/opengl-avance/">OpenGL Avancé</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction">Introduction</a>
+            </li>
+        
+            <li class="nav-item active">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline">Forward Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline">Deferred Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction">Shadow Mapping</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction">Post Processing</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context">Cours et Doc</a>
+            </li>
+        
+
+
+
+      
+    </ul>
+  </div>
+</nav>
+
+<main role="main" class="main-article">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col side-menu side-menu-left page-content">
+            <ul class="nav flex-column">
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline/">Pipeline de rendu</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/geometrie/">Geometrie</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/shaders/">Shaders</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/transformations/">Transformations</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/lighting/">Lighting</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/textures/">Textures</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/load-obj/">Chargement de modèles OBJ</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/plus-loin/">Aller plus loin</a>
+        </li>
+    
+</ul>
+        </div>
+
+        <div class="col middle-content page-content">
+            <h1 class="section-title">Textures</h1>
+
+            
+
+<h1 id="fragment-shader">Fragment Shader</h1>
+
+<ul>
+<li>Ajouter une variable uniform <em>sampler2D uKdSampler</em>, destiné à pointer sur une texture des couleurs diffuses pour l&rsquo;objet en cours de rendu.</li>
+<li>Dans le main, utiliser la fonction GLSL <a href="http://docs.gl/sl4/texture"><em>texture</em></a> afin de lire le sampler en utiliser les tex coords du fragment.</li>
+<li>Multiplier la valeur lue avec la variable uKd pour obtenir le coefficient diffus final de l&rsquo;objet, à utiliser pour l&rsquo;illumination</li>
+</ul>
+
+<h1 id="application">Application</h1>
+
+<p>A l&rsquo;initialisation</p>
+
+<ul>
+<li>Charger deux images de votre choix à utiliser en temps que texture diffuse de chacun de nos objets (utiliser la classe glmlv::Image2DRGBA et la fonction glmlv::readImage)</li>
+<li>Construire deux texture objects OpenGL et envoyer les pixel des deux images chargés dans ces texture objects</li>
+<li>Construire un sampler object OpenGL et fixer les paramètres GL_TEXTURE_MIN_FILTER et GL_TEXTURE_MAG_FILTER à GL_LINEAR pour ce sampler</li>
+<li>Récuperer la location de l&rsquo;uniform <em>sampler2D uKdSampler</em></li>
+</ul>
+
+<p>Au rendu</p>
+
+<ul>
+<li>Binder la texture sur la texture unit 0</li>
+<li>Binder le sampler sur la texture unit 0</li>
+</ul>
+
+<p>Fonctions GL à utiliser:</p>
+
+<p>A l&rsquo;initialisation:</p>
+
+<table>
+<thead>
+<tr>
+<th>Sans DSA</th>
+<th>DSA</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>glActiveTexture(GL_TEXTURE0)</td>
+<td></td>
+</tr>
+
+<tr>
+<td>glGenTextures</td>
+<td>glCreateTextures</td>
+</tr>
+
+<tr>
+<td>glBindTexture(GL_TEXTURE_2D, texID)</td>
+<td></td>
+</tr>
+
+<tr>
+<td>glTexStorage2D</td>
+<td>glTextureStorage2D</td>
+</tr>
+
+<tr>
+<td>glTexSubImage2D</td>
+<td>glTextureSubImage2D</td>
+</tr>
+
+<tr>
+<td>glGenSamplers</td>
+<td>glCreateSamplers</td>
+</tr>
+
+<tr>
+<td>glSamplerParameteri</td>
+<td>glSamplerParameteri</td>
+</tr>
+</tbody>
+</table>
+
+<p>Au rendu:</p>
+
+<table>
+<thead>
+<tr>
+<th>Sans DSA</th>
+<th>DSA</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>glActiveTexture(GL_TEXTURE0)</td>
+<td></td>
+</tr>
+
+<tr>
+<td>glUniform1i(location, 0)</td>
+<td>glUniform1i(location, 0)</td>
+</tr>
+
+<tr>
+<td>glBindSampler(0, samplerID)</td>
+<td>glBindSampler(0, samplerID)</td>
+</tr>
+
+<tr>
+<td>glBindTexture(GL_TEXTURE_2D, texID)</td>
+<td>glBindTextureUnit(0, texID)</td>
+</tr>
+</tbody>
+</table>
+
+        </div>
+
+        <div class="col side-menu side-menu-right page-content">
+            <div class="toc-sidebar">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#fragment-shader">Fragment Shader</a></li>
+<li><a href="#application">Application</a></li>
+</ul>
+</nav>
+</div>
+        </div>
+    </div>
+</div>
+
+</main>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+
+<script>
+$(".toc-sidebar ul").addClass("nav flex-column");
+$(".toc-sidebar li").addClass("nav-item");
+$(".toc-sidebar a").addClass("nav-link");
+</script>
+
+
+
+</body>
+</html>

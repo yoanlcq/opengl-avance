@@ -1,0 +1,370 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>Repo Github - OpenGL Avancé</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
+    <style>
+        body
+        {
+          font-family: "Work Sans", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          color: #444444;
+        }
+
+        main
+        {
+          height:100vh;
+          margin-top: 56px;;
+        }
+
+        h1, h2, h3, h4, h5, h6
+        {
+          margin: 2.5rem 0 1.5rem 0;
+        }
+
+        h1.section-title
+        {
+          font-family: "Novacento Sans Wide", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 3.25rem;
+          margin: 1.0rem 0 1.5rem 0;
+          font-weight: 200;
+        }
+
+        main a:hover
+        {
+          text-decoration: none;
+        }
+
+        main table
+        {
+          width: 100%;
+          margin-bottom: 1rem;
+        }
+
+        main img
+        {
+          width: 100%;
+        }
+
+        .jumbotron
+        {
+          background-color: #EEEEEE;
+        }
+
+        .page-content
+        {
+          padding-top: 16px;
+          padding-bottom: 1.5rem;
+        }
+
+        .main-article
+        {
+          margin-left: 15%;
+          margin-right: 15%;
+        }
+
+        .middle-content
+        {
+          text-align: justify;
+        }
+
+        .side-menu
+        {
+          background-color: #EEEEEE;
+          position: fixed;
+          width: 15%;
+          height: 100%;
+          font-size: 1.0em;
+          padding-left: 0px;
+          padding-right: 0px;
+        }
+
+        .side-menu li li
+        {
+          font-size: 0.9em;
+          width: 100%;
+        }
+
+        .side-menu a
+        {
+          color: #555555;
+          font-weight: bold;
+        }
+
+        .side-menu a:hover
+        {
+          color: #CCCCCC;
+          background-color: #343A40;
+        }
+
+        .side-menu-left
+        {
+          left: 0px;
+        }
+
+        .side-menu-right
+        {
+          right: 0px;
+        }
+
+        .highlight
+        {
+          margin-bottom: 1rem;
+        }
+
+        .highlight pre
+        {
+          margin: auto;
+          padding: 1% 5% 1% 5%;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="https://Celeborn2BeAlive.github.io/opengl-avance/">OpenGL Avancé</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+        
+            <li class="nav-item active">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction">Introduction</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline">Forward Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline">Deferred Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction">Shadow Mapping</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction">Post Processing</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context">Cours et Doc</a>
+            </li>
+        
+
+
+
+      
+    </ul>
+  </div>
+</nav>
+
+<main role="main" class="main-article">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col side-menu side-menu-left page-content">
+            <ul class="nav flex-column">
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/">Introduction</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/repo-github/">Repo Github</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/fiche-info/">Fiche d&#39;information</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/sdk/">Software Development Kit</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/projet/">Projet</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/liens/">Liens OpenGL</a>
+        </li>
+    
+</ul>
+        </div>
+
+        <div class="col middle-content page-content">
+            <h1 class="section-title">Repo Github</h1>
+
+            
+
+<h1 id="git">Git ?</h1>
+
+<p>Si vous ne connaissez pas, <a href="https://git-scm.com/">Git est un système distribué de gestion de version</a>: un logiciel permettant d&rsquo;enregistrer au fur à mesure les modifications du code source d&rsquo;un projet, de manière partagé entre plusieurs utilisateur.</p>
+
+<p>On peut ainsi facilement revenir en arrière, partager du code, controler qui fait quoi, gérer plusieurs versions, etc.</p>
+
+<p>L&rsquo;objectif de ces TDs n&rsquo;est pas d&rsquo;apprendre à utiliser Git, mais il sera pratique pour moi de suivre votre progression et de récupérer votre projet grace à un repo Git publique.</p>
+
+<h1 id="compte-github">Compte Github</h1>
+
+<p>Si ce n&rsquo;est pas déjà fait, commencez par créer un compte sur <a href="https://github.com/">Github</a>. Ce site vous permet de créer des repository Git et de contribuer sur des projets Open Source.</p>
+
+<p>N&rsquo;oubliez pas de vérifier votre e-mail en cliquant sur le lien reçu.</p>
+
+<h1 id="fork-du-repo-des-tds">Fork du repo des TDs</h1>
+
+<p>Une fois connecté sur Github, allez sur la page du repository des TDs <a href="https://github.com/Celeborn2BeAlive/opengl-avance">https://github.com/Celeborn2BeAlive/opengl-avance</a> et cliquez sur le bouton &ldquo;Fork&rdquo; en haut à droite.</p>
+
+<p>Cela va créer une copie de mon repository &ldquo;opengl-avance&rdquo; sur votre compte Github. Vous pourrez utiliser cette copie comme bon vous semble, faire des modifications (c&rsquo;est le but !), et même me soumettre vos modifications pour intégration dans le repository original (à éviter à moins que je vous le demande).</p>
+
+<h1 id="installer-git">Installer Git</h1>
+
+<p>Sur les machines de la Fac Git est déjà installé. Sous Linux il suffit d&rsquo;utiliser votre gestionnaire de paquet. Par exemple sous Ubuntu (versions récentes):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">sudo apt install git</span></code></pre>
+</div>
+<p>Commande à adapter à votre distribution Linux.</p>
+
+<p>Sous windows <a href="https://git-scm.com/download/win">téléchargez et installez Git</a>. Vous devriez ensuite pouvoir lancer une console Git (recherchez &ldquo;Git&rdquo; à partir du menu windows) et executer les commandes à venir, comme sous linux.</p>
+
+<h1 id="clonage-de-votre-repo">Clonage de votre repo</h1>
+
+<p>Il faut à présent cloner en local votre copie du repository. On doit pour cela utiliser la commande <strong>git clone</strong>. Dans une console, commencez par vous placer dans le repertoire de votre choix (utilisez la console Git sous windows):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">cd</span><span style=""> /le/repertoire/de/mon/choix</span></code></pre>
+</div>
+<p>On clone ensuite le repo (c&rsquo;est évident mais j&rsquo;ai appris à me méfier: remplacez <em>&lt;username&gt;</em> par votre nom d&rsquo;utilisateur Github):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">git clone https://github.com/&lt;username&gt;/opengl-avance</span></code></pre>
+</div>
+<p>Si vous travaillez en binome, choisissez l&rsquo;un des deux repo pour travailler en TD.</p>
+
+<p>Un nouveau dossier <strong>opengl-avance</strong> devrait alors être créé. Cela ci contient le repository local. Déplacez vous dedans en console.</p>
+
+<h1 id="branches-du-repo">Branches du repo</h1>
+
+<p>Un repository peut être composé de plusieurs branches, c&rsquo;est à dire différente versions du code source, à différent états d&rsquo;avancement, voir des branches avec un contenu completement différent des autres. Voici les branches du repo de TD:</p>
+
+<p>Principales:</p>
+
+<ul>
+<li>master <em>Code de base + apps d&rsquo;exemple en OpenGL 4.4</em></li>
+<li>master-direct-state-access <em>Code de base + apps d&rsquo;exemple en OpenGL 4.5 (avec DSA)</em></li>
+</ul>
+
+<p>Corrections:</p>
+
+<ul>
+<li>cheat <em>Correction des TDs en en OpenGL 4.4. A utiliser lorsque vous aurez perdu toute dignité</em></li>
+</ul>
+
+<p>Site web des TDs (ne devrait pas vous concerner):</p>
+
+<ul>
+<li>hugo-website <em>Site web statique développé avec Hugo</em></li>
+<li>gh-pages <em>Version release du site web, que vous etes en train de lire en ce moment</em></li>
+</ul>
+
+<p>Inutiles pour vous:</p>
+
+<ul>
+<li>voxskel <em>Un truc que j&rsquo;avais codé pour débugguer un code</em></li>
+</ul>
+
+<p>Pour changer de branche il faut utiliser la commande</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">git checkout &lt;branch_name&gt;</span></code></pre>
+</div>
+<p>Vous n&rsquo;aurez normalement pas à changer de branche, mais si vous voulez travailler en direct state access, passez sur la branche <em>master-direct-state-access</em>.</p>
+
+<h1 id="première-modification">Première modification</h1>
+
+<p>Commençons par une modification simple: l&rsquo;ajout d&rsquo;un fichier <em>README.md</em>. Créez ce fichier et écrivez ce que vous voulez dedans.</p>
+
+<p>Utilisez ensuite la commande:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">git status</span></code></pre>
+</div>
+<p>Git vous informe alors des changements dit &ldquo;non commités&rdquo; dans votre repo.</p>
+
+<p>Lorsque l&rsquo;on ajoute un nouveau fichier, il faut le dire à git. Pour cela on utilise la commande:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">git add &lt;nom_du_fichier&gt;</span></code></pre>
+</div>
+<p>Faites le sur README.md.</p>
+
+<p>Si vous utilisez à nouveau <em>git status</em>, vous verrez que le message à changé.</p>
+
+<p>Il faut ensuite dire à Git de &ldquo;commiter&rdquo; nos modifications sur les fichiers, grace à la commande:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">git commit -a -m </span><span style="color:#e6db74">&#34;Message de commit décrivant les modifications effectué&#34;</span></code></pre>
+</div>
+<p>Utilisez cette commande avec le message &ldquo;Add README.md&rdquo;.</p>
+
+<p>A nouveau <em>git status</em> donne un nouveau message, indiquant que notre repository à un commit d&rsquo;avance sur origin/master, qui correspond au repo sur Github.</p>
+
+<p>Il faut donc &ldquo;pusher&rdquo; nos modifications sur Github:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">git push</span></code></pre>
+</div>
+<p>Git devrait alors vous demander votre username/password pour vous autoriser à push. Vous pourrez ensuite voir vos modifs sur votre repo en ligne, en particulier un fichier README.md s&rsquo;affiche en page d&rsquo;accueil du repository (ce fichier doit etre ecrit au format Markdown pour un rendu correct).</p>
+
+<div class="alert alert-info">
+
+Pour eviter d'avoir à entrer username/password à chaque push, il est possible de passer par une clef ssh et utiliser l'url en git:// de votre repo. Consulter <a href="https://help.github.com/articles/connecting-to-github-with-ssh/">cette page pour plus d'info</a>.
+
+</div>
+
+<h1 id="conseils-pour-la-gestion-du-repo">Conseils pour la gestion du repo</h1>
+
+<p>Afin d&rsquo;exploiter au mieux votre repo, je vous conseiller de commiter vos changement assez souvent afin de &ldquo;sauvegarder&rdquo; votre code. Pensez à pusher quelques fois par TDs afin d&rsquo;avoir vos changement en ligne et que je puisse les consulter.</p>
+
+        </div>
+
+        <div class="col side-menu side-menu-right page-content">
+            <div class="toc-sidebar">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#git">Git ?</a></li>
+<li><a href="#compte-github">Compte Github</a></li>
+<li><a href="#fork-du-repo-des-tds">Fork du repo des TDs</a></li>
+<li><a href="#installer-git">Installer Git</a></li>
+<li><a href="#clonage-de-votre-repo">Clonage de votre repo</a></li>
+<li><a href="#branches-du-repo">Branches du repo</a></li>
+<li><a href="#première-modification">Première modification</a></li>
+<li><a href="#conseils-pour-la-gestion-du-repo">Conseils pour la gestion du repo</a></li>
+</ul>
+</nav>
+</div>
+        </div>
+    </div>
+</div>
+
+</main>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+
+<script>
+$(".toc-sidebar ul").addClass("nav flex-column");
+$(".toc-sidebar li").addClass("nav-item");
+$(".toc-sidebar a").addClass("nav-link");
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,282 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>Pipeline de rendu - OpenGL Avancé</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
+    <style>
+        body
+        {
+          font-family: "Work Sans", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          color: #444444;
+        }
+
+        main
+        {
+          height:100vh;
+          margin-top: 56px;;
+        }
+
+        h1, h2, h3, h4, h5, h6
+        {
+          margin: 2.5rem 0 1.5rem 0;
+        }
+
+        h1.section-title
+        {
+          font-family: "Novacento Sans Wide", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 3.25rem;
+          margin: 1.0rem 0 1.5rem 0;
+          font-weight: 200;
+        }
+
+        main a:hover
+        {
+          text-decoration: none;
+        }
+
+        main table
+        {
+          width: 100%;
+          margin-bottom: 1rem;
+        }
+
+        main img
+        {
+          width: 100%;
+        }
+
+        .jumbotron
+        {
+          background-color: #EEEEEE;
+        }
+
+        .page-content
+        {
+          padding-top: 16px;
+          padding-bottom: 1.5rem;
+        }
+
+        .main-article
+        {
+          margin-left: 15%;
+          margin-right: 15%;
+        }
+
+        .middle-content
+        {
+          text-align: justify;
+        }
+
+        .side-menu
+        {
+          background-color: #EEEEEE;
+          position: fixed;
+          width: 15%;
+          height: 100%;
+          font-size: 1.0em;
+          padding-left: 0px;
+          padding-right: 0px;
+        }
+
+        .side-menu li li
+        {
+          font-size: 0.9em;
+          width: 100%;
+        }
+
+        .side-menu a
+        {
+          color: #555555;
+          font-weight: bold;
+        }
+
+        .side-menu a:hover
+        {
+          color: #CCCCCC;
+          background-color: #343A40;
+        }
+
+        .side-menu-left
+        {
+          left: 0px;
+        }
+
+        .side-menu-right
+        {
+          right: 0px;
+        }
+
+        .highlight
+        {
+          margin-bottom: 1rem;
+        }
+
+        .highlight pre
+        {
+          margin: auto;
+          padding: 1% 5% 1% 5%;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="https://Celeborn2BeAlive.github.io/opengl-avance/">OpenGL Avancé</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction">Introduction</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline">Forward Renderer</a>
+            </li>
+        
+            <li class="nav-item active">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline">Deferred Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction">Shadow Mapping</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction">Post Processing</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context">Cours et Doc</a>
+            </li>
+        
+
+
+
+      
+    </ul>
+  </div>
+</nav>
+
+<main role="main" class="main-article">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col side-menu side-menu-left page-content">
+            <ul class="nav flex-column">
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline/">Pipeline de rendu</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/geometry-pass/">Geometry pass</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/shading-pass/">Shading pass</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/plus-loin/">Aller plus loin</a>
+        </li>
+    
+</ul>
+        </div>
+
+        <div class="col middle-content page-content">
+            <h1 class="section-title">Pipeline de rendu</h1>
+
+            
+
+<h1 id="un-problème">Un problème ?</h1>
+
+<p>Un problème bien connu du <em>forward shading</em> est le traitement par le fragment shader de fragments qui ne seront pas visible à l&rsquo;écran.
+Tous les fragment occultés par d&rsquo;autre fragments sont traités car le fragment shader peut potentiellement modifier la profondeur des fragments et donc les rendre visible.
+Ainsi, si le fragment shader est complexe, tous ces calculs inutiles peuvent devenir couteux.</p>
+
+<p>En plus de cela, il est assez difficile en une seule passe de rendu de pouvoir optimiser son algorithme pour faire moins de calcul.
+Un exemple simple est l&rsquo;utilisation d&rsquo;un grand nombre de lumières n&rsquo;émettant que dans un volume réduit de la scène.
+Ce type de lumière affecte assez peu de pixels.
+Avec un forward renderer, il n&rsquo;y a que dans le fragment shader qu&rsquo;on peut s&rsquo;appercevoir qu&rsquo;une lumière donnée n&rsquo;affecte pas le fragment, c&rsquo;est déjà trop tard.
+En ayant accès à plus d&rsquo;information sur la géométrie visible par la caméra, il est possible d&rsquo;affecter rapidement des listes de lumières à des tiles de pixel et ainsi de passer moins de temps globalement dans le fragment shader.</p>
+
+<p>Le deferred rendering est un autre algorithme de rendu permettant de palier à ces problèmes.</p>
+
+<h1 id="le-deferred-shading">Le Deferred Shading</h1>
+
+<p>Le principe du deferred est de découpler le traitement de la géométrie (vertex buffer + rasterisation) du traitement des fragments (shading dans le fragment shader).</p>
+
+<p>Une première passe de rendu dessine donc tous les objets de la scène, mais plutot que de les illuminer dans le fragment shader, elle écrit les informations de chaque fragment dans des textures.
+Ces informations sont celles utilisées pour le lighting: position, normale et texCoords du fragment, mais également paramètres de matériaux (ambiant, diffus, glossy et shininess).
+Comme ces informations sont majoritairement de nature géométrique, l&rsquo;ensemble des textures de sortie est généralement appelé <strong>GBuffer</strong> et cette première passe de rendu s&rsquo;appelle la <strong>Geometry Pass</strong>.</p>
+
+<p>Une fois la première passe accomplie et le GBuffer remplit, on effectue la <strong>Shading Pass</strong>, qui consiste à utiliser le GBuffer pour illuminer chaque pixel.
+Au cours de cette passe, on dessiner simplement un quad couvrant l&rsquo;écran, le vertex shader ne fait donc quasiment rien.
+Au contraire, le fragment shader lit dans les textures du GBuffer les informations du pixel courant (qui ont été enregistré pendant la geometry pass) et calcule la couleur finale à partir de ces infos et des lumières de la scène.</p>
+
+<p>L&rsquo;image ci-dessous montre en haut un rendu final, résultat de la Shading Pass appliquée au GBuffer donc les textures sont montrés en bas:
+<img src="https://Celeborn2BeAlive.github.io/opengl-avance/images/gbuffer_1.png" alt="GBuffer" /></p>
+
+<p>A noter qu&rsquo;il y énormément de manière de remplir un GBuffer en fonction des performances voulues.
+Pour ces TPs, on se contentera d&rsquo;écrire tous les informations dont on a besoin pour le lighting, sans chercher à optimiser.</p>
+
+<h1 id="liens">Liens</h1>
+
+<ul>
+<li><a href="https://gamedevelopment.tutsplus.com/articles/forward-rendering-vs-deferred-rendering--gamedev-12342">Explication des deux approches</a></li>
+<li><a href="http://ogldev.atspace.co.uk/www/tutorial35/tutorial35.html">Tuto OpenGL Dev</a></li>
+</ul>
+
+        </div>
+
+        <div class="col side-menu side-menu-right page-content">
+            <div class="toc-sidebar">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#un-problème">Un problème ?</a></li>
+<li><a href="#le-deferred-shading">Le Deferred Shading</a></li>
+<li><a href="#liens">Liens</a></li>
+</ul>
+</nav>
+</div>
+        </div>
+    </div>
+</div>
+
+</main>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+
+<script>
+$(".toc-sidebar ul").addClass("nav flex-column");
+$(".toc-sidebar li").addClass("nav-item");
+$(".toc-sidebar a").addClass("nav-link");
+</script>
+
+
+
+</body>
+</html>

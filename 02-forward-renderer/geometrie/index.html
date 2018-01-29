@@ -1,0 +1,352 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>Geometrie - OpenGL Avancé</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
+    <style>
+        body
+        {
+          font-family: "Work Sans", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          color: #444444;
+        }
+
+        main
+        {
+          height:100vh;
+          margin-top: 56px;;
+        }
+
+        h1, h2, h3, h4, h5, h6
+        {
+          margin: 2.5rem 0 1.5rem 0;
+        }
+
+        h1.section-title
+        {
+          font-family: "Novacento Sans Wide", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 3.25rem;
+          margin: 1.0rem 0 1.5rem 0;
+          font-weight: 200;
+        }
+
+        main a:hover
+        {
+          text-decoration: none;
+        }
+
+        main table
+        {
+          width: 100%;
+          margin-bottom: 1rem;
+        }
+
+        main img
+        {
+          width: 100%;
+        }
+
+        .jumbotron
+        {
+          background-color: #EEEEEE;
+        }
+
+        .page-content
+        {
+          padding-top: 16px;
+          padding-bottom: 1.5rem;
+        }
+
+        .main-article
+        {
+          margin-left: 15%;
+          margin-right: 15%;
+        }
+
+        .middle-content
+        {
+          text-align: justify;
+        }
+
+        .side-menu
+        {
+          background-color: #EEEEEE;
+          position: fixed;
+          width: 15%;
+          height: 100%;
+          font-size: 1.0em;
+          padding-left: 0px;
+          padding-right: 0px;
+        }
+
+        .side-menu li li
+        {
+          font-size: 0.9em;
+          width: 100%;
+        }
+
+        .side-menu a
+        {
+          color: #555555;
+          font-weight: bold;
+        }
+
+        .side-menu a:hover
+        {
+          color: #CCCCCC;
+          background-color: #343A40;
+        }
+
+        .side-menu-left
+        {
+          left: 0px;
+        }
+
+        .side-menu-right
+        {
+          right: 0px;
+        }
+
+        .highlight
+        {
+          margin-bottom: 1rem;
+        }
+
+        .highlight pre
+        {
+          margin: auto;
+          padding: 1% 5% 1% 5%;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="https://Celeborn2BeAlive.github.io/opengl-avance/">OpenGL Avancé</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction">Introduction</a>
+            </li>
+        
+            <li class="nav-item active">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline">Forward Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline">Deferred Renderer</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction">Shadow Mapping</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction">Post Processing</a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context">Cours et Doc</a>
+            </li>
+        
+
+
+
+      
+    </ul>
+  </div>
+</nav>
+
+<main role="main" class="main-article">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col side-menu side-menu-left page-content">
+            <ul class="nav flex-column">
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline/">Pipeline de rendu</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/geometrie/">Geometrie</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/shaders/">Shaders</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/transformations/">Transformations</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/lighting/">Lighting</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/textures/">Textures</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/load-obj/">Chargement de modèles OBJ</a>
+        </li>
+    
+        <li class="nav-item">
+            <a class="nav-link" href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/plus-loin/">Aller plus loin</a>
+        </li>
+    
+</ul>
+        </div>
+
+        <div class="col middle-content page-content">
+            <h1 class="section-title">Geometrie</h1>
+
+            <div class="alert alert-warning">
+<p>Vous aurez un écran noir jusqu&rsquo;a la fin de la première partie de l&rsquo;exercice <a href="https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/transformations/">Transformations</a>: OpenGL demande généralement beaucoup de code d&rsquo;initialisation avant de pouvoir afficher quelque chose.</p>
+
+</div>
+
+<p>Vous allez commencer par dessiner des cubes et spheres en 3D. La lib <em>glmlv</em> contient deux fonctions makeCube() et makeSphere() (simple_geometry.hpp) permettant de construire des tableaux de sommets et indices pour ces deux forme simple.</p>
+
+<p>A l&rsquo;initialisation (constructeur de Application):</p>
+
+<ul>
+<li>Utiliser ces fonctions pour construire la géométrie d&rsquo;une sphere et d&rsquo;un cube.</li>
+<li>Pour chacune de ces formes, construire un VBO, un VAO et un IBO et les remplir correctement.</li>
+<li>Activer le depth test</li>
+</ul>
+
+<p>Dans la boucle de rendu (Application::run):</p>
+
+<ul>
+<li>Adapter l&rsquo;appel à glClear pour aussi nettoyer le depth buffer</li>
+<li>Pour chaque objet: binder le VAO, dessiner l&rsquo;objet</li>
+</ul>
+
+<p>Fonctions OpenGL à utiliser à l&rsquo;initialisation:</p>
+
+<table>
+<thead>
+<tr>
+<th>Sans DSA</th>
+<th>DSA</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>glGenBuffers</td>
+<td>glCreateBuffers</td>
+</tr>
+
+<tr>
+<td>glGenVertexArrays</td>
+<td>glCreateVertexArrays</td>
+</tr>
+
+<tr>
+<td>glBindBuffer(GL_ARRAY_BUFFER, vboID)</td>
+<td></td>
+</tr>
+
+<tr>
+<td>glBufferStorage</td>
+<td>glNamedBufferStorage</td>
+</tr>
+
+<tr>
+<td></td>
+<td>glVertexArrayVertexBuffer</td>
+</tr>
+
+<tr>
+<td></td>
+<td>glVertexArrayAttribBinding</td>
+</tr>
+
+<tr>
+<td>glEnableVertexAttribArray</td>
+<td>glEnableVertexArrayAttrib</td>
+</tr>
+
+<tr>
+<td>glVertexAttribPointer</td>
+<td>glVertexArrayAttribFormat</td>
+</tr>
+
+<tr>
+<td>glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboID)</td>
+<td>glVertexArrayElementBuffer</td>
+</tr>
+
+<tr>
+<td>glEnable(GL_DEPTH_TEST)</td>
+<td>glEnable(GL_DEPTH_TEST)</td>
+</tr>
+</tbody>
+</table>
+
+<p>Fonctions OpenGL à utiliser au rendu:</p>
+
+<ul>
+<li>glBindVertexArray</li>
+<li>glDrawElements (le nombre de sommets à dessiner est le nombre d&rsquo;elements dans l&rsquo;indexBuffer)</li>
+<li>glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)</li>
+</ul>
+
+<p>Voir le programme <em>quad</em> du template pour un exemple simple en 2D.</p>
+
+<p><div class="alert alert-note">
+<p>A l&rsquo;initialisation du VAO, il faut utiliser pour attribut de vertex (position, normal, texCoords) un entier correspondant à la location de cet attribut dans le vertex shader.
+Le VS n&rsquo;est pas encore écrit mais on peut déjà choisir les location (le plus simple: position en 0, normal en 1 et texCoords en 2).</p>
+
+</div></p>
+
+        </div>
+
+        <div class="col side-menu side-menu-right page-content">
+            <div class="toc-sidebar">
+
+</div>
+        </div>
+    </div>
+</div>
+
+</main>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+
+<script>
+$(".toc-sidebar ul").addClass("nav flex-column");
+$(".toc-sidebar li").addClass("nav-item");
+$(".toc-sidebar a").addClass("nav-link");
+</script>
+
+
+
+</body>
+</html>

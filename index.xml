@@ -2,1478 +2,376 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>OpenGL Avancé</title>
-    <link>https://celeborn2bealive.github.io/opengl-avance/index.xml</link>
+    <link>https://Celeborn2BeAlive.github.io/opengl-avance/</link>
     <description>Recent content on OpenGL Avancé</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>fr</language>
+    <copyright>Copyright (c) 2017, Laurent NOEL; All rights reserved.</copyright>
     <lastBuildDate>Thu, 19 Jan 2017 23:51:42 +0100</lastBuildDate>
-    <atom:link href="https://celeborn2bealive.github.io/opengl-avance/index.xml" rel="self" type="application/rss+xml" />
+    
+	<atom:link href="https://Celeborn2BeAlive.github.io/opengl-avance/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Qu&#39;est ce que OpenGL ?</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/06-course/opengl-context/</link>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context/</link>
       <pubDate>Thu, 19 Jan 2017 23:51:42 +0100</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/06-course/opengl-context/</guid>
-      <description>
-
-&lt;p&gt;OpenGL est une &lt;a href=&#34;https://www.wikiwand.com/en/Application_programming_interface&#34;&gt;API&lt;/a&gt; permettant d&amp;rsquo;effectuer du calcul parallèle sur GPU, principalement orienté sur la rasterisation de primitives simples (points, lignes et triangles) afin de les afficher dans une image.&lt;/p&gt;
-
-&lt;p&gt;OpenGL &lt;strong&gt;n&amp;rsquo;est pas&lt;/strong&gt; une bibliothèque, mais simplement une &lt;a href=&#34;https://www.opengl.org/registry/doc/glspec45.core.pdf&#34;&gt;spécification&lt;/a&gt; de fonctions permettant l&amp;rsquo;utilisation d&amp;rsquo;effectuer différent de taches de manière asynchrones, souvent centrées autour de la programmation graphique.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://www.khronos.org/&#34;&gt;Khronos&lt;/a&gt; est le groupe chargé d&amp;rsquo;établir la spécification de chaque version d&amp;rsquo;OpenGL. Plusieurs &lt;a href=&#34;https://www.khronos.org/members/list&#34;&gt;entreprises/universités/personnes&lt;/a&gt; font partie de ce groupe afin de faire avancer la spécification et s&amp;rsquo;adapter à l&amp;rsquo;évolution de l&amp;rsquo;architecture du hardware.&lt;/p&gt;
-
-&lt;p&gt;Les constructeurs de cartes graphiques implémentent ensuite cette spécification à travers un driver. Ainsi, pour faire de l&amp;rsquo;OpenGL sur sa carte graphique, il suffit d&amp;rsquo;installer un driver récent depuis le site du constructeur ou depuis le gestionnaire de paquet.&lt;/p&gt;
-
-&lt;p&gt;Il est tout à fait possible d&amp;rsquo;implémenter l&amp;rsquo;ensemble des fonctions OpenGL dans une bibliothèque tournant sur CPU, c&amp;rsquo;est par exemple le cas de &lt;a href=&#34;http://www.mesa3d.org/&#34;&gt;MESA&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;contexte-opengl&#34;&gt;Contexte OpenGL&lt;/h2&gt;
-
-&lt;p&gt;Le contexte OpenGL stocke l&amp;rsquo;ensemble des données OpenGL pour votre application (ensemble des variables d&amp;rsquo;état, tel que le status d&amp;rsquo;activation du depth test, et les objets créés).&lt;/p&gt;
-
-&lt;p&gt;La création du contexte OpenGL se fait le plus souvent à l&amp;rsquo;ouverture d&amp;rsquo;une fenêtre, par la bibliothèque bas niveau de gestion de fenêtre du systeme (X ou Wayland sous Linux, &lt;a href=&#34;https://www.khronos.org/opengl/wiki/Creating_an_OpenGL_Context_(WGL)&#34;&gt;la Win32 API sous Windows&lt;/a&gt;, etc.).&lt;/p&gt;
-
-&lt;p&gt;On n&amp;rsquo;a généralement pas à s&amp;rsquo;en occuper puisqu&amp;rsquo;il est courant de passer par une lib plus haur niveau de fenêtrage (SDL, GLFW, Qt, &amp;hellip;).&lt;/p&gt;
-
-&lt;p&gt;Plus d&amp;rsquo;informations sur le Wiki:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/OpenGL_Context&#34;&gt;https://www.khronos.org/opengl/wiki/OpenGL_Context&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Core_And_Compatibility_in_Contexts&#34;&gt;https://www.khronos.org/opengl/wiki/Core_And_Compatibility_in_Contexts&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Get_Context_Info&#34;&gt;https://www.khronos.org/opengl/wiki/Get_Context_Info&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;calcul-asynchrone&#34;&gt;Calcul Asynchrone&lt;/h2&gt;
-
-&lt;p&gt;Il est important de bien comprendre que les fonction de rendu (glDraw*) OpenGL sont généralement asynchrone. Cela signifie qu&amp;rsquo;elles ne sont pas executées immédiatement mais placées dans une command queue en attendant d&amp;rsquo;être executées par le GPU.&lt;/p&gt;
-
-&lt;p&gt;Cela permet au driver d&amp;rsquo;optimiser l&amp;rsquo;utilisation du GPU, et à l&amp;rsquo;application de pouvoir faire autre chose pendant que le GPU calcule.&lt;/p&gt;
-
-&lt;p&gt;La synchronisation entre CPU et GPU peut se faire implicitement via l&amp;rsquo;appel à certaines fonctions qui necessitent que le rendu soit terminé (glfwSwapBuffers), ou explicitement à l&amp;rsquo;aide des fonctions glFinish et glFlush.&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Synchronization&#34;&gt;https://www.khronos.org/opengl/wiki/Synchronization&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;chargement-des-fonctions-opengl-core-profile&#34;&gt;Chargement des fonctions OpenGL Core Profile&lt;/h2&gt;
-
-&lt;p&gt;OpenGL a un fonctionnement un peu particulier dans le sens ou il n&amp;rsquo;existe pas de header déclarant l&amp;rsquo;ensemble des fonctions OpenGL du core profile (i.e. OpenGL 3+).&lt;/p&gt;
-
-&lt;p&gt;Le header GL.h ne déclare qu&amp;rsquo;un nombre restreint de fonctions, principalement celles du compatibility profiles, dépréciées (glBegin, glEnd, glVertex3f, etc.).&lt;/p&gt;
-
-&lt;p&gt;Pour pouvoir appeler les fonctions OpenGL 3+, il faut demander à la lib de fenetrage bas niveau des pointeurs de fonctions sur chacune de celles que l&amp;rsquo;on veut utiliser.&lt;/p&gt;
-
-&lt;p&gt;Comme c&amp;rsquo;est une tache particulièrement ennuyante, répétitive et ininteressante, on passe généralement par une bibliothèque dediée qui va charger tous les pointeurs de fonction d&amp;rsquo;un coup et nous les exposer dans des variables globales.&lt;/p&gt;
-
-&lt;p&gt;La lib la plus utilisée est sans doute &lt;a href=&#34;http://glew.sourceforge.net/&#34;&gt;GLEW&lt;/a&gt;, mais je vous recommande chaudement &lt;a href=&#34;http://glad.dav1d.de/&#34;&gt;GLAD&lt;/a&gt; qui à les avantages suivants:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;facile à compiler et linker, aussi bien sous windows que sous linux&lt;/li&gt;
-&lt;li&gt;possibilité de customiser entièrement ce qu&amp;rsquo;elle contient via le site (choix de la version d&amp;rsquo;OpenGL, choix du profile, ajout d&amp;rsquo;extensions, etc.)&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-context/</guid>
+      <description>OpenGL est une API permettant d&amp;rsquo;effectuer du calcul parallèle sur GPU, principalement orienté sur la rasterisation de primitives simples (points, lignes et triangles) afin de les afficher dans une image.
+OpenGL n&amp;rsquo;est pas une bibliothèque, mais simplement une spécification de fonctions permettant l&amp;rsquo;utilisation d&amp;rsquo;effectuer différent de taches de manière asynchrones, souvent centrées autour de la programmation graphique.
+Khronos est le groupe chargé d&amp;rsquo;établir la spécification de chaque version d&amp;rsquo;OpenGL. Plusieurs entreprises/universités/personnes font partie de ce groupe afin de faire avancer la spécification et s&amp;rsquo;adapter à l&amp;rsquo;évolution de l&amp;rsquo;architecture du hardware.</description>
     </item>
     
     <item>
       <title>Introduction</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/introduction/</link>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction/</link>
       <pubDate>Thu, 29 Dec 2016 12:35:23 +0100</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/introduction/</guid>
-      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/introduction/</guid>
+      <description>En construction  </description>
     </item>
     
     <item>
       <title>Introduction</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/introduction/</link>
-      <pubDate>Thu, 29 Dec 2016 12:29:08 +0100</pubDate>
-      
-      <guid>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/introduction/</guid>
-      <description>&lt;p&gt;Nous avons jusqu&amp;rsquo;a présent calculé l&amp;rsquo;éclairage des lumières sans prise en compte des ombres portées par les objets: la lumière passe à travers&amp;hellip;&lt;/p&gt;
-
-&lt;p&gt;Pour savoir si un fragment est dans la lumière ou dans l&amp;rsquo;ombre par rapport à une light donnée, il faut savoir si un objet intersecte le rayon connectant le fragment à la lumière. Il y a plusieurs moyens de calculer cette information. Deux méthodes sont principalement utilisées en rendu temps réel: le &lt;a href=&#34;https://www.wikiwand.com/en/Shadow_mapping&#34;&gt;shadow mapping&lt;/a&gt; et les &lt;a href=&#34;https://www.wikiwand.com/en/Shadow_volume&#34;&gt;shadow volumes&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Nous allons nous intéresser au shadow mapping pour ces TPs. L&amp;rsquo;idée est de faire un rendu de la scène selon le point de vue de la lumière afin de connaitre l&amp;rsquo;ensemble des points visibles depuis cette lumière. Plus exactement, on calcule une carte de profondeur (depth map) vue par la lumière. Ensuite, pendant le rendu principal de la scène (depuis le point de vue de la caméra), on projete les points vus par la caméra sur la depth map précalculée pour la light. On obtient ainsi un pixel de la depth map, et si la depth enregistrée dans cette map est inférieure à la depth du fragment vu par la caméra, alors necessairement un objet vient occulter ce fragment, qui est donc dans l&amp;rsquo;ombre.&lt;/p&gt;
-
-&lt;p&gt;Le schéma suivant résume ce principe:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://Celeborn2BeAlive.github.io/opengl-avance/images/shadow_mapping.jpg&#34; alt=&#34;Shadow Mapping&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Cet algorithme peut être implémenté sur un forward renderer ou sur un deferred renderer. Pour ces TPs nous allons repartir du deferred renderer. Si vous ne l&amp;rsquo;avez pas terminé, vous pouvez le récupérer sur la branche cheat du repository.&lt;/p&gt;
-
-&lt;div class=&#34;notices note&#34; &gt;&lt;p&gt;Afin de faire vos tests plus rapidement, j&amp;rsquo;ai ajouté un argument à la fonction &lt;em&gt;glmlv::loadObj&lt;/em&gt; qui permet d&amp;rsquo;éviter le chargement des textures et donc de lancer plus rapidement l&amp;rsquo;application (mettre l&amp;rsquo;argument à &lt;em&gt;false&lt;/em&gt; pour ne pas charger les textures). Il faudra peut être puller la dernière version du repo pour récupérer ce changement.&lt;/p&gt;
-&lt;/div&gt;
-
-</description>
-    </item>
-    
-    <item>
-      <title>Pipeline de rendu</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/pipeline/</link>
-      <pubDate>Thu, 29 Dec 2016 12:27:04 +0100</pubDate>
-      
-      <guid>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/pipeline/</guid>
-      <description>
-
-&lt;h2 id=&#34;un-problème&#34;&gt;Un problème ?&lt;/h2&gt;
-
-&lt;p&gt;Un problème bien connu du &lt;em&gt;forward shading&lt;/em&gt; est le traitement par le fragment shader de fragments qui ne seront pas visible à l&amp;rsquo;écran.
-Tous les fragment occultés par d&amp;rsquo;autre fragments sont traités car le fragment shader peut potentiellement modifier la profondeur des fragments et donc les rendre visible.
-Ainsi, si le fragment shader est complexe, tous ces calculs inutiles peuvent devenir couteux.&lt;/p&gt;
-
-&lt;p&gt;En plus de cela, il est assez difficile en une seule passe de rendu de pouvoir optimiser son algorithme pour faire moins de calcul.
-Un exemple simple est l&amp;rsquo;utilisation d&amp;rsquo;un grand nombre de lumières n&amp;rsquo;émettant que dans un volume réduit de la scène.
-Ce type de lumière affecte assez peu de pixels.
-Avec un forward renderer, il n&amp;rsquo;y a que dans le fragment shader qu&amp;rsquo;on peut s&amp;rsquo;appercevoir qu&amp;rsquo;une lumière donnée n&amp;rsquo;affecte pas le fragment, c&amp;rsquo;est déjà trop tard.
-En ayant accès à plus d&amp;rsquo;information sur la géométrie visible par la caméra, il est possible d&amp;rsquo;affecter rapidement des listes de lumières à des tiles de pixel et ainsi de passer moins de temps globalement dans le fragment shader.&lt;/p&gt;
-
-&lt;p&gt;Le deferred rendering est un autre algorithme de rendu permettant de palier à ces problèmes.&lt;/p&gt;
-
-&lt;h2 id=&#34;le-deferred-shading&#34;&gt;Le Deferred Shading&lt;/h2&gt;
-
-&lt;p&gt;Le principe du deferred est de découpler le traitement de la géométrie (vertex buffer + rasterisation) du traitement des fragments (shading dans le fragment shader).&lt;/p&gt;
-
-&lt;p&gt;Une première passe de rendu dessine donc tous les objets de la scène, mais plutot que de les illuminer dans le fragment shader, elle écrit les informations de chaque fragment dans des textures.
-Ces informations sont celles utilisées pour le lighting: position, normale et texCoords du fragment, mais également paramètres de matériaux (ambiant, diffus, glossy et shininess).
-Comme ces informations sont majoritairement de nature géométrique, l&amp;rsquo;ensemble des textures de sortie est généralement appelé &lt;strong&gt;GBuffer&lt;/strong&gt; et cette première passe de rendu s&amp;rsquo;appelle la &lt;strong&gt;Geometry Pass&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;Une fois la première passe accomplie et le GBuffer remplit, on effectue la &lt;strong&gt;Shading Pass&lt;/strong&gt;, qui consiste à utiliser le GBuffer pour illuminer chaque pixel.
-Au cours de cette passe, on dessiner simplement un quad couvrant l&amp;rsquo;écran, le vertex shader ne fait donc quasiment rien.
-Au contraire, le fragment shader lit dans les textures du GBuffer les informations du pixel courant (qui ont été enregistré pendant la geometry pass) et calcule la couleur finale à partir de ces infos et des lumières de la scène.&lt;/p&gt;
-
-&lt;p&gt;L&amp;rsquo;image ci-dessous montre en haut un rendu final, résultat de la Shading Pass appliquée au GBuffer donc les textures sont montrés en bas:
-&lt;img src=&#34;https://Celeborn2BeAlive.github.io/opengl-avance/images/gbuffer_1.png&#34; alt=&#34;GBuffer&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;A noter qu&amp;rsquo;il y énormément de manière de remplir un GBuffer en fonction des performances voulues.
-Pour ces TPs, on se contentera d&amp;rsquo;écrire tous les informations dont on a besoin pour le lighting, sans chercher à optimiser.&lt;/p&gt;
-
-&lt;h2 id=&#34;liens&#34;&gt;Liens&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://gamedevelopment.tutsplus.com/articles/forward-rendering-vs-deferred-rendering--gamedev-12342&#34;&gt;Explication des deux approches&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://ogldev.atspace.co.uk/www/tutorial35/tutorial35.html&#34;&gt;Tuto OpenGL Dev&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Pipeline de rendu</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/pipeline/</link>
-      <pubDate>Thu, 29 Dec 2016 12:15:45 +0100</pubDate>
-      
-      <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/pipeline/</guid>
-      <description>&lt;p&gt;Le &lt;a href=&#34;https://www.wikiwand.com/fr/Forward_Rendering&#34;&gt;&lt;strong&gt;forward shading&lt;/strong&gt;&lt;/a&gt; (ou &lt;strong&gt;forward rendering&lt;/strong&gt;) est le rendu &amp;ldquo;classique&amp;rdquo; OpenGL que vous avez normalement vu l&amp;rsquo;année dernière. Cette partie est donc une série d&amp;rsquo;exercices pour implémenter rapidement un forward renderer afin de se remettre tranquilement dans le bain.&lt;/p&gt;
-
-&lt;p&gt;Pour chaque objet de la scène, un forward renderer fait passer la géométrie de l&amp;rsquo;objet dans un Vertex Shader afin de projeter les sommets à l&amp;rsquo;écran, la carte graphique rasterise les triangles projetés pour produire des fragments qui sont illuminés dans le fragment shader afin de calculer leur couleur.&lt;/p&gt;
-
-&lt;p&gt;Cette approche à le mérite d&amp;rsquo;être simple mais introduit un coup supplémentaire lorsque beaucoup de fragments sont occultés: on paye le coup d&amp;rsquo;illumination de ces derniers alors qu&amp;rsquo;ils sont finalement discardés par le test de profondeur. Le TD suivant vous fera implémenter un &lt;strong&gt;deferred renderer&lt;/strong&gt;, qui palie à ce problème.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://gamedevelopment.tutsplus.com/articles/forward-rendering-vs-deferred-rendering--gamedev-12342&#34;&gt;Voir également cet article&lt;/a&gt; qui explique le principe des deux approches.&lt;/p&gt;
-
-&lt;p&gt;L&amp;rsquo;objectif à la fin de ce premier TP est de pouvoir charger une scène 3D en OBJ constituée de modèles texturées, et pouvoir naviguer dedans en vue FPS.&lt;/p&gt;
-
-&lt;p&gt;Commencez par dupliquer le repertoire &lt;em&gt;apps/template&lt;/em&gt; et renommez le &lt;em&gt;forward-renderer&lt;/em&gt;. Vous partirez du code de ce dossier. N&amp;rsquo;oubliez pas de &lt;strong&gt;relancer CMake&lt;/strong&gt; pour prendre en compte la nouvelle application. Il faudra églament relancer CMake à chaque ajout de fichier source ou shader. Pour faire cela rapidement, se placer dans le dossier de build et lancer simplement la commande &lt;strong&gt;&amp;ldquo;cmake .&amp;rdquo;&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;div class=&#34;notices warning&#34; &gt;&lt;p&gt;Les instructions de ce premier TP seront concises car ce sont des exercices de rappel.
-Attachez vous à utiliser des fonctions de l&amp;rsquo;extension direct_state_access afin de moderniser votre code.
-N&amp;rsquo;hésitez pas à prendre exemple sur les applications déjà présente dans le template, et à vous aidez &lt;a href=&#34;https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/liens/&#34;&gt;des liens&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-
-</description>
-    </item>
-    
-    <item>
-      <title>Introduction</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/01-introduction/introduction/</link>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/</link>
       <pubDate>Thu, 29 Dec 2016 11:34:23 +0100</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/01-introduction/introduction/</guid>
-      <description>
-
-&lt;h2 id=&#34;objectifs&#34;&gt;Objectifs&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Approfondir les connaissances en OpenGL Moderne&lt;/li&gt;
-&lt;li&gt;Premières implémentations de techniques avancées&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Projet&lt;/strong&gt;: implémentation d&amp;rsquo;articles de recherche&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;prérequis&#34;&gt;Prérequis&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Bonne connaissance du &lt;a href=&#34;https://www.khronos.org/opengl/wiki/Rendering_Pipeline_Overview&#34;&gt;pipeline de rendu OpenGL&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Maitrise des &lt;a href=&#34;http://laurentnoel.fr/index.php?section=teaching&amp;amp;teaching=opengl&amp;amp;teaching_section=tds&#34;&gt;TDs des années précédentes&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;quelle-version-d-opengl&#34;&gt;Quelle version d&amp;rsquo;OpenGL ?&lt;/h2&gt;
-
-&lt;p&gt;La version installée sur les machines de la fac est la 4.4, nous prendrons donc cette version comme base.
-En plus de cela, le template de code que j&amp;rsquo;ai préparé charge l&amp;rsquo;extension &lt;strong&gt;GL_ARB_direct_state_access&lt;/strong&gt;, dont les fonctions sont passées en OpenGL Core dans la version 4.5.&lt;/p&gt;
-
-&lt;h2 id=&#34;direct-state-access&#34;&gt;Direct State Access&lt;/h2&gt;
-
-&lt;div class=&#34;notices warning&#34; &gt;&lt;p&gt;Cette extension n&amp;rsquo;est pas disponible sur toutes les cartes graphiques. En particulier les machines de la FAC n&amp;rsquo;en sont pas equipées entièrement (il y a l&amp;rsquo;extension &lt;strong&gt;GL_EXT_direct_state_access&lt;/strong&gt; qui n&amp;rsquo;est que partielle). Si vous n&amp;rsquo;y avez pas accès, ne l&amp;rsquo;utilisez pas: cette extension ne fournit que des facilités de programmation, pas de fonctionnalité en plus.&lt;/p&gt;
-&lt;/div&gt;
-
-
-&lt;p&gt;Cette extension est très pratique car elle permet d&amp;rsquo;éviter de binder les objets OpenGL pour les manipuler (on passe aux fonctions directement l&amp;rsquo;identifiant de l&amp;rsquo;objet), et donc d&amp;rsquo;éviter les erreurs liées au mécanisme de binding. Je vous conseille donc de l&amp;rsquo;utiliser autant que possible.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://www.opengl.org/registry/specs/ARB/direct_state_access.txt&#34;&gt;Lien vers le document de référence&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Voici des exemples de code en version OpenGL 3 classique et en version Direct State Access (directement tiré du document):&lt;/p&gt;
-
-&lt;h4 id=&#34;example-1-creating-a-buffer-object-without-polluting-the-opengl-states&#34;&gt;Example 1: Creating a buffer object without polluting the OpenGL states&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;// Bind to Create
-GLuint CreateBuffer()
-{
-  // Save the previous bound buffer
-  GLuint restoreBuffer = 0;
-  glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &amp;amp;restoreBuffer);
-
-  // Reserve the buffer name and create the buffer object
-  uint buffer = 0;
-  glGenBuffers(1, &amp;amp;buffer);
-  glBindBuffer(GL_ARRAY_BUFFER, buffer);
-
-  // Restaure the previous bound buffer to avoid polluting
-  // the rendering states
-  glBindBuffer(GL_ARRAY_BUFFER, restoreBuffer);
-
-  return buffer;
-}
-
-// Direct State Access
-GLuint CreateBuffer()
-{
-  GLuint buffer = 0;
-  glCreateBuffer(1, &amp;amp;buffer);
-
-  return buffer;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;example-2-creating-a-vertex-array-object-without-polluting-the-opengl-states&#34;&gt;Example 2: Creating a vertex array object without polluting the OpenGL states&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;// OpenGL 3.0 Bind to Create for vertex array object
-GLuint CreateVertexArray(GLuint BufferName[])
-{
-  // Save the previous bound vertex array and array buffer
-  GLuint restoreVertexArray = 0;
-  glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &amp;amp;restoreVertexArray);
-  GLuint restoreBuffer = 0;
-  glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &amp;amp;restoreBuffer);
-
-  glGenVertexArrays(1, &amp;amp;VertexArrayName);
-  glBindVertexArray(VertexArrayName);
-    glEnableVertexAttribArray(semantic::attr::POSITION);
-    glEnableVertexAttribArray(semantic::attr::TEXCOORD);
-
-    glBindBuffer(GL_ARRAY_BUFFER, BufferName[buffer::VERTEX]);
-    glVertexAttribPointer(semantic::attr::POSITION, 2, GL_FLOAT, GL_FALSE, sizeof(glf::vertex_v2fv2f), BUFFER_OFFSET(0));
-    glVertexAttribPointer(semantic::attr::TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(glf::vertex_v2fv2f), BUFFER_OFFSET(sizeof(glm::vec2)));
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, BufferName[buffer::ELEMENT]);
-
-  // The GL_ARRAY_BUFFER_BINDING is a context state, not a vertex array state.
-  glBindBuffer(GL_ARRAY_BUFFER, restoreBuffer);
-  glBindVertexArray(restoreVertexArray);
-
-  return vertexArrayName;
-}
-
-// OpenGL 4.3 Bind to Create for vertex array object
-GLuint CreateVertexArray(GLuint BufferName[])
-{
-  // Save the previous bound vertex array
-  GLuint restoreVertexArray = 0;
-  glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &amp;amp;restoreVertexArray);
-
-  GLuint vertexArrayName = 0;
-  glGenVertexArrays(1, &amp;amp;vertexArrayName);
-  glBindVertexArray(VertexArrayName);
-    glEnableVertexAttribArray(semantic::attr::POSITION);
-    glEnableVertexAttribArray(semantic::attr::TEXCOORD);
-
-    glVertexAttribBinding(semantic::attr::POSITION, 0);
-    glVertexAttribFormat(semantic::attr::POSITION, 2, GL_FLOAT, GL_FALSE, 0);
-
-    glVertexAttribBinding(semantic::attr::TEXCOORD, 0);
-    glVertexAttribFormat(semantic::attr::TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, BufferName[buffer::ELEMENT]);
-    glBindVertexBuffer(0, BufferName[buffer::VERTEX], 0, 0);
-  glBindVertexArray(restoreVertexArray);
-
-  return vertexArrayName;
-}
-
-// Direct State Access
-GLuint CreateVertexArray(GLuint BufferName[])
-{
-  GLuint vertexArrayName = 0;
-  glCreateVertexArrays(1, &amp;amp;vertexArrayName);
-
-  glEnableVertexAttribArray(VertexArrayName, semantic::attr::POSITION);
-  glEnableVertexAttribArray(VertexArrayName, semantic::attr::TEXCOORD);
-
-  glVertexArrayAttribBinding(VertexArrayName, semantic::attr::POSITION, 0);
-  glVertexArrayAttribFormat(VertexArrayName, semantic::attr::POSITION, 2, GL_FLOAT, GL_FALSE, 0);
-
-  glVertexArrayAttribBinding(VertexArrayName, semantic::attr::TEXCOORD, 0);
-  glVertexArrayAttribFormat(VertexArrayName, semantic::attr::TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2);
-
-  glVertexArrayElementBuffer(VertexArrayName, BufferName[buffer::ELEMENT]);
-  glVertexArrayVertexBuffer(VertexArrayName, 0, BufferName[buffer::VERTEX], 0, 0);
-
-  return vertexArrayName;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;example-3-querying-the-bound-texture-to-a-texture-image-unit-for-debugging&#34;&gt;Example 3: Querying the bound texture to a texture image unit for debugging&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;// Select to query
-// We need the &amp;lt;target&amp;gt; or we need to loop over all the possible targets
-GLuint GetBoundTexture(GLenum target, GLuint unit)
-{
-  GLuint restore = 0;
-  glGetIntegerv(GL_ACTIVE_TEXTURE, &amp;amp;restore);
-
-  glActiveTexture(unit);
-
-  GLuint name = 0;
-  glGetIntegerv(target, &amp;amp;name);
-
-  glActiveTexture(restore);
-}
-
-// Direct State Access
-// target_binding is e.g. GL_TEXTURE_BINDING_2D for the 2D texture
-GLuint GetBoundTexture(GLenum target_binding, GLuint unit)
-{
-  GLuint name = 0;
-  glGetIntegeri_v(target_binding, unit, &amp;amp;name);
-  return name;
-}
-&lt;/code&gt;&lt;/pre&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/introduction/</guid>
+      <description>Objectifs  Approfondir les connaissances en OpenGL Moderne Premières implémentations de techniques avancées Projet: Demo  Prérequis  Bonne connaissance du pipeline de rendu OpenGL Maitrise des TDs des années précédentes Maitrise de base du C++  Quelle version d&amp;rsquo;OpenGL ? La version installée sur les machines de la fac est la 4.4, nous prendrons donc cette version comme base.
+En plus de cela, et si votre carte graphique le permet, il vous sera possible de travailler avec l&amp;rsquo;extension GL_ARB_direct_state_access (DSA) qui simplifie grandement la manipulation d&amp;rsquo;objets OpenGL (pas besoin de binder les objets pour les manipuler).</description>
+    </item>
+    
+    <item>
+      <title>Introduction</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/introduction/</guid>
+      <description>Nous avons jusqu&amp;rsquo;a présent calculé l&amp;rsquo;éclairage des lumières sans prise en compte des ombres portées par les objets: la lumière passe à travers&amp;hellip;
+Pour savoir si un fragment est dans la lumière ou dans l&amp;rsquo;ombre par rapport à une light donnée, il faut savoir si un objet intersecte le rayon connectant le fragment à la lumière. Il y a plusieurs moyens de calculer cette information. Deux méthodes sont principalement utilisées en rendu temps réel: le shadow mapping et les shadow volumes.</description>
+    </item>
+    
+    <item>
+      <title>Pipeline de rendu</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/pipeline/</guid>
+      <description>Le forward shading (ou forward rendering) est le rendu &amp;ldquo;classique&amp;rdquo; OpenGL que vous avez normalement vu l&amp;rsquo;année dernière. Cette partie est donc une série d&amp;rsquo;exercices pour implémenter rapidement un forward renderer afin de se remettre tranquilement dans le bain.
+Pour chaque objet de la scène, un forward renderer &amp;ldquo;envoie&amp;rdquo; la géométrie de l&amp;rsquo;objet dans un vertex shader afin de projeter les sommets à l&amp;rsquo;écran. La carte graphique rasterise alors les triangles projetés pour produire des fragments.</description>
+    </item>
+    
+    <item>
+      <title>Pipeline de rendu</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/pipeline/</guid>
+      <description>Un problème ? Un problème bien connu du forward shading est le traitement par le fragment shader de fragments qui ne seront pas visible à l&amp;rsquo;écran. Tous les fragment occultés par d&amp;rsquo;autre fragments sont traités car le fragment shader peut potentiellement modifier la profondeur des fragments et donc les rendre visible. Ainsi, si le fragment shader est complexe, tous ces calculs inutiles peuvent devenir couteux.
+En plus de cela, il est assez difficile en une seule passe de rendu de pouvoir optimiser son algorithme pour faire moins de calcul.</description>
     </item>
     
     <item>
       <title>OpenGL Extensions</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/06-course/opengl-extensions/</link>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-extensions/</link>
       <pubDate>Fri, 20 Jan 2017 00:05:53 +0100</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/06-course/opengl-extensions/</guid>
-      <description>
-
-&lt;p&gt;Le méchanisme d&amp;rsquo;extensions OpenGL permet aux constructeurs de carte graphique d&amp;rsquo;ajouter à l&amp;rsquo;API des fonctionnalités avancées qui ne sont pas encore présentes dans le Core profile.&lt;/p&gt;
-
-&lt;p&gt;Il est assez standard d&amp;rsquo;utiliser des extensions OpenGL et d&amp;rsquo;adapter son moteur en fonction des extensions disponibles sur la carte graphique de l&amp;rsquo;utilisateur.&lt;/p&gt;
-
-&lt;p&gt;Le nom des extensions suit une nomenclature assez précises. Il y a 3 types d&amp;rsquo;extensions:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Propriétaires: Spécifiques à un seul constructeur. Par exemple les extensions préfixées par GL_NV sont spécifiques aux GPU de NVidia.&lt;/li&gt;
-&lt;li&gt;Génériques: Généralement implémentées par un grand nombre de constructeurs. Préfixées par GL_EXT&lt;/li&gt;
-&lt;li&gt;ARB: Extensions génériques approuvées par l&amp;rsquo;&lt;a href=&#34;https://www.opengl.org/archives/about/arb/&#34;&gt;OpenGL ARB&lt;/a&gt;, destinées à entrer dans le Core profile d&amp;rsquo;une future version d&amp;rsquo;OpenGL.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Les extensions sont détaillées dans un fichier texte dedié assez difficile à lire (exemple: &lt;a href=&#34;https://www.opengl.org/registry/specs/ARB/vertex_array_object.txt&#34;&gt;https://www.opengl.org/registry/specs/ARB/vertex_array_object.txt&lt;/a&gt;) car il mentionne des additions, suppressions ou modifications dans la spécification générale d&amp;rsquo;OpenGL.&lt;/p&gt;
-
-&lt;p&gt;Plus d&amp;rsquo;infos sur le Wiki: &lt;a href=&#34;https://www.khronos.org/opengl/wiki/OpenGL_Extension&#34;&gt;https://www.khronos.org/opengl/wiki/OpenGL_Extension&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Pour savoir si une extension OpenGL est proposée par votre driver, vous pouvez utiliser la commande *glxinfo sous Linux (&lt;em&gt;nvidia-config &amp;ndash;glxinfo&lt;/em&gt; sous certains système) et piper le résultat dans un grep du nom de l&amp;rsquo;extension recherchée. Sous windows vous pouvez passer par un utilitaire tel que &lt;a href=&#34;http://realtech-vr.com/admin/glview&#34;&gt;GLview&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Quelques extensions très interessantes:&lt;/p&gt;
-
-&lt;h2 id=&#34;direct-state-access&#34;&gt;Direct State Access&lt;/h2&gt;
-
-&lt;p&gt;L&amp;rsquo;extension Direct State Access (DSA) (&lt;a href=&#34;https://www.opengl.org/registry/specs/EXT/direct_state_access.txt&#34;&gt;GL_EXT_direct_state_access&lt;/a&gt;, puis &lt;a href=&#34;https://www.opengl.org/registry/specs/ARB/direct_state_access.txt&#34;&gt;GL_ARB_direct_state_access&lt;/a&gt;, puis introduite en Core 4.5) propose une nouvelle manière de modifier/accéder aux objets OpenGL, sans avoir à les binder.&lt;/p&gt;
-
-&lt;p&gt;Cela permet d&amp;rsquo;éviter de se préoccuper de l&amp;rsquo;état global du contexte OpenGL lorsque l&amp;rsquo;on veut manipuler les objets OpenGL et ainsi d&amp;rsquo;éviter un grand nombre d&amp;rsquo;erreurs de programmation.&lt;/p&gt;
-
-&lt;h2 id=&#34;debug-output&#34;&gt;Debug Output&lt;/h2&gt;
-
-&lt;p&gt;L&amp;rsquo;extension Debug Output (&lt;a href=&#34;https://www.opengl.org/registry/specs/ARB/debug_output.txt&#34;&gt;GL_ARB_debug_output&lt;/a&gt;, puis introduite en Core 4.3) à fait beaucoup de bien aux développeurs OpenGL puisqu&amp;rsquo;elle fournit un méchanisme de messages d&amp;rsquo;erreurs bien plus efficace que l&amp;rsquo;ignoble fonction &lt;em&gt;glGetError&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;L&amp;rsquo;idée est de donner une fonction de callback à OpenGL qui sera appelée par l&amp;rsquo;implémentation dès qu&amp;rsquo;une erreur est rencontrée. Il est de plus possible de filtrer de manière assez fine les erreurs/warning à ignorer.&lt;/p&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-extensions/</guid>
+      <description>Le méchanisme d&amp;rsquo;extensions OpenGL permet aux constructeurs de carte graphique d&amp;rsquo;ajouter à l&amp;rsquo;API des fonctionnalités avancées qui ne sont pas encore présentes dans le Core profile.
+Il est assez standard d&amp;rsquo;utiliser des extensions OpenGL et d&amp;rsquo;adapter son moteur en fonction des extensions disponibles sur la carte graphique de l&amp;rsquo;utilisateur.
+Le nom des extensions suit une nomenclature assez précises. Il y a 3 types d&amp;rsquo;extensions:
+ Propriétaires: Spécifiques à un seul constructeur.</description>
     </item>
     
     <item>
       <title>Pipeline de Rendu</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/06-course/gpu-pipeline/</link>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/gpu-pipeline/</link>
       <pubDate>Thu, 19 Jan 2017 23:57:26 +0100</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/06-course/gpu-pipeline/</guid>
-      <description>&lt;p&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Rendering_Pipeline_Overview&#34;&gt;Cette page du wiki&lt;/a&gt; décrit l&amp;rsquo;ensemble du pipeline de rendu OpenGL.&lt;/p&gt;
-
-&lt;p&gt;Le schéma suivant illustre ce pipeline (&lt;a href=&#34;http://www.lighthouse3d.com/2011/03/opengl-4-1-pipeline/&#34;&gt;source&lt;/a&gt;):&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://www.lighthouse3d.com/wp-content/uploads/2011/03/pipeline4.png&#34; alt=&#34;OpenGL Pipeline&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.seas.upenn.edu/~pcozzi/OpenGLInsights/OpenGL44PipelineMap.pdf&#34;&gt;Et ce schéma entre dans le détail de chaque étape&lt;/a&gt; (un joli poster à accrocher au mur :p)&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Directional Shadow Map</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map/</link>
-      <pubDate>Thu, 19 Jan 2017 23:22:14 +0100</pubDate>
-      
-      <guid>https://celeborn2bealive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map/</guid>
-      <description>
-
-&lt;p&gt;Nous allons commencer par l&amp;rsquo;utilisation du shadow mapping pour une lumière directionnelle, qui est plus simple.&lt;/p&gt;
-
-&lt;p&gt;Il y a globalement quatre partie à coder:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Initialisation: Allocation des données OpenGL nécessaire à l&amp;rsquo;algorithme&lt;/li&gt;
-&lt;li&gt;Shaders: Coder les shaders nécessaire à la création de la shadow map.&lt;/li&gt;
-&lt;li&gt;Création de la shadow map: A faire au rendu des que la direction de la lumière est modifiée. Il s&amp;rsquo;agit de calculer la depth map selon le point de vue de la light.&lt;/li&gt;
-&lt;li&gt;Utilisation de la shadow map: A faire dans la shading pass. Il s&amp;rsquo;agit avant d&amp;rsquo;éclairer un fragment vu par la caméra de vérifier s&amp;rsquo;il est visible depuis la light en utilisant la depth map précalculée.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;initialisation&#34;&gt;Initialisation&lt;/h2&gt;
-
-&lt;p&gt;Dans la classe Application, ajoutez 4 variables:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;GLuint m_directionalSMTexture;
-GLuint m_directionalSMFBO;
-GLuint m_directionalSMSampler;
-int32_t m_nDirectionalSMResolution = 512;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;La première est destinée à stocker un identifiant de texture OpenGL qui contiendra la depth map selon le point de vue de la light.&lt;/p&gt;
-
-&lt;p&gt;La deuxième est destinée à stocker un identifiant de framebuffer OpenGL qui nous permettra de dessiner la depth map.&lt;/p&gt;
-
-&lt;p&gt;La troisème est destinée à stocker un identifiant de sampler OpenGL qui nous permettra de lire la depth map depuis un shader.&lt;/p&gt;
-
-&lt;p&gt;Enfin la dernière stocke simplement la résolution de la depth map (ici 512x512).&lt;/p&gt;
-
-&lt;p&gt;Dans le constructeur de l&amp;rsquo;application, créez à la texture m_directionalSMTexture, de target GL_TEXTURE_2D et de format interne GL_DEPTH_COMPONENT32F.&lt;/p&gt;
-
-&lt;p&gt;Créez le framebuffer m_directionalSMFBO et attachez lui la texture m_directionalSMTexture sur l&amp;rsquo;attachment GL_DEPTH_ATTACHMENT (voir le code de l&amp;rsquo;initialisation du GBuffer du deferred shading pour exemple).&lt;/p&gt;
-
-&lt;p&gt;Vérifiez la validité du framebuffer, puis débindez le framebuffer.&lt;/p&gt;
-
-&lt;p&gt;Créez enfin le sampler m_directionalSMSampler avec le code suivant:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;glGenSamplers(1, &amp;amp;m_directionalSMSampler);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Fonctions GL à utiliser:&lt;/p&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Sans DSA&lt;/th&gt;
-&lt;th&gt;DSA&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;glGenTextures&lt;/td&gt;
-&lt;td&gt;glCreateTextures&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glBindTexture&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glTexStorage2D&lt;/td&gt;
-&lt;td&gt;glTextureStorage2D&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glGenFramebuffers&lt;/td&gt;
-&lt;td&gt;glCreateFramebuffers&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo)&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glFramebufferTexture2D&lt;/td&gt;
-&lt;td&gt;glNamedFramebufferTexture&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glDrawBuffers&lt;/td&gt;
-&lt;td&gt;glNamedFramebufferDrawBuffers&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glCheckFramebufferStatus&lt;/td&gt;
-&lt;td&gt;glCheckNamedFramebufferStatus&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glGenSamplers&lt;/td&gt;
-&lt;td&gt;glCreateSamplers&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glSamplerParameteri&lt;/td&gt;
-&lt;td&gt;glSamplerParameteri&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&#34;shaders&#34;&gt;Shaders&lt;/h2&gt;
-
-&lt;p&gt;Ajoutez deux nouveaux shaders &lt;em&gt;directionalSM.vs.glsl&lt;/em&gt; et &lt;em&gt;directionalSM.fs.glsl&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;L&amp;rsquo;objectif du vertex shader est de transformer le sommet d&amp;rsquo;entrée dans l&amp;rsquo;espace de la light. Pour cela, on suppose que l&amp;rsquo;application fournie une matrice ViewProjection adaptée et le code est simplement le suivant:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;// directionalSM.vs.glsl
-#version 330
-
-layout(location = 0) in vec3 aPosition;
-uniform mat4 uDirLightViewProjMatrix;
-
-void main()
-{
-    gl_Position =  uDirLightViewProjMatrix * vec4(aPosition, 1);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Le fragment shader n&amp;rsquo;a rien a faire car tout ce qui nous interesse c&amp;rsquo;est la depth des fragments. Or la depth est directement écrite par la carte graphique dans le depth buffer après l&amp;rsquo;execution du fragment shader. On se contente donc d&amp;rsquo;écrire un fragment shader minimal qui ne sort que du noir:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;// directionalSM.fs.glsl
-#version 330
-out vec3 fColor;
-void main()
-{
-    fColor = vec3(0);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Dans l&amp;rsquo;application, ajoutez un nouveau programme et une variable pour stocker la location de l&amp;rsquo;uniform &lt;em&gt;uDirLightViewProjMatrix&lt;/em&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;glmlv::GLProgram m_directionalSMProgram;
-GLint m_uDirLightViewProjMatrix;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Dans le constructor, compilez le programme à partir des deux nouveaux shaders et récupérez à la location avec &lt;em&gt;glGetUniformLocation&lt;/em&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;création-de-la-shadow-map&#34;&gt;Création de la shadow map&lt;/h2&gt;
-
-&lt;p&gt;Il faut à présent calculer la shadow map dans la boucle de rendu. Attention: ce calcul necessite un rendu de la scène, qui peut être coûteux. Il faut donc faire attention à ne recalculer la shadow map que si la light change de direction, par exemple en utilisant un booléen. La structure générale de la méthode run() devient donc:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;int Application::run()
-{
-    [...]
-    bool directionalSMDirty = true;
-
-    // Loop until the user closes the window
-    for (auto iterationCount = 0u; !m_GLFWHandle.shouldClose(); ++iterationCount)
-    {
-        [...]
-        if (directionalSMDirty)
-        {
-            // Calcul de la shadow map (**)
-            [...]
-
-            directionalSMDirty = false; // Pas de calcul au prochain tour
-        }
-
-        // Rendu
-        [...]
-
-        // Pseudo code dans le dessin de la GUI:
-        if (directional_light_change)
-        {
-            directionalSMDirty = true; // Il faut recalculer la shadow map
-        }
-        [...]
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Mettez en place cette structure de code par dessus le code actuel de rendu du deferred.&lt;/p&gt;
-
-&lt;p&gt;A la suite du commentaire *// Calcul de la shadow map (*&lt;em&gt;)&lt;/em&gt;, ajoutez le code suivant:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;m_directionalSMProgram.use();
-
-glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_directionalSMFBO);
-glViewport(0, 0, m_nDirectionalSMResolution, m_nDirectionalSMResolution);
-glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-glUniformMatrix4fv(m_uDirLightViewProjMatrix, 1, GL_FALSE, glm::value_ptr(dirLightProjMatrix * dirLightViewMatrix));
-
-glBindVertexArray(m_SceneVAO);
-
-// We draw each shape by specifying how much indices it carries, and with an offset in the global index buffer
-for (const auto shape : m_shapes) {
-    glDrawElements(GL_TRIANGLES, shape.indexCount, GL_UNSIGNED_INT, (const GLvoid*)(shape.indexOffset * sizeof(GLuint)));
-}
-
-glBindVertexArray(0);
-
-glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Ce code met en place le programme pour dessiner la shadow map, bind le FBO sur lequel la shadow map est attachée, puis dessine la scène. Logiquement, après ce dessin, la texture m_directionalSMTexture (attachée à m_directionalSMFBO) doit contenir la shadow map.&lt;/p&gt;
-
-&lt;p&gt;Dans ce code, il vous manque le calcul des deux matrices dirLightProjMatrix et dirLightViewMatrix, qui est le suivant (à faire au début de la boucle de rendu car ces variables serviront aussi à la shading pass):&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;static const auto computeDirectionVectorUp = [](float phiRadians, float thetaRadians)
-{
-    const auto cosPhi = glm::cos(phiRadians);
-    const auto sinPhi = glm::sin(phiRadians);
-    const auto cosTheta = glm::cos(thetaRadians);
-    return -glm::normalize(glm::vec3(sinPhi * cosTheta, -glm::sin(thetaRadians), cosPhi * cosTheta));
-};
-
-const auto sceneCenter = 0.5f * (m_BBoxMin + m_BBoxMax);
-const float sceneRadius = m_SceneSizeLength * 0.5f;
-
-const auto dirLightUpVector = computeDirectionVectorUp(glm::radians(m_DirLightPhiAngleDegrees), glm::radians(m_DirLightThetaAngleDegrees));
-const auto dirLightViewMatrix = glm::lookAt(sceneCenter + m_DirLightDirection * sceneRadius, sceneCenter, dirLightUpVector); // Will not work if m_DirLightDirection is colinear to lightUpVector
-const auto dirLightProjMatrix = glm::ortho(-sceneRadius, sceneRadius, -sceneRadius, sceneRadius, 0.01f * sceneRadius, 2.f * sceneRadius);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;La matrice de projection du lumière directionelle est orthographique car une telle lumière voit &amp;ldquo;en parallèle&amp;rdquo; (tous les points sont illuminés selon la même direction). On fait en sorte que la light voit l&amp;rsquo;ensemble de la scène en la plaçant au bord de la bounding sphere de la scène (d&amp;rsquo;ou le calcul du centre et du rayon de la scène). Il vous sera peut être necessaire de stocker m_BBoxMin et m_BBoxMax si ce n&amp;rsquo;est pas déjà fait, qui peuvent être obtenu au moment du chargement de la scène.&lt;/p&gt;
-
-&lt;h2 id=&#34;utilisation-de-la-shadow-map&#34;&gt;Utilisation de la shadow map&lt;/h2&gt;
-
-&lt;p&gt;Une fois la shadow map calculée, la shading pass peut l&amp;rsquo;utiliser pour calculer la visibilité d&amp;rsquo;un fragment pour la light concernée.&lt;/p&gt;
-
-&lt;p&gt;Il faut tout d&amp;rsquo;abord modifier le fragment shader de la shading pass (shadingPass.fs.glsl) afin d&amp;rsquo;utiliser la shadow map.
-Ajoutez les uniform suivantes:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;uniform mat4 uDirLightViewProjMatrix;
-uniform sampler2D uDirLightShadowMap;
-uniform float uDirLightShadowMapBias;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;La matrice permet de passer les fragment vus par la caméra dans l&amp;rsquo;espace projeté de la light. Une fois cette projection faite, on peut lire dans la shadow map pour obtenir la depth enregistrée dans le pixel concerné. Cette depth doit alors être comparée à la depth du fragment courant, toujours selon le point de vue de la light, pour savoir s&amp;rsquo;il est visible depuis la light.&lt;/p&gt;
-
-&lt;p&gt;Le code est le suivant:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;vec4 positionInDirLightScreen = uDirLightViewProjMatrix * vec4(position, 1);
-vec3 positionInDirLightNDC = vec3(positionInDirLightScreen / positionInDirLightScreen.w) * 0.5 + 0.5;
-float depthBlockerInDirSpace = texture(uDirLightShadowMap, positionInDirLightNDC.xy).r;
-float dirLightVisibility = positionInDirLightNDC.z &amp;lt; depthBlockerInDirSpace + uDirLightShadowMapBias ? 1.0 : 0.0;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;La première ligne applique la matrice pour projeter la position du fragment courant.&lt;/p&gt;
-
-&lt;p&gt;La deuxième light homogénise cette position projetée en divisant par la coordonnée &amp;ldquo;w&amp;rdquo;. A l&amp;rsquo;issue de cette opération, toutes les coordonnées sont entre -1 et 1. Afin de pouvoir lire dans la shadow map, on les ramène entre 0 et 1 grace au *0.5 + 0.5. Les coordonnées .xy identifie le pixel à lire dans la shadow map, et la coordonnée .z stocke la depth du fragment selon le point de vue de la light.&lt;/p&gt;
-
-&lt;p&gt;La troisème ligne lit la depth stockée dans la shadow map à la position du fragment.&lt;/p&gt;
-
-&lt;p&gt;Enfin la dernière ligne compare la depth stockée à la depth du fragment afin de savoir si la light est visible.&lt;/p&gt;
-
-&lt;p&gt;On rajoute un biais uDirLightShadowMapBias afin d&amp;rsquo;éviter les erreurs d&amp;rsquo;imprecision numériques qui apparaissent sous la forme de &amp;ldquo;shadow acnée&amp;rdquo; (mettez ce bias a 0 initialement pour voir le problème).&lt;/p&gt;
-
-&lt;p&gt;La variable dirLightVisibility vaut 0 si le fragment est occulté depuis la ligne, 1 sinon. Multipliez cette variable à la contribution de la lumière directionnelle afin de l&amp;rsquo;ajouter dans fColor.&lt;/p&gt;
-
-&lt;p&gt;Une fois les modifications effectuées sur le shader, modifier le code de l&amp;rsquo;application pour récupérer la location des nouvelles uniformes. Dans la boucle de rendu, settez ces uniforms correctement et bindez la texture de shadow map m_directionalSMTexture ainsi que le sampler m_directionalSMSampler sur une nouvelle texture unit (non utilisée par le GBuffer). Pour le uDirLightShadowMapBias, faites en sorte qu&amp;rsquo;il soit controlable depuis la GUI.&lt;/p&gt;
-
-&lt;p&gt;Enfin il y a un piège pour la matrice uDirLightViewProjMatrix. Le code est un peu différent de la passe précédente puisqu&amp;rsquo;il ne suffit de pas multiplier dirLightProjMatrix à dirLightViewMatrix pour obtenir cette matrice.&lt;/p&gt;
-
-&lt;p&gt;Cela est du au fait que les fragments de la shading pass ne sont pas en espace World mais en espace View de la caméra. Il faut donc qu&amp;rsquo;ils soient repassés en World avant d&amp;rsquo;être transformés dans l&amp;rsquo;espace de la light. Pour cela, il suffit de multiplier à gauche par l&amp;rsquo;inverse de la View matrix de la caméra:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;const auto rcpViewMatrix = m_viewController.getRcpViewMatrix(); // Inverse de la view matrix de la caméra
-glUniformMatrix4fv(m_uDirLightViewProjMatrix_shadingPass, 1, GL_FALSE, glm::value_ptr(dirLightProjMatrix * dirLightViewMatrix * rcpViewMatrix));
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;si-ça-ne-fonctionne-pas&#34;&gt;Si ça ne fonctionne pas&lt;/h2&gt;
-
-&lt;p&gt;A ce stade, votre shadow mapping devrait fonctionner et vous devriez donc voir les ombres portées par les objets de la scène par rapport à la lumière directionnelle.&lt;/p&gt;
-
-&lt;p&gt;Néammoins, il peut exister une multitude de raisons pour lesquelles un shadow mapping ne fonctionnerait pas immédiatement (c&amp;rsquo;est d&amp;rsquo;ailleur rare qu&amp;rsquo;il fonctionne du premier coup).&lt;/p&gt;
-
-&lt;p&gt;Afin de débogguer, une première approche peut être d&amp;rsquo;afficher la depth map vue par la caméra. Malheureusement, la depth map ne peut pas être blittée à l&amp;rsquo;ecran comme les autres textures du GBuffer.&lt;/p&gt;
-
-&lt;p&gt;Il faut donc coder un fragment shader dediée à l&amp;rsquo;affichage de la depth map:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;// displayDepth.fs.glsl
-#version 330
-
-uniform sampler2D uGDepth;
-
-out vec3 fColor;
-
-void main()
-{
-    float depth = texelFetch(uGDepth, ivec2(gl_FragCoord.xy), 0).r;
-    fColor = vec3(depth); // Since the depth is between 0 and 1, pow it to darkness its value
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Ce fragment shader peut être combiné à &lt;em&gt;shadingPass.vs.glsl&lt;/em&gt; pour former un programme GLSL. En bindant correctment la depth map à afficher, et en dessinant un triangle sur tout l&amp;rsquo;ecran, on peut ainsi afficher n&amp;rsquo;importance quel depth map (en particulier celle représentant la shadow map de la light).&lt;/p&gt;
-
-&lt;p&gt;Voir sur la branche cheat pour un exemple.&lt;/p&gt;
-
-&lt;h2 id=&#34;percentage-closest-filtering&#34;&gt;Percentage Closest Filtering&lt;/h2&gt;
-
-&lt;h3 id=&#34;basique&#34;&gt;Basique&lt;/h3&gt;
-
-&lt;p&gt;L&amp;rsquo;aspect visuel du shadow mapping dépend grandement de la résolution choisie. Pour une résolution de 512, vous avez du constater que le rendu des ombres est très aliasé. Il faut monter à 4096 au moins pour ne plus voir l&amp;rsquo;aliasing à une distance correcte, qui reste très visible en se rapprochant.&lt;/p&gt;
-
-&lt;p&gt;Une manière de palier à cet aliasing est d&amp;rsquo;utiliser une méthode de filtrage appelée &lt;em&gt;Percentage Closest Filtering&lt;/em&gt;, qui consiste à moyenner la visibilité dans un voisinage du point afin de flouter/bruiter les ombres sur leur bord.&lt;/p&gt;
-
-&lt;p&gt;Cette technique est en partie supportée par le GPU en passant par un sampler de type &lt;em&gt;sampler2DShadow&lt;/em&gt; en GLSL.&lt;/p&gt;
-
-&lt;p&gt;Dans &lt;em&gt;shadingPass.fs.glsl&lt;/em&gt;, remplacez la déclaration des uniformes du shadow mapping par:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;uniform mat4 uDirLightViewProjMatrix;
-uniform sampler2DShadow uDirLightShadowMap;
-uniform float uDirLightShadowMapBias;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Puis remplacez le code de calcul de la visibilité par:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;vec4 positionInDirLightScreen = uDirLightViewProjMatrix * vec4(position, 1); // Compute fragment position in NDC space of light
-vec3 positionInDirLightNDC = vec3(positionInDirLightScreen / positionInDirLightScreen.w) * 0.5 + 0.5; // Homogeneize + put between 0 and 1
-float dirLightVisibility = textureProj(uDirLightShadowMap, vec4(positionInDirLightNDC.xy, positionInDirLightNDC.z - uDirLightShadowMapBias, 1.0), 0.0);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;On utilise donc un &lt;em&gt;sampler2DShadow&lt;/em&gt; à la place d&amp;rsquo;un &lt;em&gt;sampler2D&lt;/em&gt; et la fonction &lt;em&gt;textureProj&lt;/em&gt; à la place de &lt;em&gt;texture&lt;/em&gt;. Ce code permet d&amp;rsquo;obtenir un filtrage 2x2 (bilinéaire) sur nos ombres.&lt;/p&gt;
-
-&lt;p&gt;Afin que ce shader fonctionne, il faut rajouter deux lignes à l&amp;rsquo;initialisation du sampler m_directionalSMSampler:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;glGenSamplers(1, &amp;amp;m_directionalSMSampler);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE); // Cette ligne
-glSamplerParameteri(m_directionalSMSampler, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL) // Et celle ci;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Ces lignes définissent le comportement de la fonction &lt;em&gt;textureProj&lt;/em&gt; dans le shader.&lt;/p&gt;
-
-&lt;p&gt;Une fois ces modifications effectuées, lancez votre application et constatez que les ombres sont un peu floutées.&lt;/p&gt;
-
-&lt;h3 id=&#34;arbitraire&#34;&gt;Arbitraire&lt;/h3&gt;
-
-&lt;p&gt;Il est possible d&amp;rsquo;allouer plus loin dans le filtrage des ombres en appliquant un filtre arbitraire lors de la lecture de la shadow map. Cela est plus couteux mais également plus agréable visuellement.&lt;/p&gt;
-
-&lt;p&gt;Dans &lt;em&gt;shadingPass.fs.glsl&lt;/em&gt;, ajoutez les uniform:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;uniform int uDirLightShadowMapSampleCount;
-uniform float uDirLightShadowMapSpread;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;et le code utilitaires (avant le main):&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;vec2 poissonDisk[16] = vec2[](
-    vec2( -0.94201624, -0.39906216 ),
-    vec2( 0.94558609, -0.76890725 ),
-    vec2( -0.094184101, -0.92938870 ),
-    vec2( 0.34495938, 0.29387760 ),
-    vec2( -0.91588581, 0.45771432 ),
-    vec2( -0.81544232, -0.87912464 ),
-    vec2( -0.38277543, 0.27676845 ),
-    vec2( 0.97484398, 0.75648379 ),
-    vec2( 0.44323325, -0.97511554 ),
-    vec2( 0.53742981, -0.47373420 ),
-    vec2( -0.26496911, -0.41893023 ),
-    vec2( 0.79197514, 0.19090188 ),
-    vec2( -0.24188840, 0.99706507 ),
-    vec2( -0.81409955, 0.91437590 ),
-    vec2( 0.19984126, 0.78641367 ),
-    vec2( 0.14383161, -0.14100790 )
-);
-
-float random(vec4 seed)
-{
-    float dot_product = dot(seed, vec4(12.9898,78.233,45.164,94.673));
-    return fract(sin(dot_product) * 43758.5453);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Le tableau poissonDisk definit 16 échantillons d&amp;rsquo;une distribution de poisson 2D centrée en (0,0). La fonction random permet d&amp;rsquo;obtenir un nombre pseudo-aléatoire à partir d&amp;rsquo;une graine.&lt;/p&gt;
-
-&lt;p&gt;Dans le main du shader, remplacez le calcul de la visibilité par:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;float dirLightVisibility = 0.0;
-float dirSampleCountf = float(uDirLightShadowMapSampleCount);
-int step = max(1, 16 / uDirLightShadowMapSampleCount);
-for (int i = 0; i &amp;lt; uDirLightShadowMapSampleCount; ++i)
-{
-    // Noisy shadows:
-    int index = int(dirSampleCountf * random(vec4(gl_FragCoord.xyy, i))) % uDirLightShadowMapSampleCount;
-
-    dirLightVisibility += textureProj(uDirLightShadowMap, vec4(positionInDirLightNDC.xy + uDirLightShadowMapSpread * poissonDisk[index], positionInDirLightNDC.z - uDirLightShadowMapBias, 1.0), 0.0);
-}
-dirLightVisibility /= dirSampleCountf;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Dans le code de l&amp;rsquo;application, faites en sorte de pouvoir setter les deux nouvelles uniforms uDirLightShadowMapSampleCount et uDirLightShadowMapSpread via la GUI. La variable uDirLightShadowMapSpread doit être relativement petite (de l&amp;rsquo;ordre de 0.0005) afin de ne pas trop disperser les ombres.&lt;/p&gt;
-
-&lt;p&gt;Essayez ce code. Il devrait vous donner des ombres bruitées mais douces.&lt;/p&gt;
-
-&lt;p&gt;Une alternative pour obtenir des ombres floutées plutot que bruitées est de calculer l&amp;rsquo;index dans la boucle avec:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;// Blurred shadows:
-int index = (i + step) % uDirLightShadowMapSampleCount;
-&lt;/code&gt;&lt;/pre&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/gpu-pipeline/</guid>
+      <description>Cette page du wiki décrit l&amp;rsquo;ensemble du pipeline de rendu OpenGL.
+Le schéma suivant illustre ce pipeline (source):
+Et ce schéma entre dans le détail de chaque étape (un joli poster à accrocher au mur :p)</description>
     </item>
     
     <item>
       <title>Gamma correction</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/gamma-correction/</link>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/gamma-correction/</link>
       <pubDate>Thu, 29 Dec 2016 12:36:04 +0100</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/gamma-correction/</guid>
-      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/gamma-correction/</guid>
+      <description>En construction  </description>
     </item>
     
     <item>
-      <title>Geometry pass</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/geometry-pass/</link>
-      <pubDate>Thu, 29 Dec 2016 12:27:23 +0100</pubDate>
+      <title>Directional Shadow Map</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/03-deferred-shading/geometry-pass/</guid>
-      <description>
-
-&lt;p&gt;Comme indiqué en introduction, la première passe de rendu est la Geometry Pass, dont l&amp;rsquo;objectif est de &amp;ldquo;dessiner&amp;rdquo; dans un GBuffer les informations concernant les objets visible à l&amp;rsquo;écran.&lt;/p&gt;
-
-&lt;p&gt;Pour cela, il va falloir créer les textures OpenGL destinées à contenir ces informations, et les attacher à un &lt;strong&gt;framebuffer object&lt;/strong&gt;, qui va permettre d&amp;rsquo;écrire dans ces textures plutot qu&amp;rsquo;a l&amp;rsquo;écran.&lt;/p&gt;
-
-&lt;p&gt;Pour ces TPs, dupliquez l&amp;rsquo;app de l&amp;rsquo;exercice du foward renderer afin d&amp;rsquo;avoir une scene chargée et stockée sur GPU pour être rendue.
-Nommez la nouvelle app &amp;ldquo;deferred-renderer&amp;rdquo;.&lt;/p&gt;
-
-&lt;h2 id=&#34;shaders&#34;&gt;Shaders&lt;/h2&gt;
-
-&lt;p&gt;Nous allons commencer par les shaders car c&amp;rsquo;est le plus simple.
-Renommez les shaders &lt;em&gt;forward.vs.glsl&lt;/em&gt; et &lt;em&gt;forward.fs.glsl&lt;/em&gt; en &lt;em&gt;geometryPass.vs.glsl&lt;/em&gt; et &lt;em&gt;geometryPass.fs.glsl&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;Il faut ensuite modifier le fragment shader (plus exactement le simplifier).&lt;/p&gt;
-
-&lt;p&gt;Tout d&amp;rsquo;abors modifier les sorties. On avait:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;out vec3 fColor;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;a remplacer par:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;layout(location = 0) out vec3 fPosition;
-layout(location = 1) out vec3 fNormal;
-layout(location = 2) out vec3 fAmbient;
-layout(location = 3) out vec3 fDiffuse;
-layout(location = 4) out vec4 fGlossyShininess;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;On va donc écrire dans 5 textures en tout.&lt;/p&gt;
-
-&lt;p&gt;Dans le main du shader, remplacez tout le code d&amp;rsquo;illumination par des écritures dans les variables de sortie. Ne pas oublier de normaliser &lt;em&gt;vViewSpaceNormal&lt;/em&gt; avant de l&amp;rsquo;écrire dans &lt;em&gt;fNormal&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;A noter que l&amp;rsquo;on écrit pas les texCoords en sortie car on ne les utilise que pour lire les coefficients ambiant, diffus et glossy des textures de l&amp;rsquo;objet en cours de rendu. Les texCoords ne sont donc pas necessaire à la Shading Pass puisqu&amp;rsquo;on écrit directement ces coefficients dans des textures du GBuffer.&lt;/p&gt;
-
-&lt;p&gt;Les variables de sortie de matériaux doivent stocker la multiplication du coefficient associé avec la valeur lue dans la texture. Par exemple:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-glsl&#34;&gt;uniform vec3 uKd;
-uniform sampler2D uKdSampler;
-
-[...]
-
-// Dans le main:
-vec3 kd = uKd * vec3(texture(uKdSampler, vTexCoords));
-fDiffuse = kd;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Enfin, il faut packer la shininess dans le canal alpha de la variable de sortie &lt;em&gt;fGlossyShininess&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;Dans le code de Application, chargez ces shaders pour tester leur compilation.&lt;/p&gt;
-
-&lt;h2 id=&#34;textures-du-gbuffer&#34;&gt;Textures du GBuffer&lt;/h2&gt;
-
-&lt;p&gt;Dans la classe Application, déclarez un tableau de &lt;em&gt;GLuint&lt;/em&gt; pour stocker les texture objects, ainsi que l&amp;rsquo;enum suivant:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;enum GBufferTextureType
-{
-    GPosition = 0,
-    GNormal,
-    GAmbient,
-    GDiffuse,
-    GGlossyShininess,
-    GDepth, // On doit créer une texture de depth mais on écrit pas directement dedans dans le FS. OpenGL le fait pour nous (et l&#39;utilise).
-    GBufferTextureCount
-};
-GLuint m_GBufferTextures[GBufferTextureCount];
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Dans le constructeur, créer et initialiser ces textures avec comme dimension la taille de la fenêtre.&lt;/p&gt;
-
-&lt;div class=&#34;notices note&#34; &gt;&lt;p&gt;Vous pouvez créer toutes les textures en un seul appel à glGenTextures (ou glCreateTextures en DSA) car nos identifiants sont stockés dans un tableau. Il suffit de passer à la fonction le nombre de textures à créer.&lt;/p&gt;
-&lt;/div&gt;
-
-
-&lt;p&gt;Le format à passer à &lt;em&gt;glTexStorage2D&lt;/em&gt; dépend du type de texture, vous pouvez utiliser le tableau suivant, en correspondance avec l&amp;rsquo;enum:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;const GLenum m_GBufferTextureFormat[GBufferTextureCount] = { GL_RGB32F, GL_RGB32F, GL_RGB32F, GL_RGB32F, GL_RGBA32F, GL_DEPTH_COMPONENT32F };
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Il est inutile de remplir les textures avec &lt;em&gt;glTexSubImage2D&lt;/em&gt; car elles sont destinées à être remplies par le fragment shader.&lt;/p&gt;
-
-&lt;p&gt;Fonctions GL à utiliser:&lt;/p&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Sans DSA&lt;/th&gt;
-&lt;th&gt;DSA&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;glGenTextures&lt;/td&gt;
-&lt;td&gt;glCreateTextures&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glBindTexture(GL_TEXTURE_2D, texID)&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glTexStorage2D&lt;/td&gt;
-&lt;td&gt;glTextureStorage2D&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&#34;framebuffer-object&#34;&gt;Framebuffer object&lt;/h2&gt;
-
-&lt;p&gt;Déclarez une variable &lt;em&gt;GLuint m_FBO&lt;/em&gt; dans la classe Application.&lt;/p&gt;
-
-&lt;p&gt;Dans le constructeur, après création des texture objects, créez le FBO (&lt;em&gt;glGenFramebuffers&lt;/em&gt;) et bindez le sur la cible &lt;em&gt;GL_DRAW_FRAMEBUFFER&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;Il faut ensuite attacher toutes nos textures au FBO en utilisant la fonction &lt;em&gt;glFramebufferTexture2D&lt;/em&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;glFramebufferTexture2D( GLenum target,
-    GLenum attachment,
-    GLenum textarget,
-    GLuint texture,
-    GLint level);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;La target est la cible sur laquelle est bindée de FBO (&lt;em&gt;GL_DRAW_FRAMEBUFFER&lt;/em&gt;).&lt;/p&gt;
-
-&lt;p&gt;L&amp;rsquo;attachment est un point d&amp;rsquo;attache de la forme &lt;em&gt;GL_COLOR_ATTACHMENT0 + i&lt;/em&gt;, ou &lt;em&gt;i&lt;/em&gt; est l&amp;rsquo;index de la texture dans son tableau (de &lt;em&gt;GPosition&lt;/em&gt; à &lt;em&gt;GGlossyShininess&lt;/em&gt;).
-Pour la texture de profondeur (&lt;em&gt;GDepth&lt;/em&gt;), elle doit être attachée sur le point &lt;em&gt;GL_DEPTH_ATTACHMENT&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;Dans notre cas, &lt;em&gt;textarget&lt;/em&gt; doit être mis à &lt;em&gt;GL_TEXTURE_2D&lt;/em&gt; car toutes nos textures sont 2D (on pourrait aussi faire le rendu dans des layers de textures 3D, il faudrait alors changer ce paramètre).&lt;/p&gt;
-
-&lt;p&gt;Enfin, &lt;em&gt;level&lt;/em&gt; doit être mis à 0 (c&amp;rsquo;est le niveau de mipmap dans lequel dessiner).&lt;/p&gt;
-
-&lt;p&gt;Une fois les textures attachées, il faut indiquer à OpenGL une association &amp;ldquo;sortie du fragment shader&amp;rdquo; vers texture.
-Comme vous le verrez au prochain exercice, le fragment shader peut avoir plusieurs sorties indicées avec des &lt;em&gt;layout(location = i)&lt;/em&gt; (de la meme manière que les entrée du vertex shader).
-Il faut dire à OpenGL comment les locations doivent être connectées aux textures du FBO.&lt;/p&gt;
-
-&lt;p&gt;Cela passe par la fonction &lt;em&gt;glDrawBuffers&lt;/em&gt;, qui prend le nombre de sorties du fragment shader et un tableau de &lt;em&gt;GL_COLOR_ATTACHMENTi&lt;/em&gt; afin de faire la liaison. Nous allons faire assez simple:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
-glDrawBuffers(5, drawBuffers);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Ici on va envoyer la sortie &lt;em&gt;i&lt;/em&gt; du fragment shader vers l&amp;rsquo;attachment &lt;em&gt;GL_COLOR_ATTACHMENTi&lt;/em&gt; du FBO.
-C&amp;rsquo;est ce qui parait le plus logique mais, si on voulait, on pourrait tout à fait envoyer la sortie 3 du fragment shader vers la texture attachée sur GL_COLOR_ATTACHMENT0, par exemple.&lt;/p&gt;
-
-&lt;p&gt;Utilisez ensuite la fonction &lt;em&gt;glCheckFramebufferStatus&lt;/em&gt; afin de vérifier si le framebuffer créé est correct (si ce n&amp;rsquo;est pas le cas, bon debug !).&lt;/p&gt;
-
-&lt;p&gt;Enfin débindez le framebuffer de la cible &lt;em&gt;GL_DRAW_FRAMEBUFFER&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;Fonctions GL à utiliser:&lt;/p&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Sans DSA&lt;/th&gt;
-&lt;th&gt;DSA&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;glGenFramebuffers&lt;/td&gt;
-&lt;td&gt;glCreateFramebuffers&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo)&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glFramebufferTexture2D&lt;/td&gt;
-&lt;td&gt;glNamedFramebufferTexture&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glDrawBuffers&lt;/td&gt;
-&lt;td&gt;glNamedFramebufferDrawBuffers&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glCheckFramebufferStatus&lt;/td&gt;
-&lt;td&gt;glCheckNamedFramebufferStatus&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&#34;boucle-de-rendu&#34;&gt;Boucle de rendu&lt;/h2&gt;
-
-&lt;p&gt;Au rendu assez peu de chose à changer.&lt;/p&gt;
-
-&lt;p&gt;Avant de dessiner, binder le framebuffer sur la cible &lt;em&gt;GL_DRAW_FRAMEBUFFER&lt;/em&gt;. Cela va indiquer à OpenGL que le fragment shader va écrire dans les textures attachées au FBO.&lt;/p&gt;
-
-&lt;p&gt;Il faut également faire un &lt;em&gt;.use()&lt;/em&gt; sur le programme correspondant au aux &lt;em&gt;geometryPass.glsl&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Après le dessin de la scène, débindez le FBO. Voila.&lt;/p&gt;
-
-&lt;p&gt;Pour tester que tout fonctionne bien, on peut blitter les textures du GBuffer à l&amp;rsquo;écran.&lt;/p&gt;
-
-&lt;p&gt;Après le débind du FBO, rebindez le, cette fois ci sur la cible &lt;em&gt;GL_READ_FRAMEBUFFER&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;Utilisez ensuite la fonction &lt;em&gt;glReadBuffer&lt;/em&gt;, qui prend en paramètre un &lt;em&gt;GL_COLOR_ATTACHMENT0 + i&lt;/em&gt;, correspondant à la texture du GBuffer que vous voulez afficher. Vous pouvez par example afficher la texture de normals en passant &lt;em&gt;GL_COLOR_ATTACHMENT0 + GNormal&lt;/em&gt;. Faites ensuite en sorte de pouvoir choisir la texture à afficher via la GUI (avec des boutons radio, &lt;em&gt;ImgGui::RadioButton&lt;/em&gt;).&lt;/p&gt;
-
-&lt;p&gt;Puis utilisez la fonction &lt;em&gt;glBlitFramebuffer&lt;/em&gt; qui permet de &amp;ldquo;copier-coller&amp;rdquo; (avec filtre) une portion du FBO bindé sur &lt;em&gt;GL_READ_FRAMEBUFFER&lt;/em&gt; vers le FBO bindé sur &lt;em&gt;GL_DRAW_FRAMEBUFFER&lt;/em&gt; (c&amp;rsquo;est à dire l&amp;rsquo;écran, lorsque rien n&amp;rsquo;est bindé dessus).&lt;/p&gt;
-
-&lt;p&gt;Finalement, débindez le FBO de &lt;em&gt;GL_READ_FRAMEBUFFER&lt;/em&gt;. A noter qu&amp;rsquo;en DSA il n&amp;rsquo;y a rien à binder pour l&amp;rsquo;étape du blit (il faut quand même binder sur &lt;em&gt;GL_DRAW_FRAMEBUFFER&lt;/em&gt; avant de dessiner la scène).&lt;/p&gt;
-
-&lt;p&gt;Fonctions GL à utiliser:&lt;/p&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Sans DSA&lt;/th&gt;
-&lt;th&gt;DSA&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo)&lt;/td&gt;
-&lt;td&gt;glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo)&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo)&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glReadBuffer&lt;/td&gt;
-&lt;td&gt;glNamedFramebufferReadBuffer&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glBlitFramebuffer&lt;/td&gt;
-&lt;td&gt;glBlitNamedFramebuffer&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/dir-shadow-map/</guid>
+      <description>Nous allons commencer par l&amp;rsquo;utilisation du shadow mapping pour une lumière directionnelle, qui est plus simple.
+Il y a globalement quatre partie à coder:
+ Initialisation: Allocation des données OpenGL nécessaire à l&amp;rsquo;algorithme Shaders: Coder les shaders nécessaire à la création de la shadow map. Création de la shadow map: A faire au rendu des que la direction de la lumière est modifiée. Il s&amp;rsquo;agit de calculer la depth map selon le point de vue de la light.</description>
     </item>
     
     <item>
       <title>Geometrie</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/geometrie/</link>
-      <pubDate>Thu, 29 Dec 2016 12:18:05 +0100</pubDate>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/geometrie/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/02-forward-shading/geometrie/</guid>
-      <description>&lt;div class=&#34;notices warning&#34; &gt;&lt;p&gt;Vous aurez un écran noir jusqu&amp;rsquo;a la fin de la première partie de l&amp;rsquo;exercice &lt;a href=&#34;https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-shading/transformations/&#34;&gt;Transformations&lt;/a&gt;: OpenGL demande généralement beaucoup de code d&amp;rsquo;initialisation avant de pouvoir afficher quelque chose.&lt;/p&gt;
-&lt;/div&gt;
-
-
-&lt;p&gt;Vous allez commencer par dessiner des cubes et spheres en 3D. La lib &lt;em&gt;glmlv&lt;/em&gt; contient deux fonctions makeCube() et makeSphere() (simple_geometry.hpp) permettant de construire des tableaux de sommets et indices pour ces deux forme simple.&lt;/p&gt;
-
-&lt;p&gt;A l&amp;rsquo;initialisation (constructeur de Application):&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Utiliser ces fonctions pour construire la géométrie d&amp;rsquo;une sphere et d&amp;rsquo;un cube.&lt;/li&gt;
-&lt;li&gt;Pour chacune de ces formes, construire un VBO, un VAO et un IBO et les remplir correctement.&lt;/li&gt;
-&lt;li&gt;Activer le depth test&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Dans la boucle de rendu (Application::run):&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Adapter l&amp;rsquo;appel à glClear pour aussi nettoyer le depth buffer&lt;/li&gt;
-&lt;li&gt;Pour chaque objet: binder le VAO, dessiner l&amp;rsquo;objet&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Fonctions OpenGL à utiliser à l&amp;rsquo;initialisation:&lt;/p&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Sans DSA&lt;/th&gt;
-&lt;th&gt;DSA&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;glGenBuffers&lt;/td&gt;
-&lt;td&gt;glCreateBuffers&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glGenVertexArrays&lt;/td&gt;
-&lt;td&gt;glCreateVertexArrays&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glBindBuffer(GL_ARRAY_BUFFER, vboID)&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glBufferStorage&lt;/td&gt;
-&lt;td&gt;glNamedBufferStorage&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;glVertexArrayVertexBuffer&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;glVertexArrayAttribBinding&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glEnableVertexAttribArray&lt;/td&gt;
-&lt;td&gt;glEnableVertexArrayAttrib&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glVertexAttribPointer&lt;/td&gt;
-&lt;td&gt;glVertexArrayAttribFormat&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboID)&lt;/td&gt;
-&lt;td&gt;glVertexArrayElementBuffer&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;glEnable(GL_DEPTH_TEST)&lt;/td&gt;
-&lt;td&gt;glEnable(GL_DEPTH_TEST)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;Fonctions OpenGL à utiliser au rendu:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;glBindVertexArray&lt;/li&gt;
-&lt;li&gt;glDrawElements (le nombre de sommets à dessiner est le nombre d&amp;rsquo;elements dans l&amp;rsquo;indexBuffer)&lt;/li&gt;
-&lt;li&gt;glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Voir le programme &lt;em&gt;quad&lt;/em&gt; du template pour un exemple simple en 2D.&lt;/p&gt;
-
-&lt;p&gt;&lt;div class=&#34;notices note&#34; &gt;&lt;p&gt;A l&amp;rsquo;initialisation du VAO, il faut utiliser pour attribut de vertex (position, normal, texCoords) un entier correspondant à la location de cet attribut dans le vertex shader.
-Le VS n&amp;rsquo;est pas encore écrit mais on peut déjà choisir les location (le plus simple: position en 0, normal en 1 et texCoords en 2).&lt;/p&gt;
-&lt;/div&gt;
-&lt;/p&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/geometrie/</guid>
+      <description>Vous aurez un écran noir jusqu&amp;rsquo;a la fin de la première partie de l&amp;rsquo;exercice Transformations: OpenGL demande généralement beaucoup de code d&amp;rsquo;initialisation avant de pouvoir afficher quelque chose.
+ Vous allez commencer par dessiner des cubes et spheres en 3D. La lib glmlv contient deux fonctions makeCube() et makeSphere() (simple_geometry.hpp) permettant de construire des tableaux de sommets et indices pour ces deux forme simple.
+A l&amp;rsquo;initialisation (constructeur de Application):
+ Utiliser ces fonctions pour construire la géométrie d&amp;rsquo;une sphere et d&amp;rsquo;un cube.</description>
     </item>
     
     <item>
-      <title>Code template</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/01-introduction/code-template/</link>
-      <pubDate>Thu, 29 Dec 2016 11:36:02 +0100</pubDate>
+      <title>Geometry pass</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/geometry-pass/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/01-introduction/code-template/</guid>
-      <description>
-
-&lt;h2 id=&#34;téléchargement&#34;&gt;Téléchargement&lt;/h2&gt;
-
-&lt;p&gt;Clonez, forkez sur votre compte Github ou téléchargez le &lt;a href=&#34;https://github.com/Celeborn2BeAlive/opengl-avance&#34;&gt;repository sur github&lt;/a&gt; (fork de préférence, plus facile de partager le code avec moi ensuite)&lt;/p&gt;
-
-&lt;h2 id=&#34;branches-du-repo&#34;&gt;Branches du repo&lt;/h2&gt;
-
-&lt;p&gt;Principales:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;master &lt;em&gt;Code de base + apps d&amp;rsquo;exemple en OpenGL 3&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;master-direct-state-access &lt;em&gt;Code de base + apps d&amp;rsquo;exemple en OpenGL 4.5 (avec DSA)&lt;/em&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Corrections:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;cheat &lt;em&gt;Correction des TDs en OpenGL 3&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;cheat-direct-state-access &lt;em&gt;Correction des TDs en OpenGL OpenGL 4.5 (avec DSA)&lt;/em&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;compilation&#34;&gt;Compilation&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Avec CMake&lt;/li&gt;
-&lt;li&gt;Support de GCC 5+ (sans boost), GCC 4.9.2 (boost requis) et Visual Studio 2015 (sans boost)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;linux&#34;&gt;Linux&lt;/h3&gt;
-
-&lt;p&gt;En console:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Créer un repertoire &lt;em&gt;opengl-avance-build&lt;/em&gt; à coté du repertoire &lt;em&gt;opengl-avance&lt;/em&gt; (correspondant au clone du repo)&lt;/li&gt;
-&lt;li&gt;Se placer dans &lt;em&gt;opengl-avance-build&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;Sur un PC ou GCC 5+ est installé, taper la commande &lt;strong&gt;cmake ../opengl-avance&lt;/strong&gt;. Si uniquement GCC 4.9.2 est disponible (machines de la FAC), taper la commande &lt;strong&gt;cmake -DGLMLV_USE_BOOST_FILESYSTEM=ON ../opengl-avance&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;Compiler avec &lt;strong&gt;make -j&lt;/strong&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Les executables sont compilés dans le repertoire &lt;em&gt;bin&lt;/em&gt; du dossier de build&lt;/p&gt;
-
-&lt;h3 id=&#34;windows&#34;&gt;Windows&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Télécharger et installer &lt;a href=&#34;https://cmake.org/download/&#34;&gt;CMake GUI&lt;/a&gt; (Windows win64-x64 Installer ou Windows win32-x86 Installer selon votre CPU) et &lt;a href=&#34;https://www.visualstudio.com/fr/vs/community/&#34;&gt;Visual Studio Community Edition 2015&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Créer un repertoire &lt;em&gt;opengl-avance-build&lt;/em&gt; à coté du repertoire &lt;em&gt;opengl-avance&lt;/em&gt; (correspondant au clone du repo)&lt;/li&gt;
-&lt;li&gt;Lancer CMake GUI, choisir comme repertoire source le clone du repo et comme repertoire de build le dossier que vous avez créé&lt;/li&gt;
-&lt;li&gt;Cliquer sur &lt;strong&gt;Configure&lt;/strong&gt; et choisir comme generateur: &lt;em&gt;Visual Studio 14 2015 Win64&lt;/em&gt; pour un CPU 64-bits, &lt;em&gt;Visual Studio 14 2015&lt;/em&gt; pour un CPU 32-bits (ça existe encore ?)&lt;/li&gt;
-&lt;li&gt;Cliquer sur &lt;strong&gt;Generate&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;Ouvrir la solution Visual Studio &lt;em&gt;opengl.sln&lt;/em&gt; qui a été créée par CMake dans le repertoire de build&lt;/li&gt;
-&lt;li&gt;Dans le panel &lt;em&gt;Explorateur de solutions&lt;/em&gt;, choisir le projet &lt;em&gt;template&lt;/em&gt; comme projet de démarage (clic droit dessus, puis trouver l&amp;rsquo;option)&lt;/li&gt;
-&lt;li&gt;Menu &lt;em&gt;Générer&lt;/em&gt; -&amp;gt; &lt;em&gt;Générer la solution&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;Lancer l&amp;rsquo;application avec F5 (debug) ou Ctrl+F5 (non debug)&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Les executables sont compilés dans les repertoire &lt;em&gt;bin/Debug&lt;/em&gt; et &lt;em&gt;bin/Release&lt;/em&gt; selon la configuration.&lt;/p&gt;
-
-&lt;p&gt;Il est possible de compiler le projet &lt;em&gt;INSTALL&lt;/em&gt; de la solution avec que les executables compilés soit recopiés dans un repertoire d&amp;rsquo;installation. Par défault ce repertoire est &lt;em&gt;C:/Program Files/opengl&lt;/em&gt; mais il est possible de le changer depuis CMake GUI en recherchant la variable &lt;em&gt;CMAKE_INSTALL_PREFIX&lt;/em&gt; et en la modifiant.&lt;/p&gt;
-
-&lt;h2 id=&#34;arborescence&#34;&gt;Arborescence&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;apps &lt;em&gt;Contient le code des executables à compiler&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;cmake &lt;em&gt;Contient des modules cmake&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;lib &lt;em&gt;Contient le code partagé entre les executables&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;third-party &lt;em&gt;Contient des bibliothèques externes&lt;/em&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Chaque sous-repertoire de &lt;em&gt;apps&lt;/em&gt; est compilé en tant qu&amp;rsquo;application indépendant. Ainsi le code du repertoire &lt;em&gt;apps/template&lt;/em&gt; sera compilé en un executable &lt;em&gt;template&lt;/em&gt; (Linux) ou &lt;em&gt;template.exe&lt;/em&gt; (Windows), et le code du repertoire &lt;em&gt;apps/triangle&lt;/em&gt; sera compilé en un executable &lt;em&gt;triangle&lt;/em&gt; (Linux) ou &lt;em&gt;triangle.exe&lt;/em&gt; (Windows).&lt;/p&gt;
-
-&lt;p&gt;Le répertoire &lt;em&gt;lib&lt;/em&gt; est destiné à contenir du code d&amp;rsquo;une lib (nommée &lt;em&gt;glmlv&lt;/em&gt;) partagée entre les executables.&lt;/p&gt;
-
-&lt;p&gt;Afin de garder un code clair, je vous conseille de créer une application différente par theme de TP. Il faudra également créer une application pour le projet.&lt;/p&gt;
-
-&lt;h2 id=&#34;shaders&#34;&gt;Shaders&lt;/h2&gt;
-
-&lt;p&gt;Concernant les shaders GLSL, le processus de compilation se charge de les copier à coté des executables afin qu&amp;rsquo;il soient facilement accessible (de manière relative) par ces derniers. Leur extension doit être &amp;ldquo;.glsl&amp;rdquo; afin qu&amp;rsquo;ils soient reconnu par le CMakeLists.txt, et ils doivent être placés dans un sous repertoire &lt;em&gt;shaders&lt;/em&gt; de l&amp;rsquo;application qui les utilise. Par convention, on suffixera &amp;ldquo;.vs.glsl&amp;rdquo; les vertex shader, &amp;ldquo;.fs.glsl&amp;rdquo; les fragments shaders, &amp;ldquo;.gs.glsl&amp;rdquo; les geometry shaders et &amp;ldquo;.cs.glsl&amp;rdquo; les compute shaders.&lt;/p&gt;
-
-&lt;p&gt;La lib &lt;em&gt;glmlv&lt;/em&gt; peut également contenir des shaders partagés entre les applications, en les plaçant dans le repertoire &lt;em&gt;lib/shaders&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;Par exemple, supposons l&amp;rsquo;arborescence suivante pour les shaders de &lt;em&gt;apps&lt;/em&gt; et &lt;em&gt;libs&lt;/em&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;apps
-
-&lt;ul&gt;
-&lt;li&gt;triangle
-
-&lt;ul&gt;
-&lt;li&gt;shaders
-
-&lt;ul&gt;
-&lt;li&gt;triangle.vs.glsl&lt;/li&gt;
-&lt;li&gt;triangle.fs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;smab
-
-&lt;ul&gt;
-&lt;li&gt;shaders
-
-&lt;ul&gt;
-&lt;li&gt;shadow_mapping
-
-&lt;ul&gt;
-&lt;li&gt;sm.vs.glsl&lt;/li&gt;
-&lt;li&gt;sm.fs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;deferred
-
-&lt;ul&gt;
-&lt;li&gt;gbuffer.vs.glsl&lt;/li&gt;
-&lt;li&gt;gbuffer.fs.glsl&lt;/li&gt;
-&lt;li&gt;shading.vs.glsl&lt;/li&gt;
-&lt;li&gt;shading.fs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;lib
-
-&lt;ul&gt;
-&lt;li&gt;shaders
-
-&lt;ul&gt;
-&lt;li&gt;post-processing
-
-&lt;ul&gt;
-&lt;li&gt;blur.cs.glsl&lt;/li&gt;
-&lt;li&gt;dof.cs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;On a ici deux applications &lt;em&gt;triangle&lt;/em&gt; et &lt;em&gt;smab&lt;/em&gt;, contenant chacune des shaders différents et partageant deux shaders de &lt;em&gt;glmlv&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;Cette arborescence sera reproduite de la manière suivante dans le repertoire de build:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;opengl-avance-build
-
-&lt;ul&gt;
-&lt;li&gt;bin
-
-&lt;ul&gt;
-&lt;li&gt;triangle.exe&lt;/li&gt;
-&lt;li&gt;smab.exe&lt;/li&gt;
-&lt;li&gt;shaders
-
-&lt;ul&gt;
-&lt;li&gt;glmlv
-
-&lt;ul&gt;
-&lt;li&gt;post-processing
-
-&lt;ul&gt;
-&lt;li&gt;blur.cs.glsl&lt;/li&gt;
-&lt;li&gt;dof.cs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;triangle
-
-&lt;ul&gt;
-&lt;li&gt;triangle.vs.glsl&lt;/li&gt;
-&lt;li&gt;triangle.fs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;smab
-
-&lt;ul&gt;
-&lt;li&gt;shadow_mapping
-
-&lt;ul&gt;
-&lt;li&gt;sm.vs.glsl&lt;/li&gt;
-&lt;li&gt;sm.fs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;deferred
-
-&lt;ul&gt;
-&lt;li&gt;gbuffer.vs.glsl&lt;/li&gt;
-&lt;li&gt;gbuffer.fs.glsl&lt;/li&gt;
-&lt;li&gt;shading.vs.glsl&lt;/li&gt;
-&lt;li&gt;shading.fs.glsl&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;De cette manière, un code comme le suivant accède facilement aux shaders &lt;strong&gt;sans dépendre de l&amp;rsquo;emplacement de ces derniers sur la machine de l&amp;rsquo;utilisateur&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;#include &amp;lt;glmlv/filesystem.hpp&amp;gt;
-
-// Supposons que le code est celui de smab.exe, dont le chemin est C:/toto/tata/bin/smab.exe
-int main(int argc, char** argv)
-{
-    // argv[0] contient toujours le chemin vers l&#39;executable, ici &amp;quot;C:/toto/tata/bin/smab.exe&amp;quot;
-    // On le récupère dans une variable de type glmlv::fs::path permettant de gérer facilement les chemins
-    const auto applicationPath = glmlv::fs::path{ argv[0] };
-
-    // stem() renvoit le nom du fichier sans son extension, i.e. &amp;quot;smab&amp;quot;:
-    const auto appName = applicationPath.stem().string();
-
-    // L&#39;opérateur &#39;/&#39; permet de concatener les chemins de fichier
-    const auto shadersRootPath = applicationPath.parent_path() / &amp;quot;shaders&amp;quot;;
-
-    // Pour les shaders de l&#39;application, on utilise la variable contenant le nom de l&#39;application pour accéder au dossier contenant ses shaders
-    const auto pathToSMVS = shadersRootPath / appName / &amp;quot;shadow_mapping&amp;quot; / &amp;quot;sm.vs.glsl&amp;quot;;
-    const auto pathToSMFS = shadersRootPath / appName / &amp;quot;shadow_mapping&amp;quot; / &amp;quot;sm.fs.glsl&amp;quot;;
-
-    // Pour les shaders de la lib, on cible directement le dossier &amp;quot;glmlv&amp;quot;
-    const auto pathToBlurCS = shadersRootPath / &amp;quot;glmlv&amp;quot; / &amp;quot;post-processing&amp;quot; / &amp;quot;blur.cs.glsl&amp;quot;;
-
-    [...]
-
-    return 0;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;applications-d-exemple&#34;&gt;Applications d&amp;rsquo;exemple&lt;/h2&gt;
-
-&lt;p&gt;Le repertoire &lt;em&gt;apps&lt;/em&gt; contient déjà du code pour plusieurs applications simples. Toutes sont basées sur le template de base &lt;em&gt;template&lt;/em&gt; qui se contente d&amp;rsquo;ouvrir une fenêtre contenant une GUI affichant le framerate et permettant de changer la couleur de fond.&lt;/p&gt;
-
-&lt;p&gt;Ces codes simples sont destinés à vous donner quelques exemple d&amp;rsquo;appels aux fonctions OpenGL, en particulier l&amp;rsquo;utilisation des fonction de l&amp;rsquo;extension direct_state_access.&lt;/p&gt;
-
-&lt;p&gt;Une ressource supplémentaire est &lt;a href=&#34;https://github.com/g-truc/ogl-samples/tree/master/tests&#34;&gt;ce repository GIT&lt;/a&gt; contenant un grand nombre d&amp;rsquo;exemples de code pour l&amp;rsquo;ensemble des features OpenGL.&lt;/p&gt;
-
-&lt;p&gt;Voici une description des apps d&amp;rsquo;exemple:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;triangle &lt;em&gt;Dessine un triangle coloré&lt;/em&gt; (création de VBO, création de VAO, attributs entrelacés, chargement de shaders)&lt;/li&gt;
-&lt;li&gt;triangle_2vbos &lt;em&gt;Pareil mais en utilisant 2 VBOs, un pour les positions, l&amp;rsquo;autre pour les couleurs&lt;/em&gt; (plusieurs VBOs pour un objet, attributs non entrelacés)&lt;/li&gt;
-&lt;li&gt;quad &lt;em&gt;Dessine un quad coloré&lt;/em&gt; (création d&amp;rsquo;IBO, i.e. buffer d&amp;rsquo;index)&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/geometry-pass/</guid>
+      <description>Comme indiqué en introduction, la première passe de rendu est la Geometry Pass, dont l&amp;rsquo;objectif est de &amp;ldquo;dessiner&amp;rdquo; dans un GBuffer les informations concernant les objets visible à l&amp;rsquo;écran.
+Pour cela, il va falloir créer les textures OpenGL destinées à contenir ces informations, et les attacher à un framebuffer object, qui va permettre d&amp;rsquo;écrire dans ces textures plutot qu&amp;rsquo;a l&amp;rsquo;écran.
+Pour ces TPs, dupliquez l&amp;rsquo;app de l&amp;rsquo;exercice du foward renderer afin d&amp;rsquo;avoir une scene chargée et stockée sur GPU pour être rendue.</description>
+    </item>
+    
+    <item>
+      <title>Repo Github</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/repo-github/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/repo-github/</guid>
+      <description>Git ? Si vous ne connaissez pas, Git est un système distribué de gestion de version: un logiciel permettant d&amp;rsquo;enregistrer au fur à mesure les modifications du code source d&amp;rsquo;un projet, de manière partagé entre plusieurs utilisateur.
+On peut ainsi facilement revenir en arrière, partager du code, controler qui fait quoi, gérer plusieurs versions, etc.
+L&amp;rsquo;objectif de ces TDs n&amp;rsquo;est pas d&amp;rsquo;apprendre à utiliser Git, mais il sera pratique pour moi de suivre votre progression et de récupérer votre projet grace à un repo Git publique.</description>
     </item>
     
     <item>
       <title>OpenGL Objects</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/06-course/opengl-objects/</link>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-objects/</link>
       <pubDate>Thu, 19 Jan 2017 23:52:53 +0100</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/06-course/opengl-objects/</guid>
-      <description>&lt;p&gt;Les objets OpenGL représentent des conteneurs d&amp;rsquo;état du contexte OpenGL.
-Lorsqu&amp;rsquo;un objet est bindé sur l&amp;rsquo;état correspondant, tous les changement sur cet état sont stocké dans l&amp;rsquo;objet bindé.&lt;/p&gt;
-
-&lt;p&gt;A lire: &lt;a href=&#34;https://www.khronos.org/opengl/wiki/OpenGL_Object&#34;&gt;https://www.khronos.org/opengl/wiki/OpenGL_Object&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Il existe différents types d&amp;rsquo;objets OpenGL, ceux que nous utilisons dans ces TPs étant:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Buffer_Object&#34;&gt;Buffer Object&lt;/a&gt;: représente un tableau de données pouvant être stocké en mémoire GPU.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Vertex_Specification&#34;&gt;Vertex Array Object&lt;/a&gt;: représente la spécification des sommets et leurs rangement aux seins d&amp;rsquo;un ou plusieurs buffer objets.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Texture&#34;&gt;Texture Object&lt;/a&gt;: représente une texture pouvant être stocké en mémoire GPU et pouvant être lue et filtrée depuis les shaders.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Sampler_Object&#34;&gt;Sampler Object&lt;/a&gt;: représente des paramètres de lecture et filtrage de textures.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/Framebuffer_Object&#34;&gt;Framebuffer Object&lt;/a&gt;: Représente un ensemble de textures sur lesquels il est possible de dessiner.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.khronos.org/opengl/wiki/GLSL_Object&#34;&gt;GLSL Objects&lt;/a&gt;: Shaders et programmes GLSL qui peuvent être executés par les stage programmable du GPU.&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/opengl-objects/</guid>
+      <description>Les objets OpenGL représentent des conteneurs d&amp;rsquo;état du contexte OpenGL. Lorsqu&amp;rsquo;un objet est bindé sur l&amp;rsquo;état correspondant, tous les changement sur cet état sont stocké dans l&amp;rsquo;objet bindé.
+A lire: https://www.khronos.org/opengl/wiki/OpenGL_Object
+Il existe différents types d&amp;rsquo;objets OpenGL, ceux que nous utilisons dans ces TPs étant:
+ Buffer Object: représente un tableau de données pouvant être stocké en mémoire GPU. Vertex Array Object: représente la spécification des sommets et leurs rangement aux seins d&amp;rsquo;un ou plusieurs buffer objets.</description>
     </item>
     
     <item>
       <title>Extraction de contours</title>
-      <link>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/extraction-contours/</link>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/extraction-contours/</link>
       <pubDate>Thu, 29 Dec 2016 12:36:20 +0100</pubDate>
       
-      <guid>https://celeborn2bealive.github.io/opengl-avance/05-post-processing/extraction-contours/</guid>
-      <description>&lt;p&gt;Lorem Ipsum&lt;/p&gt;
-</description>
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/extraction-contours/</guid>
+      <description>En construction  </description>
+    </item>
+    
+    <item>
+      <title>Fiche d&#39;information</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/fiche-info/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/fiche-info/</guid>
+      <description>Remplissez cette fiche: https://goo.gl/forms/ffuXJJ1vYCAvUA7s1 ça m&amp;rsquo;aidera.</description>
+    </item>
+    
+    <item>
+      <title>Shaders</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/shaders/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/shaders/</guid>
+      <description>Créez un sous-dossier shader dans le dossier de l&amp;rsquo;application foward-renderer et créez le fichiers forward.vs.glsl et forward.fs.glsl.
+Voir les différents shaders des applications déjà présente pour vous aider.
+Ce TD de l&amp;rsquo;année précedente explique également la théorie.
+Le Vertex Shader  Le vertex shader doit prendre en entrée une position (vec3 aPosition), une normale (vec3 aNormal) et des texCoords (vec2 aTexCoords) N&amp;rsquo;oubliez pas de définir les locations des attributs Ajouter des variable uniformes mat4 uModelViewProjMatrix, mat4 uModelViewMatrix, mat4 uNormalMatrix correspondant aux matrices standard en 3D Ajouter des variables out vec3 vViewSpacePosition, vec3 vViewSpaceNormal, vec3 vTexCoords Dans le main du shader, remplir les différentes variables out et la variable gl_Position en respectant le pseudo-code suivant et en faisant les convertions de type necessaires:  vViewSpacePosition = uModelViewMatrix * aPosition vViewSpaceNormal = uNormalMatrix * aNormal vTexCoords = aTexCoords gl_Position = uModelViewProjMatrix * aPosition  Le Fragment Shader En attendant d&amp;rsquo;implémenter un modèle d&amp;rsquo;illumination, faite en sorte que le fragment shader affiche les normales des objets.</description>
+    </item>
+    
+    <item>
+      <title>Shading pass</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/shading-pass/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/shading-pass/</guid>
+      <description>Il faut maintenant coder la shading pass, qui a pour role d&amp;rsquo;illuminer chaque pixel en utilisant les textures du GBuffer qui viennents se substituer aux variables d&amp;rsquo;entrées du fragment shader d&amp;rsquo;un forward renderer.
+Shaders Créez deux nouveaux shaders shadingPass.vs.glsl et shadingPass.fs.glsl.
+Le VS est destiner à traiter un simple quad en 2D couvrant tout l&amp;rsquo;écran, tout ce passera dans le FS. Voici donc le code du VS:
+#version 330layout(location=0)invec2aPosition;voidmain(){gl_Position=vec4(aPosition,0,1);}  Pour le FS c&amp;rsquo;est un peu plus compliqué, mais vous pouvez repartir de celui du forward renderer.</description>
+    </item>
+    
+    <item>
+      <title>Buffer Objects</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/buffer-objects/</link>
+      <pubDate>Thu, 19 Jan 2017 23:55:15 +0100</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/buffer-objects/</guid>
+      <description>Pages du wiki à lire:
+ Buffer Object Buffer Object Streaming Shader Storage Buffer Object Uniform Buffer Object  </description>
+    </item>
+    
+    <item>
+      <title>Point Shadow Map</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map/</link>
+      <pubDate>Thu, 19 Jan 2017 23:22:33 +0100</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/04-shadow-mapping/point-shadow-map/</guid>
+      <description>En construction  </description>
+    </item>
+    
+    <item>
+      <title>Depth of field</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/depth-of-field/</link>
+      <pubDate>Thu, 29 Dec 2016 12:36:32 +0100</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/05-post-processing/depth-of-field/</guid>
+      <description>En construction  </description>
+    </item>
+    
+    <item>
+      <title>Software Development Kit</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/sdk/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/sdk/</guid>
+      <description>Le repository que vous avez forké et cloné contient un SDK pour coder les TDs. Cette partie explique comment compiler les applications d&amp;rsquo;exemple, vos futures applications, la structure du repertoire et les spécifité du fichier CMake.
+Compilation  Avec CMake Support de GCC 5+ (sans boost), GCC 4.9.2 (boost requis) et Visual Studio 2015 (sans boost) (devrait aussi fonctionner avec Visual 2017, mais je n&amp;rsquo;ai pas encore testé)  CMake est un logiciel permettant de générer une solution de compilation adaptée au système sur lequel on l&#39;execute.</description>
+    </item>
+    
+    <item>
+      <title>Transformations</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/transformations/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/transformations/</guid>
+      <description>Sans Caméra Dans le code C++ de l&amp;rsquo;application, à l&amp;rsquo;initialisation:
+ Charger et compiler les shaders (glmlv::compileProgram) Récupérer les locations des variables uniform Appeler .use() sur le programme GLSL compilé  Au rendu:
+ Construire une matrice projection, une matrice view et deux matrices model (une pour le cube et une pour la sphere) Envoyez les combinaisons de ces matrices dans les uniform correspondante avant le rendu de chaque objet  A ce stade, vous devriez avoir un rendu correct de vos objets si vous vous arrangez pour bien construire les matrices (ne pas oublier qu&amp;rsquo;OpenGL &amp;ldquo;voit&amp;rdquo; du coté négatif de l&amp;rsquo;axe Z de l&amp;rsquo;espace view).</description>
+    </item>
+    
+    <item>
+      <title>Vertex Array Objects</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/vertex-array-objects/</link>
+      <pubDate>Thu, 19 Jan 2017 23:55:25 +0100</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/vertex-array-objects/</guid>
+      <description>Pages du wiki à lire:
+ Vertex Specification Vertex Array Object Vertex Buffer Object Index buffers  </description>
+    </item>
+    
+    <item>
+      <title>Lighting</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/lighting/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/lighting/</guid>
+      <description>Fragment Shader Implémenter un modèle d&amp;rsquo;illumination diffuse dans le fragment shader forward-renderer.fs.glsl
+ Ajouter des variables uniform vec3 uDirectionalLightDir et vec3 uDirectionalLightIntensity destinés à stocker les paramètres d&amp;rsquo;une lumière directionnelle (en espace view) Ajouter des variables uniform vec3 uPointLightPosition et vec3 uPointLightIntensity destinés à stocker les paramètres d&amp;rsquo;une lumière ponctuelle (en espace view) Ajouter une variable uniform vec3 uKd destiné à stocker la couleur diffuse de l&amp;rsquo;objet en cours de rendu Dans le main, utiliser ces variables ainsi que les attributs du fragment pour calculer la couleur du fragment:  floatdistToPointLight=length(uPointLightPosition-vViewSpacePosition);vec3dirToPointLight=(uPointLightPosition-vViewSpacePosition)/distToPointLight;fColor=uKd*(uDirectionalLightIntensity*max(0.</description>
+    </item>
+    
+    <item>
+      <title>Projet</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/projet/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/projet/</guid>
+      <description>L&amp;rsquo;objectif du projet est de développer une demo, au sens &amp;ldquo;Demoscene&amp;rdquo;, c&amp;rsquo;est à dire une application jouant une animation 3D. Quelques exemples de demo.
+Le thème imposé est le suivant: Star Wars (grosse originalité). Si vous n&amp;rsquo;aimez pas Star Wars, vous n&amp;rsquo;aurez qu&amp;rsquo;à exprimer cette haine dans votre démo, ou le mixer avec un autre thème de votre choix.
+En general les elements d&amp;rsquo;une demo sont procéduraux (générés aléatoirement), mais ce n&amp;rsquo;est pas obligatoire pour le projet (vous pouvez charger des modèles 3D et textures, vous devriez pouvoir trouver facilement des vaisseaux sur le net).</description>
+    </item>
+    
+    <item>
+      <title>Texture et Sampler Objects</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/textures/</link>
+      <pubDate>Thu, 19 Jan 2017 23:55:40 +0100</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/textures/</guid>
+      <description>Pages du wiki à lire:
+ Texture Image Format Sampler Object Cubemap Texture Buffer Texture Array Texture  </description>
+    </item>
+    
+    <item>
+      <title>Liens OpenGL</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/liens/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/01-introduction/liens/</guid>
+      <description>Le plus important, à toujours avoir sous le coude:
+ Le Wiki OpenGL Une version digeste de la documentation OpenGL/GLSL La reference card OpenGL 4.4  Et quelques liens utiles pour OpenGL:
+ Mes TDs OpenGL 3+ écris pour les Imacs 2 Des tutoriaux OpenGL 3+ Plein d&amp;rsquo;autres tutos OpenGL 3+ en francais Une énorme liste d&amp;rsquo;exemples de code OpenGL  </description>
+    </item>
+    
+    <item>
+      <title>Textures</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/textures/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/textures/</guid>
+      <description>Fragment Shader  Ajouter une variable uniform sampler2D uKdSampler, destiné à pointer sur une texture des couleurs diffuses pour l&amp;rsquo;objet en cours de rendu. Dans le main, utiliser la fonction GLSL texture afin de lire le sampler en utiliser les tex coords du fragment. Multiplier la valeur lue avec la variable uKd pour obtenir le coefficient diffus final de l&amp;rsquo;objet, à utiliser pour l&amp;rsquo;illumination  Application A l&amp;rsquo;initialisation
+ Charger deux images de votre choix à utiliser en temps que texture diffuse de chacun de nos objets (utiliser la classe glmlv::Image2DRGBA et la fonction glmlv::readImage) Construire deux texture objects OpenGL et envoyer les pixel des deux images chargés dans ces texture objects Construire un sampler object OpenGL et fixer les paramètres GL_TEXTURE_MIN_FILTER et GL_TEXTURE_MAG_FILTER à GL_LINEAR pour ce sampler Récuperer la location de l&amp;rsquo;uniform sampler2D uKdSampler  Au rendu</description>
+    </item>
+    
+    <item>
+      <title>Framebuffer Objects</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/framebuffer-objects/</link>
+      <pubDate>Thu, 19 Jan 2017 23:55:49 +0100</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/framebuffer-objects/</guid>
+      <description>Pages du wiki à lire:
+ Framebuffer Object Default Framebuffer  </description>
+    </item>
+    
+    <item>
+      <title>Chargement de modèles OBJ</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/load-obj/</link>
+      <pubDate>Thu, 29 Dec 2016 12:22:16 +0100</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/load-obj/</guid>
+      <description>Vous pouvez obtenir différents modèles OBJ sur cette page (je vous conseille de commencer par essayer avec Crytek-Sponza).
+ API Utiliser la fonction suivante de la lib pour charger un modèle OBJ:
+voidglmlv::loadObj(constglmlv::fs::path&amp;amp;objPath,glmlv::ObjData&amp;amp;data);  Celle ci charge le fichier dont le chemin est passé en paramètre (pensez à mettre le modèle dans le repertoire assets). Elle remplit une structure de type glmlv::ObjData contenant les informations suivantes:
+structObjData{size_tshapeCount;// Nombre d&amp;#39;objets dans l&amp;#39;OBJ size_tmaterialCount;// Nombre de matériaux // Point min et max de la bounding box de l&amp;#39;OBJ: glm::vec3bboxMin;glm::vec3bboxMax;std::vector&amp;lt;Vertex3f3f2f&amp;gt;vertexBuffer;// Tableau de sommets std::vector&amp;lt;uint32_t&amp;gt;indexBuffer;// Tableau d&amp;#39;indices std::vector&amp;lt;uint32_t&amp;gt;indexCountPerShape;// Nombre d&amp;#39;indices par objet std::vector&amp;lt;int32_t&amp;gt;materialIDPerShape;// Index de materiaux de chaque objet (pointe dans le tableau materials) std::vector&amp;lt;PhongMaterial&amp;gt;materials;// Tableau des materiaux std::vector&amp;lt;Image2DRGBA&amp;gt;textures;// Tableau dex textures référencées par les materiaux }  Les tableaux vertexBuffer et indexBuffer doivent être utilisés pour remplir un VBO et un IBO à binder sur un VAO pour le rendu.</description>
+    </item>
+    
+    <item>
+      <title>Shaders</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/shaders/</link>
+      <pubDate>Thu, 19 Jan 2017 23:57:43 +0100</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/06-course/shaders/</guid>
+      <description>Les shaders sont de cours programmes compilés pour fonctionner sur carte graphique, dans les stages dit programmables du pipeline.
+Plusieurs languages de shading existent mais nous utilisons GLSL dans ces TPs car OpenGL fournie une API et compilation et link pour ce language.
+A lire: https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language
+Différents types de shaders existent, ceux que nous utilisons dans ces TPs sont:
+ Vertex Shaders: Se charge du calcul par sommet. Généralement il projete le sommet en entrée sur l&amp;rsquo;écran afin que les triangles soit prêt pour la rasterisation.</description>
+    </item>
+    
+    <item>
+      <title>Aller plus loin</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/plus-loin/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/02-forward-renderer/plus-loin/</guid>
+      <description>Voici plusieurs choses améliorable pour rendre notre forward renderer plus interessant:
+Normal Mapping Ajouter une texture de normales dans le fragment shader et faire le necessaire pour charger la texture de normales de chaque objet.
+L&amp;rsquo;utiliser à la place de uViewSpaceNormal pour calculer l&amp;rsquo;illumination.
+Vous pouvez vous réferer à ce tutorial.
+Plusieurs Lights Actuellement le shader ne gère que deux lumières, c&amp;rsquo;est un peu triste.
+Utilisez les Shader Storage Buffer Objects pour accéder à des tableau de directions, positions et intensités depuis le fragment shader, correspondant à un nombre arbitraire de directional et point lights (stockez leur nombre dans des uniforms).</description>
+    </item>
+    
+    <item>
+      <title>Aller plus loin</title>
+      <link>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/plus-loin/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://Celeborn2BeAlive.github.io/opengl-avance/03-deferred-renderer/plus-loin/</guid>
+      <description>Voici plusieurs choses améliorable pour rendre notre deferred renderer plus interessant:
+Compute Shader pour la Shading Pass Dessiner un quad pour la shading pass, c&amp;rsquo;est en réalité se compliquer la vie pour rien. Tout ce qu&amp;rsquo;on veut c&amp;rsquo;est traiter chacun des pixels du GBuffer, en parallèle sur GPU. D&amp;rsquo;une certaine manière, ce qu&amp;rsquo;on aimerait faire c&amp;rsquo;est un genre de kernel Cuda.
+Ca tombe bien, les compute shaders (dispo depuis OpenGL 4.</description>
     </item>
     
   </channel>

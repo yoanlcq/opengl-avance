@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on OpenGL Avancé</title>
+    <link>https://Celeborn2BeAlive.github.io/opengl-avance/tags/</link>
+    <description>Recent content in Tags on OpenGL Avancé</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>fr</language>
+    <copyright>Copyright (c) 2017, Laurent NOEL; All rights reserved.</copyright>
+    
+	<atom:link href="https://Celeborn2BeAlive.github.io/opengl-avance/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+  </channel>
+</rss>
