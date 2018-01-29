@@ -14,9 +14,16 @@ namespace glmlv
 // Class responsible for initializing GLFW, creating a window, initializing OpenGL function pointers with GLAD library and initializing ImGUI
 class GLFWHandle
 {
+
+    static void glfwErrorHandler(int code, const char *msg) {
+        std::cerr << "GLFW error " << code << ": " << msg << std::endl;
+    }
+
 public:
     GLFWHandle(int width, int height, const char * title)
     {
+        glfwSetErrorCallback(glfwErrorHandler);
+
         if (!glfwInit()) {
             std::cerr << "Unable to init GLFW.\n";
             throw std::runtime_error("Unable to init GLFW.\n");
