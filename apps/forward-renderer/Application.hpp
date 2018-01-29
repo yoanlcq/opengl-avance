@@ -6,9 +6,11 @@
 #include <glmlv/simple_geometry.hpp>
 #include <glmlv/ViewController.hpp>
 #include <glmlv/Image2DRGBA.hpp>
+#include <glmlv/load_obj.hpp>
 
 using glmlv::SimpleGeometry;
 using glmlv::Vertex3f3f2f;
+using glmlv::ObjData;
 
 struct GLMesh {
     GLuint vao, vbo, ibo;
@@ -73,6 +75,49 @@ struct Mesh {
     }
 };
 
+/*
+struct ObjData
+{
+    size_t shapeCount; // Nombre d'objets dans l'OBJ
+    size_t materialCount; // Nombre de matériaux
+    // Point min et max de la bounding box de l'OBJ:
+    glm::vec3 bboxMin;
+    glm::vec3 bboxMax;
+    std::vector<Vertex3f3f2f> vertexBuffer; // Tableau de sommets
+    std::vector<uint32_t> indexBuffer; // Tableau d'indices
+    std::vector<uint32_t> indexCountPerShape; // Nombre d'indices par objet
+
+    std::vector<int32_t> materialIDPerShape; // Index de materiaux de chaque objet (pointe dans le tableau materials)
+
+    std::vector<PhongMaterial> materials; // Tableau des materiaux
+    std::vector<Image2DRGBA> textures; // Tableau dex textures référencées par les materiaux
+}
+*/
+
+struct Scene {
+    ObjData objData;
+    GLMesh gl;
+    Scene() = delete;
+    Scene(const glmlv::fs::path& path) :
+        objData(objDataFromPath(path)),
+        gl(SimpleGeometry { objData.vertexBuffer, objData.indexBuffer })
+        {}
+    void render() const {
+        glBindVertexArray(gl.vao);
+        auto indexOffset = 0;
+        for (const auto indexCount: objData.indexCountPerShape) {
+            glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, (void*) (indexOffset * sizeof(GLuint)));
+            indexOffset += indexCount;
+        };
+    }
+private:
+    static ObjData objDataFromPath(const glmlv::fs::path& path) {
+        ObjData d;
+        glmlv::loadObj(path, d);
+        return d;
+    }
+};
+
 struct GLTexture2D {
     GLuint texid, sampler;
     GLTexture2D(const glmlv::fs::path& path): GLTexture2D(glmlv::readImage(path)) {}
@@ -127,5 +172,6 @@ private:
     const GLint m_UniformKdSamplerLocation;
     const GLTexture2D m_CubeTex, m_SphereTex;
     const Mesh m_Cube, m_Sphere;
+    const Scene m_Scene;
     glmlv::ViewController m_ViewController;
 };

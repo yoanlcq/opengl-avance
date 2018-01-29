@@ -9,7 +9,6 @@
 
 using namespace glm;
 
-
 int Application::run()
 {
     vec3 clearColor(0,0,0);
@@ -34,13 +33,16 @@ int Application::run()
         glUniform3fv(m_UniformPointLightPositionLocation, 1, &pointLightDir[0]);
         glUniform3fv(m_UniformPointLightIntensityLocation, 1, &pointLightIntensity[0]);
 
-        const float fovy = radians(60.f), near = 0.001, far = 1000, aspect = m_nWindowWidth / float(m_nWindowHeight);
+        const float fovy = radians(60.f), near = 0.5, far = 5000, aspect = m_nWindowWidth / float(m_nWindowHeight);
         mat4 proj(perspective(fovy, aspect, near, far));
         mat4 view = m_ViewController.getViewMatrix();
 
+        const auto sceneDiagonalSize = glm::length(m_Scene.objData.bboxMax - m_Scene.objData.bboxMin);
+        m_ViewController.setSpeed(sceneDiagonalSize * 0.1f); // 10% de la scene parcouru par seconde
+
+        // Render the sphere
         {
             mat4 model(translate(mat4(1), vec3(0,0,-2)));
-            //mat4 view(lookAt(vec3(0,0,0), vec3(0,0,1), vec3(0,1,0)));
             mat4 modelView(view * model);
             mat4 modelViewProj(proj * modelView);
             mat4 normalMatrix(transpose(inverse(modelView)));
@@ -59,9 +61,9 @@ int Application::run()
             m_Sphere.render();
         }
 
+        // Render the cube
         {
             mat4 model(translate(mat4(1), vec3(-2,0,-2)));
-            //mat4 view(lookAt(vec3(0,0,0), vec3(0,0,1), vec3(0,1,0)));
             mat4 modelView(view * model);
             mat4 modelViewProj(proj * modelView);
             mat4 normalMatrix(transpose(inverse(modelView)));
@@ -80,6 +82,26 @@ int Application::run()
             m_Cube.render();
         }
 
+        // Render the loaded OBJ scene
+        {
+            mat4 model(translate(mat4(1), vec3(2,0,-2)));
+            mat4 modelView(view * model);
+            mat4 modelViewProj(proj * modelView);
+            mat4 normalMatrix(transpose(inverse(modelView)));
+
+            const GLuint unit = 1;
+            glActiveTexture(GL_TEXTURE0 + unit);
+            glBindTexture(GL_TEXTURE_2D, m_CubeTex.texid);
+            glBindSampler(unit, m_CubeTex.sampler);
+
+            glUniform1i(m_UniformKdSamplerLocation, unit);
+            glUniform3fv(m_UniformKdLocation, 1, &cubeColor[0]);
+            glUniformMatrix4fv(m_UniformModelViewProjMatrixLocation, 1, GL_FALSE, &modelViewProj[0][0]);
+            glUniformMatrix4fv(m_UniformModelViewMatrixLocation, 1, GL_FALSE, &modelView[0][0]);
+            glUniformMatrix4fv(m_UniformNormalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
+
+            m_Scene.render();
+        }
 
         // GUI code:
         ImGui_ImplGlfwGL3_NewFrame();
@@ -147,7 +169,8 @@ Application::Application(int argc, char** argv):
     m_SphereTex(m_AssetsRootPath / m_AppName / "textures" / "plasma.png"),
     m_Cube(glmlv::makeCube()),
     m_Sphere(glmlv::makeSphere(32)),
-    m_ViewController(m_GLFWHandle.window())
+    m_ViewController(m_GLFWHandle.window()),
+    m_Scene(m_AssetsRootPath / "glmlv" / "models" / "crytek-sponza" / "sponza.obj")
 {
     ImGui::GetIO().IniFilename = strdup(m_ImGuiIniFilename.c_str()); // At exit, ImGUI will store its windows positions in this file
 
