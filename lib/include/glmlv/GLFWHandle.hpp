@@ -30,7 +30,7 @@ public:
         }
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+        //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
@@ -51,7 +51,52 @@ public:
             throw std::runtime_error("Unable to init OpenGL.\n");
         }
 
-        glmlv::initGLDebugOutput();
+        GLint ctxflags, ctxpflags, depth_bits, stencil_bits;
+        GLboolean double_buffer, stereo_buffers;
+
+        glGetIntegerv(GL_CONTEXT_FLAGS, &ctxflags);
+        glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &ctxpflags);
+        glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_DEPTH, 
+                GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
+        glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_STENCIL, 
+                GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, &stencil_bits);
+        glGetBooleanv(GL_DOUBLEBUFFER, &double_buffer);
+        glGetBooleanv(GL_STEREO, &stereo_buffers);
+
+
+        printf(
+            "--- Active OpenGL context settings ---\n"
+            "    Version             : %s\n"
+            "    Renderer            : %s\n"
+            "    Vendor              : %s\n"
+            "    GLSL version        : %s\n"
+            "    Profile flags       : %s%s(%#x)\n"
+            "    Context flags       : %s%s(%#x)\n"
+            "    Double buffering    : %s\n"
+            "    Stereo buffers      : %s\n"
+            "    Depth buffer bits   : %d\n"
+            "    Stencil buffer bits : %d\n"
+            "\n",
+            glGetString(GL_VERSION),
+            glGetString(GL_RENDERER),
+            glGetString(GL_VENDOR),
+            glGetString(GL_SHADING_LANGUAGE_VERSION),
+            ctxpflags & GL_CONTEXT_CORE_PROFILE_BIT ? "core " : "",
+            ctxpflags & GL_CONTEXT_COMPATIBILITY_PROFILE_BIT ? "compatibility " :"",
+            ctxpflags,
+            ctxflags & GL_CONTEXT_FLAG_FORWARD_COMPATIBLE_BIT ? "forward_compatible " : "",
+            ctxflags & GL_CONTEXT_FLAG_DEBUG_BIT ? "debug " : "",
+            ctxflags,
+            double_buffer ? "yes" : "no",
+            stereo_buffers ? "yes" : "no",
+            depth_bits,
+            stencil_bits
+        );
+
+        if(!std::getenv("GL_DONT_DEBUG")) {
+            std::cout << "NOTE: Enabling debug output (OpenGL 4.3+). Set GL_DONT_DEBUG environment variable to disable." << std::endl;
+            glmlv::initGLDebugOutput();
+        }
 
         // Setup ImGui binding
         ImGui_ImplGlfwGL3_Init(m_pWindow, true);
