@@ -4,6 +4,7 @@
 #include <glmlv/GLFWHandle.hpp>
 #include <glmlv/GLProgram.hpp>
 #include <glmlv/simple_geometry.hpp>
+#include <glmlv/ViewController.hpp>
 
 using glmlv::SimpleGeometry;
 using glmlv::Vertex3f3f2f;
@@ -94,4 +95,5 @@ private:
     const GLint m_UniformModelViewMatrixLocation;
     const GLint m_UniformNormalMatrixLocation;
     const Mesh m_Cube, m_Sphere;
+    glmlv::ViewController m_ViewController;
 };

@@ -25,10 +25,11 @@ int Application::run()
         mat4 proj(perspective(fovy, aspect, near, far));
         mat4 model(translate(mat4(1), vec3(0,0,-2)));
         //mat4 view(lookAt(vec3(0,0,0), vec3(0,0,1), vec3(0,1,0)));
-        mat4 view(1);
+        mat4 view = m_ViewController.getViewMatrix();
         mat4 modelView(view * model);
         mat4 modelViewProj(proj * modelView);
         mat4 normalMatrix(transpose(inverse(modelView)));
+
         glUniformMatrix4fv(m_UniformModelViewProjMatrixLocation, 1, GL_FALSE, &modelViewProj[0][0]);
         glUniformMatrix4fv(m_UniformModelViewMatrixLocation, 1, GL_FALSE, &modelView[0][0]);
         glUniformMatrix4fv(m_UniformNormalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
@@ -59,10 +60,10 @@ int Application::run()
         /* Swap front and back buffers*/
         m_GLFWHandle.swapBuffers();
 
-        auto ellapsedTime = glfwGetTime() - seconds;
+        auto elapsedTime = glfwGetTime() - seconds;
         auto guiHasFocus = ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
         if (!guiHasFocus) {
-            //viewController.update(float(ellapsedTime))
+            m_ViewController.update(float(elapsedTime));
         }
     }
 
@@ -81,7 +82,8 @@ Application::Application(int argc, char** argv):
     m_UniformModelViewMatrixLocation(glGetUniformLocation(m_ForwardProgram.glId(), "uModelViewMatrix")),
     m_UniformNormalMatrixLocation(glGetUniformLocation(m_ForwardProgram.glId(), "uNormalMatrix")),
     m_Cube(glmlv::makeCube()),
-    m_Sphere(glmlv::makeSphere(32))
+    m_Sphere(glmlv::makeSphere(32)),
+    m_ViewController(m_GLFWHandle.window())
 {
     ImGui::GetIO().IniFilename = m_ImGuiIniFilename.c_str(); // At exit, ImGUI will store its windows positions in this file
 
