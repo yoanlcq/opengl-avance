@@ -5,6 +5,7 @@
 #include <glmlv/GLProgram.hpp>
 #include <glmlv/simple_geometry.hpp>
 #include <glmlv/ViewController.hpp>
+#include <glmlv/Image2DRGBA.hpp>
 
 using glmlv::SimpleGeometry;
 using glmlv::Vertex3f3f2f;
@@ -72,6 +73,29 @@ struct Mesh {
     }
 };
 
+struct GLTexture2D {
+    GLuint texid, sampler;
+    GLTexture2D(const glmlv::fs::path& path): GLTexture2D(glmlv::readImage(path)) {}
+    GLTexture2D(const glmlv::Image2DRGBA& img) {
+        texid = 0;
+        sampler = 0;
+        glGenTextures(1, &texid);
+        glBindTexture(GL_TEXTURE_2D, texid);
+        glTexStorage2D(
+            GL_TEXTURE_2D, 1, GL_RGBA8,
+            img.width(), img.height()
+        );
+        glTexSubImage2D(
+            GL_TEXTURE_2D, 0, 0, 0, img.width(), img.height(), GL_RGBA,
+            GL_UNSIGNED_BYTE, img.data()
+        );
+        glGenSamplers(1, &sampler);
+        glSamplerParameteri(sampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glSamplerParameteri(sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glSamplerParameteri(sampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glSamplerParameteri(sampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
+};
 
 class Application
 {
@@ -87,6 +111,7 @@ private:
     const glmlv::fs::path m_AppPath;
     const std::string m_AppName;
     const std::string m_ImGuiIniFilename;
+    const glmlv::fs::path m_AssetsRootPath;
     const glmlv::fs::path m_ShadersRootPath;
     const glmlv::fs::path m_ForwardVsPath;
     const glmlv::fs::path m_ForwardFsPath;
@@ -99,6 +124,8 @@ private:
     const GLint m_UniformPointLightPositionLocation;
     const GLint m_UniformPointLightIntensityLocation;
     const GLint m_UniformKdLocation;
+    const GLint m_UniformKdSamplerLocation;
+    const GLTexture2D m_CubeTex, m_SphereTex;
     const Mesh m_Cube, m_Sphere;
     glmlv::ViewController m_ViewController;
 };

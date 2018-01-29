@@ -9,6 +9,7 @@
 
 using namespace glm;
 
+
 int Application::run()
 {
     vec3 clearColor(0,0,0);
@@ -16,8 +17,8 @@ int Application::run()
     vec3 dirLightIntensity(1,1,1);
     vec3 pointLightDir(0,0,1);
     vec3 pointLightIntensity(1,1,1);
-    vec3 cubeColor(0,1,0);
-    vec3 sphereColor(1,0,0);
+    vec3 cubeColor(1,1,1);
+    vec3 sphereColor(1,1,1);
 
     // Loop until the user closes the window
     for (auto iterationCount = 0u; !m_GLFWHandle.shouldClose(); ++iterationCount)
@@ -44,11 +45,17 @@ int Application::run()
             mat4 modelViewProj(proj * modelView);
             mat4 normalMatrix(transpose(inverse(modelView)));
 
+            const GLuint unit = 0;
+            glActiveTexture(GL_TEXTURE0 + unit);
+            glBindTexture(GL_TEXTURE_2D, m_SphereTex.texid);
+            glBindSampler(unit, m_SphereTex.sampler);
+
+            glUniform1i(m_UniformKdSamplerLocation, unit);
             glUniform3fv(m_UniformKdLocation, 1, &sphereColor[0]);
             glUniformMatrix4fv(m_UniformModelViewProjMatrixLocation, 1, GL_FALSE, &modelViewProj[0][0]);
             glUniformMatrix4fv(m_UniformModelViewMatrixLocation, 1, GL_FALSE, &modelView[0][0]);
             glUniformMatrix4fv(m_UniformNormalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
-
+            
             m_Sphere.render();
         }
 
@@ -59,6 +66,12 @@ int Application::run()
             mat4 modelViewProj(proj * modelView);
             mat4 normalMatrix(transpose(inverse(modelView)));
 
+            const GLuint unit = 1;
+            glActiveTexture(GL_TEXTURE0 + unit);
+            glBindTexture(GL_TEXTURE_2D, m_CubeTex.texid);
+            glBindSampler(unit, m_CubeTex.sampler);
+
+            glUniform1i(m_UniformKdSamplerLocation, unit);
             glUniform3fv(m_UniformKdLocation, 1, &cubeColor[0]);
             glUniformMatrix4fv(m_UniformModelViewProjMatrixLocation, 1, GL_FALSE, &modelViewProj[0][0]);
             glUniformMatrix4fv(m_UniformModelViewMatrixLocation, 1, GL_FALSE, &modelView[0][0]);
@@ -83,8 +96,6 @@ int Application::run()
             EDIT_DIRECTION(pointLightDir);
 #undef EDIT_DIRECTION
 #define EDIT_COLOR(c) ImGui::ColorEdit3(#c, &c[0])
-            EDIT_COLOR(dirLightDir);
-            EDIT_COLOR(pointLightDir);
             EDIT_COLOR(dirLightIntensity);
             EDIT_COLOR(pointLightIntensity);
             EDIT_COLOR(cubeColor);
@@ -117,23 +128,28 @@ Application::Application(int argc, char** argv):
     m_AppPath { glmlv::fs::path{ argv[0] } },
     m_AppName { m_AppPath.stem().string() },
     m_ImGuiIniFilename { m_AppName + ".imgui.ini" },
+    m_AssetsRootPath { m_AppPath.parent_path() / "assets" },
     m_ShadersRootPath { m_AppPath.parent_path() / "shaders" },
     m_ForwardVsPath { m_ShadersRootPath / m_AppName / "forward.vs.glsl" },
     m_ForwardFsPath { m_ShadersRootPath / m_AppName / "forward.fs.glsl" },
     m_ForwardProgram(glmlv::compileProgram({ m_ForwardVsPath.string(), m_ForwardFsPath.string() })),
-    m_UniformModelViewProjMatrixLocation      (glGetUniformLocation(m_ForwardProgram.glId(), "uModelViewProjMatrix")),
-    m_UniformModelViewMatrixLocation          (glGetUniformLocation(m_ForwardProgram.glId(), "uModelViewMatrix")),
-    m_UniformNormalMatrixLocation             (glGetUniformLocation(m_ForwardProgram.glId(), "uNormalMatrix")),
-    m_UniformDirectionalLightDirLocation      (glGetUniformLocation(m_ForwardProgram.glId(), "uDirectionalLightDir")),
-    m_UniformDirectionalLightIntensityLocation(glGetUniformLocation(m_ForwardProgram.glId(), "uDirectionalLightIntensity")),
-    m_UniformPointLightPositionLocation       (glGetUniformLocation(m_ForwardProgram.glId(), "uPointLightPosition")),
-    m_UniformPointLightIntensityLocation      (glGetUniformLocation(m_ForwardProgram.glId(), "uPointLightIntensity")),
-    m_UniformKdLocation                       (glGetUniformLocation(m_ForwardProgram.glId(), "uKd")),
+    m_UniformModelViewProjMatrixLocation      (m_ForwardProgram.getUniformLocation("uModelViewProjMatrix")),
+    m_UniformModelViewMatrixLocation          (m_ForwardProgram.getUniformLocation("uModelViewMatrix")),
+    m_UniformNormalMatrixLocation             (m_ForwardProgram.getUniformLocation("uNormalMatrix")),
+    m_UniformDirectionalLightDirLocation      (m_ForwardProgram.getUniformLocation("uDirectionalLightDir")),
+    m_UniformDirectionalLightIntensityLocation(m_ForwardProgram.getUniformLocation("uDirectionalLightIntensity")),
+    m_UniformPointLightPositionLocation       (m_ForwardProgram.getUniformLocation("uPointLightPosition")),
+    m_UniformPointLightIntensityLocation      (m_ForwardProgram.getUniformLocation("uPointLightIntensity")),
+    m_UniformKdLocation                       (m_ForwardProgram.getUniformLocation("uKd")),
+    m_UniformKdSamplerLocation                (m_ForwardProgram.getUniformLocation("uKdSampler")),
+    // Let's pretend the below two are different files for now (the code was planned for two files anyway)
+    m_CubeTex  (m_AssetsRootPath / m_AppName / "textures" / "plasma.png"),
+    m_SphereTex(m_AssetsRootPath / m_AppName / "textures" / "plasma.png"),
     m_Cube(glmlv::makeCube()),
     m_Sphere(glmlv::makeSphere(32)),
     m_ViewController(m_GLFWHandle.window())
 {
-    ImGui::GetIO().IniFilename = m_ImGuiIniFilename.c_str(); // At exit, ImGUI will store its windows positions in this file
+    ImGui::GetIO().IniFilename = strdup(m_ImGuiIniFilename.c_str()); // At exit, ImGUI will store its windows positions in this file
 
 #define CHECK_UNIFORM(u) if(u == -1) { std::cerr << "Warning: " << #u << "equals -1 (is it unused?)" << std::endl; }
     CHECK_UNIFORM(m_UniformModelViewProjMatrixLocation);
@@ -144,6 +160,7 @@ Application::Application(int argc, char** argv):
     CHECK_UNIFORM(m_UniformPointLightPositionLocation);
     CHECK_UNIFORM(m_UniformPointLightIntensityLocation);
     CHECK_UNIFORM(m_UniformKdLocation);
+    CHECK_UNIFORM(m_UniformKdSamplerLocation);
 #undef CHECK_UNIFORM
 
     glEnable(GL_DEPTH_TEST);
