@@ -7,9 +7,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/io.hpp>
 
+using namespace glm;
+
 int Application::run()
 {
-    float clearColor[3] = { 0, 0, 0 };
+    vec3 clearColor(0,0,0);
+    vec3 dirLightDir(1,0,0);
+    vec3 dirLightIntensity(1,1,1);
+    vec3 pointLightDir(0,0,1);
+    vec3 pointLightIntensity(1,1,1);
+    vec3 cubeColor(0,1,0);
+    vec3 sphereColor(1,0,0);
+
     // Loop until the user closes the window
     for (auto iterationCount = 0u; !m_GLFWHandle.shouldClose(); ++iterationCount)
     {
@@ -19,12 +28,6 @@ int Application::run()
 
         m_ForwardProgram.use();
 
-        using namespace glm;
-
-        vec3 dirLightDir(1,0,1);
-        vec3 dirLightIntensity(1,1,1);
-        vec3 pointLightDir(0,0,1);
-        vec3 pointLightIntensity(1,1,1);
         glUniform3fv(m_UniformDirectionalLightDirLocation, 1, &dirLightDir[0]);
         glUniform3fv(m_UniformDirectionalLightIntensityLocation, 1, &dirLightIntensity[0]);
         glUniform3fv(m_UniformPointLightPositionLocation, 1, &pointLightDir[0]);
@@ -35,14 +38,13 @@ int Application::run()
         mat4 view = m_ViewController.getViewMatrix();
 
         {
-            vec3 color(0,1,0);
             mat4 model(translate(mat4(1), vec3(0,0,-2)));
             //mat4 view(lookAt(vec3(0,0,0), vec3(0,0,1), vec3(0,1,0)));
             mat4 modelView(view * model);
             mat4 modelViewProj(proj * modelView);
             mat4 normalMatrix(transpose(inverse(modelView)));
 
-            glUniform3fv(m_UniformKdLocation, 1, &color[0]);
+            glUniform3fv(m_UniformKdLocation, 1, &sphereColor[0]);
             glUniformMatrix4fv(m_UniformModelViewProjMatrixLocation, 1, GL_FALSE, &modelViewProj[0][0]);
             glUniformMatrix4fv(m_UniformModelViewMatrixLocation, 1, GL_FALSE, &modelView[0][0]);
             glUniformMatrix4fv(m_UniformNormalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
@@ -51,14 +53,13 @@ int Application::run()
         }
 
         {
-            vec3 color(0,0,1);
             mat4 model(translate(mat4(1), vec3(-2,0,-2)));
             //mat4 view(lookAt(vec3(0,0,0), vec3(0,0,1), vec3(0,1,0)));
             mat4 modelView(view * model);
             mat4 modelViewProj(proj * modelView);
             mat4 normalMatrix(transpose(inverse(modelView)));
 
-            glUniform3fv(m_UniformKdLocation, 1, &color[0]);
+            glUniform3fv(m_UniformKdLocation, 1, &cubeColor[0]);
             glUniformMatrix4fv(m_UniformModelViewProjMatrixLocation, 1, GL_FALSE, &modelViewProj[0][0]);
             glUniformMatrix4fv(m_UniformModelViewMatrixLocation, 1, GL_FALSE, &modelView[0][0]);
             glUniformMatrix4fv(m_UniformNormalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
@@ -74,9 +75,21 @@ int Application::run()
             ImGui::Begin("GUI");
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             ImGui::ColorEditMode(ImGuiColorEditMode_RGB);
-            if (ImGui::ColorEdit3("clearColor", clearColor)) {
+            if (ImGui::ColorEdit3("clearColor", &clearColor[0])) {
                 glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);
             }
+#define EDIT_DIRECTION(c) ImGui::SliderFloat3(#c, &c[0], -1.f, 1.f)
+            EDIT_DIRECTION(dirLightDir);
+            EDIT_DIRECTION(pointLightDir);
+#undef EDIT_DIRECTION
+#define EDIT_COLOR(c) ImGui::ColorEdit3(#c, &c[0])
+            EDIT_COLOR(dirLightDir);
+            EDIT_COLOR(pointLightDir);
+            EDIT_COLOR(dirLightIntensity);
+            EDIT_COLOR(pointLightIntensity);
+            EDIT_COLOR(cubeColor);
+            EDIT_COLOR(sphereColor);
+#undef EDIT_COLOR
             ImGui::End();
         }
 

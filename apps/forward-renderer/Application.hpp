@@ -29,8 +29,8 @@ struct GLMesh {
         assert(vao);
         assert(vbo);
         assert(ibo);
-        auto& v = mesh.vertexBuffer;
-        auto& i = mesh.indexBuffer;
+        const auto& v = mesh.vertexBuffer;
+        const auto& i = mesh.indexBuffer;
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof v[0], v.data(), GL_STATIC_DRAW);
@@ -39,7 +39,7 @@ struct GLMesh {
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
-        auto stride = sizeof mesh.vertexBuffer[0];
+        const auto stride = sizeof mesh.vertexBuffer[0];
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*) offsetof(Vertex3f3f2f, position));
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*) offsetof(Vertex3f3f2f, normal));
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*) offsetof(Vertex3f3f2f, texCoords));
