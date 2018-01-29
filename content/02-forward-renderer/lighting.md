@@ -1,14 +1,11 @@
 +++
 title = "Lighting"
 weight = 5
-prev = "/02-forward-shading/transformations"
-next = "/02-forward-shading/textures"
 toc = true
-date = "2016-12-29T12:21:21+01:00"
 
 +++
 
-## Fragment Shader
+# Fragment Shader
 
 Implémenter un modèle d'illumination diffuse dans le fragment shader *forward-renderer.fs.glsl*
 
@@ -23,7 +20,7 @@ vec3 dirToPointLight = (uPointLightPosition - vViewSpacePosition) / distToPointL
 fColor = uKd * (uDirectionalLightIntensity * max(0.0, dot(vViewSpaceNormal, uDirectionalLightDir)) + uPointLightIntensity * max(0.0, dot(vViewSpaceNormal, dirToPointLight)) / (distToPointLight * distToPointLight))
 ```
 
-## Application
+# Application
 
 A l'initialisation:
 

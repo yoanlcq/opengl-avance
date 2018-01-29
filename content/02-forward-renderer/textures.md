@@ -1,20 +1,17 @@
 +++
 title = "Textures"
 weight = 6
-prev = "/02-forward-shading/lighting"
-next = "/02-forward-shading/load-obj"
 toc = true
-date = "2016-12-29T12:21:29+01:00"
 
 +++
 
-## Fragment Shader
+# Fragment Shader
 
 - Ajouter une variable uniform *sampler2D uKdSampler*, destiné à pointer sur une texture des couleurs diffuses pour l'objet en cours de rendu.
 - Dans le main, utiliser la fonction GLSL [*texture*](http://docs.gl/sl4/texture) afin de lire le sampler en utiliser les tex coords du fragment.
 - Multiplier la valeur lue avec la variable uKd pour obtenir le coefficient diffus final de l'objet, à utiliser pour l'illumination
 
-## Application
+# Application
 
 A l'initialisation
 
@@ -32,13 +29,13 @@ Fonctions GL à utiliser:
 
 A l'initialisation:
 
-| Sans DSA                             | DSA |
+| Sans DSA | DSA |
 | ------------------------------------ | ----------- |
 | glActiveTexture(GL_TEXTURE0) | |
-| glGenTextures                         | glCreateTextures |
+| glGenTextures | glCreateTextures |
 | glBindTexture(GL_TEXTURE_2D, texID) | |
-| glTexStorage2D                    | glTextureStorage2D |
-| glTexSubImage2D                      | glTextureSubImage2D |
+| glTexStorage2D | glTextureStorage2D |
+| glTexSubImage2D | glTextureSubImage2D |
 | glGenSamplers | glCreateSamplers |
 | glSamplerParameteri | glSamplerParameteri |
 

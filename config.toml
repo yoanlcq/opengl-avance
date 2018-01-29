@@ -8,5 +8,5 @@ pygmentsCodeFences = true
 pygmentsOptions = ""
 
 [params]
-    description = "Sujets de TP pour Imac 3 / Master 2"
+    description = "Niveau Master 2 et Imac 3"
     noCategoryLink = true

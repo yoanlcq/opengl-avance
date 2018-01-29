@@ -1,16 +1,12 @@
 +++
 toc = true
-prev = "/03-deferred-shading/shading-pass/"
-next = "/04-shadow-mapping/"
 weight = 8
 title = "Aller plus loin"
-date = "2017-01-04T00:58:16+01:00"
-
 +++
 
 Voici plusieurs choses améliorable pour rendre notre deferred renderer plus interessant:
 
-## Compute Shader pour la Shading Pass
+# Compute Shader pour la Shading Pass
 
 Dessiner un quad pour la shading pass, c'est en réalité se compliquer la vie pour rien. Tout ce qu'on veut c'est traiter chacun des pixels du GBuffer, en parallèle sur GPU. D'une certaine manière, ce qu'on aimerait faire c'est un genre de kernel Cuda.
 
@@ -18,7 +14,7 @@ Ca tombe bien, les compute shaders (dispo depuis OpenGL 4.3) permettent exacteme
 
 Trouvez vous un tuto sur le net sur les compute shaders et essayez d'adapter votre shading pass pour utiliser un CS plutot que dessin quad + VS + FS.
 
-## Light Culling simple
+# Light Culling simple
 
 Il est assez facile en deferred de faire le rendu de la contribution de plusieurs lights en accumulant le résultat de plusieurs shading pass.
 
@@ -29,13 +25,13 @@ Ces deux exercices sont un peu antagonistes. Dans le premier on remplace le dess
 Dans le deuxième on remplace le dessin du Quad par des dessins de différents formes.
 {{% /notice %}}
 
-## Conclusion et Forward +
+# Conclusion et Forward+
 
 Ces deux premiers TPs vous ont permis d'implémenter les deux pipelines de rendu temps réel les plus utilisé: forward et deferred.
 
 Ils ont tous les deux des avantages et inconvénients:
 
-### Forward
+## Forward
 
 Avantages:
 - Simple a mettre en oeuvre, un seul programme GLSL
@@ -46,7 +42,7 @@ Désavantages:
 - Potentiellement beaucoup de fragment traités puis occultés
 - Pas d'information globale sur l'ensemble de la géométrie visible (en tout cas pas sans précalcul)
 
-### Deferred
+## Deferred
 
 Avantages:
 - Possibilité d'utiliser le GBuffer pour faire du light culling, post-process ou autre
@@ -57,7 +53,7 @@ Désavantages:
 - Pour avoir accès a des informations sur les objets à rendre dans la shading pass, il faut les écrire dans des textures -> difficile de mélanger différent modèles de shading sur un meme rendu
 - Par defaut, impossible de rendre des objets transparents
 
-### Forward +
+## Forward+
 
 Une autre méthode a été développé par AMD, appelé Forward + ([voir ici](http://www.gdcvault.com/play/1016435/Forward-Rendering-Pipeline-for-Modern) et [la](http://fr.slideshare.net/takahiroharada/forward-34779335)), qui tente d'obtenir les avantages des deux méthodes sans les inconvénients.
 

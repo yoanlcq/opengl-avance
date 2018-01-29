@@ -8,13 +8,11 @@ toc = true
 
 +++
 
-{{% notice note %}}
+{{% notice info %}}
 Vous pouvez obtenir différents modèles OBJ sur [cette page](http://graphics.cs.williams.edu/data/meshes.xml) (je vous conseille de commencer par essayer avec Crytek-Sponza).
 {{% /notice %}}
 
-{{% notice warning %}}
-Il faut puller la dernière version du repo afin de récupérer la fonction **loadObj**
-{{% /notice %}}
+# API
 
 Utiliser la fonction suivante de la lib pour charger un modèle OBJ:
 
@@ -85,7 +83,7 @@ Il faut donc, après avoir appelé cette fonction, initialiser toutes les donné
 
 Comme pour les exercices précédent, il est conseillé d'y aller par étape. D'abord afficher uniquement les normales des objets 3D, puis afficher la couleur diffuse, puis faire l'illumination.
 
-## Modèle de Shading
+# Modèle de Shading
 
 Améliorer le modèle de shading utilisé pour utiliser le modèle de Blinn-Phong plutot qu'un simple modèle Diffus (voir [cet ancien TD](http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&teaching=opengl&teaching_section=tds&td=td8#intro) pour les équations).
 
@@ -95,6 +93,6 @@ Vous pouvez également rajouter le terme ambiant en addition.
 
 Toutes les informations necessaires sont chargés dans les matériaux de ObjData.
 
-{{% notice note %}}
+{{% notice info %}}
 Si vous bloquez sur un element du TP, vous pouvez puller la branche *cheat* du repo et regarder le code de l'application *forward-renderer-06-load-obj*.
 {{% /notice %}}

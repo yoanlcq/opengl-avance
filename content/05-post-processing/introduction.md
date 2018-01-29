@@ -8,4 +8,6 @@ prev = "/05-post-processing/"
 
 +++
 
-Lorem Ipsum
+{{< notice "info" >}}
+En construction
+{{< /notice >}}

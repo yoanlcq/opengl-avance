@@ -1,14 +1,11 @@
 +++
 weight = 1
-prev = "/03-deferred-shading/"
-next = "/03-deferred-shading/geometry-pass/"
 toc = true
-date = "2016-12-29T12:27:04+01:00"
 title = "Pipeline de rendu"
 
 +++
 
-## Un problème ?
+# Un problème ?
 
 Un problème bien connu du *forward shading* est le traitement par le fragment shader de fragments qui ne seront pas visible à l'écran.
 Tous les fragment occultés par d'autre fragments sont traités car le fragment shader peut potentiellement modifier la profondeur des fragments et donc les rendre visible.
@@ -22,7 +19,7 @@ En ayant accès à plus d'information sur la géométrie visible par la caméra,
 
 Le deferred rendering est un autre algorithme de rendu permettant de palier à ces problèmes.
 
-## Le Deferred Shading
+# Le Deferred Shading
 
 Le principe du deferred est de découpler le traitement de la géométrie (vertex buffer + rasterisation) du traitement des fragments (shading dans le fragment shader).
 
@@ -40,7 +37,7 @@ L'image ci-dessous montre en haut un rendu final, résultat de la Shading Pass a
 A noter qu'il y énormément de manière de remplir un GBuffer en fonction des performances voulues.
 Pour ces TPs, on se contentera d'écrire tous les informations dont on a besoin pour le lighting, sans chercher à optimiser.
 
-## Liens
+# Liens
 
 - [Explication des deux approches](https://gamedevelopment.tutsplus.com/articles/forward-rendering-vs-deferred-rendering--gamedev-12342)
 - [Tuto OpenGL Dev](http://ogldev.atspace.co.uk/www/tutorial35/tutorial35.html)

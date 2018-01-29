@@ -1,10 +1,7 @@
 +++
 toc = true
-date = "2016-12-29T11:50:45+01:00"
-title = "Liens"
-weight = 5
-prev = "/01-introduction/projet/"
-next = "/02-forward-shading/"
+title = "Liens OpenGL"
+weight = 6
 
 +++
 

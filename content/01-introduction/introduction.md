@@ -2,8 +2,6 @@
 date = "2016-12-29T11:34:23+01:00"
 title = "Introduction"
 weight = 1
-prev = "/01-introduction"
-next = "/01-introduction/code-template"
 toc = true
 
 +++
@@ -12,169 +10,32 @@ toc = true
 
 - Approfondir les connaissances en OpenGL Moderne
 - Premières implémentations de techniques avancées
-- **Projet**: implémentation d'articles de recherche
+- **Projet**: Demo
 
 # Prérequis
 
 - Bonne connaissance du [pipeline de rendu OpenGL](https://www.khronos.org/opengl/wiki/Rendering_Pipeline_Overview)
 - Maitrise des [TDs des années précédentes](http://laurentnoel.fr/index.php?section=teaching&teaching=opengl&teaching_section=tds)
+- Maitrise de base du C++
 
 # Quelle version d'OpenGL ?
 
 La version installée sur les machines de la fac est la 4.4, nous prendrons donc cette version comme base.
-En plus de cela, le template de code que j'ai préparé charge l'extension **GL_ARB_direct_state_access**, dont les fonctions sont passées en OpenGL Core dans la version 4.5.
 
-# Direct State Access
+En plus de cela, et si votre carte graphique le permet, il vous sera possible de travailler avec l'extension **GL_ARB_direct_state_access** (DSA) qui simplifie grandement la manipulation d'objets OpenGL (pas besoin de binder les objets pour les manipuler). A noter que les PCs de la fac ne permette pas l'utilisation de cette extension (en partie, mais pas à 100%).
 
-{{< notice "warning" >}}
-Cette extension n'est pas disponible sur toutes les cartes graphiques. En particulier les machines de la FAC n'en sont pas equipées entièrement (il y a l'extension **GL_EXT_direct_state_access** qui n'est que partielle). Si vous n'y avez pas accès, ne l'utilisez pas: cette extension ne fournit que des facilités de programmation, pas de fonctionnalité en plus.
-{{< /notice >}}
+Si vous êtes interessé par l'utilisation de cette extension, consultez [la section dediée sur ce site](/06-course/opengl-extensions/#direct-state-access).
 
-Cette extension est très pratique car elle permet d'éviter de binder les objets OpenGL pour les manipuler (on passe aux fonctions directement l'identifiant de l'objet), et donc d'éviter les erreurs liées au mécanisme de binding. Je vous conseille donc de l'utiliser autant que possible.
+La plupart des sujets de TDs fournissent la liste des fonctions à utiliser en DSA.
 
-[Lien vers le document de référence](https://www.opengl.org/registry/specs/ARB/direct_state_access.txt).
+Pas d'inquiétude si votre carte graphique n'est pas équipée de l'extension: tous les sujets fournissent aussi la version des fonctions à utiliser sans DSA.
 
-Voici des exemples de code en version OpenGL 3 classique et en version Direct State Access (directement tiré du document):
+# Planning
 
-## Example 1: Creating a buffer object without polluting the OpenGL states
-```cpp
-// Bind to Create
-GLuint CreateBuffer()
-{
-  // Save the previous bound buffer
-  GLuint restoreBuffer = 0;
-  glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &restoreBuffer);
+Nous aurons 5 x 4h ensemble:
 
-  // Reserve the buffer name and create the buffer object
-  uint buffer = 0;
-  glGenBuffers(1, &buffer);
-  glBindBuffer(GL_ARRAY_BUFFER, buffer);
-
-  // Restaure the previous bound buffer to avoid polluting
-  // the rendering states
-  glBindBuffer(GL_ARRAY_BUFFER, restoreBuffer);
-
-  return buffer;
-}
-
-// Direct State Access
-GLuint CreateBuffer()
-{
-  GLuint buffer = 0;
-  glCreateBuffer(1, &buffer);
-
-  return buffer;
-}
-```
-
-## Example 2: Creating a vertex array object without polluting the OpenGL states
-
-```cpp
-// OpenGL 3.0 Bind to Create for vertex array object
-GLuint CreateVertexArray(GLuint BufferName[])
-{
-  // Save the previous bound vertex array and array buffer
-  GLuint restoreVertexArray = 0;
-  glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &restoreVertexArray);
-  GLuint restoreBuffer = 0;
-  glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &restoreBuffer);
-
-  glGenVertexArrays(1, &VertexArrayName);
-  glBindVertexArray(VertexArrayName);
-    glEnableVertexAttribArray(semantic::attr::POSITION);
-    glEnableVertexAttribArray(semantic::attr::TEXCOORD);
-
-    glBindBuffer(GL_ARRAY_BUFFER, BufferName[buffer::VERTEX]);
-    glVertexAttribPointer(semantic::attr::POSITION, 2, GL_FLOAT, 
-      GL_FALSE, sizeof(glf::vertex_v2fv2f), BUFFER_OFFSET(0));
-    glVertexAttribPointer(semantic::attr::TEXCOORD, 2, GL_FLOAT, 
-      GL_FALSE, sizeof(glf::vertex_v2fv2f), BUFFER_OFFSET(sizeof(glm::vec2)));
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, BufferName[buffer::ELEMENT]);
-
-  // The GL_ARRAY_BUFFER_BINDING is a context state, not a vertex array state.
-  glBindBuffer(GL_ARRAY_BUFFER, restoreBuffer);
-  glBindVertexArray(restoreVertexArray);
-
-  return vertexArrayName;
-}
-
-// OpenGL 4.3 Bind to Create for vertex array object
-GLuint CreateVertexArray(GLuint BufferName[])
-{
-  // Save the previous bound vertex array
-  GLuint restoreVertexArray = 0;
-  glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &restoreVertexArray);
-
-  GLuint vertexArrayName = 0;
-  glGenVertexArrays(1, &vertexArrayName);
-  glBindVertexArray(VertexArrayName);
-    glEnableVertexAttribArray(semantic::attr::POSITION);
-    glEnableVertexAttribArray(semantic::attr::TEXCOORD);
-
-    glVertexAttribBinding(semantic::attr::POSITION, 0);
-    glVertexAttribFormat(semantic::attr::POSITION, 2, GL_FLOAT, 
-      GL_FALSE, 0);
-
-    glVertexAttribBinding(semantic::attr::TEXCOORD, 0);
-    glVertexAttribFormat(semantic::attr::TEXCOORD, 2, GL_FLOAT, 
-      GL_FALSE, sizeof(float) * 2);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, BufferName[buffer::ELEMENT]);
-    glBindVertexBuffer(0, BufferName[buffer::VERTEX], 0, 0);
-  glBindVertexArray(restoreVertexArray);
-
-  return vertexArrayName;
-}
-
-// Direct State Access
-GLuint CreateVertexArray(GLuint BufferName[])
-{
-  GLuint vertexArrayName = 0;
-  glCreateVertexArrays(1, &vertexArrayName);
-
-  glEnableVertexAttribArray(VertexArrayName, semantic::attr::POSITION);
-  glEnableVertexAttribArray(VertexArrayName, semantic::attr::TEXCOORD);
-
-  glVertexArrayAttribBinding(VertexArrayName, semantic::attr::POSITION, 0);
-  glVertexArrayAttribFormat(VertexArrayName, semantic::attr::POSITION, 2, GL_FLOAT, 
-    GL_FALSE, 0);
-
-  glVertexArrayAttribBinding(VertexArrayName, semantic::attr::TEXCOORD, 0);
-  glVertexArrayAttribFormat(VertexArrayName, semantic::attr::TEXCOORD, 2, GL_FLOAT, 
-    GL_FALSE, sizeof(float) * 2);
-
-  glVertexArrayElementBuffer(VertexArrayName, BufferName[buffer::ELEMENT]);
-  glVertexArrayVertexBuffer(VertexArrayName, 0, BufferName[buffer::VERTEX], 0, 0);
-
-  return vertexArrayName;
-}
-```
-
-## Example 3: Querying the bound texture to a texture image unit for debugging
-
-```cpp
-// Select to query
-// We need the <target> or we need to loop over all the possible targets
-GLuint GetBoundTexture(GLenum target, GLuint unit)
-{
-  GLuint restore = 0;
-  glGetIntegerv(GL_ACTIVE_TEXTURE, &restore);
-
-  glActiveTexture(unit);
-
-  GLuint name = 0;
-  glGetIntegerv(target, &name);
-
-  glActiveTexture(restore);
-}
-
-// Direct State Access
-// target_binding is e.g. GL_TEXTURE_BINDING_2D for the 2D texture
-GLuint GetBoundTexture(GLenum target_binding, GLuint unit)
-{
-  GLuint name = 0;
-  glGetIntegeri_v(target_binding, unit, &name);
-  return name;
-}
-```
+- Lundi 29 / 01 8h30 - 12h45: Fork du repo github, mise en place du SDK, fiche d'info perso, début du Forward Renderer
+- Vendredi 02 / 02 8h30 - 12h45: Fin du Forward Renderer
+- Lundi 05 / 02 8h30 - 12h45 4h: Deferred Renderer
+- Lundi 05 / 02 14h - 18h15: Shadow Mapping
+- Vendredi 09 / 02 8h30 - 12h45: Gouter de fin d'année (et post processing si on à le temps)

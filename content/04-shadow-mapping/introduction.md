@@ -1,10 +1,7 @@
 +++
 title = "Introduction"
 weight = 1
-prev = "/04-shadow-mapping/"
-next = "/04-shadow-mapping/dir-shadow-map"
 toc = true
-date = "2016-12-29T12:29:08+01:00"
 
 +++
 
@@ -20,6 +17,6 @@ Le schéma suivant résume ce principe:
 
 Cet algorithme peut être implémenté sur un forward renderer ou sur un deferred renderer. Pour ces TPs nous allons repartir du deferred renderer. Si vous ne l'avez pas terminé, vous pouvez le récupérer sur la branche cheat du repository.
 
-{{% notice note %}}
+{{% notice info %}}
 Afin de faire vos tests plus rapidement, j'ai ajouté un argument à la fonction *glmlv::loadObj* qui permet d'éviter le chargement des textures et donc de lancer plus rapidement l'application (mettre l'argument à *false* pour ne pas charger les textures). Il faudra peut être puller la dernière version du repo pour récupérer ce changement.
 {{% /notice %}}

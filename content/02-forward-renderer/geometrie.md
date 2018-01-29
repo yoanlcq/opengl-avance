@@ -1,10 +1,7 @@
 +++
-next = "/02-forward-shading/shaders/"
 toc = true
-date = "2016-12-29T12:18:05+01:00"
 title = "Geometrie"
 weight = 2
-prev = "/02-forward-shading/pipeline"
 
 +++
 

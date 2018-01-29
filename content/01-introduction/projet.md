@@ -1,18 +1,23 @@
 +++
-next = "/01-introduction/liens/"
-toc = true
-date = "2016-12-29T11:50:50+01:00"
 title = "Projet"
 weight = 5
-prev = "/01-introduction/lib-interne"
+toc = true
 
 +++
 
-{{% notice note %}}
-Cette page n'est pas terminée, j'ajouterais des informations concernant les projet au cours du mois.
-{{% /notice %}}
+L'objectif du projet est de développer une demo, au sens "Demoscene", c'est à dire une application jouant une animation 3D. [Quelques exemples de demo](https://www.youtube.com/watch?v=gEvVHCg6fHo&list=PL9HVvEQXdWVb_Nakad9URLWoP6sngpWj1).
 
-L'objectif du projet est de développer une demo courte (c'est à dire une animation codée) implémentant une ou plusieurs techniques vues en TP, ainsi qu'une ou plusieurs méthodes non vue en TD, potentiellement issues d'articles de recherche. Le choix de l'article est libre mais vous devez me le proposer avant afin que je valide. Si vous n'avez pas d'idées, voici une liste de méthodes/articles possibles:
+Le thème imposé est le suivant: **Star Wars** (grosse originalité). Si vous n'aimez pas Star Wars, vous n'aurez qu'à exprimer cette haine dans votre démo, ou le mixer avec un autre thème de votre choix.
+
+En general les elements d'une demo sont procéduraux (générés aléatoirement), mais ce n'est pas obligatoire pour le projet (vous pouvez charger des modèles 3D et textures, vous devriez pouvoir trouver facilement des vaisseaux sur le net). La musique n'est pas obligatoire non plus.
+
+Il est par contre obligatoire de faire une animation: la caméra doit se déplacer seule, et les elements de la scene aussi. Essayez de faire quelque chose d'un minimum artistique. Les interactions avec l'utilisateur sont autorisées mais l'ensemble doit rester majoritairement automatique. L'animation peut boucler ou bien s'arreter et proposer à l'utilisateur de recommencer. La durée minimale d'animation à respecter est d'une minute. Pas de durée maximale.
+
+Votre projet devra être pushé sur votre repository Github.
+
+Le niveau 1 de réalisation du projet est d'utiliser TOUTES les techniques vu en TP pour réaliser votre demo.
+
+Le niveau 2 est l'intégration de techniques avancées pour rendre votre demo encore plus impressionantes. Voici une liste de techniques possible:
 
 - Shadow Volumes
 - Normal Mapping (pas suffisant seul, à combiner avec d'autres choses)
@@ -25,7 +30,7 @@ L'objectif du projet est de développer une demo courte (c'est à dire une anima
 - [Screen Space Ray Tracing] (http://jcgt.org/published/0003/04/04/)
 - [Virtual Spherical Gaussian Lights for Real-time Glossy Indirect Illumination] (http://www.jp.square-enix.com/tech/library/pdf/Virtual%20Spherical%20Gaussian%20Lights%20for%20Real-Time%20Glossy%20Indirect%20Illumination.pdf)
 
-Des sites où trouver des articles:
+Des sites où trouver d'autres articles:
 
 - http://jcgt.org/read.html?reload=1
 - http://kesen.realtimerendering.com/ (en particulier les articles de la conférence I3D)

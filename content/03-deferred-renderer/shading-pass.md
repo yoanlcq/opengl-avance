@@ -1,16 +1,13 @@
 +++
 title = "Shading pass"
 weight = 3
-prev = "/03-deferred-shading/geometry-pass/"
-next = "/03-deferred-shading/plus-loin/"
 toc = true
-date = "2016-12-29T12:27:28+01:00"
 
 +++
 
 Il faut maintenant coder la shading pass, qui a pour role d'illuminer chaque pixel en utilisant les textures du GBuffer qui viennents se substituer aux variables d'entrées du fragment shader d'un forward renderer.
 
-## Shaders
+# Shaders
 
 Créez deux nouveaux shaders *shadingPass.vs.glsl* et *shadingPass.fs.glsl*.
 
@@ -54,7 +51,7 @@ Dans le code de l'application, chargez et compilez vos deux shaders dans un seco
 
 A l'initialisation, récupérez les locations des nouvelles uniformes (ainsi que des anciennes, mettez à jour le programme concerné puisqu'on en a deux maintenant).
 
-## Un Quad (ou un triangle, voir la note)
+# Un Quad (ou un triangle, voir la note)
 
 Afin de "lancer" la Shading Pass et pouvoir passer dans le fragment shader pour calculer la couleur de nos pixels, il faut un truc à dessiner à l'écran. Puisque toute la géometrie visible depuis la caméra est déjà encodée dans le GBuffer, il suffira juste de dessiner un quad couvrant tout l'écran pour pouvoir parcourir tous les pixels du GBuffer et faire notre traitement.
 
@@ -79,7 +76,7 @@ Dans le cas d'un triangle, pas besoin d'IBO, on peut directement appeler *glDraw
 | glVertexAttribPointer                | glVertexArrayAttribFormat |
 | glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboID) | glVertexArrayElementBuffer |
 
-## Au Rendu
+# Au Rendu
 
 Dans la boucle de rendu, remplacez le blit des textures du GBuffer de l'exercice précédent par les étapes suivantes:
 

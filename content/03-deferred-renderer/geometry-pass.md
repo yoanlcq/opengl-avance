@@ -1,10 +1,7 @@
 +++
 toc = true
-date = "2016-12-29T12:27:23+01:00"
 title = "Geometry pass"
 weight = 2
-prev = "/03-deferred-shading/pipeline/"
-next = "/03-deferred-shading/shading-pass/"
 
 +++
 
@@ -15,7 +12,7 @@ Pour cela, il va falloir créer les textures OpenGL destinées à contenir ces i
 Pour ces TPs, dupliquez l'app de l'exercice du foward renderer afin d'avoir une scene chargée et stockée sur GPU pour être rendue.
 Nommez la nouvelle app "deferred-renderer".
 
-## Shaders
+# Shaders
 
 Nous allons commencer par les shaders car c'est le plus simple.
 Renommez les shaders *forward.vs.glsl* et *forward.fs.glsl* en *geometryPass.vs.glsl* et *geometryPass.fs.glsl*.
@@ -61,7 +58,7 @@ Enfin, il faut packer la shininess dans le canal alpha de la variable de sortie 
 
 Dans le code de Application, chargez ces shaders pour tester leur compilation.
 
-## Textures du GBuffer
+# Textures du GBuffer
 
 Dans la classe Application, déclarez un tableau de *GLuint* pour stocker les texture objects, ainsi que l'enum suivant:
 
@@ -101,7 +98,7 @@ Fonctions GL à utiliser:
 | glBindTexture(GL_TEXTURE_2D, texID) | |
 | glTexStorage2D                    | glTextureStorage2D |
 
-## Framebuffer object
+# Framebuffer object
 
 Déclarez une variable *GLuint m_FBO* dans la classe Application.
 
@@ -154,7 +151,7 @@ Fonctions GL à utiliser:
 | glDrawBuffers | glNamedFramebufferDrawBuffers |
 | glCheckFramebufferStatus | glCheckNamedFramebufferStatus |
 
-## Boucle de rendu
+# Boucle de rendu
 
 Au rendu assez peu de chose à changer.
 

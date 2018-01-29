@@ -1,10 +1,7 @@
 +++
 title = "Shaders"
 weight = 3
-prev = "/02-forward-shading/geometrie"
-next = "/02-forward-shading/transformations"
 toc = true
-date = "2016-12-29T12:20:05+01:00"
 
 +++
 
@@ -14,7 +11,7 @@ Voir les différents shaders des applications déjà présente pour vous aider.
 
 [Ce TD de l'année précedente](http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&teaching=opengl&teaching_section=tds&td=td5) explique également la théorie.
 
-## Le Vertex Shader
+# Le Vertex Shader
 
 - Le vertex shader doit prendre en entrée une position (vec3 aPosition), une normale (vec3 aNormal) et des texCoords (vec2 aTexCoords)
 - N'oubliez pas de définir les locations des attributs
@@ -29,6 +26,6 @@ vTexCoords = aTexCoords
 gl_Position = uModelViewProjMatrix * aPosition
 ```
 
-## Le Fragment Shader
+# Le Fragment Shader
 
 En attendant d'implémenter un modèle d'illumination, faite en sorte que le fragment shader affiche les normales des objets.

@@ -1,35 +1,22 @@
 +++
-title = "Code template"
-weight = 2
-prev = "/01-introduction/introduction/"
-next = "/01-introduction/lib-externes/"
+title = "Software Development Kit"
+weight = 4
 toc = true
-date = "2016-12-29T11:36:02+01:00"
 
 +++
 
-## Téléchargement
+Le repository que vous avez forké et cloné contient un SDK pour coder les TDs. Cette partie explique comment compiler les applications d'exemple, vos futures applications, la structure du repertoire et les spécifité du fichier CMake.
 
-Clonez, forkez sur votre compte Github ou téléchargez le [repository sur github](https://github.com/Celeborn2BeAlive/opengl-avance) (fork de préférence, plus facile de partager le code avec moi ensuite)
-
-## Branches du repo
-
-Principales:
-
-- master *Code de base + apps d'exemple en OpenGL 3*
-- master-direct-state-access *Code de base + apps d'exemple en OpenGL 4.5 (avec DSA)*
-
-Corrections:
-
-- cheat *Correction des TDs en OpenGL 3*
-- cheat-direct-state-access *Correction des TDs en OpenGL OpenGL 4.5 (avec DSA)*
-
-## Compilation
+# Compilation
 
 - Avec CMake
-- Support de GCC 5+ (sans boost), GCC 4.9.2 (boost requis) et Visual Studio 2015 (sans boost)
+- Support de GCC 5+ (sans boost), GCC 4.9.2 (boost requis) et Visual Studio 2015 (sans boost) (devrait aussi fonctionner avec Visual 2017, mais je n'ai pas encore testé)
 
-### Linux
+{{< notice "info" >}}
+CMake est un logiciel permettant de générer une solution de compilation adaptée au système sur lequel on l'execute. Par exemple sous Linux il pourra générer un makefile, sous Windows une solution Visual Studio, etc. CMake permet donc de créer un projet multi-plateforme assez facilement. C'est devenu un standard et la plupart des projets Open Source fournissent un fichier CMakeLists.txt.
+{{< /notice >}}
+
+## Linux
 
 En console:
 
@@ -40,7 +27,7 @@ En console:
 
 Les executables sont compilés dans le repertoire *bin* du dossier de build
 
-### Windows
+## Windows
 
 1. Télécharger et installer [CMake GUI](https://cmake.org/download/) (Windows win64-x64 Installer ou Windows win32-x86 Installer selon votre CPU) et [Visual Studio Community Edition 2015](https://www.visualstudio.com/fr/vs/community/).
 2. Créer un repertoire *opengl-avance-build* à coté du repertoire *opengl-avance* (correspondant au clone du repo)
@@ -56,20 +43,34 @@ Les executables sont compilés dans les repertoire *bin/Debug* et *bin/Release* 
 
 Il est possible de compiler le projet *INSTALL* de la solution avec que les executables compilés soit recopiés dans un repertoire d'installation. Par défault ce repertoire est *C:/Program Files/opengl* mais il est possible de le changer depuis CMake GUI en recherchant la variable *CMAKE_INSTALL_PREFIX* et en la modifiant.
 
-## Arborescence
+# Arborescence
 
 - apps *Contient le code des executables à compiler*
 - cmake *Contient des modules cmake*
 - lib *Contient le code partagé entre les executables*
 - third-party *Contient des bibliothèques externes*
 
-Chaque sous-repertoire de *apps* est compilé en tant qu'application indépendant. Ainsi le code du repertoire *apps/template* sera compilé en un executable *template* (Linux) ou *template.exe* (Windows), et le code du repertoire *apps/triangle* sera compilé en un executable *triangle* (Linux) ou *triangle.exe* (Windows).
+Chaque sous-repertoire de *apps* est compilé en tant qu'application indépendante. Ainsi le code du repertoire *apps/template* sera compilé en un executable *template* (Linux) ou *template.exe* (Windows), et le code du repertoire *apps/triangle* sera compilé en un executable *triangle* (Linux) ou *triangle.exe* (Windows).
 
 Le répertoire *lib* est destiné à contenir du code d'une lib (nommée *glmlv*) partagée entre les executables.
 
 Afin de garder un code clair, je vous conseille de créer une application différente par theme de TP. Il faudra également créer une application pour le projet.
 
-## Shaders
+# Applications d'exemple
+
+Le repertoire *apps* contient déjà du code pour plusieurs applications simples. Toutes sont basées sur le template de base *template* qui se contente d'ouvrir une fenêtre contenant une GUI affichant le framerate et permettant de changer la couleur de fond.
+
+Ces codes simples sont destinés à vous donner quelques exemple d'appels aux fonctions OpenGL, en particulier l'utilisation des fonction de l'extension direct_state_access sur la branche *master-direct-state-access*.
+
+Une ressource supplémentaire est [ce repository GIT](https://github.com/g-truc/ogl-samples/) contenant un grand nombre d'exemples de code pour l'ensemble des features OpenGL.
+
+Voici une description des apps d'exemple:
+
+- triangle *Dessine un triangle coloré* (création de VBO, création de VAO, attributs entrelacés, chargement de shaders)
+- triangle_2vbos *Pareil mais en utilisant 2 VBOs, un pour les positions, l'autre pour les couleurs* (plusieurs VBOs pour un objet, attributs non entrelacés)
+- quad *Dessine un quad coloré* (création d'IBO, i.e. buffer d'index)
+
+## Gestion des shaders
 
 Concernant les shaders GLSL, le processus de compilation se charge de les copier à coté des executables afin qu'il soient facilement accessible (de manière relative) par ces derniers. Leur extension doit être ".glsl" afin qu'ils soient reconnu par le CMakeLists.txt, et ils doivent être placés dans un sous repertoire *shaders* de l'application qui les utilise. Par convention, on suffixera ".vs.glsl" les vertex shader, ".fs.glsl" les fragments shaders, ".gs.glsl" les geometry shaders et ".cs.glsl" les compute shaders.
 
@@ -142,7 +143,8 @@ int main(int argc, char** argv)
     // L'opérateur '/' permet de concatener les chemins de fichier
     const auto shadersRootPath = applicationPath.parent_path() / "shaders";
 
-    // Pour les shaders de l'application, on utilise la variable contenant le nom de l'application pour accéder au dossier contenant ses shaders
+    // Pour les shaders de l'application, on utilise la variable contenant le
+    // nom de l'application pour accéder au dossier contenant ses shaders
     const auto pathToSMVS = shadersRootPath / appName / "shadow_mapping" / "sm.vs.glsl";
     const auto pathToSMFS = shadersRootPath / appName / "shadow_mapping" / "sm.fs.glsl";
 
@@ -155,16 +157,32 @@ int main(int argc, char** argv)
 }
 ```
 
-## Applications d'exemple
+# Lib interne (glmlv)
 
-Le repertoire *apps* contient déjà du code pour plusieurs applications simples. Toutes sont basées sur le template de base *template* qui se contente d'ouvrir une fenêtre contenant une GUI affichant le framerate et permettant de changer la couleur de fond.
+La bibliothèque interne, dont le code est situé dans le repertoire *lib* du template, est destiné à contenir le code partagé entre les applications. **Les classes et fonctions réutilisables doivent donc y être placées**.
 
-Ces codes simples sont destinés à vous donner quelques exemple d'appels aux fonctions OpenGL, en particulier l'utilisation des fonction de l'extension direct_state_access.
+Le template de base contient déjà plusieurs fichiers dans la lib:
 
-Une ressource supplémentaire est [ce repository GIT](https://github.com/g-truc/ogl-samples/tree/master/tests) contenant un grand nombre d'exemples de code pour l'ensemble des features OpenGL.
+- filesystem.hpp *Inclut une bibliothèque de manipulation du système de fichier (soit la lib experimentale de la std, soit la lib de boost si cmake a été appelé avec l'option -DGLMLV_USE_BOOST_FILESYSTEM)*
+- gl_debug_output.cpp/hpp *Définit la fonction initGLDebugOutput() permettant d'activer les message de debug d'OpenGL*
+- glfw.hpp *Inclut simplement les header de GLFW et glad dans le bon ordre afin d'éviter des erreurs de compil*
+- GLFWHandle.hpp *Définit la classe GLFWHandle qui initialise GLFW, ouvre une fenetre, initialise OpenGL avec glad et initialise ImGUI dans son constructeur*
+- GLProgram.hpp, GLShader.hpp *Définissent des classes et fonction helpers pour charger, compiler et linker des shaders GLSL*
+- Image2DRGBA.hpp *Définit la classe Image2DRGBA et des fonctions de lecture/écriture d'image en surcouche de la lib stb*
+- imgui_impl_glfw_gl3.hpp/.cpp *Définit les fonctions de dessin et d'interaction avec l'utilisateurs nécessaires au bon fonctionnement de ImGui*
 
-Voici une description des apps d'exemple:
+# Libs externes (third-party)
 
-- triangle *Dessine un triangle coloré* (création de VBO, création de VAO, attributs entrelacés, chargement de shaders)
-- triangle_2vbos *Pareil mais en utilisant 2 VBOs, un pour les positions, l'autre pour les couleurs* (plusieurs VBOs pour un objet, attributs non entrelacés)
-- quad *Dessine un quad coloré* (création d'IBO, i.e. buffer d'index)
+Le template contient plusieurs bibliothèques externes (dans *third-party*) afin de vous simplifier la vie:
+
+- [glfw] (http://www.glfw.org/): bibliothèque de fenetrage et de gestion d'inputs (similaire à la SDL)
+- [glm] (http://glm.g-truc.net/): bibliothèque de maths "à la GLSL"
+- [glad] (http://glad.dav1d.de/): bibliothèque pour "charger" les fonctions OpenGL 3+ (similaire à GLEW)
+- [imgui] (https://github.com/ocornut/imgui): bibliotheque permettant d'afficher une interface utilisateur de manière simple et en "immediate mode"
+- [json] (https://github.com/nlohmann/json): bibliotheque pour lire/écrire des fichiers json, pratique pour gérer rapidement des fichiers de config
+- [tinyobjloader] (https://github.com/syoyo/tinyobjloader): bibliotheque pour charger des fichiers OBJ (format simple de scenes 3D)
+- [stb] (https://github.com/nothings/stb) contient les header *stb_image.h* et *stb_image_write.h* de la bibliothèque stb, afin de lire et écrire des images.
+
+Mon objectif n'étant pas de vous apprendre à utiliser ces libs, je détaillerais assez peu leurs fonctionnalités dans les TPs. Les liens ci-dessus redirigent vers des documentations assez complètes pour que vous puissiez vous débrouiller :)
+
+A noter que ImGui fournie une fonction ImGui::ShowTestWindow dont le code montre des exemples d'utilisation d'a peu près tous les widgets de la lib. Le code de cette fonction est dans le fichier *imgui_demo.cpp* du repertoire contenant la lib.

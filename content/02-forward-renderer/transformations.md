@@ -1,14 +1,11 @@
 +++
 toc = true
-date = "2016-12-29T12:20:24+01:00"
 title = "Transformations"
 weight = 4
-prev = "/02-forward-shading/shaders/"
-next = "/02-forward-shading/lighting/"
 
 +++
 
-## Sans Caméra
+# Sans Caméra
 
 Dans le code C++ de l'application, à l'initialisation:
 
@@ -44,6 +41,6 @@ Au rendu:
 
 Aide: [TD de l'année précédente](http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&teaching=opengl&teaching_section=tds&td=td6#intro)
 
-## Avec Caméra
+# Avec Caméra
 
 Utiliser la classe *ViewController* de *glmlv* afin de construire une view matrix qui se controle en mode FPS.

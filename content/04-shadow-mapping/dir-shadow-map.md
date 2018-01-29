@@ -1,10 +1,7 @@
 +++
 toc = true
-next = "/04-shadow-mapping/point-shadow-map"
-prev = "/04-shadow-mapping/introduction/"
 weight = 2
 title = "Directional Shadow Map"
-date = "2017-01-19T23:22:14+01:00"
 
 +++
 
@@ -17,7 +14,7 @@ Il y a globalement quatre partie à coder:
 - Création de la shadow map: A faire au rendu des que la direction de la lumière est modifiée. Il s'agit de calculer la depth map selon le point de vue de la light.
 - Utilisation de la shadow map: A faire dans la shading pass. Il s'agit avant d'éclairer un fragment vu par la caméra de vérifier s'il est visible depuis la light en utilisant la depth map précalculée.
 
-## Initialisation
+# Initialisation
 
 Dans la classe Application, ajoutez 4 variables:
 
@@ -67,7 +64,7 @@ Fonctions GL à utiliser:
 | glGenSamplers | glCreateSamplers |
 | glSamplerParameteri | glSamplerParameteri |
 
-## Shaders
+# Shaders
 
 Ajoutez deux nouveaux shaders *directionalSM.vs.glsl* et *directionalSM.fs.glsl*.
 
@@ -107,7 +104,7 @@ GLint m_uDirLightViewProjMatrix;
 
 Dans le constructor, compilez le programme à partir des deux nouveaux shaders et récupérez à la location avec *glGetUniformLocation*.
 
-## Création de la shadow map
+# Création de la shadow map
 
 Il faut à présent calculer la shadow map dans la boucle de rendu. Attention: ce calcul necessite un rendu de la scène, qui peut être coûteux. Il faut donc faire attention à ne recalculer la shadow map que si la light change de direction, par exemple en utilisant un booléen. La structure générale de la méthode run() devient donc:
 
@@ -190,7 +187,7 @@ const auto dirLightProjMatrix = glm::ortho(-sceneRadius, sceneRadius, -sceneRadi
 
 La matrice de projection du lumière directionelle est orthographique car une telle lumière voit "en parallèle" (tous les points sont illuminés selon la même direction). On fait en sorte que la light voit l'ensemble de la scène en la plaçant au bord de la bounding sphere de la scène (d'ou le calcul du centre et du rayon de la scène). Il vous sera peut être necessaire de stocker m_BBoxMin et m_BBoxMax si ce n'est pas déjà fait, qui peuvent être obtenu au moment du chargement de la scène.
 
-## Utilisation de la shadow map
+# Utilisation de la shadow map
 
 Une fois la shadow map calculée, la shading pass peut l'utiliser pour calculer la visibilité d'un fragment pour la light concernée.
 
@@ -237,7 +234,7 @@ const auto rcpViewMatrix = m_viewController.getRcpViewMatrix(); // Inverse de la
 glUniformMatrix4fv(m_uDirLightViewProjMatrix_shadingPass, 1, GL_FALSE, glm::value_ptr(dirLightProjMatrix * dirLightViewMatrix * rcpViewMatrix));
 ```
 
-## Si ça ne fonctionne pas
+# Si ça ne fonctionne pas
 
 A ce stade, votre shadow mapping devrait fonctionner et vous devriez donc voir les ombres portées par les objets de la scène par rapport à la lumière directionnelle.
 
@@ -266,9 +263,9 @@ Ce fragment shader peut être combiné à *shadingPass.vs.glsl* pour former un p
 
 Voir sur la branche cheat pour un exemple.
 
-## Percentage Closest Filtering
+# Percentage Closest Filtering
 
-### Basique
+## Basique
 
 L'aspect visuel du shadow mapping dépend grandement de la résolution choisie. Pour une résolution de 512, vous avez du constater que le rendu des ombres est très aliasé. Il faut monter à 4096 au moins pour ne plus voir l'aliasing à une distance correcte, qui reste très visible en se rapprochant.
 
@@ -310,7 +307,7 @@ Ces lignes définissent le comportement de la fonction *textureProj* dans le sha
 
 Une fois ces modifications effectuées, lancez votre application et constatez que les ombres sont un peu floutées.
 
-### Arbitraire
+## Arbitraire
 
 Il est possible d'allouer plus loin dans le filtrage des ombres en appliquant un filtre arbitraire lors de la lecture de la shadow map. Cela est plus couteux mais également plus agréable visuellement.
 

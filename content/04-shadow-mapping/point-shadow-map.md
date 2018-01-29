@@ -8,4 +8,6 @@ date = "2017-01-19T23:22:33+01:00"
 
 +++
 
-todo.
+{{< notice "info" >}}
+En construction
+{{< /notice >}}
