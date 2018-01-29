@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <imgui.h>
 #include <glmlv/imgui_impl_glfw_gl3.hpp>
+#include <glmlv/gl_debug_output.hpp>
 
 int Application::run()
 {
@@ -72,6 +73,7 @@ Application::Application(int argc, char** argv):
     m_ImGuiIniFilename{ m_AppName + ".imgui.ini" },
     m_ShadersRootPath{ m_AppPath.parent_path() / "shaders" }
 {
+    glmlv::initGLDebugOutput();
     glGenBuffers(1, &m_quadVBO);
 
     Vertex quadVertices[] = {
