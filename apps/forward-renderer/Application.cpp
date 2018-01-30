@@ -60,14 +60,10 @@ int Application::run()
 
         // Render everything
         mat4 view = m_ViewController.getViewMatrix();
-        vec4 viewSpaceDirLightDir4(lighting.dirLightDir, 0);
-        vec3 viewSpaceDirLightDir = normalize(vec3(view * viewSpaceDirLightDir4));
-        vec4 viewSpacePointLightPosition4(lighting.pointLightPosition, 1);
-        vec3 viewSpacePointLightPosition(view * viewSpacePointLightPosition4);
         m_ForwardProgram.use();
-        m_ForwardProgram.setUniformDirectionalLightDir(viewSpaceDirLightDir);
+        m_ForwardProgram.setUniformDirectionalLightDir(normalize(vec3(view * vec4(lighting.dirLightDir, 0))));
         m_ForwardProgram.setUniformDirectionalLightIntensity(lighting.dirLightIntensity);
-        m_ForwardProgram.setUniformPointLightPosition(viewSpacePointLightPosition);
+        m_ForwardProgram.setUniformPointLightPosition(vec3(view * vec4(lighting.pointLightPosition, 1)));
         m_ForwardProgram.setUniformPointLightIntensity(lighting.pointLightIntensity);
         m_ForwardProgram.setUniformPointLightRange(lighting.pointLightRange);
         m_ForwardProgram.setUniformPointLightAttenuationFactor(lighting.pointLightAttenuationFactor);
