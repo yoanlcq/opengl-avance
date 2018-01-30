@@ -4,8 +4,19 @@ uniform vec3 uDirectionalLightDir;
 uniform vec3 uDirectionalLightIntensity;
 uniform vec3 uPointLightPosition;
 uniform vec3 uPointLightIntensity;
+
+uniform vec3 uKa;
 uniform vec3 uKd;
+uniform vec3 uKs;
+uniform float uShininess;
+uniform sampler2D uKaSampler;
 uniform sampler2D uKdSampler;
+uniform sampler2D uKsSampler;
+uniform sampler2D uShininessSampler;
+uniform float uKaSamplerFactor;
+uniform float uKdSamplerFactor;
+uniform float uKsSamplerFactor;
+uniform float uShininessSamplerFactor;
 
 in vec3 vViewSpacePosition;
 in vec3 vViewSpaceNormal;
