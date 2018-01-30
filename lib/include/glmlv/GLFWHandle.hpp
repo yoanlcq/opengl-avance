@@ -29,13 +29,21 @@ public:
             throw std::runtime_error("Unable to init GLFW.\n");
         }
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 
-        m_pWindow = glfwCreateWindow(width, height, title, nullptr, nullptr);
+        const int profiles[] = {GLFW_OPENGL_CORE_PROFILE, GLFW_OPENGL_COMPAT_PROFILE};
+        for(const auto profile: profiles) {
+            glfwWindowHint(GLFW_OPENGL_PROFILE, profile);
+            for(int minor=5 ; minor>=0 ; --minor) {
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
+                m_pWindow = glfwCreateWindow(width, height, title, nullptr, nullptr);
+                if (m_pWindow)
+                    break;
+                std::cerr << "Could not open an OpenGL 4." << minor << "-enabled window." << std::endl;
+            }
+        }
         if (!m_pWindow) {
             std::cerr << "Unable to open window.\n";
             glfwTerminate();

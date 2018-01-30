@@ -120,11 +120,11 @@ public:
         setUniformKa(mat.Ka);
         setUniformKd(mat.Kd);
         setUniformKs(mat.Ks);
-        setUniformShininess(mat.shininess);
-        setUniformKaSampler(mat.KaTextureId);
-        setUniformKdSampler(mat.KdTextureId);
-        setUniformKsSampler(mat.KsTextureId);
-        setUniformShininessSampler(mat.shininessTextureId);
+        setUniformShininess(1); // NOTE: 1 instead of mat.shininess (i.e 0) fixes completely black fragments on NVIDIA
+        setUniformKaSampler(mat.KaTextureId >= 0 ? mat.KaTextureId : 0);
+        setUniformKdSampler(mat.KdTextureId >= 0 ? mat.KdTextureId : 0);
+        setUniformKsSampler(mat.KsTextureId >= 0 ? mat.KsTextureId : 0);
+        setUniformShininessSampler(mat.shininessTextureId >= 0 ? mat.shininessTextureId : 0);
         setUniformKaSamplerFactor(mat.KaTextureId >= 0);
         setUniformKdSamplerFactor(mat.KdTextureId >= 0);
         setUniformKsSamplerFactor(mat.KsTextureId >= 0);
@@ -387,10 +387,10 @@ struct Scene {
             prog.setUniformKd(mat.Kd);
             prog.setUniformKs(mat.Ks);
             prog.setUniformShininess(mat.shininess);
-            prog.setUniformKaSampler(mat.KaTextureId);
-            prog.setUniformKdSampler(mat.KdTextureId);
-            prog.setUniformKsSampler(mat.KsTextureId);
-            prog.setUniformShininessSampler(mat.shininessTextureId);
+            prog.setUniformKaSampler(mat.KaTextureId >= 0 ? mat.KaTextureId : 0);
+            prog.setUniformKdSampler(mat.KdTextureId >= 0 ? mat.KdTextureId : 0);
+            prog.setUniformKsSampler(mat.KsTextureId >= 0 ? mat.KsTextureId : 0);
+            prog.setUniformShininessSampler(mat.shininessTextureId >= 0 ? mat.shininessTextureId : 0);
             prog.setUniformKaSamplerFactor(mat.KaTextureId >= 0);
             prog.setUniformKdSamplerFactor(mat.KdTextureId >= 0);
             prog.setUniformKsSamplerFactor(mat.KsTextureId >= 0);

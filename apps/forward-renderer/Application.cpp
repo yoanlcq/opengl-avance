@@ -57,7 +57,6 @@ int Application::run()
         m_CubeTex.bind();
         m_Sampler.bindToTextureUnit(cubeTextureUnit);
 
-
         // Render everything
         mat4 view = m_ViewController.getViewMatrix();
         m_ForwardProgram.use();
