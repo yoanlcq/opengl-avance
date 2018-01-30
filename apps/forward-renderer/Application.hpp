@@ -16,6 +16,8 @@ using glm::mat4;
 using glm::vec3;
 
 // TODO: Move utilities to glmlv;
+// TODO: remove using directive in hpp;
+// TODO: Actually change shaders to follow a Blinn-Phong model;
 
 class GLForwardRenderingProgram: public GLProgram {
     const GLint m_UniformModelViewProjMatrixLocation       = -1;
@@ -320,12 +322,14 @@ public:
 struct Scene {
     ObjData m_ObjData;
     GLMesh m_GLMesh;
+    GLSampler m_GLSampler;
     std::vector<GLTexture2D> m_GLTextures2D;
 
     Scene() = delete;
     Scene(const glmlv::fs::path& path) :
         m_ObjData(objDataFromPath(path)),
-        m_GLMesh(SimpleGeometry { m_ObjData.vertexBuffer, m_ObjData.indexBuffer })
+        m_GLMesh(SimpleGeometry { m_ObjData.vertexBuffer, m_ObjData.indexBuffer }),
+        m_GLSampler(GLSamplerParams().withWrapST(GL_REPEAT).withMinMagFilter(GL_LINEAR))
     {
         for(const auto& img: m_ObjData.textures) {
             m_GLTextures2D.emplace_back(img);
@@ -349,6 +353,7 @@ struct Scene {
         for(GLuint i=0 ; i<m_GLTextures2D.size() ; ++i) {
             glActiveTexture(GL_TEXTURE0 + i);
             m_GLTextures2D[i].bind();
+            m_GLSampler.bindToTextureUnit(i);
         }
 
         glBindVertexArray(m_GLMesh.getVao());

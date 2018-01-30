@@ -22,14 +22,7 @@ int Application::run()
     m_ViewController.setSpeed(m_Scene.getDiagonalLength() * 0.1f); // 10% de la scene parcouru par seconde
 
     const GLuint sphereTextureUnit = 0;
-    glActiveTexture(GL_TEXTURE0 + sphereTextureUnit);
-    m_SphereTex.bind();
-    m_Sampler.bindToTextureUnit(sphereTextureUnit);
-
     const GLuint cubeTextureUnit = 1;
-    glActiveTexture(GL_TEXTURE0 + cubeTextureUnit);
-    m_CubeTex.bind();
-    m_Sampler.bindToTextureUnit(cubeTextureUnit);
 
     MeshInstanceData sphereInstance;
     sphereInstance.modelMatrix = translate(mat4(1), vec3(0,0,-2));
@@ -50,6 +43,15 @@ int Application::run()
         const auto seconds = glfwGetTime();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Do it every time because m_Scene overrides it when rendering
+        glActiveTexture(GL_TEXTURE0 + sphereTextureUnit);
+        m_SphereTex.bind();
+        m_Sampler.bindToTextureUnit(sphereTextureUnit);
+        glActiveTexture(GL_TEXTURE0 + cubeTextureUnit);
+        m_CubeTex.bind();
+        m_Sampler.bindToTextureUnit(cubeTextureUnit);
+
 
         m_ForwardProgram.use();
         m_ForwardProgram.setSharedUniformData(sharedUniformData);
