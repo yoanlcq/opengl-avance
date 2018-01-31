@@ -43,14 +43,14 @@ struct ALHandle {
         std::swap(m_Context, o.m_Context);
         return *this;
     }
-    void setGain(float gain) const { alListenerf( AL_GAIN, gain); checkAlError(); }
-    float getGain() const { float v; alGetListenerf(AL_GAIN, &v); checkAlError(); return v; }
-    void setPosition (const glm::vec3& v) const { alListenerfv(AL_POSITION,  &v[0]); checkAlError(); }
-    void setVelocity (const glm::vec3& v) const { alListenerfv(AL_VELOCITY,  &v[0]); checkAlError(); }
-    void setOrientation(const ALOrientation& v) const { alListenerfv(AL_ORIENTATION, &v.at[0]); checkAlError(); }
-    ALOrientation getOrientation() const { ALOrientation v; alGetListenerfv(AL_ORIENTATION, &v.at[0]); checkAlError();  return v; }
-    glm::vec3 getPosition () const { glm::vec3 v; alGetListenerfv(AL_POSITION,  &v[0]); checkAlError(); return v; }
-    glm::vec3 getVelocity () const { glm::vec3 v; alGetListenerfv(AL_VELOCITY,  &v[0]); checkAlError(); return v; }
+    void setListenerGain(float gain) const { alListenerf( AL_GAIN, gain); checkAlError(); }
+    float getListenerGain() const { float v; alGetListenerf(AL_GAIN, &v); checkAlError(); return v; }
+    void setListenerPosition (const glm::vec3& v) const { alListenerfv(AL_POSITION,  &v[0]); checkAlError(); }
+    void setListenerVelocity (const glm::vec3& v) const { alListenerfv(AL_VELOCITY,  &v[0]); checkAlError(); }
+    void setListenerOrientation(const ALOrientation& v) const { alListenerfv(AL_ORIENTATION, &v.at[0]); checkAlError(); }
+    ALOrientation getListenerOrientation() const { ALOrientation v; alGetListenerfv(AL_ORIENTATION, &v.at[0]); checkAlError(); return v; }
+    glm::vec3 getListenerPosition() const { glm::vec3 v; alGetListenerfv(AL_POSITION,  &v[0]); checkAlError(); return v; }
+    glm::vec3 getListenerVelocity() const { glm::vec3 v; alGetListenerfv(AL_VELOCITY,  &v[0]); checkAlError(); return v; }
 };
 
 } // namespace glmlv
