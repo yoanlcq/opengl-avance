@@ -92,7 +92,8 @@ int Application::run()
             EDIT_COLOR(lighting.dirLightIntensity);
             EDIT_COLOR(lighting.pointLightIntensity[0]);
             EDIT_DIRECTION(lighting.dirLightDir, -1, 1);
-            EDIT_DIRECTION(lighting.pointLightPosition[0], -100, 100);
+            auto bound = m_Scene.getDiagonalLength() / 2.f;
+            EDIT_DIRECTION(lighting.pointLightPosition[0], -bound, bound);
             ImGui::SliderFloat("near", &m_ViewController.near, 0.0001f, 1.f);
             ImGui::SliderFloat("far", &m_ViewController.far, 100.f, 10000.f);
             ImGui::SliderFloat("Point Light range", &lighting.pointLightRange[0], 0.01f, 1000);
