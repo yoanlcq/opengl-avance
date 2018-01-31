@@ -40,8 +40,8 @@ void PcmWav::log_summary(std::ostream& os) const {
     uint32_t frame_count = data.size() / frame_size;
     PcmDuration d(frame_count, sample_rate);
 
-    os << bits_per_sample << "-bit " << channel_count << " channels @"
-       << sample_rate << "Hz, " << frame_count << "frames (" << d << ")";
+    os << bits_per_sample << "-bit " << channel_count << " channel(s) @"
+       << sample_rate << "Hz, " << frame_count << " frames (" << d << ")";
 }
 
 } // namespace glmlv

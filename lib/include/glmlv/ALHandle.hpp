@@ -5,6 +5,23 @@
 
 namespace glmlv {
 
+static bool checkAlError() {
+    auto e = alGetError();
+    if(e != AL_NO_ERROR) {
+        std::cerr << "OpenAL: An error was generated: " << e << std::endl;
+        return false;
+    }
+    return true;
+}
+static bool checkAlcError(ALCdevice* dev) {
+    auto e = alcGetError(dev);
+    if(e != ALC_NO_ERROR) {
+        std::cerr << "ALC: An error was generated: " << e << std::endl;
+        return false;
+    }
+    return true;
+}
+
 struct ALOrientation {
     glm::vec3 at, up; // NOTE: The order matters!
 };
@@ -25,8 +42,11 @@ struct ALHandle {
             std::cerr << msg << std::endl;
             throw std::runtime_error(msg);
         }
+        checkAlcError(m_Device);
+        std::cout << "Opened OpenAL default device" << std::endl;
         m_Context = alcCreateContext(m_Device, nullptr);
         alcMakeContextCurrent(m_Context);
+        checkAlcError(m_Device);
 
         alGetError(); // clear error code
     }
@@ -41,25 +61,29 @@ struct ALHandle {
         std::swap(m_Context, o.m_Context);
         return *this;
     }
-    void setGain(float gain) const { alListenerf( AL_GAIN, gain); }
-    float getGain() const { float v; alGetListenerf(AL_GAIN, &v); return v; }
-    void setPosition (const glm::vec3& v) const { alListenerfv(AL_POSITION,  &v[0]); }
-    void setVelocity (const glm::vec3& v) const { alListenerfv(AL_VELOCITY,  &v[0]); }
-    void setOrientation(const ALOrientation& v) const { alListenerfv(AL_ORIENTATION, &v.at[0]);}
-    ALOrientation getOrientation() const { ALOrientation v; alGetListenerfv(AL_ORIENTATION, &v.at[0]); return v; }
-    glm::vec3 getPosition () const { glm::vec3 v; alGetListenerfv(AL_POSITION,  &v[0]); return v; }
-    glm::vec3 getVelocity () const { glm::vec3 v; alGetListenerfv(AL_VELOCITY,  &v[0]); return v; }
+    void setGain(float gain) const { alListenerf( AL_GAIN, gain); checkAlError(); }
+    float getGain() const { float v; alGetListenerf(AL_GAIN, &v); checkAlError(); return v; }
+    void setPosition (const glm::vec3& v) const { alListenerfv(AL_POSITION,  &v[0]); checkAlError(); }
+    void setVelocity (const glm::vec3& v) const { alListenerfv(AL_VELOCITY,  &v[0]); checkAlError(); }
+    void setOrientation(const ALOrientation& v) const { alListenerfv(AL_ORIENTATION, &v.at[0]); checkAlError(); }
+    ALOrientation getOrientation() const { ALOrientation v; alGetListenerfv(AL_ORIENTATION, &v.at[0]); checkAlError();  return v; }
+    glm::vec3 getPosition () const { glm::vec3 v; alGetListenerfv(AL_POSITION,  &v[0]); checkAlError(); return v; }
+    glm::vec3 getVelocity () const { glm::vec3 v; alGetListenerfv(AL_VELOCITY,  &v[0]); checkAlError(); return v; }
 };
 
 class ALBuffer {
     ALuint m_ALId = 0;
 public:
+    ~ALBuffer() {
+        alDeleteBuffers(1, &m_ALId);
+    }
     ALBuffer() {
         alGenBuffers(1, &m_ALId);
         assert(m_ALId);
+        checkAlError();
     }
-    ~ALBuffer() {
-        alDeleteBuffers(1, &m_ALId);
+    ALBuffer(const PcmWav& wav): ALBuffer() {
+        loadWav(wav);
     }
     ALBuffer(const ALBuffer& o) = delete;
     ALBuffer& operator=(const ALBuffer& o) = delete;
@@ -76,18 +100,23 @@ public:
         assert(format != -1 && "No suitable OpenAL format found!");
 
         alBufferData(m_ALId, format, wav.data.data(), wav.data.size(), wav.sample_rate);
+        checkAlError();
     }
 };
 
 class ALSource {
     ALuint m_ALId = 0;
 public:
+    ~ALSource() {
+        alDeleteSources(1, &m_ALId);
+    }
     ALSource() {
         alGenSources(1, &m_ALId);
         assert(m_ALId);
+        checkAlError();
     }
-    ~ALSource() {
-        alDeleteSources(1, &m_ALId);
+    ALSource(const ALBuffer& b): ALSource() {
+        setBuffer(b);
     }
     ALSource(const ALSource& o) = delete;
     ALSource& operator=(const ALSource& o) = delete;
@@ -97,26 +126,29 @@ public:
     ALuint alId() const { return m_ALId; }
     void setBuffer(const ALBuffer& b) const {
         alSourcei(m_ALId, AL_BUFFER, b.alId());
+        checkAlError();
     }
     void setLooping(bool loop) const {
         alSourcei(m_ALId, AL_LOOPING, loop);
+        checkAlError();
     }
-    void play()   const { alSourcePlay  (m_ALId); }
-    void pause()  const { alSourcePause (m_ALId); }
-    void stop()   const { alSourceStop  (m_ALId); }
-    void rewind() const { alSourceRewind(m_ALId); }
-    void setGain(float gain) const { alSourcef(m_ALId, AL_GAIN, gain); }
-    float getGain() const { float v; alGetSourcef(m_ALId, AL_GAIN, &v); return v; }
-    void setPosition (const glm::vec3& v) const { alSourcefv(m_ALId, AL_POSITION,  &v[0]); }
-    void setVelocity (const glm::vec3& v) const { alSourcefv(m_ALId, AL_VELOCITY,  &v[0]); }
-    void setDirection(const glm::vec3& v) const { alSourcefv(m_ALId, AL_DIRECTION, &v[0]); }
-    glm::vec3 getPosition () const { glm::vec3 v; alGetSourcefv(m_ALId, AL_POSITION,  &v[0]); return v; }
-    glm::vec3 getVelocity () const { glm::vec3 v; alGetSourcefv(m_ALId, AL_VELOCITY,  &v[0]); return v; }
-    glm::vec3 getDirection() const { glm::vec3 v; alGetSourcefv(m_ALId, AL_DIRECTION, &v[0]); return v; }
+    void play()   const { alSourcePlay  (m_ALId); checkAlError(); }
+    void pause()  const { alSourcePause (m_ALId); checkAlError(); }
+    void stop()   const { alSourceStop  (m_ALId); checkAlError(); }
+    void rewind() const { alSourceRewind(m_ALId); checkAlError(); }
+    void setGain(float gain) const { alSourcef(m_ALId, AL_GAIN, gain); checkAlError(); }
+    float getGain() const { float v; alGetSourcef(m_ALId, AL_GAIN, &v); checkAlError(); return v; }
+    void setPosition (const glm::vec3& v) const { alSourcefv(m_ALId, AL_POSITION,  &v[0]); checkAlError(); }
+    void setVelocity (const glm::vec3& v) const { alSourcefv(m_ALId, AL_VELOCITY,  &v[0]); checkAlError(); }
+    void setDirection(const glm::vec3& v) const { alSourcefv(m_ALId, AL_DIRECTION, &v[0]); checkAlError(); }
+    glm::vec3 getPosition () const { glm::vec3 v; alGetSourcefv(m_ALId, AL_POSITION,  &v[0]); checkAlError(); return v; }
+    glm::vec3 getVelocity () const { glm::vec3 v; alGetSourcefv(m_ALId, AL_VELOCITY,  &v[0]); checkAlError(); return v; }
+    glm::vec3 getDirection() const { glm::vec3 v; alGetSourcefv(m_ALId, AL_DIRECTION, &v[0]); checkAlError(); return v; }
     enum class State { Playing, Paused, Stopped };
     State getState() const {
         ALint i;
         alGetSourcei(m_ALId, AL_SOURCE_STATE, &i);
+        checkAlError();
         switch(i) {
         case AL_PLAYING: return State::Playing;
         case AL_PAUSED : return State::Paused;
@@ -124,9 +156,9 @@ public:
         }
         assert(false && "alGetSourcei returned an invalid state!");
     }
-    float  getPlaybackPositionInSeconds() const { ALfloat v; alGetSourcef(m_ALId, AL_SEC_OFFSET, &v); return v; }
-    size_t getPlaybackPositionInSamples() const { ALint i; alGetSourcei(m_ALId, AL_SAMPLE_OFFSET, &i); return i; }
-    size_t getPlaybackPositionInBytes()   const { ALint i; alGetSourcei(m_ALId, AL_BYTE_OFFSET, &i); return i; }
+    float  getPlaybackPositionInSeconds() const { ALfloat v; alGetSourcef(m_ALId, AL_SEC_OFFSET, &v);  checkAlError(); return v; }
+    size_t getPlaybackPositionInSamples() const { ALint i; alGetSourcei(m_ALId, AL_SAMPLE_OFFSET, &i); checkAlError(); return i; }
+    size_t getPlaybackPositionInBytes()   const { ALint i; alGetSourcei(m_ALId, AL_BYTE_OFFSET, &i);   checkAlError(); return i; }
 };
 
 } // namespace glmlv

@@ -37,7 +37,9 @@ struct PcmWav {
 
         std::vector<char> buffer(size); // Can't use uint8_t here. Ugh.
         if(!file.read(buffer.data(), size)) {
-            assert(false);
+            auto msg = "Couldn't load WAV file \"" + path.string() + "\"!";
+            std::cerr << msg << std::endl;
+            throw std::runtime_error(msg);
         }
         load_raw(buffer.data(), buffer.size());
     }
@@ -50,9 +52,17 @@ struct PcmWav {
         assert(size >= header_size);
         memcpy(this, raw, header_size);
         auto data_size = *(const uint32_t*) &raw[header_size];
-        data.reserve(data_size);
-        memcpy(data.data(), &raw[header_size + 4], size - (header_size + 4));
         data.resize(data_size);
+        memcpy(data.data(), &raw[header_size + 4], size - (header_size + 4));
+    }
+    void saveToFile(const fs::path& path) const {
+        auto file = std::ofstream (path.string(), std::ios::binary);
+
+        auto header_len = offsetof(PcmWav, data);
+        file.write((const char*)this, header_len);
+        uint32_t data_size = data.size();
+        file.write((const char*)&data_size, 4);
+        file.write((const char*)data.data(), data.size());
     }
     bool is_valid() const;
     void log_summary(std::ostream&) const;

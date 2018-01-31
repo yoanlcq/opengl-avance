@@ -9,6 +9,7 @@
 #include <glmlv/Scene.hpp>
 #include <glmlv/Camera.hpp>
 #include <glmlv/ALHandle.hpp>
+#include <glmlv/wav.hpp>
 
 // TODO: Move utilities to glmlv and get used to do "make forward-renderer";
 
@@ -36,6 +37,7 @@ private:
     const glmlv::Mesh m_Cube, m_Sphere;
     const glmlv::Scene m_Scene;
     glmlv::Camera m_ViewController;
+    const glmlv::PcmWav m_PcmWav;
     glmlv::ALBuffer m_ALBuffer;
     glmlv::ALSource m_ALSource;
 
