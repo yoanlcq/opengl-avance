@@ -125,7 +125,6 @@ int Application::run()
 Application::Application(int argc, char** argv):
     m_AppPath { glmlv::fs::path{ argv[0] } },
     m_AppName { m_AppPath.stem().string() },
-    m_ImGuiIniFilename { m_AppName + ".imgui.ini" },
     m_AssetsRootPath { m_AppPath.parent_path() / "assets" },
     m_ShadersRootPath { m_AppPath.parent_path() / "shaders" },
     m_ForwardVsPath { m_ShadersRootPath / m_AppName / "forward.vs.glsl" },
@@ -141,6 +140,9 @@ Application::Application(int argc, char** argv):
     m_ViewController(m_GLFWHandle.window(), m_nWindowWidth, m_nWindowHeight)
 {
     (void) argc;
-    ImGui::GetIO().IniFilename = strdup(m_ImGuiIniFilename.c_str()); // At exit, ImGUI will store its windows positions in this file
+    static_ImGuiIniFilename = m_AppName + ".imgui.ini";
+    ImGui::GetIO().IniFilename = static_ImGuiIniFilename.c_str(); // At exit, ImGUI will store its windows positions in this file
     glEnable(GL_DEPTH_TEST);
 }
+
+std::string Application::static_ImGuiIniFilename;

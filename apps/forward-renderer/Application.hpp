@@ -8,7 +8,6 @@
 #include <glmlv/Image2DRGBA.hpp>
 #include <glmlv/load_obj.hpp>
 
-// TODO: Actually change shaders to follow a Blinn-Phong model;
 // TODO: Move utilities to glmlv and get used to do "make forward-renderer";
 
 class GLForwardRenderingProgram: public glmlv::GLProgram {
@@ -424,7 +423,6 @@ private:
 
     const glmlv::fs::path m_AppPath;
     const std::string m_AppName;
-    const std::string m_ImGuiIniFilename;
     const glmlv::fs::path m_AssetsRootPath;
     const glmlv::fs::path m_ShadersRootPath;
     const glmlv::fs::path m_ForwardVsPath;
@@ -435,4 +433,8 @@ private:
     const Mesh m_Cube, m_Sphere;
     const Scene m_Scene;
     Camera m_ViewController;
+
+    // NOTE: Make it static, so that the char pointer's lifetime is unbounded.
+    // With the old code, the memory was freed before ImGUI wrote to the ini filename.
+    static std::string static_ImGuiIniFilename;
 };
