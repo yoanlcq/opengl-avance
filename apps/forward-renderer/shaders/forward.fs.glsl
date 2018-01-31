@@ -2,10 +2,12 @@
 
 uniform vec3 uDirectionalLightDir;
 uniform vec3 uDirectionalLightIntensity;
-uniform vec3 uPointLightPosition;
-uniform vec3 uPointLightIntensity;
-uniform float uPointLightRange;
-uniform float uPointLightAttenuationFactor;
+#define MAX_POINT_LIGHTS 32 // NOTE: Keep in sync with GLForwardRenderingProgram
+uniform uint uPointLightCount;
+uniform vec3 uPointLightPosition[MAX_POINT_LIGHTS];
+uniform vec3 uPointLightIntensity[MAX_POINT_LIGHTS];
+uniform float uPointLightRange[MAX_POINT_LIGHTS];
+uniform float uPointLightAttenuationFactor[MAX_POINT_LIGHTS];
 
 uniform vec3 uKa;
 uniform vec3 uKd;
@@ -49,11 +51,13 @@ void main() {
     vec3 halfVector = normalize(mix(wo, wi, 0.5));
     color += Li*(Kd*dot(wi, N) + pow(Ks*dot(halfVector, N), vec3(shininess)));
 
-    float distFromPointLight = length(uPointLightPosition - vViewSpacePosition);
-    wi = (uPointLightPosition - vViewSpacePosition) / distFromPointLight;
-    Li = uPointLightIntensity / (uPointLightAttenuationFactor * pow(max(1, distFromPointLight / uPointLightRange), 2));
-    halfVector = normalize(mix(wo, wi, 0.5));
-    color += Li*(Kd*dot(wi, N) + pow(Ks*dot(halfVector, N), vec3(shininess)));
+    for(uint i=0u ; i<uPointLightCount ; ++i) {
+        float distFromPointLight = length(uPointLightPosition[i] - vViewSpacePosition);
+        wi = (uPointLightPosition[i] - vViewSpacePosition) / distFromPointLight;
+        Li = uPointLightIntensity[i] / (uPointLightAttenuationFactor[i] * pow(max(1, distFromPointLight / uPointLightRange[i]), 2));
+        halfVector = normalize(mix(wo, wi, 0.5));
+        color += Li*(Kd*dot(wi, N) + pow(Ks*dot(halfVector, N), vec3(shininess)));
+    }
 
     fColor = vec4(color, 1); // FIXME make alpha vary
 }

@@ -15,13 +15,16 @@ int Application::run()
     vec3 clearColor(0, 186/255.f, 1.f);
     glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);
 
-    GLForwardRenderingProgram::SharedUniformData lighting;
+    GLForwardRenderingProgram::LightingUniforms lighting;
     lighting.dirLightDir = vec3(-1,-1,-1);
     lighting.dirLightIntensity = vec3(1,1,1);
-    lighting.pointLightPosition = vec3(0,0,1);
-    lighting.pointLightIntensity = vec3(1,1,1);
-    lighting.pointLightRange = 1;
-    lighting.pointLightAttenuationFactor = 1;
+    lighting.pointLightCount = 2;
+    for(size_t i=0 ; i<GLForwardRenderingProgram::MAX_POINT_LIGHTS ; ++i) {
+        lighting.pointLightPosition[i] = vec3(i, i*2, 1);
+        lighting.pointLightIntensity[i] = vec3(0.5, 0.5, 0.5);
+        lighting.pointLightRange[i] = 1;
+        lighting.pointLightAttenuationFactor[i] = 1;
+    }
 
     const float maxCameraSpeed = m_Scene.getDiagonalLength() * 0.5f;
     float cameraSpeed = maxCameraSpeed / 5.f;
@@ -59,14 +62,8 @@ int Application::run()
         m_Sampler.bindToTextureUnit(cubeTextureUnit);
 
         // Render everything
-        mat4 view = m_ViewController.getViewMatrix();
         m_ForwardProgram.use();
-        m_ForwardProgram.setUniformDirectionalLightDir(normalize(vec3(view * vec4(lighting.dirLightDir, 0))));
-        m_ForwardProgram.setUniformDirectionalLightIntensity(lighting.dirLightIntensity);
-        m_ForwardProgram.setUniformPointLightPosition(vec3(view * vec4(lighting.pointLightPosition, 1)));
-        m_ForwardProgram.setUniformPointLightIntensity(lighting.pointLightIntensity);
-        m_ForwardProgram.setUniformPointLightRange(lighting.pointLightRange);
-        m_ForwardProgram.setUniformPointLightAttenuationFactor(lighting.pointLightAttenuationFactor);
+        m_ForwardProgram.setLightingUniforms(lighting, m_ViewController);
         m_ForwardProgram.resetMaterialUniforms();
         m_Sphere.render(m_ForwardProgram, m_ViewController, sphereInstance);
         m_Cube.render(m_ForwardProgram, m_ViewController, cubeInstance);
@@ -91,13 +88,13 @@ int Application::run()
             EDIT_COLOR(cubeInstance.color);
             EDIT_COLOR(sphereInstance.color);
             EDIT_COLOR(lighting.dirLightIntensity);
-            EDIT_COLOR(lighting.pointLightIntensity);
+            EDIT_COLOR(lighting.pointLightIntensity[0]);
             EDIT_DIRECTION(lighting.dirLightDir, -1, 1);
-            EDIT_DIRECTION(lighting.pointLightPosition, -100, 100);
+            EDIT_DIRECTION(lighting.pointLightPosition[0], -100, 100);
             ImGui::SliderFloat("near", &m_ViewController.near, 0.0001f, 1.f);
             ImGui::SliderFloat("far", &m_ViewController.far, 100.f, 10000.f);
-            ImGui::SliderFloat("Point Light range", &lighting.pointLightRange, 0.01f, 1000);
-            ImGui::SliderFloat("Point Light attenuation factor", &lighting.pointLightAttenuationFactor, 0, 100.f);
+            ImGui::SliderFloat("Point Light range", &lighting.pointLightRange[0], 0.01f, 1000);
+            ImGui::SliderFloat("Point Light attenuation factor", &lighting.pointLightAttenuationFactor[0], 0, 100.f);
 #undef EDIT_DIRECTION
 #undef EDIT_COLOR
             ImGui::End();
