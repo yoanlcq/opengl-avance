@@ -8,6 +8,7 @@
 #include <glm/gtx/io.hpp>
 
 using namespace glm;
+using namespace glmlv;
 
 int Application::run()
 {
