@@ -24,7 +24,6 @@ set(GLM_DIR glm-0.9.8.3)
 set(GLAD_DIR glad)
 set(JSON_DIR json-2.0.9)
 set(STB_DIR stb)
-set(DR_LIBS_DIR dr_libs)
 set(TINY_OBJ_LOADER_DIR tinyobjloader-1.0.5)
 
 add_subdirectory(third-party/${GLFW_DIR})
@@ -61,7 +60,6 @@ include_directories(
     third-party/${JSON_DIR}
     third-party/${IMGUI_DIR}
     third-party/${STB_DIR}
-    third-party/${DR_LIBS_DIR}
     third-party/${TINY_OBJ_LOADER_DIR}
     lib/include
 )
