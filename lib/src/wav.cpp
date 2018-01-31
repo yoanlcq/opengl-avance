@@ -3,6 +3,7 @@
 
 namespace glmlv {
 
+// XXX What about MSVC ??
 #ifdef __GNUG__
 static_assert(__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__, "wav.cpp doesn't support big endian!");
 #endif

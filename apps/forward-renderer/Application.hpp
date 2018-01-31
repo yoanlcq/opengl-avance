@@ -8,7 +8,7 @@
 #include <glmlv/Mesh.hpp>
 #include <glmlv/Scene.hpp>
 #include <glmlv/Camera.hpp>
-#include <glmlv/ALHandle.hpp>
+#include <glmlv/AL.hpp>
 #include <glmlv/wav.hpp>
 
 // TODO: Move utilities to glmlv and get used to do "make forward-renderer";
