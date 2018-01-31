@@ -21,10 +21,12 @@ int Application::run()
     lighting.pointLightCount = 2;
     for(size_t i=0 ; i<GLForwardRenderingProgram::MAX_POINT_LIGHTS ; ++i) {
         lighting.pointLightPosition[i] = vec3(i, i*2, 1);
-        lighting.pointLightIntensity[i] = vec3(0.5, 0.5, 0.5);
-        lighting.pointLightRange[i] = 1;
+        lighting.pointLightIntensity[i] = vec3(1, 1, 1);
+        lighting.pointLightRange[i] = 10;
         lighting.pointLightAttenuationFactor[i] = 1;
     }
+    // TODO: Draw spheres for showing where point lights are.
+    // TODO: Somehow manage to make all point lights editable.
 
     const float maxCameraSpeed = m_Scene.getDiagonalLength() * 0.5f;
     float cameraSpeed = maxCameraSpeed / 5.f;

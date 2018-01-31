@@ -62,8 +62,11 @@ public:
         m_UniformShininessSamplerFactorLocation      (getUniformLocation("uShininessSamplerFactor"))
         {}
 
-    static const GLuint MAX_POINT_LIGHTS = 32;
+    // NOTE: Keep in sync with forward shader
+    static const size_t MAX_POINT_LIGHTS = 32;
 
+    // XXX: I'm not actually of fan of forcing implicit world-space to view-space mapping
+    // when uploading uniforms
     struct LightingUniforms {
         glm::vec3 dirLightDir = glm::vec3(1,0,0);
         glm::vec3 dirLightIntensity = glm::vec3(1,1,1);
