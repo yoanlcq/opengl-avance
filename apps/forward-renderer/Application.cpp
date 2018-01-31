@@ -150,7 +150,7 @@ Application::Application(int argc, char** argv):
     std::cout << "Now playing ";
     m_PcmWav.log_summary(std::cout);
     std::cout << std::endl;
-    m_ALSource.setLooping(true);
+    m_ALSource.setLooping(false);
     m_ALSource.play();
     checkAlError();
 }
