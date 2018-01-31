@@ -20,6 +20,7 @@ endif()
 
 set(IMGUI_DIR imgui-1.49)
 set(GLFW_DIR glfw-3.2.1)
+set(OPENAL_SOFT_DIR openal-soft-1.18.2)
 set(GLM_DIR glm-0.9.8.3)
 set(GLAD_DIR glad)
 set(JSON_DIR json-2.0.9)
@@ -27,6 +28,7 @@ set(STB_DIR stb)
 set(TINY_OBJ_LOADER_DIR tinyobjloader-1.0.5)
 
 add_subdirectory(third-party/${GLFW_DIR})
+add_subdirectory(third-party/${OPENAL_SOFT_DIR})
 
 find_package(OpenGL REQUIRED)
 
@@ -55,6 +57,7 @@ endif()
 include_directories(
     ${OPENGL_INCLUDE_DIRS}
     third-party/${GLFW_DIR}/include
+    third-party/${OPENAL_SOFT_DIR}/include
     third-party/${GLM_DIR}
     third-party/${GLAD_DIR}/include
     third-party/${JSON_DIR}
@@ -108,6 +111,7 @@ set(
     ${OPENGL_LIBRARIES}
     glfw
     glmlv
+    openal
 )
 
 if(CMAKE_COMPILER_IS_GNUCXX AND NOT GLMLV_USE_BOOST_FILESYSTEM)
