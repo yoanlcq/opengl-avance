@@ -43,6 +43,8 @@ public:
                     break;
                 std::cerr << "Could not open an OpenGL 4." << minor << "-enabled window." << std::endl;
             }
+            if (m_pWindow)
+                break;
         }
         if (!m_pWindow) {
             std::cerr << "Unable to open window.\n";
