@@ -3,9 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 project(opengl)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    add_definitions(
-        -std=c++14 -Wall -Wextra
-    )
+    set (CMAKE_CXX_STANDARD 14)
+    add_definitions(-Wall -Wextra)
 endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -145,6 +144,11 @@ foreach(DIR ${APP_DIRECTORIES})
         ${APP}
         ${LIBRARIES}
     )
+
+    # set_target_properties(${APP} PROPERTIES INSTALL_RPATH "foobar")
+    # set_target_properties(${APP} PROPERTIES SKIP_BUILD_RPATH  FALSE)
+    # set_target_properties(${APP} PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE) 
+    # set_target_properties(${APP} PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 
     install(
         TARGETS ${APP}
