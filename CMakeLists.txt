@@ -2,9 +2,11 @@ cmake_minimum_required(VERSION 2.8)
 
 project(opengl)
 
+set (CMAKE_CXX_STANDARD 11)
+
 if(CMAKE_COMPILER_IS_GNUCXX)
     set (CMAKE_CXX_STANDARD 14)
-    add_definitions(-Wall -Wextra)
+    add_definitions(-std=c++14 -Wall -Wextra)
 endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)

@@ -31,7 +31,7 @@ struct PcmWav {
     std::vector<uint8_t> data;
 
     PcmWav(const fs::path& path) {
-        auto file = std::ifstream (path.string(), std::ios::binary | std::ios::ate);
+        std::ifstream file(path.string(), std::ios::binary | std::ios::ate);
         auto size = file.tellg();
         file.seekg(0, std::ios::beg);
 
@@ -56,7 +56,7 @@ struct PcmWav {
         memcpy(data.data(), &raw[header_size + 4], size - (header_size + 4));
     }
     void saveToFile(const fs::path& path) const {
-        auto file = std::ofstream (path.string(), std::ios::binary);
+        std::ofstream file(path.string(), std::ios::binary);
 
         auto header_len = offsetof(PcmWav, data);
         file.write((const char*)this, header_len);
