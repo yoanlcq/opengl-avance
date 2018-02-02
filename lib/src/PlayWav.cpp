@@ -5,11 +5,14 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <signal.h>
+#elif defined(_WIN32)
+#include <windows.h>
 #endif
 
 namespace glmlv {
 
 #if defined(__linux__)
+
 OsPlayWav::OsPlayWav(const fs::path& path): m_HasAplayPid(true), m_AplayPid(fork()) {
     switch(m_AplayPid) {
     case 0:
@@ -37,6 +40,18 @@ OsPlayWav& OsPlayWav::operator=(OsPlayWav&& o) {
     std::swap(m_HasAplayPid, o.m_HasAplayPid);
     return *this;
 }
-#endif // linux
+
+#elif defined(_WIN32)
+
+OsPlayWav::OsPlayWav(const fs::path& path) {
+    if(!PlaySoundA(path.string().c_str(), nullptr, SND_FILENAME)) {
+        std::cerr << "PlaySoundA error: " << GetLastError() << std::endl;
+    }
+}
+OsPlayWav::~OsPlayWav() {}
+OsPlayWav::OsPlayWav(OsPlayWav&& o) {}
+OsPlayWav& OsPlayWav::operator=(OsPlayWav&& o) { return *this; }
+
+#endif
 
 } // namespace glmlv
