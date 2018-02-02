@@ -8,10 +8,7 @@
 #include <glmlv/Mesh.hpp>
 #include <glmlv/Scene.hpp>
 #include <glmlv/Camera.hpp>
-#include <glmlv/AL.hpp>
-#include <glmlv/wav.hpp>
-
-// TODO: Move utilities to glmlv and get used to do "make forward-renderer";
+#include <glmlv/PlayWav.hpp>
 
 class Application
 {
@@ -23,7 +20,6 @@ private:
     const size_t m_nWindowWidth = 1280;
     const size_t m_nWindowHeight = 720;
     glmlv::GLFWHandle m_GLFWHandle{ m_nWindowWidth, m_nWindowHeight, "Forward Rendering" }; // Note: the handle must be declared before the creation of any object managing OpenGL resource (e.g. glmlv::GLProgram, GLShader)
-    glmlv::ALHandle m_ALHandle { }; // Note: same as above, but for OpenAL.
 
     const glmlv::fs::path m_AppPath;
     const std::string m_AppName;
@@ -37,9 +33,7 @@ private:
     const glmlv::Mesh m_Cube, m_Sphere;
     const glmlv::Scene m_Scene;
     glmlv::Camera m_ViewController;
-    const glmlv::PcmWav m_PcmWav;
-    glmlv::ALBuffer m_ALBuffer;
-    glmlv::ALSource m_ALSource;
+    const glmlv::PlayWav m_PlayWav;
 
     // NOTE: Make it static, so that the char pointer's lifetime is unbounded.
     // With the old code, the memory was freed before ImGUI wrote to the ini filename.

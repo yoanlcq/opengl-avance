@@ -29,7 +29,7 @@ set(STB_DIR stb)
 set(TINY_OBJ_LOADER_DIR tinyobjloader-1.0.5)
 
 add_subdirectory(third-party/${GLFW_DIR})
-add_subdirectory(third-party/${OPENAL_SOFT_DIR})
+#add_subdirectory(third-party/${OPENAL_SOFT_DIR})
 
 find_package(OpenGL REQUIRED)
 
@@ -112,7 +112,7 @@ set(
     ${OPENGL_LIBRARIES}
     glfw
     glmlv
-    openal
+#    openal
 )
 
 if(CMAKE_COMPILER_IS_GNUCXX AND NOT GLMLV_USE_BOOST_FILESYSTEM)
