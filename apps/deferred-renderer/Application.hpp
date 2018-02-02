@@ -3,8 +3,20 @@
 #include <glmlv/filesystem.hpp>
 #include <glmlv/GLFWHandle.hpp>
 #include <glmlv/GLDeferredGPassProgram.hpp>
+#include <glmlv/GLTexture2D.hpp>
 #include <glmlv/Scene.hpp>
 #include <glmlv/Camera.hpp>
+
+enum GBufferTextureType
+{
+    GPosition = 0,
+    GNormal,
+    GAmbient,
+    GDiffuse,
+    GGlossyShininess,
+    GDepth, // On doit créer une texture de depth mais on écrit pas directement dedans dans le FS. OpenGL le fait pour nous (et l'utilise).
+    GBufferTextureCount
+};
 
 class Application
 {
@@ -24,6 +36,8 @@ private:
     const glmlv::GLDeferredGPassProgram m_DeferredGPassProgram;
     const glmlv::Scene m_Scene;
     glmlv::Camera m_ViewController;
+    glmlv::GLTexture2D m_GBufferTextures[GBufferTextureCount];
+    const GLenum m_GBufferTextureFormat[GBufferTextureCount] = { GL_RGB32F, GL_RGB32F, GL_RGB32F, GL_RGB32F, GL_RGBA32F, GL_DEPTH_COMPONENT32F };
 
     // NOTE: Make it static, so that the char pointer's lifetime is unbounded.
     // With the old code, the memory was freed before ImGUI wrote to the ini filename.

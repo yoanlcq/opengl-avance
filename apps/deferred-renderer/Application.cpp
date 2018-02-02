@@ -15,17 +15,6 @@ int Application::run()
     vec3 clearColor(0, 186/255.f, 1.f);
     glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);
 
-    GLDeferredGPassProgram::LightingUniforms lighting;
-    lighting.dirLightDir = vec3(-1,-1,-1);
-    lighting.dirLightIntensity = vec3(1,1,1);
-    lighting.pointLightCount = 2;
-    for(size_t i=0 ; i<GLDeferredGPassProgram::MAX_POINT_LIGHTS ; ++i) {
-        lighting.pointLightPosition[i] = vec3(i, i*2, 1);
-        lighting.pointLightIntensity[i] = vec3(1, 1, 1);
-        lighting.pointLightRange[i] = 10;
-        lighting.pointLightAttenuationFactor[i] = 1;
-    }
-
     const float maxCameraSpeed = m_Scene.getDiagonalLength() * 0.5f;
     float cameraSpeed = maxCameraSpeed / 5.f;
     m_ViewController.setSpeed(cameraSpeed);
@@ -42,7 +31,6 @@ int Application::run()
 
         // Render everything
         m_DeferredGPassProgram.use();
-        m_DeferredGPassProgram.setLightingUniforms(lighting, m_ViewController);
         m_DeferredGPassProgram.resetMaterialUniforms();
         static bool hasWarned = false;
         if(!hasWarned) {
@@ -65,19 +53,8 @@ int Application::run()
             if(ImGui::SliderFloat("Camera speed", &cameraSpeed, 0.001f, maxCameraSpeed)) {
                 m_ViewController.setSpeed(cameraSpeed);
             }
-#define EDIT_COLOR(c) ImGui::ColorEdit3(#c, &c[0])
-#define EDIT_DIRECTION(c, min, max) ImGui::SliderFloat3(#c, &c[0], min, max)
-            EDIT_COLOR(lighting.dirLightIntensity);
-            EDIT_COLOR(lighting.pointLightIntensity[0]);
-            EDIT_DIRECTION(lighting.dirLightDir, -1, 1);
-            auto bound = m_Scene.getDiagonalLength() / 2.f;
-            EDIT_DIRECTION(lighting.pointLightPosition[0], -bound, bound);
             ImGui::SliderFloat("near", &m_ViewController.near, 0.0001f, 1.f);
             ImGui::SliderFloat("far", &m_ViewController.far, 100.f, 10000.f);
-            ImGui::SliderFloat("Point Light range", &lighting.pointLightRange[0], 0.01f, 1000);
-            ImGui::SliderFloat("Point Light attenuation factor", &lighting.pointLightAttenuationFactor[0], 0, 100.f);
-#undef EDIT_DIRECTION
-#undef EDIT_COLOR
             ImGui::End();
         }
 
@@ -111,7 +88,15 @@ Application::Application(int argc, char** argv):
         m_ShadersRootPath / m_AppName / "geometryPass.fs.glsl"
     ),
     m_Scene(m_AssetsRootPath / "glmlv" / "models" / "crytek-sponza" / "sponza.obj"),
-    m_ViewController(m_GLFWHandle.window(), m_nWindowWidth, m_nWindowHeight)
+    m_ViewController(m_GLFWHandle.window(), m_nWindowWidth, m_nWindowHeight),
+    m_GBufferTextures {
+        { m_GBufferTextureFormat[0], (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight },
+        { m_GBufferTextureFormat[1], (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight },
+        { m_GBufferTextureFormat[2], (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight },
+        { m_GBufferTextureFormat[3], (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight },
+        { m_GBufferTextureFormat[4], (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight },
+        { m_GBufferTextureFormat[5], (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight }
+    }
 {
     (void) argc;
     static_ImGuiIniFilename = m_AppName + ".imgui.ini";
