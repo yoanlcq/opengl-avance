@@ -73,7 +73,7 @@ static std::array<std::tuple<const char *, bool, GLenum>, 4> severitySelector =
     std::make_tuple("NOTIFICATION", false, GL_DEBUG_SEVERITY_NOTIFICATION)
 };
 
-APIENTRY void logGLDebugInfo(GLenum source, GLenum type, GLuint id, GLenum severity,
+void APIENTRY logGLDebugInfo(GLenum source, GLenum type, GLuint id, GLenum severity,
     GLsizei length, const GLchar* message, GLvoid* userParam);
 
 void initGLDebugOutput()
@@ -86,7 +86,7 @@ void initGLDebugOutput()
     }
 }
 
-APIENTRY void logGLDebugInfo(GLenum source, GLenum type, GLuint id, GLenum severity,
+void APIENTRY logGLDebugInfo(GLenum source, GLenum type, GLuint id, GLenum severity,
     GLsizei length, const GLchar* message, GLvoid* userParam)
 {
     const auto findStr = [](GLenum value, const auto & map)

@@ -94,8 +94,8 @@ int Application::run()
             EDIT_DIRECTION(lighting.dirLightDir, -1, 1);
             auto bound = m_Scene.getDiagonalLength() / 2.f;
             EDIT_DIRECTION(lighting.pointLightPosition[0], -bound, bound);
-            ImGui::SliderFloat("near", &m_ViewController.near, 0.0001f, 1.f);
-            ImGui::SliderFloat("far", &m_ViewController.far, 100.f, 10000.f);
+            ImGui::SliderFloat("near", &m_ViewController.m_Near, 0.0001f, 1.f);
+            ImGui::SliderFloat("far", &m_ViewController.m_Far, 100.f, 10000.f);
             ImGui::SliderFloat("Point Light range", &lighting.pointLightRange[0], 0.01f, 1000);
             ImGui::SliderFloat("Point Light attenuation factor", &lighting.pointLightAttenuationFactor[0], 0, 100.f);
 #undef EDIT_DIRECTION

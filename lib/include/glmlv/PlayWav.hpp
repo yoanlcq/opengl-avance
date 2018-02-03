@@ -23,7 +23,7 @@ class OsPlayWav {
     bool m_HasAplayPid;
     pid_t m_AplayPid;
 #elif defined(_WIN32)
-#error "TODO: Support on Win32"
+	// Actually nothing here yet
 #else
 #error "Usupported platform"
 #endif

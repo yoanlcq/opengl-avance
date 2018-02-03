@@ -44,8 +44,15 @@ OsPlayWav& OsPlayWav::operator=(OsPlayWav&& o) {
 #elif defined(_WIN32)
 
 OsPlayWav::OsPlayWav(const fs::path& path) {
-    if(!PlaySoundA(path.string().c_str(), nullptr, SND_FILENAME)) {
-        std::cerr << "PlaySoundA error: " << GetLastError() << std::endl;
+	const auto flags = SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP;
+	const BOOL success = PlaySoundW(path.wstring().c_str(), nullptr, flags);
+    if(!success) {
+		auto err = GetLastError();
+		wchar_t buf[256];
+		FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			buf, sizeof(buf), NULL);
+        std::cerr << "Could not play \"" << path << "\": PlaySound error " << err << ": " << buf << std::endl;
     }
 }
 OsPlayWav::~OsPlayWav() {}

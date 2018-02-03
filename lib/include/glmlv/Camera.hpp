@@ -14,9 +14,9 @@ namespace glmlv {
 // build a perspective projection matrix.
 // We might want to add an orthographic projection mode too.
 struct Camera: public ViewController {
-    float fovy = glm::radians(60.f);
-    float near = 0.2;
-    float far = 5000;
+    float m_FovY = glm::radians(60.f);
+    float m_Near = 0.2;
+    float m_Far = 5000;
     size_t m_nWindowWidth = 0;
     size_t m_nWindowHeight = 0;
 
@@ -33,9 +33,9 @@ struct Camera: public ViewController {
         return m_nWindowWidth / float(m_nWindowHeight);
     }
     glm::mat4 getProjMatrix() const {
-        assert(fovy > 0);
-        assert(fovy < glm::radians(180.f));
-        return glm::perspective(fovy, getAspect(), near, far);
+        assert(m_FovY > 0);
+        assert(m_FovY < glm::radians(180.f));
+        return glm::perspective(m_FovY, getAspect(), m_Near, m_Far);
     }
 };
 
