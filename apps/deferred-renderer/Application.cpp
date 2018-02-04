@@ -53,8 +53,8 @@ int Application::run()
             if(ImGui::SliderFloat("Camera speed", &cameraSpeed, 0.001f, maxCameraSpeed)) {
                 m_ViewController.setSpeed(cameraSpeed);
             }
-            ImGui::SliderFloat("near", &m_ViewController.near, 0.0001f, 1.f);
-            ImGui::SliderFloat("far", &m_ViewController.far, 100.f, 10000.f);
+            ImGui::SliderFloat("near", &m_ViewController.m_Near, 0.0001f, 1.f);
+            ImGui::SliderFloat("far", &m_ViewController.m_Far, 100.f, 10000.f);
             ImGui::End();
         }
 
