@@ -1,5 +1,6 @@
 #include <glmlv/PlayWav.hpp>
 #include <iostream>
+#include <string.h>
 
 #if defined(__linux__)
 #include <unistd.h>
