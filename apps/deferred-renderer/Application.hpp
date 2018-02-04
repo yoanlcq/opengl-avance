@@ -37,8 +37,7 @@ private:
     const glmlv::Scene m_Scene;
     glmlv::Camera m_ViewController;
     glmlv::GLTexture2D m_GBufferTextures[GBufferTextureCount];
-    const GLenum m_GBufferTextureFormat[GBufferTextureCount] = { GL_RGB32F, GL_RGB32F, GL_RGB32F, GL_RGB32F, GL_RGBA32F, GL_DEPTH_COMPONENT32F };
-
+    static const GLenum static_GBufferTextureFormat[GBufferTextureCount];
     // NOTE: Make it static, so that the char pointer's lifetime is unbounded.
     // With the old code, the memory was freed before ImGUI wrote to the ini filename.
     static std::string static_ImGuiIniFilename;
