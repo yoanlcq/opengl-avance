@@ -47,7 +47,7 @@ private:
     const glmlv::GLTexture2D m_directionalSMTexture;
     GLuint m_directionalSMFBO;
     const glmlv::GLSampler m_directionalSMSampler;
-    static const size_t static_nDirectionalSMResolution = 512;
+    static const size_t static_nDirectionalSMResolution = 2048;
     // NOTE: Make it static, so that the char pointer's lifetime is unbounded.
     // With the old code, the memory was freed before ImGUI wrote to the ini filename.
     static std::string static_ImGuiIniFilename;

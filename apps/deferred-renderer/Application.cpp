@@ -37,20 +37,24 @@ int Application::run()
 
     int currentGBufferTextureType = GNormal;
 
-    // FIXME!!!
-    float m_DirLightPhiAngleDegrees = 0;
-    float m_DirLightThetaAngleDegrees = 0;
-    vec3 m_DirLightDirection(0,0,0);
+    float m_DirLightPhiAngleDegrees = 260; // Angle around Y
+    float m_DirLightThetaAngleDegrees = 260; // Angle around X
+    lighting.dirLightShadowMapBias = 0.05f;
+
+    bool debugs_gbuffers = false;
 
     // Loop until the user closes the window
     for (auto iterationCount = 0u; !m_GLFWHandle.shouldClose(); ++iterationCount)
     {
         const auto seconds = glfwGetTime();
 
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_Fbo);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        lighting.dirLightDir = vec3(
+            cos(radians(m_DirLightPhiAngleDegrees)) * sin(radians(m_DirLightThetaAngleDegrees)),
+            sin(radians(m_DirLightPhiAngleDegrees)) * sin(radians(m_DirLightThetaAngleDegrees)),
+            cos(radians(m_DirLightThetaAngleDegrees))
+        );
 
-        // Recalculer la shadow map à chaque fois mdr
+        // TODO PERF: Eviter de recalculer la shadow map tout le temps
         const auto computeDirectionVectorUp = [](float phiRadians, float thetaRadians) {
             const auto cosPhi = glm::cos(phiRadians);
             const auto sinPhi = glm::sin(phiRadians);
@@ -61,51 +65,57 @@ int Application::run()
         const float sceneRadius = m_Scene.getDiagonalLength() / 2.f;
 
         const auto dirLightUpVector = computeDirectionVectorUp(glm::radians(m_DirLightPhiAngleDegrees), glm::radians(m_DirLightThetaAngleDegrees));
-        const auto dirLightViewMatrix = glm::lookAt(sceneCenter + m_DirLightDirection * sceneRadius, sceneCenter, dirLightUpVector); // Will not work if m_DirLightDirection is colinear to lightUpVector
+        const auto dirLightViewMatrix = glm::lookAt(sceneCenter + lighting.dirLightDir * sceneRadius, sceneCenter, dirLightUpVector); // Will not work if lighting.dirLightDir is colinear to lightUpVector
         const auto dirLightProjMatrix = glm::ortho(-sceneRadius, sceneRadius, -sceneRadius, sceneRadius, 0.01f * sceneRadius, 2.f * sceneRadius);
 
+        // Render shadow map
         m_DirectionalSMProgram.use();
+        m_DirectionalSMProgram.setUniformDirLightViewProjMatrix(dirLightProjMatrix * dirLightViewMatrix);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_directionalSMFBO);
         glViewport(0, 0, static_nDirectionalSMResolution, static_nDirectionalSMResolution);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_Scene.render();
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glViewport(0, 0, m_nWindowWidth, m_nWindowHeight);
 
-        // Render everything
+        // Geometry Pass
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_Fbo);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_DeferredGPassProgram.use();
         m_DeferredGPassProgram.resetMaterialUniforms();
         m_Scene.render(m_DeferredGPassProgram, m_ViewController, sceneInstance);
 
+        // Shading Pass
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-#ifdef DEBUG_FBS
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, m_Fbo);
-        glReadBuffer(GL_COLOR_ATTACHMENT0 + currentGBufferTextureType);
-        const GLint sx0 = 0, sy0 = 0, dx0 = 0, dy0 = 0;
-        const GLint sx1 = m_nWindowWidth, sy1 = m_nWindowHeight, dx1 = sx1, dy1 = sy1;
-        glBlitFramebuffer(sx0, sy0, sx1, sy1, dx0, dy0, dx1, dy1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-#else
-        for(GLuint i=0 ; i<GBufferTextureCount ; ++i) {
-            glActiveTexture(GL_TEXTURE0 + i);
-            m_GBufferTextures[i].bind();
+        if(debugs_gbuffers) {
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, m_Fbo);
+            glReadBuffer(GL_COLOR_ATTACHMENT0 + currentGBufferTextureType);
+            const GLint sx0 = 0, sy0 = 0, dx0 = 0, dy0 = 0;
+            const GLint sx1 = m_nWindowWidth, sy1 = m_nWindowHeight, dx1 = sx1, dy1 = sy1;
+            glBlitFramebuffer(sx0, sy0, sx1, sy1, dx0, dy0, dx1, dy1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+        } else {
+            for(GLuint i=0 ; i<GBufferTextureCount ; ++i) {
+                glActiveTexture(GL_TEXTURE0 + i);
+                m_GBufferTextures[i].bind();
+            }
+            m_DeferredShadingPassProgram.use();
+            lighting.dirLightShadowMap = GBufferTextureCount;
+            glActiveTexture(GL_TEXTURE0 + lighting.dirLightShadowMap);
+            m_directionalSMTexture.bind();
+            m_directionalSMSampler.bindToTextureUnit(lighting.dirLightShadowMap);
+            lighting.dirLightViewProjMatrix = dirLightProjMatrix * dirLightViewMatrix * m_ViewController.getRcpViewMatrix();
+            lighting.dirLightDir = -lighting.dirLightDir;
+            m_DeferredShadingPassProgram.setLightingUniforms(lighting, m_ViewController);
+            lighting.dirLightDir = -lighting.dirLightDir;
+            m_DeferredShadingPassProgram.setUniformGPosition(0);
+            m_DeferredShadingPassProgram.setUniformGNormal(1);
+            m_DeferredShadingPassProgram.setUniformGAmbient(2);
+            m_DeferredShadingPassProgram.setUniformGDiffuse(3);
+            m_DeferredShadingPassProgram.setUniformGGlossyShininess(4);
+            screenCoverQuad.render();
         }
-        m_DeferredShadingPassProgram.use();
-        lighting.dirLightShadowMap = 0;
-        glActiveTexture(GL_TEXTURE0 + lighting.dirLightShadowMap);
-        m_directionalSMTexture.bind();
-        m_directionalSMSampler.bindToTextureUnit(lighting.dirLightShadowMap);
-        lighting.dirLightShadowMapBias = 0;
-        lighting.dirLightViewProjMatrix = dirLightProjMatrix * dirLightViewMatrix * m_ViewController.getRcpViewMatrix();
-        m_DeferredShadingPassProgram.setLightingUniforms(lighting, m_ViewController);
-        m_DeferredShadingPassProgram.setUniformGPosition(0);
-        m_DeferredShadingPassProgram.setUniformGNormal(1);
-        m_DeferredShadingPassProgram.setUniformGAmbient(2);
-        m_DeferredShadingPassProgram.setUniformGDiffuse(3);
-        m_DeferredShadingPassProgram.setUniformGGlossyShininess(4);
-        screenCoverQuad.render();
-#endif
 
         // GUI code:
         ImGui_ImplGlfwGL3_NewFrame();
@@ -117,12 +127,17 @@ int Application::run()
             if (ImGui::ColorEdit3("clearColor", &clearColor[0])) {
                 glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);
             }
-            ImGui::RadioButton("GPosition"       , &currentGBufferTextureType, GPosition);        ImGui::SameLine();
-            ImGui::RadioButton("GNormal"         , &currentGBufferTextureType, GNormal);          ImGui::SameLine();
-            ImGui::RadioButton("GAmbient"        , &currentGBufferTextureType, GAmbient);         ImGui::SameLine();
-            ImGui::RadioButton("GDiffuse"        , &currentGBufferTextureType, GDiffuse);         ImGui::SameLine();
-            ImGui::RadioButton("GGlossyShininess", &currentGBufferTextureType, GGlossyShininess); ImGui::SameLine();
-            ImGui::RadioButton("GDepth"          , &currentGBufferTextureType, GDepth);
+            if(ImGui::Button(debugs_gbuffers ? "See Final Scene" : "See G-Buffers")) {
+                debugs_gbuffers = !debugs_gbuffers;
+            }
+            if(debugs_gbuffers) {
+                ImGui::RadioButton("GPosition"       , &currentGBufferTextureType, GPosition);        ImGui::SameLine();
+                ImGui::RadioButton("GNormal"         , &currentGBufferTextureType, GNormal);          ImGui::SameLine();
+                ImGui::RadioButton("GAmbient"        , &currentGBufferTextureType, GAmbient);         ImGui::SameLine();
+                ImGui::RadioButton("GDiffuse"        , &currentGBufferTextureType, GDiffuse);         ImGui::SameLine();
+                ImGui::RadioButton("GGlossyShininess", &currentGBufferTextureType, GGlossyShininess); ImGui::SameLine();
+                ImGui::RadioButton("GDepth"          , &currentGBufferTextureType, GDepth);
+            }
 
             if(ImGui::SliderFloat("Camera speed", &cameraSpeed, 0.001f, maxCameraSpeed)) {
                 m_ViewController.setSpeed(cameraSpeed);
@@ -131,9 +146,11 @@ int Application::run()
 #define EDIT_DIRECTION(c, min, max) ImGui::SliderFloat3(#c, &c[0], min, max)
             EDIT_COLOR(lighting.dirLightIntensity);
             EDIT_COLOR(lighting.pointLightIntensity[0]);
-            EDIT_DIRECTION(lighting.dirLightDir, -1, 1);
             auto bound = m_Scene.getDiagonalLength() / 2.f;
             EDIT_DIRECTION(lighting.pointLightPosition[0], -bound, bound);
+            ImGui::SliderFloat("dirLight Phi", &m_DirLightPhiAngleDegrees, 0, 360);
+            ImGui::SliderFloat("dirLight Theta", &m_DirLightThetaAngleDegrees, 0, 360);
+            ImGui::SliderFloat("SM Bias", &lighting.dirLightShadowMapBias, 0, 10.f);
             ImGui::SliderFloat("near", &m_ViewController.m_Near, 0.0001f, 1.f);
             ImGui::SliderFloat("far", &m_ViewController.m_Far, 100.f, 10000.f);
             ImGui::SliderFloat("Point Light range", &lighting.pointLightRange[0], 0.01f, 1000);
@@ -238,8 +255,8 @@ Application::Application(int argc, char** argv):
     assert(m_directionalSMFBO);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_directionalSMFBO);
     glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  GL_TEXTURE_2D, m_directionalSMTexture.glId(), 0);
-    const GLenum smDrawBuffers[] = { GL_DEPTH_ATTACHMENT };
-    glDrawBuffers(1, smDrawBuffers);
+    // const GLenum smDrawBuffers[] = { GL_DEPTH_ATTACHMENT };
+    // glDrawBuffers(1, smDrawBuffers);
     handleFramebufferStatus(glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }

@@ -20,7 +20,7 @@ public:
         m_UniformDirLightViewProjMatrixLocation(getUniformLocation("uDirLightViewProjMatrix"))
         {}
 
-    void setUniformDirLightViewProjMatrixLocation(const glm::mat4& m) const {
+    void setUniformDirLightViewProjMatrix(const glm::mat4& m) const {
         glUniformMatrix4fv(m_UniformDirLightViewProjMatrixLocation, 1, GL_FALSE, &m[0][0]);
     }
 };
