@@ -173,6 +173,8 @@ int Application::run()
                 shadow_map_is_dirty = true;
             ImGui::Text(shadow_map_is_dirty ? "Shadow Map is dirty" : "Shadow Map is not dirty");
             ImGui::SliderFloat("SM Bias", &lighting.dirLightShadowMapBias, 0, 10.f);
+            ImGui::SliderInt("SM Sample Count", &lighting.dirLightShadowMapSampleCount, 1, 128);
+            ImGui::SliderFloat("SM Spread", &lighting.dirLightShadowMapSpread, 0, 0.01f);
             ImGui::SliderFloat("near", &m_ViewController.m_Near, 0.0001f, 1.f);
             ImGui::SliderFloat("far", &m_ViewController.m_Far, 100.f, 10000.f);
             ImGui::SliderFloat("Point Light range", &lighting.pointLightRange[0], 0.01f, 1000);
@@ -285,6 +287,9 @@ Application::Application(int argc, char** argv):
     // glDrawBuffers(1, smDrawBuffers);
     handleFramebufferStatus(glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+    glSamplerParameteri(m_directionalSMSampler.glId(), GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+    glSamplerParameteri(m_directionalSMSampler.glId(), GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 }
 
 std::string Application::static_ImGuiIniFilename;

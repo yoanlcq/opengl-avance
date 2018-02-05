@@ -12,40 +12,45 @@ namespace glmlv
 {
 
 class GLDeferredShadingPassProgram: public GLProgram {
-    const GLint m_UniformGPositionLocation                   = -1;
-    const GLint m_UniformGNormalLocation                     = -1;
-    const GLint m_UniformGAmbientLocation                    = -1;
-    const GLint m_UniformGDiffuseLocation                    = -1;
-    const GLint m_UniformGGlossyShininessLocation            = -1;
-    const GLint m_UniformDirectionalLightDirLocation         = -1;
-    const GLint m_UniformDirectionalLightIntensityLocation   = -1;
-    const GLint m_UniformPointLightPositionLocation          = -1;
-    const GLint m_UniformPointLightIntensityLocation         = -1;
-    const GLint m_UniformPointLightRangeLocation             = -1;
-    const GLint m_UniformPointLightAttenuationFactorLocation = -1;
-    const GLint m_UniformPointLightCountLocation             = -1;
-    const GLint m_UniformDirLightViewProjMatrix              = -1;
-    const GLint m_UniformDirLightShadowMap                   = -1;
-    const GLint m_UniformDirLightShadowMapBias               = -1;
+    const GLint m_UniformGPositionLocation                    = -1;
+    const GLint m_UniformGNormalLocation                      = -1;
+    const GLint m_UniformGAmbientLocation                     = -1;
+    const GLint m_UniformGDiffuseLocation                     = -1;
+    const GLint m_UniformGGlossyShininessLocation             = -1;
+    const GLint m_UniformDirectionalLightDirLocation          = -1;
+    const GLint m_UniformDirectionalLightIntensityLocation    = -1;
+    const GLint m_UniformPointLightPositionLocation           = -1;
+    const GLint m_UniformPointLightIntensityLocation          = -1;
+    const GLint m_UniformPointLightRangeLocation              = -1;
+    const GLint m_UniformPointLightAttenuationFactorLocation  = -1;
+    const GLint m_UniformPointLightCountLocation              = -1;
+    const GLint m_UniformDirLightViewProjMatrix               = -1;
+    const GLint m_UniformDirLightShadowMap                    = -1;
+    const GLint m_UniformDirLightShadowMapBias                = -1;
+    const GLint m_UniformDirLightShadowMapSampleCountLocation = -1;
+    const GLint m_UniformDirLightShadowMapSpreadLocation      = -1;
+
 
 public:
     GLDeferredShadingPassProgram(const fs::path& vs, const fs::path& fs):
         GLProgram(compileProgram({ vs.string(), fs.string() })),
-        m_UniformGPositionLocation                  (getUniformLocation("uGPosition")),
-        m_UniformGNormalLocation                    (getUniformLocation("uGNormal")),
-        m_UniformGAmbientLocation                   (getUniformLocation("uGAmbient")),
-        m_UniformGDiffuseLocation                   (getUniformLocation("uGDiffuse")),
-        m_UniformGGlossyShininessLocation           (getUniformLocation("uGGlossyShininess")),
-        m_UniformDirectionalLightDirLocation        (getUniformLocation("uDirectionalLightDir")),
-        m_UniformDirectionalLightIntensityLocation  (getUniformLocation("uDirectionalLightIntensity")),
-        m_UniformPointLightPositionLocation         (getUniformLocation("uPointLightPosition")),
-        m_UniformPointLightIntensityLocation        (getUniformLocation("uPointLightIntensity")),
-        m_UniformPointLightRangeLocation            (getUniformLocation("uPointLightRange")),
-        m_UniformPointLightAttenuationFactorLocation(getUniformLocation("uPointLightAttenuationFactor")),
-        m_UniformPointLightCountLocation            (getUniformLocation("uPointLightCount")),
-        m_UniformDirLightViewProjMatrix             (getUniformLocation("uDirLightViewProjMatrix")),
-        m_UniformDirLightShadowMap                  (getUniformLocation("uDirLightShadowMap")),
-        m_UniformDirLightShadowMapBias              (getUniformLocation("uDirLightShadowMapBias"))
+        m_UniformGPositionLocation                    (getUniformLocation("uGPosition")),
+        m_UniformGNormalLocation                      (getUniformLocation("uGNormal")),
+        m_UniformGAmbientLocation                     (getUniformLocation("uGAmbient")),
+        m_UniformGDiffuseLocation                     (getUniformLocation("uGDiffuse")),
+        m_UniformGGlossyShininessLocation             (getUniformLocation("uGGlossyShininess")),
+        m_UniformDirectionalLightDirLocation          (getUniformLocation("uDirectionalLightDir")),
+        m_UniformDirectionalLightIntensityLocation    (getUniformLocation("uDirectionalLightIntensity")),
+        m_UniformPointLightPositionLocation           (getUniformLocation("uPointLightPosition")),
+        m_UniformPointLightIntensityLocation          (getUniformLocation("uPointLightIntensity")),
+        m_UniformPointLightRangeLocation              (getUniformLocation("uPointLightRange")),
+        m_UniformPointLightAttenuationFactorLocation  (getUniformLocation("uPointLightAttenuationFactor")),
+        m_UniformPointLightCountLocation              (getUniformLocation("uPointLightCount")),
+        m_UniformDirLightViewProjMatrix               (getUniformLocation("uDirLightViewProjMatrix")),
+        m_UniformDirLightShadowMap                    (getUniformLocation("uDirLightShadowMap")),
+        m_UniformDirLightShadowMapBias                (getUniformLocation("uDirLightShadowMapBias")),
+        m_UniformDirLightShadowMapSampleCountLocation (getUniformLocation("uDirLightShadowMapSampleCount")),
+        m_UniformDirLightShadowMapSpreadLocation      (getUniformLocation("uDirLightShadowMapSpread"))
         {}
 
     // NOTE: Keep in sync with forward shader
@@ -58,6 +63,8 @@ public:
         glm::vec3 dirLightIntensity = glm::vec3(1,1,1);
         GLfloat dirLightShadowMapBias = 0;
         GLint dirLightShadowMap = 0;
+        GLint dirLightShadowMapSampleCount = 1;
+        GLfloat dirLightShadowMapSpread = 0.0005;
         glm::mat4 dirLightViewProjMatrix = glm::mat4(1);
         size_t pointLightCount = 1;
         glm::vec3 pointLightPosition[MAX_POINT_LIGHTS] = {};
@@ -74,6 +81,8 @@ public:
         setUniformDirLightViewProjMatrix(d.dirLightViewProjMatrix);
         setUniformDirLightShadowMap(d.dirLightShadowMap);
         setUniformDirLightShadowMapBias(d.dirLightShadowMapBias);
+        setUniformDirLightShadowMapSampleCount(d.dirLightShadowMapSampleCount);
+        setUniformDirLightShadowMapSpread(d.dirLightShadowMapSpread);
         setUniformPointLightCount(count);
         setUniformPointLightPosition(count, d.pointLightPosition, vc);
         setUniformPointLightIntensity(count, d.pointLightIntensity);
@@ -98,6 +107,12 @@ public:
     }
     void setUniformDirLightShadowMapBias(GLfloat bias) const {
         glUniform1f(m_UniformDirLightShadowMapBias, bias);
+    }
+    void setUniformDirLightShadowMapSampleCount(GLint i) const {
+        glUniform1i(m_UniformDirLightShadowMapSampleCountLocation, i);
+    }
+    void setUniformDirLightShadowMapSpread(GLfloat v) const {
+        glUniform1f(m_UniformDirLightShadowMapSpreadLocation, v);
     }
 
 
