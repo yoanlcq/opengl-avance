@@ -57,4 +57,6 @@ private:
     static const size_t static_nDirectionalSMResolution = 512;
     glmlv::GLTexture2D m_BeautyTexture;
     GLuint m_BeautyFBO;
+    glmlv::GLTexture2D m_GammaCorrectedBeautyTexture;
+    GLuint m_GammaCorrectedBeautyFBO;
 };

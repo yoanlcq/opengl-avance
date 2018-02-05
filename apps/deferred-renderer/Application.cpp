@@ -44,6 +44,7 @@ int Application::run()
     bool debugs_gbuffers = false;
     bool displays_shadow_map = false;
     bool shadow_map_is_dirty = true;
+    float gamma = 2.2f;
 
     // Loop until the user closes the window
     for (auto iterationCount = 0u; !m_GLFWHandle.shouldClose(); ++iterationCount)
@@ -131,9 +132,17 @@ int Application::run()
             screenCoverQuad.render();
         }
 
+        m_GammaCorrectProgram.use();
+        m_GammaCorrectProgram.setUniformGammaExponent(1.f / gamma);
+        m_GammaCorrectProgram.setUniformInputImage(0);
+        m_GammaCorrectProgram.setUniformOutputImage(1);
+        glBindImageTexture(0, m_BeautyTexture.glId(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+        glBindImageTexture(1, m_GammaCorrectedBeautyTexture.glId(), 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+        glDispatchCompute(m_nWindowWidth, m_nWindowHeight, 1);
+
         {
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-            glBindFramebuffer(GL_READ_FRAMEBUFFER, m_BeautyFBO);
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, m_GammaCorrectedBeautyFBO);
             glReadBuffer(GL_COLOR_ATTACHMENT0);
             const GLint sx0 = 0, sy0 = 0, dx0 = 0, dy0 = 0;
             const GLint sx1 = m_nWindowWidth, sy1 = m_nWindowHeight, dx1 = sx1, dy1 = sy1;
@@ -151,6 +160,7 @@ int Application::run()
             if (ImGui::ColorEdit3("clearColor", &clearColor[0])) {
                 glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);
             }
+            ImGui::SliderFloat("Gamma", &gamma, 0, 16);
             if(ImGui::Button(debugs_gbuffers ? "Hide G-Buffers" : "Show G-Buffers")) {
                 debugs_gbuffers = !debugs_gbuffers;
             }
@@ -269,7 +279,9 @@ Application::Application(int argc, char** argv):
     m_directionalSMFBO(0),
     m_directionalSMSampler(GLSamplerParams().withWrapST(GL_CLAMP_TO_BORDER).withMinMagFilter(GL_LINEAR)),
     m_BeautyTexture(GL_RGBA32F, (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight),
-    m_BeautyFBO(0)
+    m_BeautyFBO(0),
+    m_GammaCorrectedBeautyTexture(GL_RGBA32F, (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight),
+    m_GammaCorrectedBeautyFBO(0)
 {
     (void) argc;
     static_ImGuiIniFilename = m_AppName + ".imgui.ini";
@@ -309,6 +321,15 @@ Application::Application(int argc, char** argv):
     glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_BeautyTexture.glId(), 0);
     const GLenum beautyDrawBuffers[] = { GL_COLOR_ATTACHMENT0 };
     glDrawBuffers(1, beautyDrawBuffers);
+    handleFramebufferStatus(glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+    glGenFramebuffers(1, &m_GammaCorrectedBeautyFBO);
+    assert(m_GammaCorrectedBeautyFBO);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_GammaCorrectedBeautyFBO);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_GammaCorrectedBeautyTexture.glId(), 0);
+    const GLenum gcBeautyDrawBuffers[] = { GL_COLOR_ATTACHMENT0 };
+    glDrawBuffers(1, gcBeautyDrawBuffers);
     handleFramebufferStatus(glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
