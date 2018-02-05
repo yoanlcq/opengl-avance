@@ -42,6 +42,8 @@ int Application::run()
     lighting.dirLightShadowMapBias = 0.05f;
 
     bool debugs_gbuffers = false;
+    bool displays_shadow_map = false;
+    bool shadow_map_is_dirty = true;
 
     // Loop until the user closes the window
     for (auto iterationCount = 0u; !m_GLFWHandle.shouldClose(); ++iterationCount)
@@ -69,13 +71,16 @@ int Application::run()
         const auto dirLightProjMatrix = glm::ortho(-sceneRadius, sceneRadius, -sceneRadius, sceneRadius, 0.01f * sceneRadius, 2.f * sceneRadius);
 
         // Render shadow map
-        m_DirectionalSMProgram.use();
-        m_DirectionalSMProgram.setUniformDirLightViewProjMatrix(dirLightProjMatrix * dirLightViewMatrix);
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_directionalSMFBO);
-        glViewport(0, 0, static_nDirectionalSMResolution, static_nDirectionalSMResolution);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        m_Scene.render();
-        glViewport(0, 0, m_nWindowWidth, m_nWindowHeight);
+        if(shadow_map_is_dirty) {
+            shadow_map_is_dirty = false;
+            m_DirectionalSMProgram.use();
+            m_DirectionalSMProgram.setUniformDirLightViewProjMatrix(dirLightProjMatrix * dirLightViewMatrix);
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_directionalSMFBO);
+            glViewport(0, 0, static_nDirectionalSMResolution, static_nDirectionalSMResolution);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            m_Scene.render();
+            glViewport(0, 0, m_nWindowWidth, m_nWindowHeight);
+        }
 
         // Geometry Pass
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_Fbo);
@@ -117,6 +122,16 @@ int Application::run()
             screenCoverQuad.render();
         }
 
+        if(displays_shadow_map) {
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            m_DisplayDepthMapProgram.use();
+            m_DisplayDepthMapProgram.setUniformGDepth(0);
+            glActiveTexture(GL_TEXTURE0);
+            m_directionalSMTexture.bind();
+            m_directionalSMSampler.bindToTextureUnit(0);
+            screenCoverQuad.render();
+        }
+
         // GUI code:
         ImGui_ImplGlfwGL3_NewFrame();
 
@@ -127,8 +142,12 @@ int Application::run()
             if (ImGui::ColorEdit3("clearColor", &clearColor[0])) {
                 glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);
             }
-            if(ImGui::Button(debugs_gbuffers ? "See Final Scene" : "See G-Buffers")) {
+            if(ImGui::Button(debugs_gbuffers ? "Hide G-Buffers" : "Show G-Buffers")) {
                 debugs_gbuffers = !debugs_gbuffers;
+            }
+            ImGui::SameLine();
+            if(ImGui::Button(displays_shadow_map ? "Hide Shadow Map" : "Show Shadow Map")) {
+                displays_shadow_map = !displays_shadow_map;
             }
             if(debugs_gbuffers) {
                 ImGui::RadioButton("GPosition"       , &currentGBufferTextureType, GPosition);        ImGui::SameLine();
@@ -148,8 +167,11 @@ int Application::run()
             EDIT_COLOR(lighting.pointLightIntensity[0]);
             auto bound = m_Scene.getDiagonalLength() / 2.f;
             EDIT_DIRECTION(lighting.pointLightPosition[0], -bound, bound);
-            ImGui::SliderFloat("dirLight Phi", &m_DirLightPhiAngleDegrees, 0, 360);
-            ImGui::SliderFloat("dirLight Theta", &m_DirLightThetaAngleDegrees, 0, 360);
+            if(ImGui::SliderFloat("dirLight Phi", &m_DirLightPhiAngleDegrees, 0, 360))
+                shadow_map_is_dirty = true;
+            if(ImGui::SliderFloat("dirLight Theta", &m_DirLightThetaAngleDegrees, 0, 360))
+                shadow_map_is_dirty = true;
+            ImGui::Text(shadow_map_is_dirty ? "Shadow Map is dirty" : "Shadow Map is not dirty");
             ImGui::SliderFloat("SM Bias", &lighting.dirLightShadowMapBias, 0, 10.f);
             ImGui::SliderFloat("near", &m_ViewController.m_Near, 0.0001f, 1.f);
             ImGui::SliderFloat("far", &m_ViewController.m_Far, 100.f, 10000.f);
@@ -215,6 +237,10 @@ Application::Application(int argc, char** argv):
     m_DirectionalSMProgram(
         m_ShadersRootPath / m_AppName / "directionalSM.vs.glsl",
         m_ShadersRootPath / m_AppName / "directionalSM.fs.glsl"
+    ),
+    m_DisplayDepthMapProgram(
+        m_ShadersRootPath / m_AppName / "shadingPass.vs.glsl",
+        m_ShadersRootPath / m_AppName / "displayDepth.fs.glsl"
     ),
     m_GBufferTextures {
         { static_GBufferTextureFormat[0], (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight },
