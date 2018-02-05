@@ -4,7 +4,7 @@ uniform sampler2D uGPosition;
 uniform sampler2D uGNormal;
 uniform sampler2D uGAmbient;
 uniform sampler2D uGDiffuse;
-uniform sampler2D uGlossyShininess;
+uniform sampler2D uGGlossyShininess;
 
 uniform vec3 uDirectionalLightDir;
 uniform vec3 uDirectionalLightIntensity;
@@ -22,11 +22,11 @@ void main() {
     vec3 N        = texelFetch(uGNormal,         ivec2(gl_FragCoord.xy), 0).xyz;
     vec3 Ka       = texelFetch(uGAmbient,        ivec2(gl_FragCoord.xy), 0).xyz;
     vec3 Kd       = texelFetch(uGDiffuse,        ivec2(gl_FragCoord.xy), 0).xyz;
-    vec4 glossy   = texelFetch(uGlossyShininess, ivec2(gl_FragCoord.xy), 0);
+    vec4 glossy   = texelFetch(uGGlossyShininess, ivec2(gl_FragCoord.xy), 0);
     vec3 Ks = glossy.xyz;
     float shininess = glossy.w;
 
-    vec3 color = vec3(0,0,0);
+    vec3 color = Ka;
 
     // http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&teaching=opengl&teaching_section=tds&td=td8#intro
 

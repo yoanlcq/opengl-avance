@@ -15,6 +15,7 @@ int Application::run()
     vec3 clearColor(0, 186/255.f, 1.f);
     glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);
 
+    GLMesh screenCoverQuad(glmlv::makeScreenCoverQuad());
 
     GLDeferredShadingPassProgram::LightingUniforms lighting;
     lighting.dirLightDir = vec3(-1,-1,-1);
@@ -52,18 +53,27 @@ int Application::run()
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+#ifdef DEBUG_FBS
         glBindFramebuffer(GL_READ_FRAMEBUFFER, m_Fbo);
         glReadBuffer(GL_COLOR_ATTACHMENT0 + currentGBufferTextureType);
         const GLint sx0 = 0, sy0 = 0, dx0 = 0, dy0 = 0;
         const GLint sx1 = m_nWindowWidth, sy1 = m_nWindowHeight, dx1 = sx1, dy1 = sy1;
         glBlitFramebuffer(sx0, sy0, sx1, sy1, dx0, dy0, dx1, dy1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-
-
-        // XXX
-        // m_ForwardProgram.setLightingUniforms(lighting, m_ViewController);
-
-
+#else
+        for(GLuint i=0 ; i<GBufferTextureCount ; ++i) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            m_GBufferTextures[i].bind();
+        }
+        m_DeferredShadingPassProgram.use();
+        m_DeferredShadingPassProgram.setLightingUniforms(lighting, m_ViewController);
+        m_DeferredShadingPassProgram.setUniformGPosition(0);
+        m_DeferredShadingPassProgram.setUniformGNormal(1);
+        m_DeferredShadingPassProgram.setUniformGAmbient(2);
+        m_DeferredShadingPassProgram.setUniformGDiffuse(3);
+        m_DeferredShadingPassProgram.setUniformGGlossyShininess(4);
+        screenCoverQuad.render();
+#endif
 
         // GUI code:
         ImGui_ImplGlfwGL3_NewFrame();
