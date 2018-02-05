@@ -24,6 +24,9 @@ class GLDeferredShadingPassProgram: public GLProgram {
     const GLint m_UniformPointLightRangeLocation             = -1;
     const GLint m_UniformPointLightAttenuationFactorLocation = -1;
     const GLint m_UniformPointLightCountLocation             = -1;
+    const GLint m_UniformDirLightViewProjMatrix              = -1;
+    const GLint m_UniformDirLightShadowMap                   = -1;
+    const GLint m_UniformDirLightShadowMapBias               = -1;
 
 public:
     GLDeferredShadingPassProgram(const fs::path& vs, const fs::path& fs):
@@ -39,7 +42,10 @@ public:
         m_UniformPointLightIntensityLocation        (getUniformLocation("uPointLightIntensity")),
         m_UniformPointLightRangeLocation            (getUniformLocation("uPointLightRange")),
         m_UniformPointLightAttenuationFactorLocation(getUniformLocation("uPointLightAttenuationFactor")),
-        m_UniformPointLightCountLocation            (getUniformLocation("uPointLightCount"))
+        m_UniformPointLightCountLocation            (getUniformLocation("uPointLightCount")),
+        m_UniformDirLightViewProjMatrix             (getUniformLocation("uDirLightViewProjMatrix")),
+        m_UniformDirLightShadowMap                  (getUniformLocation("uDirLightShadowMap")),
+        m_UniformDirLightShadowMapBias              (getUniformLocation("uDirLightShadowMapBias"))
         {}
 
     // NOTE: Keep in sync with forward shader
@@ -50,6 +56,9 @@ public:
     struct LightingUniforms {
         glm::vec3 dirLightDir = glm::vec3(1,0,0);
         glm::vec3 dirLightIntensity = glm::vec3(1,1,1);
+        GLfloat dirLightShadowMapBias = 0;
+        GLint dirLightShadowMap = 0;
+        glm::mat4 dirLightViewProjMatrix = glm::mat4(1);
         size_t pointLightCount = 1;
         glm::vec3 pointLightPosition[MAX_POINT_LIGHTS] = {};
         glm::vec3 pointLightIntensity[MAX_POINT_LIGHTS] = {};
@@ -62,6 +71,9 @@ public:
         assert(count < MAX_POINT_LIGHTS);
         setUniformDirectionalLightDir(d.dirLightDir, vc);
         setUniformDirectionalLightIntensity(d.dirLightIntensity);
+        setUniformDirLightViewProjMatrix(d.dirLightViewProjMatrix);
+        setUniformDirLightShadowMap(d.dirLightShadowMap);
+        setUniformDirLightShadowMapBias(d.dirLightShadowMapBias);
         setUniformPointLightCount(count);
         setUniformPointLightPosition(count, d.pointLightPosition, vc);
         setUniformPointLightIntensity(count, d.pointLightIntensity);
@@ -77,6 +89,18 @@ public:
     void setUniformDirectionalLightIntensity(const glm::vec3& v) const {
         glUniform3fv(m_UniformDirectionalLightIntensityLocation, 1, &v[0]);
     }
+
+    void setUniformDirLightViewProjMatrix(const glm::mat4 &m) const {
+        glUniformMatrix4fv(m_UniformDirLightViewProjMatrix, 1, GL_FALSE, &m[0][0]);
+    }
+    void setUniformDirLightShadowMap(GLint i) const {
+        glUniform1i(m_UniformDirLightShadowMap, i);
+    }
+    void setUniformDirLightShadowMapBias(GLfloat bias) const {
+        glUniform1f(m_UniformDirLightShadowMapBias, bias);
+    }
+
+
     void setUniformPointLightPosition(size_t count, const glm::vec3* v, const ViewController& vc) const {
         assert(count < MAX_POINT_LIGHTS);
         auto view = vc.getViewMatrix();

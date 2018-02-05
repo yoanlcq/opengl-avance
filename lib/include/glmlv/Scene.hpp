@@ -126,6 +126,16 @@ struct Scene {
             indexOffset += indexCount;
         }
     }
+
+    void render() const {
+        glBindVertexArray(m_GLMesh.getVao());
+        auto indexOffset = 0u;
+        for(auto i=0u ; i < m_ObjData.shapeCount ; ++i) {
+            const auto indexCount = m_ObjData.indexCountPerShape[i];
+            glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, (void*) (indexOffset * sizeof(GLuint)));
+            indexOffset += indexCount;
+        }
+    }
 private:
     static ObjData objDataFromPath(const fs::path& path) {
         ObjData d;
