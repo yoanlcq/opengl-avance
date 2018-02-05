@@ -3,6 +3,7 @@
 #include <glmlv/filesystem.hpp>
 #include <glmlv/GLFWHandle.hpp>
 #include <glmlv/GLDeferredGPassProgram.hpp>
+#include <glmlv/GLDeferredShadingPassProgram.hpp>
 #include <glmlv/GLTexture2D.hpp>
 #include <glmlv/Scene.hpp>
 #include <glmlv/Camera.hpp>
@@ -34,6 +35,7 @@ private:
     const glmlv::fs::path m_AssetsRootPath;
     const glmlv::fs::path m_ShadersRootPath;
     const glmlv::GLDeferredGPassProgram m_DeferredGPassProgram;
+    const glmlv::GLDeferredShadingPassProgram m_DeferredShadingPassProgram;
     const glmlv::Scene m_Scene;
     glmlv::Camera m_ViewController;
     glmlv::GLTexture2D m_GBufferTextures[GBufferTextureCount];
