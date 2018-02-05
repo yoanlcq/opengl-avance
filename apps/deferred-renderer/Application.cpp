@@ -22,22 +22,30 @@ int Application::run()
     SceneInstanceData sceneInstance;
     sceneInstance.modelMatrix = translate(mat4(1), vec3(2,0,-2));
 
+    int currentGBufferTextureType = GNormal;
+
     // Loop until the user closes the window
     for (auto iterationCount = 0u; !m_GLFWHandle.shouldClose(); ++iterationCount)
     {
         const auto seconds = glfwGetTime();
 
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_Fbo);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Render everything
         m_DeferredGPassProgram.use();
         m_DeferredGPassProgram.resetMaterialUniforms();
-        static bool hasWarned = false;
-        if(!hasWarned) {
-            hasWarned = true;
-            std::cout << "NOTE: We're not rendering anything right now!" << std::endl;
-        }
-        // m_Scene.render(m_DeferredGPassProgram, m_ViewController, sceneInstance); // FIXME
+        m_Scene.render(m_DeferredGPassProgram, m_ViewController, sceneInstance);
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, m_Fbo);
+        glReadBuffer(GL_COLOR_ATTACHMENT0 + currentGBufferTextureType);
+        const GLint sx0 = 0, sy0 = 0, dx0 = 0, dy0 = 0;
+        const GLint sx1 = m_nWindowWidth, sy1 = m_nWindowHeight, dx1 = sx1, dy1 = sy1;
+        glBlitFramebuffer(sx0, sy0, sx1, sy1, dx0, dy0, dx1, dy1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
         // GUI code:
         ImGui_ImplGlfwGL3_NewFrame();
@@ -49,6 +57,12 @@ int Application::run()
             if (ImGui::ColorEdit3("clearColor", &clearColor[0])) {
                 glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.f);
             }
+            ImGui::RadioButton("GPosition"       , &currentGBufferTextureType, GPosition);        ImGui::SameLine();
+            ImGui::RadioButton("GNormal"         , &currentGBufferTextureType, GNormal);          ImGui::SameLine();
+            ImGui::RadioButton("GAmbient"        , &currentGBufferTextureType, GAmbient);         ImGui::SameLine();
+            ImGui::RadioButton("GDiffuse"        , &currentGBufferTextureType, GDiffuse);         ImGui::SameLine();
+            ImGui::RadioButton("GGlossyShininess", &currentGBufferTextureType, GGlossyShininess); ImGui::SameLine();
+            ImGui::RadioButton("GDepth"          , &currentGBufferTextureType, GDepth);
 
             if(ImGui::SliderFloat("Camera speed", &cameraSpeed, 0.001f, maxCameraSpeed)) {
                 m_ViewController.setSpeed(cameraSpeed);
@@ -96,12 +110,45 @@ Application::Application(int argc, char** argv):
         { static_GBufferTextureFormat[3], (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight },
         { static_GBufferTextureFormat[4], (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight },
         { static_GBufferTextureFormat[5], (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight }
-    }
+    },
+    m_Fbo(0)
 {
     (void) argc;
     static_ImGuiIniFilename = m_AppName + ".imgui.ini";
     ImGui::GetIO().IniFilename = static_ImGuiIniFilename.c_str(); // At exit, ImGUI will store its windows positions in this file
+
     glEnable(GL_DEPTH_TEST);
+
+    glGenFramebuffers(1, &m_Fbo);
+    assert(m_Fbo);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_Fbo);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_GBufferTextures[0].glId(), 0);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_GBufferTextures[1].glId(), 0);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_GBufferTextures[2].glId(), 0);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, m_GBufferTextures[3].glId(), 0);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, m_GBufferTextures[4].glId(), 0);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  GL_TEXTURE_2D, m_GBufferTextures[5].glId(), 0);
+
+    const GLenum drawBuffers[] = {
+        GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4
+    };
+    glDrawBuffers(5, drawBuffers);
+    GLenum status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+#define CASE(x) case x: std::cerr << "Invalid Framebuffer: " << #x << std::endl; throw std::runtime_error("Invalid Framebuffer"); break;
+    switch(status) {
+    case GL_FRAMEBUFFER_COMPLETE: std::cout << "Framebuffer OK" << std::endl; break;
+    case 0: std::cerr << "Framebuffer status: Unknown error" << std::endl; break;
+    CASE(GL_FRAMEBUFFER_UNDEFINED);
+    CASE(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT);
+    CASE(GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT);
+    CASE(GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER);
+    CASE(GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER);
+    CASE(GL_FRAMEBUFFER_UNSUPPORTED);
+    CASE(GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE);
+    CASE(GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS);
+    }
+#undef CASE
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
 std::string Application::static_ImGuiIniFilename;

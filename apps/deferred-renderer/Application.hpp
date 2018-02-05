@@ -37,6 +37,7 @@ private:
     const glmlv::Scene m_Scene;
     glmlv::Camera m_ViewController;
     glmlv::GLTexture2D m_GBufferTextures[GBufferTextureCount];
+    GLuint m_Fbo;
     static const GLenum static_GBufferTextureFormat[GBufferTextureCount];
     // NOTE: Make it static, so that the char pointer's lifetime is unbounded.
     // With the old code, the memory was freed before ImGUI wrote to the ini filename.
