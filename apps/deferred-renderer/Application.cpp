@@ -253,6 +253,9 @@ Application::Application(int argc, char** argv):
         m_ShadersRootPath / m_AppName / "shadingPass.vs.glsl",
         m_ShadersRootPath / m_AppName / "displayDepth.fs.glsl"
     ),
+    m_GammaCorrectProgram(
+        m_ShadersRootPath / m_AppName / "gammaCorrect.cs.glsl"
+    ),
     m_GBufferTextures {
         { static_GBufferTextureFormat[0], (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight },
         { static_GBufferTextureFormat[1], (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight },

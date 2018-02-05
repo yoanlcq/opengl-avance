@@ -6,6 +6,7 @@
 #include <glmlv/GLDeferredShadingPassProgram.hpp>
 #include <glmlv/GLDirectionalSMProgram.hpp>
 #include <glmlv/GLDisplayDepthMapProgram.hpp>
+#include <glmlv/GLGammaCorrectProgram.hpp>
 #include <glmlv/GLTexture2D.hpp>
 #include <glmlv/GLSampler.hpp>
 #include <glmlv/Scene.hpp>
@@ -46,6 +47,7 @@ private:
     const glmlv::GLDeferredShadingPassProgram m_DeferredShadingPassProgram;
     const glmlv::GLDirectionalSMProgram m_DirectionalSMProgram;
     const glmlv::GLDisplayDepthMapProgram m_DisplayDepthMapProgram;
+    const glmlv::GLGammaCorrectProgram m_GammaCorrectProgram;
     glmlv::GLTexture2D m_GBufferTextures[GBufferTextureCount];
     static const GLenum static_GBufferTextureFormat[GBufferTextureCount];
     GLuint m_Fbo;
