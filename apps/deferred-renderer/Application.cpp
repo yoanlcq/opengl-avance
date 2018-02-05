@@ -56,7 +56,6 @@ int Application::run()
             cos(radians(m_DirLightThetaAngleDegrees))
         );
 
-        // TODO PERF: Eviter de recalculer la shadow map tout le temps
         const auto computeDirectionVectorUp = [](float phiRadians, float thetaRadians) {
             const auto cosPhi = glm::cos(phiRadians);
             const auto sinPhi = glm::sin(phiRadians);
@@ -90,7 +89,7 @@ int Application::run()
         m_Scene.render(m_DeferredGPassProgram, m_ViewController, sceneInstance);
 
         // Shading Pass
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_BeautyFBO);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if(debugs_gbuffers) {
@@ -130,6 +129,16 @@ int Application::run()
             m_directionalSMTexture.bind();
             m_directionalSMSampler.bindToTextureUnit(0);
             screenCoverQuad.render();
+        }
+
+        {
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, m_BeautyFBO);
+            glReadBuffer(GL_COLOR_ATTACHMENT0);
+            const GLint sx0 = 0, sy0 = 0, dx0 = 0, dy0 = 0;
+            const GLint sx1 = m_nWindowWidth, sy1 = m_nWindowHeight, dx1 = sx1, dy1 = sy1;
+            glBlitFramebuffer(sx0, sy0, sx1, sy1, dx0, dy0, dx1, dy1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
         }
 
         // GUI code:
@@ -255,7 +264,9 @@ Application::Application(int argc, char** argv):
     m_Fbo(0),
     m_directionalSMTexture(GL_DEPTH_COMPONENT32F, static_nDirectionalSMResolution, static_nDirectionalSMResolution),
     m_directionalSMFBO(0),
-    m_directionalSMSampler(GLSamplerParams().withWrapST(GL_CLAMP_TO_BORDER).withMinMagFilter(GL_LINEAR))
+    m_directionalSMSampler(GLSamplerParams().withWrapST(GL_CLAMP_TO_BORDER).withMinMagFilter(GL_LINEAR)),
+    m_BeautyTexture(GL_RGBA32F, (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight),
+    m_BeautyFBO(0)
 {
     (void) argc;
     static_ImGuiIniFilename = m_AppName + ".imgui.ini";
@@ -283,13 +294,20 @@ Application::Application(int argc, char** argv):
     assert(m_directionalSMFBO);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_directionalSMFBO);
     glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  GL_TEXTURE_2D, m_directionalSMTexture.glId(), 0);
-    // const GLenum smDrawBuffers[] = { GL_DEPTH_ATTACHMENT };
-    // glDrawBuffers(1, smDrawBuffers);
     handleFramebufferStatus(glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
     glSamplerParameteri(m_directionalSMSampler.glId(), GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
     glSamplerParameteri(m_directionalSMSampler.glId(), GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+
+    glGenFramebuffers(1, &m_BeautyFBO);
+    assert(m_BeautyFBO);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_BeautyFBO);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_BeautyTexture.glId(), 0);
+    const GLenum beautyDrawBuffers[] = { GL_COLOR_ATTACHMENT0 };
+    glDrawBuffers(1, beautyDrawBuffers);
+    handleFramebufferStatus(glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
 std::string Application::static_ImGuiIniFilename;

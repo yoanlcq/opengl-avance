@@ -29,6 +29,9 @@ public:
 
     int run();
 private:
+    // NOTE: Make it static, so that the char pointer's lifetime is unbounded.
+    // With the old code, the memory was freed before ImGUI wrote to the ini filename.
+    static std::string static_ImGuiIniFilename;
     const size_t m_nWindowWidth = 1280;
     const size_t m_nWindowHeight = 720;
     glmlv::GLFWHandle m_GLFWHandle{ m_nWindowWidth, m_nWindowHeight, "Deferred Rendering" }; // Note: the handle must be declared before the creation of any object managing OpenGL resource (e.g. glmlv::GLProgram, GLShader)
@@ -50,7 +53,6 @@ private:
     GLuint m_directionalSMFBO;
     const glmlv::GLSampler m_directionalSMSampler;
     static const size_t static_nDirectionalSMResolution = 512;
-    // NOTE: Make it static, so that the char pointer's lifetime is unbounded.
-    // With the old code, the memory was freed before ImGUI wrote to the ini filename.
-    static std::string static_ImGuiIniFilename;
+    glmlv::GLTexture2D m_BeautyTexture;
+    GLuint m_BeautyFBO;
 };
