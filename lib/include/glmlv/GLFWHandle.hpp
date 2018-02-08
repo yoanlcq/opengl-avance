@@ -54,7 +54,10 @@ public:
 
         glfwMakeContextCurrent(m_pWindow);
 
-        glfwSwapInterval(1); // Erm, do use VSync
+        const char* vsync_str = std::getenv("VSYNC");
+        int vsync_setting = vsync_str ? atoi(vsync_str) : 1;
+        std::cout << "Calling glfwSwapInterval(" << vsync_setting << ") " << (vsync_str ? "(from VSYNC env var)" : "(VSYNC env var wasn't set)") << std::endl;
+        glfwSwapInterval(vsync_setting);
 
         if (!gladLoadGL()) {
             std::cerr << "Unable to init OpenGL.\n";

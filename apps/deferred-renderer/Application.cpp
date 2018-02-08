@@ -41,6 +41,7 @@ int Application::run()
     float m_DirLightThetaAngleDegrees = 260; // Angle around X
     lighting.dirLightShadowMapBias = 0.05f;
 
+    bool post_processing_is_enabled = true;
     bool debugs_gbuffers = false;
     bool displays_shadow_map = false;
     bool shadow_map_is_dirty = true;
@@ -90,7 +91,7 @@ int Application::run()
         m_Scene.render(m_DeferredGPassProgram, m_ViewController, sceneInstance);
 
         // Shading Pass
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_BeautyFBO);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, !!(post_processing_is_enabled) * m_BeautyFBO);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if(debugs_gbuffers) {
@@ -132,22 +133,26 @@ int Application::run()
             screenCoverQuad.render();
         }
 
-        m_GammaCorrectProgram.use();
-        m_GammaCorrectProgram.setUniformGammaExponent(1.f / gamma);
-        m_GammaCorrectProgram.setUniformInputImage(0);
-        m_GammaCorrectProgram.setUniformOutputImage(1);
-        glBindImageTexture(0, m_BeautyTexture.glId(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
-        glBindImageTexture(1, m_GammaCorrectedBeautyTexture.glId(), 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-        glDispatchCompute(m_nWindowWidth, m_nWindowHeight, 1);
+        if(post_processing_is_enabled) {
+            m_GammaCorrectProgram.use();
+            m_GammaCorrectProgram.setUniformGammaExponent(1.f / gamma);
+            m_GammaCorrectProgram.setUniformInputImage(0);
+            m_GammaCorrectProgram.setUniformOutputImage(1);
+            glBindImageTexture(0, m_BeautyTexture.glId(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+            glBindImageTexture(1, m_GammaCorrectedBeautyTexture.glId(), 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+            // NOTE!!!! 32 = local_size dans le compute shader. 
+            glDispatchCompute(1 + m_nWindowWidth / 32, 1 + m_nWindowHeight / 32, 1);
+            glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
-        {
-            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-            glBindFramebuffer(GL_READ_FRAMEBUFFER, m_GammaCorrectedBeautyFBO);
-            glReadBuffer(GL_COLOR_ATTACHMENT0);
-            const GLint sx0 = 0, sy0 = 0, dx0 = 0, dy0 = 0;
-            const GLint sx1 = m_nWindowWidth, sy1 = m_nWindowHeight, dx1 = sx1, dy1 = sy1;
-            glBlitFramebuffer(sx0, sy0, sx1, sy1, dx0, dy0, dx1, dy1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-            glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+            {
+                glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+                glBindFramebuffer(GL_READ_FRAMEBUFFER, m_GammaCorrectedBeautyFBO);
+                glReadBuffer(GL_COLOR_ATTACHMENT0);
+                const GLint sx0 = 0, sy0 = 0, dx0 = 0, dy0 = 0;
+                const GLint sx1 = m_nWindowWidth, sy1 = m_nWindowHeight, dx1 = sx1, dy1 = sy1;
+                glBlitFramebuffer(sx0, sy0, sx1, sy1, dx0, dy0, dx1, dy1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+                glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+            }
         }
 
         // GUI code:
@@ -167,6 +172,9 @@ int Application::run()
             ImGui::SameLine();
             if(ImGui::Button(displays_shadow_map ? "Hide Shadow Map" : "Show Shadow Map")) {
                 displays_shadow_map = !displays_shadow_map;
+            }
+            if(ImGui::Button(post_processing_is_enabled ? "Disable post-processing" : "Enable post-processing")) {
+                post_processing_is_enabled = !post_processing_is_enabled;
             }
             if(debugs_gbuffers) {
                 ImGui::RadioButton("GPosition"       , &currentGBufferTextureType, GPosition);        ImGui::SameLine();
