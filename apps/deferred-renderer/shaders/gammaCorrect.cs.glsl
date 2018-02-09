@@ -7,6 +7,9 @@ uniform float uGammaExponent;
 //uniform int uBlurMatrixHalfSide;
 const int uBlurMatrixHalfSide = 4;
 
+// 0 => simple; 1 => box blur; 2 => motion blur
+#define MODE 2
+
 void main() {
     ivec2 inputImageSize = imageSize(uInputImage);
     ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
@@ -14,7 +17,11 @@ void main() {
     if(pixelCoords.x >= inputImageSize.x || pixelCoords.y >= inputImageSize.y)
         return;
 
-#if 1
+    vec4 pixel = vec4(0);
+
+#if MODE==0
+    pixel = imageLoad(uInputImage, pixelCoords);
+#elif MODE==1
     vec4 accum = vec4(0);
     int s = uBlurMatrixHalfSide;
 
@@ -24,10 +31,24 @@ void main() {
             accum += imageLoad(uInputImage, coords);
         }
     }
-    vec4 pixel = accum / ((s+s+1)*(s+s+1));
+    pixel = accum / ((s+s+1)*(s+s+1));
+#elif MODE==2
+    // https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch27.html
+    
+    vec2 coords = vec2(pixelCoords);
+    const uint numSamples = 32;
+    vec2 center = vec2(inputImageSize)/2.0f;
+    vec2 velocityFromCenter = (center - coords) / float(numSamples);
+    float upperLength = 20.0f / float(numSamples);
+    vec2 velocity = length(velocityFromCenter) < upperLength ? velocityFromCenter : upperLength * normalize(velocityFromCenter);
+    for(uint i = 0; i < numSamples; ++i, coords += velocity) {
+        pixel += imageLoad(uInputImage, ivec2(round(coords)));
+    }
+    pixel /= float(numSamples);
 #else
-    vec4 pixel = imageLoad(uInputImage, pixelCoords);
+#error Invalid MODE value
 #endif
+    
     pixel.rgb = pow(pixel.rgb, vec3(uGammaExponent));
     imageStore(uOutputImage, pixelCoords, pixel);
 }
