@@ -76,26 +76,27 @@ void main() {
     }
     dirLightVisibility /= dirSampleCountf;
 
-
     vec3 color = Ka;
 
     // http://igm.univ-mlv.fr/~lnoel/index.php?section=teaching&teaching=opengl&teaching_section=tds&td=td8#intro
 
     vec3 wo = vec3(0,0,1);
 
-    vec3 wi = -uDirectionalLightDir; // Expected to be normalized
-    vec3 Li = uDirectionalLightIntensity;
-    vec3 halfVector = normalize(mix(wo, wi, 0.5));
-    color += dirLightVisibility * Li*(Kd*dot(wi, N) + pow(Ks*dot(halfVector, N), vec3(shininess)));
+    const vec3 SMALL3 = vec3(0.001f);
+    vec3 wi, Li, halfVector;
+
+    wi = -uDirectionalLightDir; // Expected to be normalized
+    Li = uDirectionalLightIntensity;
+    halfVector = normalize(mix(wo, wi, 0.5));
+    color += dirLightVisibility * Li*(Kd*dot(wi, N) + pow(max(SMALL3, Ks*dot(halfVector, N)), max(SMALL3, vec3(shininess))));
 
     for(uint i=0u ; i<uPointLightCount ; ++i) {
         float distFromPointLight = length(uPointLightPosition[i] - position);
         wi = (uPointLightPosition[i] - position) / distFromPointLight;
         Li = uPointLightIntensity[i] / (uPointLightAttenuationFactor[i] * pow(max(1, distFromPointLight / uPointLightRange[i]), 2));
         halfVector = normalize(mix(wo, wi, 0.5));
-        color += Li*(Kd*dot(wi, N) + pow(Ks*dot(halfVector, N), vec3(shininess)));
+        color += Li*(Kd*dot(wi, N) + pow(max(SMALL3, Ks*dot(halfVector, N)), max(SMALL3, vec3(shininess))));
     }
 
     fColor = vec4(color, 1); // FIXME make alpha vary
-
 }
