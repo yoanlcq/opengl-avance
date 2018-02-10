@@ -6,7 +6,7 @@ set (CMAKE_CXX_STANDARD 11)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
     set (CMAKE_CXX_STANDARD 14)
-    add_definitions(-std=c++14 -Wall -Wextra)
+    add_definitions(-std=c++14 -Wall -Wextra -Wno-misleading-indentation)
 endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
