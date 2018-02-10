@@ -142,7 +142,7 @@ int Application::run()
             glBindImageTexture(1, m_GammaCorrectedBeautyTexture.glId(), 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
             // NOTE!!!! 32 = local_size dans le compute shader. 
             glDispatchCompute(1 + m_nWindowWidth / 32, 1 + m_nWindowHeight / 32, 1);
-            glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+            glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_FRAMEBUFFER_BARRIER_BIT);
 
             {
                 glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
