@@ -13,9 +13,8 @@
 #include <glmlv/Camera.hpp>
 
 // TODO:
-// - Integrate forward rendering
-// - Make lighting data common
 // - Clean-up lighting data
+// - Fix postFX for forward pipeline
 
 void handleFboStatus(GLenum status);
 
@@ -102,7 +101,6 @@ struct DeferredRendering {
     const glmlv::GLDeferredShadingPassProgram m_ShadingPassProgram;
     glmlv::GLTexture2D                        m_GBufferTextures[GBufferTextureCount];
     GLuint                                    m_GBufferFbo;
-    glmlv::CommonLighting                     m_Lighting;
 
     bool m_GuiDisplaysGBufferTextures;
     int m_GuiGBufferTexIndex;
@@ -125,7 +123,6 @@ struct DeferredRendering {
             { GL_DEPTH_COMPONENT32F, w, h }
         },
         m_GBufferFbo(0),
-        m_Lighting(),
         m_GuiDisplaysGBufferTextures(false),
         m_GuiGBufferTexIndex(GNormal)
     {
@@ -255,12 +252,16 @@ private:
     glmlv::GLFWHandle m_GLFWHandle{ m_nWindowWidth, m_nWindowHeight, "Creating Dimensions" }; // Note: the handle must be declared before the creation of any object managing OpenGL resource (e.g. glmlv::GLProgram, GLShader)
 
     Paths m_Paths;
+    static const int PIPELINE_FORWARD = 1;
+    static const int PIPELINE_DEFERRED = 2;
+    int m_PipelineKind;
     ForwardRendering m_ForwardRendering;
     DeferredRendering m_DeferredRendering;
     DirectionalShadowMapping m_DirectionalShadowMapping;
     PostFX m_PostFX;
 
     glm::vec3 m_ClearColor;
+    glmlv::CommonLighting m_Lighting;
     float m_DirLightPhiAngleDegrees; // Angle around Y
     float m_DirLightThetaAngleDegrees; // Angle around X
     glmlv::GLMesh m_ScreenCoverQuad;

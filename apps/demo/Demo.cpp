@@ -56,36 +56,46 @@ void Demo::renderGUI() {
         ImGui::SliderFloat("Near", &m_Camera.m_Near, 0.0001f, 1.f);
         ImGui::SliderFloat("Far", &m_Camera.m_Far, 100.f, 10000.f);
     }
-    if(ImGui::CollapsingHeader("Deferred Rendering")) {
-        ImGui::Checkbox("Debug G-Buffers", &m_DeferredRendering.m_GuiDisplaysGBufferTextures);
-        ImGui::Text("Which one:");
-        ImGui::RadioButton("GPosition"       , &m_DeferredRendering.m_GuiGBufferTexIndex, GPosition);       
-        ImGui::RadioButton("GNormal"         , &m_DeferredRendering.m_GuiGBufferTexIndex, GNormal);         
-        ImGui::RadioButton("GAmbient"        , &m_DeferredRendering.m_GuiGBufferTexIndex, GAmbient);        
-        ImGui::RadioButton("GDiffuse"        , &m_DeferredRendering.m_GuiGBufferTexIndex, GDiffuse);        
-        ImGui::RadioButton("GGlossyShininess", &m_DeferredRendering.m_GuiGBufferTexIndex, GGlossyShininess);
-        ImGui::RadioButton("GDepth"          , &m_DeferredRendering.m_GuiGBufferTexIndex, GDepth);
+    ImGui::Text("Pipeline: ");
+    ImGui::RadioButton("Forward", &m_PipelineKind, PIPELINE_FORWARD);
+    ImGui::RadioButton("Deferred", &m_PipelineKind, PIPELINE_DEFERRED);
+
+    switch(m_PipelineKind) {
+    case PIPELINE_FORWARD:
+        break;
+    case PIPELINE_DEFERRED:
+        if(ImGui::CollapsingHeader("Deferred Rendering")) {
+            ImGui::Checkbox("Debug G-Buffers", &m_DeferredRendering.m_GuiDisplaysGBufferTextures);
+            ImGui::Text("Which one:");
+            ImGui::RadioButton("GPosition"       , &m_DeferredRendering.m_GuiGBufferTexIndex, GPosition);       
+            ImGui::RadioButton("GNormal"         , &m_DeferredRendering.m_GuiGBufferTexIndex, GNormal);         
+            ImGui::RadioButton("GAmbient"        , &m_DeferredRendering.m_GuiGBufferTexIndex, GAmbient);        
+            ImGui::RadioButton("GDiffuse"        , &m_DeferredRendering.m_GuiGBufferTexIndex, GDiffuse);        
+            ImGui::RadioButton("GGlossyShininess", &m_DeferredRendering.m_GuiGBufferTexIndex, GGlossyShininess);
+            ImGui::RadioButton("GDepth"          , &m_DeferredRendering.m_GuiGBufferTexIndex, GDepth);
+        }
+        break;
     }
     if(ImGui::CollapsingHeader("Point Lights")) {
         const float sceneBoundary = m_Sponza.getDiagonalLength() / 2.f;
-        ImGui::SliderInt("Count", &m_DeferredRendering.m_Lighting.pointLightCount, 0, GLDeferredShadingPassProgram::MAX_POINT_LIGHTS);
+        ImGui::SliderInt("Count", &m_Lighting.pointLightCount, 0, GLDeferredShadingPassProgram::MAX_POINT_LIGHTS);
         ImGui::Indent();
-        for(int i=0 ; i<m_DeferredRendering.m_Lighting.pointLightCount ; ++i) {
+        for(int i=0 ; i<m_Lighting.pointLightCount ; ++i) {
             char txt[32];
             snprintf(txt, sizeof txt, "Point Light n°%i", i);
             ImGui::PushID(i);
             if(ImGui::CollapsingHeader(txt)) {
-                ImGui::ColorEdit3("Intensity", &m_DeferredRendering.m_Lighting.pointLightIntensity[i][0]);
-                ImGui::SliderFloat3("Position", &m_DeferredRendering.m_Lighting.pointLightPosition[i][0], -sceneBoundary, sceneBoundary);
-                ImGui::SliderFloat("Range", &m_DeferredRendering.m_Lighting.pointLightRange[i], 0.01f, 1000);
-                ImGui::SliderFloat("Attenuation Factor", &m_DeferredRendering.m_Lighting.pointLightAttenuationFactor[i], 0, 100.f);
+                ImGui::ColorEdit3("Intensity", &m_Lighting.pointLightIntensity[i][0]);
+                ImGui::SliderFloat3("Position", &m_Lighting.pointLightPosition[i][0], -sceneBoundary, sceneBoundary);
+                ImGui::SliderFloat("Range", &m_Lighting.pointLightRange[i], 0.01f, 1000);
+                ImGui::SliderFloat("Attenuation Factor", &m_Lighting.pointLightAttenuationFactor[i], 0, 100.f);
             }
             ImGui::PopID();
         }
         ImGui::Unindent();
     }
     if(ImGui::CollapsingHeader("Directional Light")) {
-        ImGui::ColorEdit3("Intensity", &m_DeferredRendering.m_Lighting.dirLightIntensity[0]);
+        ImGui::ColorEdit3("Intensity", &m_Lighting.dirLightIntensity[0]);
         if(ImGui::SliderFloat("Phi Angle", &m_DirLightPhiAngleDegrees, 0, 360))
             m_DirectionalShadowMapping.m_IsDirty = true;
         if(ImGui::SliderFloat("Theta Angle", &m_DirLightThetaAngleDegrees, 0, 360))
@@ -95,9 +105,9 @@ void Demo::renderGUI() {
         if(ImGui::CollapsingHeader("Directional Shadow Mapping")) {
             ImGui::Checkbox("Show Shadow Map", &m_DirectionalShadowMapping.m_GuiDisplaysShadowMap);
             ImGui::Text(m_DirectionalShadowMapping.m_IsDirty ? "Shadow Map is dirty" : "Shadow Map is not dirty");
-            ImGui::SliderFloat("Bias", &m_DeferredRendering.m_Lighting.dirLightShadowMapBias, 0, 10.f);
-            ImGui::SliderInt("Sample Count", &m_DeferredRendering.m_Lighting.dirLightShadowMapSampleCount, 1, 128);
-            ImGui::SliderFloat("Spread", &m_DeferredRendering.m_Lighting.dirLightShadowMapSpread, 0, 0.01f);
+            ImGui::SliderFloat("Bias", &m_Lighting.dirLightShadowMapBias, 0, 10.f);
+            ImGui::SliderInt("Sample Count", &m_Lighting.dirLightShadowMapSampleCount, 1, 128);
+            ImGui::SliderFloat("Spread", &m_Lighting.dirLightShadowMapSpread, 0, 0.01f);
             ImGui::Text("Resolution:");
             static const GLuint resolutions[8] = { 16, 32, 64, 128, 256, 512, 1024, 2048 };
             for(int i=0 ; i<8 ; ++i) {
@@ -155,7 +165,7 @@ void Demo::renderGUI() {
 }
 
 void Demo::render() {
-    m_DeferredRendering.m_Lighting.dirLightDir = vec3(
+    m_Lighting.dirLightDir = vec3(
         cos(radians(m_DirLightPhiAngleDegrees)) * sin(radians(m_DirLightThetaAngleDegrees)),
         sin(radians(m_DirLightPhiAngleDegrees)) * sin(radians(m_DirLightThetaAngleDegrees)),
         cos(radians(m_DirLightThetaAngleDegrees))
@@ -171,7 +181,7 @@ void Demo::render() {
     const float sceneRadius = m_Sponza.getDiagonalLength() / 2.f;
 
     const auto dirLightUpVector = computeDirectionVectorUp(radians(m_DirLightPhiAngleDegrees), radians(m_DirLightThetaAngleDegrees));
-    const auto dirLightViewMatrix = glm::lookAt(sceneCenter + m_DeferredRendering.m_Lighting.dirLightDir * sceneRadius, sceneCenter, dirLightUpVector); // Will not work if m_DeferredRendering.m_Lighting.dirLightDir is colinear to lightUpVector
+    const auto dirLightViewMatrix = glm::lookAt(sceneCenter + m_Lighting.dirLightDir * sceneRadius, sceneCenter, dirLightUpVector); // Will not work if m_Lighting.dirLightDir is colinear to lightUpVector
     const auto dirLightProjMatrix = glm::ortho(-sceneRadius, sceneRadius, -sceneRadius, sceneRadius, 0.01f * sceneRadius, 2.f * sceneRadius);
 
     // Render shadow map
@@ -186,14 +196,21 @@ void Demo::render() {
         glViewport(0, 0, m_nWindowWidth, m_nWindowHeight);
     }
 
-    // Geometry Pass
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_DeferredRendering.m_GBufferFbo);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    m_DeferredRendering.m_GPassProgram.use();
-    m_DeferredRendering.m_GPassProgram.resetMaterialUniforms();
-    m_Sponza.render(m_DeferredRendering.m_GPassProgram, m_Camera, m_SponzaInstanceData);
+    switch(m_PipelineKind) {
+    case PIPELINE_FORWARD:
+        break;
+    case PIPELINE_DEFERRED:
+        // Geometry Pass
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_DeferredRendering.m_GBufferFbo);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        m_DeferredRendering.m_GPassProgram.use();
+        m_DeferredRendering.m_GPassProgram.resetMaterialUniforms();
+        m_Sponza.render(m_DeferredRendering.m_GPassProgram, m_Camera, m_SponzaInstanceData);
 
-    // Shading Pass
+        break;
+    }
+
+
     if(m_PostFX.m_IsEnabled)
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_PostFX.m_Input.m_Fbo);
     else
@@ -201,40 +218,52 @@ void Demo::render() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if(m_DeferredRendering.m_GuiDisplaysGBufferTextures) {
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, m_DeferredRendering.m_GBufferFbo);
-        glReadBuffer(GL_COLOR_ATTACHMENT0 + m_DeferredRendering.m_GuiGBufferTexIndex);
-        const GLint w = m_nWindowWidth, h = m_nWindowHeight;
-        glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-    } else if(m_DirectionalShadowMapping.m_GuiDisplaysShadowMap) {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        m_DirectionalShadowMapping.m_DisplayDepthMapProgram.use();
-        m_DirectionalShadowMapping.m_DisplayDepthMapProgram.setUniformGDepth(0);
-        glActiveTexture(GL_TEXTURE0);
-        m_DirectionalShadowMapping.m_Texture.bind();
-        m_DirectionalShadowMapping.m_Sampler.bindToTextureUnit(0);
-        m_ScreenCoverQuad.render();
-    } else {
-        for(GLuint i=0 ; i<GBufferTextureCount ; ++i) {
-            glActiveTexture(GL_TEXTURE0 + i);
-            m_DeferredRendering.m_GBufferTextures[i].bind();
+
+    switch(m_PipelineKind) {
+    case PIPELINE_FORWARD:
+        m_ForwardRendering.m_Program.use();
+        m_ForwardRendering.m_Program.setLightingUniforms(m_Lighting, m_Camera);
+        m_ForwardRendering.m_Program.resetMaterialUniforms();
+        m_Sponza.render(m_ForwardRendering.m_Program, m_Camera, m_SponzaInstanceData);
+        break;
+    case PIPELINE_DEFERRED:
+        // Shading Pass
+        if(m_DeferredRendering.m_GuiDisplaysGBufferTextures) {
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, m_DeferredRendering.m_GBufferFbo);
+            glReadBuffer(GL_COLOR_ATTACHMENT0 + m_DeferredRendering.m_GuiGBufferTexIndex);
+            const GLint w = m_nWindowWidth, h = m_nWindowHeight;
+            glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+        } else if(m_DirectionalShadowMapping.m_GuiDisplaysShadowMap) {
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            m_DirectionalShadowMapping.m_DisplayDepthMapProgram.use();
+            m_DirectionalShadowMapping.m_DisplayDepthMapProgram.setUniformGDepth(0);
+            glActiveTexture(GL_TEXTURE0);
+            m_DirectionalShadowMapping.m_Texture.bind();
+            m_DirectionalShadowMapping.m_Sampler.bindToTextureUnit(0);
+            m_ScreenCoverQuad.render();
+        } else {
+            for(GLuint i=0 ; i<GBufferTextureCount ; ++i) {
+                glActiveTexture(GL_TEXTURE0 + i);
+                m_DeferredRendering.m_GBufferTextures[i].bind();
+            }
+            m_DeferredRendering.m_ShadingPassProgram.use();
+            m_Lighting.dirLightShadowMap = GBufferTextureCount;
+            glActiveTexture(GL_TEXTURE0 + m_Lighting.dirLightShadowMap);
+            m_DirectionalShadowMapping.m_Texture.bind();
+            m_DirectionalShadowMapping.m_Sampler.bindToTextureUnit(m_Lighting.dirLightShadowMap);
+            m_Lighting.dirLightViewProjMatrix = dirLightProjMatrix * dirLightViewMatrix * m_Camera.getRcpViewMatrix();
+            m_Lighting.dirLightDir = -m_Lighting.dirLightDir; // FIXME Hack!!!!!!
+            m_DeferredRendering.m_ShadingPassProgram.setLightingUniforms(m_Lighting, m_Camera);
+            m_Lighting.dirLightDir = -m_Lighting.dirLightDir;
+            m_DeferredRendering.m_ShadingPassProgram.setUniformGPosition(0);
+            m_DeferredRendering.m_ShadingPassProgram.setUniformGNormal(1);
+            m_DeferredRendering.m_ShadingPassProgram.setUniformGAmbient(2);
+            m_DeferredRendering.m_ShadingPassProgram.setUniformGDiffuse(3);
+            m_DeferredRendering.m_ShadingPassProgram.setUniformGGlossyShininess(4);
+            m_ScreenCoverQuad.render();
         }
-        m_DeferredRendering.m_ShadingPassProgram.use();
-        m_DeferredRendering.m_Lighting.dirLightShadowMap = GBufferTextureCount;
-        glActiveTexture(GL_TEXTURE0 + m_DeferredRendering.m_Lighting.dirLightShadowMap);
-        m_DirectionalShadowMapping.m_Texture.bind();
-        m_DirectionalShadowMapping.m_Sampler.bindToTextureUnit(m_DeferredRendering.m_Lighting.dirLightShadowMap);
-        m_DeferredRendering.m_Lighting.dirLightViewProjMatrix = dirLightProjMatrix * dirLightViewMatrix * m_Camera.getRcpViewMatrix();
-        m_DeferredRendering.m_Lighting.dirLightDir = -m_DeferredRendering.m_Lighting.dirLightDir;
-        m_DeferredRendering.m_ShadingPassProgram.setLightingUniforms(m_DeferredRendering.m_Lighting, m_Camera);
-        m_DeferredRendering.m_Lighting.dirLightDir = -m_DeferredRendering.m_Lighting.dirLightDir;
-        m_DeferredRendering.m_ShadingPassProgram.setUniformGPosition(0);
-        m_DeferredRendering.m_ShadingPassProgram.setUniformGNormal(1);
-        m_DeferredRendering.m_ShadingPassProgram.setUniformGAmbient(2);
-        m_DeferredRendering.m_ShadingPassProgram.setUniformGDiffuse(3);
-        m_DeferredRendering.m_ShadingPassProgram.setUniformGGlossyShininess(4);
-        m_ScreenCoverQuad.render();
+        break;
     }
 
     if(m_PostFX.m_IsEnabled) {
@@ -261,22 +290,20 @@ void Demo::render() {
         glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
     }
-
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
 int Demo::run()
 {
-    m_DeferredRendering.m_Lighting.dirLightDir = vec3(-1,-1,-1);
-    m_DeferredRendering.m_Lighting.dirLightIntensity = vec3(1,1,1);
-    m_DeferredRendering.m_Lighting.pointLightCount = 2;
+    m_Lighting.dirLightDir = vec3(-1,-1,-1);
+    m_Lighting.dirLightIntensity = vec3(1,1,1);
+    m_Lighting.pointLightCount = 2;
     for(size_t i=0 ; i<GLDeferredShadingPassProgram::MAX_POINT_LIGHTS ; ++i) {
-        m_DeferredRendering.m_Lighting.pointLightPosition[i] = vec3(i, i*2, 1);
-        m_DeferredRendering.m_Lighting.pointLightIntensity[i] = vec3(1, 1, 1);
-        m_DeferredRendering.m_Lighting.pointLightRange[i] = 10;
-        m_DeferredRendering.m_Lighting.pointLightAttenuationFactor[i] = 1;
+        m_Lighting.pointLightPosition[i] = vec3(i, i*2, 1);
+        m_Lighting.pointLightIntensity[i] = vec3(1, 1, 1);
+        m_Lighting.pointLightRange[i] = 10;
+        m_Lighting.pointLightAttenuationFactor[i] = 1;
     }
-    m_DeferredRendering.m_Lighting.dirLightShadowMapBias = 0.05f;
+    m_Lighting.dirLightShadowMapBias = 0.05f;
 
     // Loop until the user closes the window
     for (auto frameCount = 0u; !m_GLFWHandle.shouldClose(); ++frameCount)
@@ -306,11 +333,13 @@ int Demo::run()
 
 Demo::Demo(int argc, char** argv):
     m_Paths(glmlv::fs::path{ argv[0] }),
+    m_PipelineKind(PIPELINE_DEFERRED),
     m_ForwardRendering(m_Paths),
     m_DeferredRendering(m_Paths, (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight),
     m_DirectionalShadowMapping(m_Paths),
     m_PostFX(m_Paths, (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight),
     m_ClearColor(0, 186/255.f, 1.f),
+    m_Lighting(),
     m_DirLightPhiAngleDegrees(260),
     m_DirLightThetaAngleDegrees(260),
     m_ScreenCoverQuad(glmlv::makeScreenCoverQuad()),
