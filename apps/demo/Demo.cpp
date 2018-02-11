@@ -210,19 +210,20 @@ void Demo::render() {
         break;
     }
 
-
-    if(m_PostFX.m_IsEnabled)
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_PostFX.m_Input.m_Fbo);
-    else
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_PostFX.m_IsEnabled ? m_PostFX.m_Input.m_Fbo : 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 
     switch(m_PipelineKind) {
     case PIPELINE_FORWARD:
         m_ForwardRendering.m_Program.use();
+        m_Lighting.dirLightShadowMap = m_Sponza.m_GLTextures2D.size()+2; // XXX HACK
+        glActiveTexture(GL_TEXTURE0 + m_Lighting.dirLightShadowMap);
+        m_DirectionalShadowMapping.m_Texture.bind();
+        m_DirectionalShadowMapping.m_Sampler.bindToTextureUnit(m_Lighting.dirLightShadowMap);
+        m_Lighting.dirLightViewProjMatrix = dirLightProjMatrix * dirLightViewMatrix * m_Camera.getRcpViewMatrix();
+        m_Lighting.dirLightDir = -m_Lighting.dirLightDir; // FIXME Hack!!!!!!
         m_ForwardRendering.m_Program.setLightingUniforms(m_Lighting, m_Camera);
+        m_Lighting.dirLightDir = -m_Lighting.dirLightDir; // FIXME Hack!!!!!!
         m_ForwardRendering.m_Program.resetMaterialUniforms();
         m_Sponza.render(m_ForwardRendering.m_Program, m_Camera, m_SponzaInstanceData);
         break;
@@ -294,17 +295,6 @@ void Demo::render() {
 
 int Demo::run()
 {
-    m_Lighting.dirLightDir = vec3(-1,-1,-1);
-    m_Lighting.dirLightIntensity = vec3(1,1,1);
-    m_Lighting.pointLightCount = 2;
-    for(size_t i=0 ; i<GLDeferredShadingPassProgram::MAX_POINT_LIGHTS ; ++i) {
-        m_Lighting.pointLightPosition[i] = vec3(i, i*2, 1);
-        m_Lighting.pointLightIntensity[i] = vec3(1, 1, 1);
-        m_Lighting.pointLightRange[i] = 10;
-        m_Lighting.pointLightAttenuationFactor[i] = 1;
-    }
-    m_Lighting.dirLightShadowMapBias = 0.05f;
-
     // Loop until the user closes the window
     for (auto frameCount = 0u; !m_GLFWHandle.shouldClose(); ++frameCount)
     {
@@ -356,4 +346,17 @@ Demo::Demo(int argc, char** argv):
     glEnable(GL_DEPTH_TEST);
     glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], 1.f);
     m_Camera.setSpeed(m_CameraSpeed);
+
+    m_Lighting.dirLightDir = vec3(-1,-1,-1);
+    m_Lighting.dirLightIntensity = vec3(1,1,1);
+    m_Lighting.pointLightCount = 2;
+    for(size_t i=0 ; i<GLDeferredShadingPassProgram::MAX_POINT_LIGHTS ; ++i) {
+        m_Lighting.pointLightPosition[i] = vec3(i, i*2, 1);
+        m_Lighting.pointLightIntensity[i] = vec3(1, 1, 1);
+        m_Lighting.pointLightRange[i] = 10;
+        m_Lighting.pointLightAttenuationFactor[i] = 1;
+    }
+    m_Lighting.dirLightShadowMapBias = 0.05f;
+
+    m_PostFX.m_IsEnabled = false;
 }

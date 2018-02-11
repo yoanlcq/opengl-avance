@@ -13,15 +13,16 @@ namespace glmlv
 {
 
 class GLDeferredShadingPassProgram: public GLCommonLightingProgram {
-    const GLint m_UniformGPositionLocation                    = -1;
-    const GLint m_UniformGNormalLocation                      = -1;
-    const GLint m_UniformGAmbientLocation                     = -1;
-    const GLint m_UniformGDiffuseLocation                     = -1;
-    const GLint m_UniformGGlossyShininessLocation             = -1;
+    const GLint m_UniformGPositionLocation        = -1;
+    const GLint m_UniformGNormalLocation          = -1;
+    const GLint m_UniformGAmbientLocation         = -1;
+    const GLint m_UniformGDiffuseLocation         = -1;
+    const GLint m_UniformGGlossyShininessLocation = -1;
 
 public:
     GLDeferredShadingPassProgram(const fs::path& vs, const fs::path& fs):
-        GLCommonLightingProgram(vs, fs),
+        GLProgram(compileProgram({ vs.string(), fs.string() })),
+        GLCommonLightingProgram(),
         m_UniformGPositionLocation       (getUniformLocation("uGPosition")),
         m_UniformGNormalLocation         (getUniformLocation("uGNormal")),
         m_UniformGAmbientLocation        (getUniformLocation("uGAmbient")),

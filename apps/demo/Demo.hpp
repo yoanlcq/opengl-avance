@@ -209,6 +209,7 @@ struct PostFX_TextureFbo {
 
 struct PostFX {
     const GLDemoPostFXProgram m_Program;
+    const glmlv::GLTexture2D m_InputDepthTexture;
     const PostFX_TextureFbo m_Input, m_Output;
     bool m_IsEnabled;
     float m_Gamma;
@@ -221,6 +222,7 @@ struct PostFX {
 
     PostFX(const Paths& paths, GLsizei w, GLsizei h):
         m_Program(paths.m_AppShaders / "postFX.cs.glsl"),
+        m_InputDepthTexture(GL_DEPTH_COMPONENT32F, w, h),
         m_Input(w, h),
         m_Output(w, h),
         m_IsEnabled(true),
@@ -231,7 +233,13 @@ struct PostFX {
         m_RadialBlurMaxLength(42.5f),
         m_FinalTouchMul(1.0f),
         m_FinalTouchAdd(0.0f)
-    {}
+    {
+        // Still attach a depth texture to input FBO for when using Forward Pipeline
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_Input.m_Fbo);
+        glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_InputDepthTexture.glId(), 0);
+        handleFboStatus(glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    }
 };
 
 class Demo {

@@ -32,7 +32,7 @@ struct CommonLighting {
 };
 
 
-class GLCommonLightingProgram: public GLProgram {
+class GLCommonLightingProgram: public virtual GLProgram {
     const GLint m_UniformDirectionalLightDirLocation         = -1;
     const GLint m_UniformDirectionalLightIntensityLocation   = -1;
     const GLint m_UniformPointLightPositionLocation          = -1;
@@ -48,8 +48,7 @@ class GLCommonLightingProgram: public GLProgram {
     const GLint m_UniformDirLightShadowMapSpreadLocation      = -1;
 
 public:
-    GLCommonLightingProgram(const fs::path& vs, const fs::path& fs):
-        GLProgram(compileProgram({ vs.string(), fs.string() })),
+    GLCommonLightingProgram():
         m_UniformDirectionalLightDirLocation          (getUniformLocation("uDirectionalLightDir")),
         m_UniformDirectionalLightIntensityLocation    (getUniformLocation("uDirectionalLightIntensity")),
         m_UniformPointLightPositionLocation           (getUniformLocation("uPointLightPosition")),
@@ -64,7 +63,8 @@ public:
         m_UniformDirLightShadowMapSpreadLocation      (getUniformLocation("uDirLightShadowMapSpread"))
         {}
 
-    static const size_t MAX_POINT_LIGHTS = CommonLighting::MAX_POINT_LIGHTS;
+    typedef CommonLighting LightingUniforms;
+    static const size_t MAX_POINT_LIGHTS = LightingUniforms::MAX_POINT_LIGHTS;
 
     void setLightingUniforms(const CommonLighting& d, const ViewController& vc) const {
         auto count = d.pointLightCount;
