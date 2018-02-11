@@ -8,7 +8,7 @@
 #include <glmlv/Mesh.hpp>
 #include <glmlv/Scene.hpp>
 #include <glmlv/Camera.hpp>
-#include <glmlv/PlayWav.hpp>
+#include <glmlv/GlobalWavPlayer.hpp>
 
 class Application
 {
@@ -33,7 +33,6 @@ private:
     const glmlv::Mesh m_Cube, m_Sphere;
     const glmlv::Scene m_Scene;
     glmlv::Camera m_ViewController;
-    const glmlv::PlayWav m_PlayWav;
 
     // NOTE: Make it static, so that the char pointer's lifetime is unbounded.
     // With the old code, the memory was freed before ImGUI wrote to the ini filename.

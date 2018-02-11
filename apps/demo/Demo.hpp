@@ -12,8 +12,52 @@
 #include <glmlv/Scene.hpp>
 #include <glmlv/Camera.hpp>
 
+// TODO:
+// - Integrate forward rendering
+// - Make lighting data common
+// - Clean-up lighting data
 
 void handleFboStatus(GLenum status);
+
+
+class GLDemoPostFXProgram: public glmlv::GLProgram {
+    GLint m_UniformInputImageLocation            = -1;
+    GLint m_UniformOutputImageLocation           = -1;
+    GLint m_UniformBlurTechniqueLocation         = -1;
+    GLint m_UniformBoxBlurMatrixHalfSideLocation = -1;
+    GLint m_UniformRadialBlurNumSamplesLocation  = -1;
+    GLint m_UniformRadialBlurMaxLengthLocation   = -1;
+    GLint m_UniformGammaExponentLocation         = -1;
+    GLint m_UniformFinalTouchMulLocation         = -1;
+    GLint m_UniformFinalTouchAddLocation         = -1;
+
+public:
+    GLDemoPostFXProgram(const glmlv::fs::path& cs):
+        GLProgram(glmlv::compileProgram({ cs.string() })),
+        m_UniformInputImageLocation           (getUniformLocation("uInputImage")),
+        m_UniformOutputImageLocation          (getUniformLocation("uOutputImage")),
+        m_UniformBlurTechniqueLocation        (getUniformLocation("uBlurTechnique")),
+        m_UniformBoxBlurMatrixHalfSideLocation(getUniformLocation("uBoxBlurMatrixHalfSide")),
+        m_UniformRadialBlurNumSamplesLocation (getUniformLocation("uRadialBlurNumSamples")),
+        m_UniformRadialBlurMaxLengthLocation  (getUniformLocation("uRadialBlurMaxLength")),
+        m_UniformGammaExponentLocation        (getUniformLocation("uGammaExponent")),
+        m_UniformFinalTouchMulLocation        (getUniformLocation("uFinalTouchMul")),
+        m_UniformFinalTouchAddLocation        (getUniformLocation("uFinalTouchAdd"))
+        {}
+    static const GLuint BLUR_NONE = 1;
+    static const GLuint BLUR_BOX = 2;
+    static const GLuint BLUR_RADIAL = 3;
+    void setUniformInputImage(GLint i)               const { glUniform1i(m_UniformInputImageLocation, i); }
+    void setUniformOutputImage(GLint i)              const { glUniform1i(m_UniformOutputImageLocation, i); }
+    void setUniformBlurTechnique(GLuint tech)        const { glUniform1ui(m_UniformBlurTechniqueLocation, tech); }
+    void setUniformBoxBlurMatrixHalfSide(GLint i)    const { glUniform1i(m_UniformBoxBlurMatrixHalfSideLocation, i); }
+    void setUniformRadialBlurNumSamples(GLuint n)    const { glUniform1ui(m_UniformRadialBlurNumSamplesLocation, n); }
+    void setUniformRadialBlurMaxLength(GLfloat f)    const { glUniform1f(m_UniformRadialBlurMaxLengthLocation, f); }
+    void setUniformGammaExponent(GLfloat f)          const { glUniform1f(m_UniformGammaExponentLocation, f); }
+    void setUniformFinalTouchMul(const glm::vec3 &v) const { glUniform3fv(m_UniformFinalTouchMulLocation, 1, &v[0]); }
+    void setUniformFinalTouchAdd(const glm::vec3 &v) const { glUniform3fv(m_UniformFinalTouchAddLocation, 1, &v[0]); }
+};
+
 
 enum GBufferTexIndex
 {
@@ -42,17 +86,28 @@ struct Paths {
         {}
 };
 
-struct Deferred {
+struct ForwardRendering {
+    const glmlv::GLForwardRenderingProgram m_Program;
+
+    ForwardRendering(const Paths& paths):
+        m_Program(
+            paths.m_AppShaders / "forward.vs.glsl",
+            paths.m_AppShaders / "forward.fs.glsl"
+        )
+        {}
+};
+
+struct DeferredRendering {
     const glmlv::GLDeferredGPassProgram       m_GPassProgram;
     const glmlv::GLDeferredShadingPassProgram m_ShadingPassProgram;
-    glmlv::GLTexture2D                  m_GBufferTextures[GBufferTextureCount];
+    glmlv::GLTexture2D                        m_GBufferTextures[GBufferTextureCount];
     GLuint                                    m_GBufferFbo;
-    glmlv::GLDeferredShadingPassProgram::LightingUniforms m_Lighting;
+    glmlv::CommonLighting                     m_Lighting;
 
     bool m_GuiDisplaysGBufferTextures;
     int m_GuiGBufferTexIndex;
 
-    Deferred(const Paths& paths, GLsizei w, GLsizei h):
+    DeferredRendering(const Paths& paths, GLsizei w, GLsizei h):
         m_GPassProgram(
             paths.m_AppShaders / "geometryPass.vs.glsl",
             paths.m_AppShaders / "geometryPass.fs.glsl"
@@ -96,7 +151,7 @@ struct Deferred {
     }
 };
 
-struct ShadowMapping {
+struct DirectionalShadowMapping {
     int m_Resolution; // NOTE: int to be editable via RadioButton
     const glmlv::GLDirectionalSMProgram m_Program;
     const glmlv::GLDisplayDepthMapProgram m_DisplayDepthMapProgram;
@@ -107,7 +162,7 @@ struct ShadowMapping {
     bool m_IsDirty;
     bool m_GuiDisplaysShadowMap;
 
-    ShadowMapping(const Paths& paths): 
+    DirectionalShadowMapping(const Paths& paths): 
         m_Resolution(512),
         m_Program(
             paths.m_AppShaders / "directionalSM.vs.glsl",
@@ -156,17 +211,29 @@ struct PostFX_TextureFbo {
 };
 
 struct PostFX {
-    const glmlv::GLGammaCorrectProgram m_Program;
+    const GLDemoPostFXProgram m_Program;
     const PostFX_TextureFbo m_Input, m_Output;
     bool m_IsEnabled;
     float m_Gamma;
+    int m_BlurTechnique;
+    int m_BoxBlurMatrixHalfSide;
+    int m_RadialBlurNumSamples;
+    float m_RadialBlurMaxLength;
+    glm::vec3 m_FinalTouchMul;
+    glm::vec3 m_FinalTouchAdd;
 
     PostFX(const Paths& paths, GLsizei w, GLsizei h):
-        m_Program(paths.m_AppShaders / "gammaCorrect.cs.glsl"),
+        m_Program(paths.m_AppShaders / "postFX.cs.glsl"),
         m_Input(w, h),
         m_Output(w, h),
         m_IsEnabled(true),
-        m_Gamma(2.2f)
+        m_Gamma(2.2f),
+        m_BlurTechnique(GLDemoPostFXProgram::BLUR_RADIAL),
+        m_BoxBlurMatrixHalfSide(2),
+        m_RadialBlurNumSamples(16),
+        m_RadialBlurMaxLength(42.5f),
+        m_FinalTouchMul(1.0f),
+        m_FinalTouchAdd(0.0f)
     {}
 };
 
@@ -176,6 +243,9 @@ public:
 
     int run();
 private:
+    void renderGUI();
+    void render();
+
     // NOTE: Make it static, so that the char pointer's lifetime is unbounded.
     // With the old code, the memory was freed before ImGUI wrote to the ini filename.
     static std::string static_ImGuiIniFilename;
@@ -185,15 +255,18 @@ private:
     glmlv::GLFWHandle m_GLFWHandle{ m_nWindowWidth, m_nWindowHeight, "Creating Dimensions" }; // Note: the handle must be declared before the creation of any object managing OpenGL resource (e.g. glmlv::GLProgram, GLShader)
 
     Paths m_Paths;
-    Deferred m_Deferred;
-    ShadowMapping m_ShadowMapping;
+    ForwardRendering m_ForwardRendering;
+    DeferredRendering m_DeferredRendering;
+    DirectionalShadowMapping m_DirectionalShadowMapping;
     PostFX m_PostFX;
 
     glm::vec3 m_ClearColor;
     float m_DirLightPhiAngleDegrees; // Angle around Y
     float m_DirLightThetaAngleDegrees; // Angle around X
-    glmlv::Camera m_Camera;
+    glmlv::GLMesh m_ScreenCoverQuad;
     glmlv::Scene m_Sponza;
     glmlv::SceneInstanceData m_SponzaInstanceData;
-    glmlv::GLMesh m_ScreenCoverQuad;
+    glmlv::Camera m_Camera;
+    const float m_CameraMaxSpeed;
+    float m_CameraSpeed;
 };

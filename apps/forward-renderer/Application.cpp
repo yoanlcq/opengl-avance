@@ -138,13 +138,13 @@ Application::Application(int argc, char** argv):
     m_Cube(glmlv::makeCube()),
     m_Sphere(glmlv::makeSphere(32)),
     m_Scene(m_AssetsRootPath / "glmlv" / "models" / "crytek-sponza" / "sponza.obj"),
-    m_ViewController(m_GLFWHandle.window(), m_nWindowWidth, m_nWindowHeight),
-    m_PlayWav(m_AssetsRootPath / m_AppName / "musics" / "raving_crowd1.wav")
+    m_ViewController(m_GLFWHandle.window(), m_nWindowWidth, m_nWindowHeight)
 {
     (void) argc;
     static_ImGuiIniFilename = m_AppName + ".imgui.ini";
     ImGui::GetIO().IniFilename = static_ImGuiIniFilename.c_str(); // At exit, ImGUI will store its windows positions in this file
     glEnable(GL_DEPTH_TEST);
+    GlobalWavPlayer::playWav(m_AssetsRootPath / m_AppName / "musics" / "raving_crowd1.wav");
 }
 
 std::string Application::static_ImGuiIniFilename;

@@ -7,21 +7,15 @@
 #include "load_obj.hpp"
 #include "GLProgram.hpp"
 #include "ViewController.hpp"
+#include "CommonLighting.hpp"
 
 namespace glmlv
 {
 
-class GLForwardRenderingProgram: public GLProgram {
+class GLForwardRenderingProgram: public GLCommonLightingProgram {
     const GLint m_UniformModelViewProjMatrixLocation         = -1;
     const GLint m_UniformModelViewMatrixLocation             = -1;
     const GLint m_UniformNormalMatrixLocation                = -1;
-    const GLint m_UniformDirectionalLightDirLocation         = -1;
-    const GLint m_UniformDirectionalLightIntensityLocation   = -1;
-    const GLint m_UniformPointLightPositionLocation          = -1;
-    const GLint m_UniformPointLightIntensityLocation         = -1;
-    const GLint m_UniformPointLightRangeLocation             = -1;
-    const GLint m_UniformPointLightAttenuationFactorLocation = -1;
-    const GLint m_UniformPointLightCountLocation             = -1;
     const GLint m_UniformKaLocation                          = -1;
     const GLint m_UniformKdLocation                          = -1;
     const GLint m_UniformKsLocation                          = -1;
@@ -37,17 +31,10 @@ class GLForwardRenderingProgram: public GLProgram {
 
 public:
     GLForwardRenderingProgram(const fs::path& vs, const fs::path& fs):
-        GLProgram(compileProgram({ vs.string(), fs.string() })),
+        GLCommonLightingProgram(vs, fs),
         m_UniformModelViewProjMatrixLocation         (getUniformLocation("uModelViewProjMatrix")),
         m_UniformModelViewMatrixLocation             (getUniformLocation("uModelViewMatrix")),
         m_UniformNormalMatrixLocation                (getUniformLocation("uNormalMatrix")),
-        m_UniformDirectionalLightDirLocation         (getUniformLocation("uDirectionalLightDir")),
-        m_UniformDirectionalLightIntensityLocation   (getUniformLocation("uDirectionalLightIntensity")),
-        m_UniformPointLightPositionLocation          (getUniformLocation("uPointLightPosition")),
-        m_UniformPointLightIntensityLocation         (getUniformLocation("uPointLightIntensity")),
-        m_UniformPointLightRangeLocation             (getUniformLocation("uPointLightRange")),
-        m_UniformPointLightAttenuationFactorLocation (getUniformLocation("uPointLightAttenuationFactor")),
-        m_UniformPointLightCountLocation             (getUniformLocation("uPointLightCount")),
         m_UniformKaLocation                          (getUniformLocation("uKa")),
         m_UniformKdLocation                          (getUniformLocation("uKd")),
         m_UniformKsLocation                          (getUniformLocation("uKs")),
@@ -61,76 +48,10 @@ public:
         m_UniformKsSamplerFactorLocation             (getUniformLocation("uKsSamplerFactor")),
         m_UniformShininessSamplerFactorLocation      (getUniformLocation("uShininessSamplerFactor"))
         {}
-
-    // NOTE: Keep in sync with forward shader
-    static const size_t MAX_POINT_LIGHTS = 32;
-
-    // XXX: I'm not actually of fan of forcing implicit world-space to view-space mapping
-    // when uploading uniforms
-    struct LightingUniforms {
-        glm::vec3 dirLightDir = glm::vec3(1,0,0);
-        glm::vec3 dirLightIntensity = glm::vec3(1,1,1);
-        size_t pointLightCount = 1;
-        glm::vec3 pointLightPosition[MAX_POINT_LIGHTS] = {};
-        glm::vec3 pointLightIntensity[MAX_POINT_LIGHTS] = {};
-        GLfloat pointLightRange[MAX_POINT_LIGHTS] = {};
-        GLfloat pointLightAttenuationFactor[MAX_POINT_LIGHTS] = {};
-    };
-
-    void setLightingUniforms(const LightingUniforms& d, const ViewController& vc) const {
-        auto count = d.pointLightCount;
-        assert(count < MAX_POINT_LIGHTS);
-        setUniformDirectionalLightDir(d.dirLightDir, vc);
-        setUniformDirectionalLightIntensity(d.dirLightIntensity);
-        setUniformPointLightCount(count);
-        setUniformPointLightPosition(count, d.pointLightPosition, vc);
-        setUniformPointLightIntensity(count, d.pointLightIntensity);
-        setUniformPointLightRange(count, d.pointLightRange);
-        setUniformPointLightAttenuationFactor(count, d.pointLightAttenuationFactor);
-    }
-
-    void setUniformModelViewProjMatrix(const glm::mat4& m) const {
-        glUniformMatrix4fv(m_UniformModelViewProjMatrixLocation, 1, GL_FALSE, &m[0][0]);
-    }
-    void setUniformModelViewMatrix(const glm::mat4& m) const {
-        glUniformMatrix4fv(m_UniformModelViewMatrixLocation, 1, GL_FALSE, &m[0][0]);
-    }
-    void setUniformNormalMatrix(const glm::mat4& m) const {
-        glUniformMatrix4fv(m_UniformNormalMatrixLocation, 1, GL_FALSE, &m[0][0]);
-    }
-    void setUniformDirectionalLightDir(const glm::vec3& v, const ViewController& vc) const {
-        auto view = vc.getViewMatrix();
-        auto data = glm::vec3(view * glm::vec4(v, 0));
-        glUniform3fv(m_UniformDirectionalLightDirLocation, 1, &data[0]);
-    }
-    void setUniformDirectionalLightIntensity(const glm::vec3& v) const {
-        glUniform3fv(m_UniformDirectionalLightIntensityLocation, 1, &v[0]);
-    }
-    void setUniformPointLightPosition(size_t count, const glm::vec3* v, const ViewController& vc) const {
-        assert(count < MAX_POINT_LIGHTS);
-        auto view = vc.getViewMatrix();
-        glm::vec3 vsPointLightPosition[MAX_POINT_LIGHTS] = {};
-        for(size_t i=0 ; i<MAX_POINT_LIGHTS ; ++i) {
-            vsPointLightPosition[i] = glm::vec3(view * glm::vec4(v[i], 1));
-        }
-        glUniform3fv(m_UniformPointLightPositionLocation, count, &vsPointLightPosition[0][0]);
-    }
-    void setUniformPointLightIntensity(size_t count, const glm::vec3* v) const {
-        assert(count < MAX_POINT_LIGHTS);
-        glUniform3fv(m_UniformPointLightIntensityLocation, count, &v[0][0]);
-    }
-    void setUniformPointLightRange(size_t count, const GLfloat* factor) const {
-        assert(count < MAX_POINT_LIGHTS);
-        glUniform1fv(m_UniformPointLightRangeLocation, count, factor);
-    }
-    void setUniformPointLightAttenuationFactor(size_t count, const GLfloat* factor) const {
-        assert(count < MAX_POINT_LIGHTS);
-        glUniform1fv(m_UniformPointLightAttenuationFactorLocation, count, factor);
-    }
-    void setUniformPointLightCount(size_t count) const {
-        assert(count < MAX_POINT_LIGHTS);
-        glUniform1ui(m_UniformPointLightCountLocation, count);
-    }
+    typedef CommonLighting LightingUniforms;
+    void setUniformModelViewProjMatrix(const glm::mat4& m) const { glUniformMatrix4fv(m_UniformModelViewProjMatrixLocation, 1, GL_FALSE, &m[0][0]); }
+    void setUniformModelViewMatrix(const glm::mat4& m) const { glUniformMatrix4fv(m_UniformModelViewMatrixLocation, 1, GL_FALSE, &m[0][0]); }
+    void setUniformNormalMatrix(const glm::mat4& m) const { glUniformMatrix4fv(m_UniformNormalMatrixLocation, 1, GL_FALSE, &m[0][0]); }
     void setUniformKa(const glm::vec3& v) const { glUniform3fv(m_UniformKaLocation, 1, &v[0]); }
     void setUniformKd(const glm::vec3& v) const { glUniform3fv(m_UniformKdLocation, 1, &v[0]); }
     void setUniformKs(const glm::vec3& v) const { glUniform3fv(m_UniformKsLocation, 1, &v[0]); }
