@@ -328,6 +328,7 @@ void Demo::render() {
     }
 
     if(cpass.m_IsEnabled) {
+		glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
         glBindImageTexture(0, cpass.m_Input.m_Texture.glId(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
         glBindImageTexture(1, cpass.m_Output.m_Texture.glId(), 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
         cpass.m_Program.use();
@@ -338,7 +339,7 @@ void Demo::render() {
         cpass.m_Program.setUniformFinalTouchAdd(cpass.m_FinalTouchAdd);
         // NOTE!!!! 32 = local_size dans le compute shader. 
         glDispatchCompute(1 + m_nWindowWidth / 32, 1 + m_nWindowHeight / 32, 1);
-        glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_FRAMEBUFFER_BARRIER_BIT);
+        glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
 
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, cpass.m_Output.m_Fbo);
@@ -379,7 +380,7 @@ int Demo::run()
 
 Demo::Demo(int argc, char** argv):
     m_Paths(glmlv::fs::path{ argv[0] }),
-    m_PipelineKind(PIPELINE_DEFERRED),
+    m_PipelineKind(PIPELINE_FORWARD),
     m_ForwardRendering(m_Paths),
     m_DeferredRendering(m_Paths, (GLsizei) m_nWindowWidth, (GLsizei) m_nWindowHeight),
     m_DirectionalShadowMapping(m_Paths),
@@ -400,6 +401,8 @@ Demo::Demo(int argc, char** argv):
     ImGui::GetIO().IniFilename = static_ImGuiIniFilename.c_str(); // At exit, ImGUI will store its windows positions in this file
 
     glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
     glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], 1.f);
     m_Camera.setSpeed(m_CameraSpeed);
 
@@ -413,7 +416,4 @@ Demo::Demo(int argc, char** argv):
         m_Lighting.pointLightAttenuationFactor[i] = 1;
     }
     m_Lighting.dirLightShadowMapBias = 0.05f;
-
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
 }
