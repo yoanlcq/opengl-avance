@@ -7,6 +7,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/io.hpp>
 
+#include <glmlv/OpenSimplexNoise.hpp>
+
 
 std::string Demo::static_ImGuiIniFilename;
 
