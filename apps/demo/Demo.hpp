@@ -12,49 +12,62 @@
 #include <glmlv/Scene.hpp>
 #include <glmlv/Camera.hpp>
 
-// TODO:
-// - Clean-up lighting data
-// - Fix postFX for forward pipeline
-
 void handleFboStatus(GLenum status);
 
-
-class GLDemoPostFXProgram: public glmlv::GLProgram {
+class PostFX_ComputePassProgram: public glmlv::GLProgram {
     GLint m_UniformInputImageLocation            = -1;
     GLint m_UniformOutputImageLocation           = -1;
-    GLint m_UniformBlurTechniqueLocation         = -1;
-    GLint m_UniformBoxBlurMatrixHalfSideLocation = -1;
-    GLint m_UniformRadialBlurNumSamplesLocation  = -1;
-    GLint m_UniformRadialBlurMaxLengthLocation   = -1;
     GLint m_UniformGammaExponentLocation         = -1;
     GLint m_UniformFinalTouchMulLocation         = -1;
     GLint m_UniformFinalTouchAddLocation         = -1;
 
 public:
-    GLDemoPostFXProgram(const glmlv::fs::path& cs):
+    PostFX_ComputePassProgram(const glmlv::fs::path& cs):
         GLProgram(glmlv::compileProgram({ cs.string() })),
         m_UniformInputImageLocation           (getUniformLocation("uInputImage")),
         m_UniformOutputImageLocation          (getUniformLocation("uOutputImage")),
-        m_UniformBlurTechniqueLocation        (getUniformLocation("uBlurTechnique")),
-        m_UniformBoxBlurMatrixHalfSideLocation(getUniformLocation("uBoxBlurMatrixHalfSide")),
-        m_UniformRadialBlurNumSamplesLocation (getUniformLocation("uRadialBlurNumSamples")),
-        m_UniformRadialBlurMaxLengthLocation  (getUniformLocation("uRadialBlurMaxLength")),
         m_UniformGammaExponentLocation        (getUniformLocation("uGammaExponent")),
         m_UniformFinalTouchMulLocation        (getUniformLocation("uFinalTouchMul")),
         m_UniformFinalTouchAddLocation        (getUniformLocation("uFinalTouchAdd"))
         {}
+    void setUniformInputImage(GLint i)               const { glUniform1i(m_UniformInputImageLocation, i); }
+    void setUniformOutputImage(GLint i)              const { glUniform1i(m_UniformOutputImageLocation, i); }
+    void setUniformGammaExponent(GLfloat f)          const { glUniform1f(m_UniformGammaExponentLocation, f); }
+    void setUniformFinalTouchMul(const glm::vec3 &v) const { glUniform3fv(m_UniformFinalTouchMulLocation, 1, &v[0]); }
+    void setUniformFinalTouchAdd(const glm::vec3 &v) const { glUniform3fv(m_UniformFinalTouchAddLocation, 1, &v[0]); }
+};
+
+
+class PostFX_FragmentPassProgram: public glmlv::GLProgram {
+    GLint m_UniformHiResTextureLocation          = -1;
+    GLint m_UniformLoResTextureLocation          = -1;
+    GLint m_UniformWindowSizeLocation            = -1;
+    GLint m_UniformBlurTechniqueLocation         = -1;
+    GLint m_UniformBoxBlurMatrixHalfSideLocation = -1;
+    GLint m_UniformRadialBlurNumSamplesLocation  = -1;
+    GLint m_UniformRadialBlurMaxLengthLocation   = -1;
+
+public:
+    PostFX_FragmentPassProgram(const glmlv::fs::path& vs, const glmlv::fs::path& fs):
+        GLProgram(glmlv::compileProgram({ vs.string(), fs.string() })),
+        m_UniformHiResTextureLocation         (getUniformLocation("uHiResTexture")),
+        m_UniformLoResTextureLocation         (getUniformLocation("uLoResTexture")),
+        m_UniformWindowSizeLocation           (getUniformLocation("uWindowSize")),
+        m_UniformBlurTechniqueLocation        (getUniformLocation("uBlurTechnique")),
+        m_UniformBoxBlurMatrixHalfSideLocation(getUniformLocation("uBoxBlurMatrixHalfSide")),
+        m_UniformRadialBlurNumSamplesLocation (getUniformLocation("uRadialBlurNumSamples")),
+        m_UniformRadialBlurMaxLengthLocation  (getUniformLocation("uRadialBlurMaxLength"))
+        {}
     static const GLuint BLUR_NONE = 1;
     static const GLuint BLUR_BOX = 2;
     static const GLuint BLUR_RADIAL = 3;
-    void setUniformInputImage(GLint i)               const { glUniform1i(m_UniformInputImageLocation, i); }
-    void setUniformOutputImage(GLint i)              const { glUniform1i(m_UniformOutputImageLocation, i); }
+    void setUniformHiResTexture(GLint i)             const { glUniform1i(m_UniformHiResTextureLocation, i); }
+    void setUniformLoResTexture(GLint i)             const { glUniform1i(m_UniformLoResTextureLocation, i); }
+    void setUniformWindowSize(GLuint w, GLuint h)    const { glUniform2ui(m_UniformWindowSizeLocation, w, h); }
     void setUniformBlurTechnique(GLuint tech)        const { glUniform1ui(m_UniformBlurTechniqueLocation, tech); }
     void setUniformBoxBlurMatrixHalfSide(GLint i)    const { glUniform1i(m_UniformBoxBlurMatrixHalfSideLocation, i); }
     void setUniformRadialBlurNumSamples(GLuint n)    const { glUniform1ui(m_UniformRadialBlurNumSamplesLocation, n); }
     void setUniformRadialBlurMaxLength(GLfloat f)    const { glUniform1f(m_UniformRadialBlurMaxLengthLocation, f); }
-    void setUniformGammaExponent(GLfloat f)          const { glUniform1f(m_UniformGammaExponentLocation, f); }
-    void setUniformFinalTouchMul(const glm::vec3 &v) const { glUniform3fv(m_UniformFinalTouchMulLocation, 1, &v[0]); }
-    void setUniformFinalTouchAdd(const glm::vec3 &v) const { glUniform3fv(m_UniformFinalTouchAddLocation, 1, &v[0]); }
 };
 
 
@@ -207,30 +220,22 @@ struct PostFX_TextureFbo {
     }
 };
 
-struct PostFX {
-    const GLDemoPostFXProgram m_Program;
+struct PostFX_ComputePass {
+    const PostFX_ComputePassProgram m_Program;
     const glmlv::GLTexture2D m_InputDepthTexture;
     const PostFX_TextureFbo m_Input, m_Output;
     bool m_IsEnabled;
     float m_Gamma;
-    int m_BlurTechnique;
-    int m_BoxBlurMatrixHalfSide;
-    int m_RadialBlurNumSamples;
-    float m_RadialBlurMaxLength;
     glm::vec3 m_FinalTouchMul;
     glm::vec3 m_FinalTouchAdd;
 
-    PostFX(const Paths& paths, GLsizei w, GLsizei h):
+    PostFX_ComputePass(const Paths& paths, GLsizei w, GLsizei h):
         m_Program(paths.m_AppShaders / "postFX.cs.glsl"),
         m_InputDepthTexture(GL_DEPTH_COMPONENT32F, w, h),
         m_Input(w, h),
         m_Output(w, h),
         m_IsEnabled(true),
         m_Gamma(2.2f),
-        m_BlurTechnique(GLDemoPostFXProgram::BLUR_RADIAL),
-        m_BoxBlurMatrixHalfSide(2),
-        m_RadialBlurNumSamples(16),
-        m_RadialBlurMaxLength(42.5f),
         m_FinalTouchMul(1.0f),
         m_FinalTouchAdd(0.0f)
     {
@@ -240,6 +245,53 @@ struct PostFX {
         handleFboStatus(glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     }
+};
+struct PostFX_FragmentPass {
+    const GLuint m_LoResWidth, m_LoResHeight;
+    const PostFX_FragmentPassProgram m_Program;
+    const glmlv::GLTexture2D m_HiResDepthTexture;
+    const PostFX_TextureFbo m_HiRes, m_LoRes;
+    const glmlv::GLSampler m_LinearSampler, m_NearestSampler;
+    bool m_IsEnabled;
+    int m_BlurTechnique;
+    int m_BoxBlurMatrixHalfSide;
+    int m_RadialBlurNumSamples;
+    float m_RadialBlurMaxLength;
+
+    PostFX_FragmentPass(const Paths& paths, GLsizei w, GLsizei h):
+        m_LoResWidth(w/4),
+        m_LoResHeight(h/4),
+        m_Program(
+            paths.m_AppShaders / "shadingPass.vs.glsl",
+            paths.m_AppShaders / "postFX.fs.glsl"
+        ),
+        m_HiResDepthTexture(GL_DEPTH_COMPONENT32F, w, h),
+        m_HiRes(w, h),
+        m_LoRes(m_LoResWidth, m_LoResHeight),
+        m_LinearSampler(glmlv::GLSamplerParams().withWrapST(GL_CLAMP_TO_BORDER).withMinMagFilter(GL_LINEAR)),
+        m_NearestSampler(glmlv::GLSamplerParams().withWrapST(GL_CLAMP_TO_BORDER).withMinMagFilter(GL_NEAREST)),
+        m_IsEnabled(true),
+        m_BlurTechnique(PostFX_FragmentPassProgram::BLUR_RADIAL),
+        m_BoxBlurMatrixHalfSide(2),
+        m_RadialBlurNumSamples(16),
+        m_RadialBlurMaxLength(42.5f)
+    {
+        // Still attach a depth texture to input FBO for when using Forward Pipeline
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_HiRes.m_Fbo);
+        glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_HiResDepthTexture.glId(), 0);
+        handleFboStatus(glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    }
+};
+
+struct PostFX {
+    PostFX_FragmentPass m_FragmentPass;
+    PostFX_ComputePass m_ComputePass;
+
+    PostFX(const Paths& paths, GLsizei w, GLsizei h):
+        m_FragmentPass(paths, w, h),
+        m_ComputePass(paths, w, h)
+        {}
 };
 
 class Demo {

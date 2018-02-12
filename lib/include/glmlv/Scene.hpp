@@ -33,6 +33,7 @@ struct Scene {
         m_GLMesh(SimpleGeometry { m_ObjData.vertexBuffer, m_ObjData.indexBuffer }),
         m_GLSampler(GLSamplerParams().withWrapST(GL_REPEAT).withMinMagFilter(GL_LINEAR))
     {
+        // TODO: Anisotropic filtering and mipmaps
         for(const auto& img: m_ObjData.textures) {
             m_GLTextures2D.emplace_back(img);
         }

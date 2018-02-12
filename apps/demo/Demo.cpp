@@ -129,31 +129,37 @@ void Demo::renderGUI() {
         ImGui::Unindent();
     }
 
+    auto& fpass = m_PostFX.m_FragmentPass;
+    auto& cpass = m_PostFX.m_ComputePass;
+
     if(ImGui::CollapsingHeader("PostFX")) {
-        ImGui::Checkbox("Enable", &m_PostFX.m_IsEnabled);
-        if(m_PostFX.m_IsEnabled) {
+        ImGui::Checkbox("Enable Fragment Pass", &fpass.m_IsEnabled);
+        ImGui::Checkbox("Enable Compute Pass", &cpass.m_IsEnabled);
+        if(fpass.m_IsEnabled) {
             ImGui::Text("Blur: "); ImGui::SameLine();
-            ImGui::RadioButton("None"  , &m_PostFX.m_BlurTechnique, GLDemoPostFXProgram::BLUR_NONE); ImGui::SameLine();
-            ImGui::RadioButton("Box"   , &m_PostFX.m_BlurTechnique, GLDemoPostFXProgram::BLUR_BOX);  ImGui::SameLine();
-            ImGui::RadioButton("Radial", &m_PostFX.m_BlurTechnique, GLDemoPostFXProgram::BLUR_RADIAL);
-            switch(m_PostFX.m_BlurTechnique) {
-            case GLDemoPostFXProgram::BLUR_NONE:
+            ImGui::RadioButton("None"  , &fpass.m_BlurTechnique, PostFX_FragmentPassProgram::BLUR_NONE); ImGui::SameLine();
+            ImGui::RadioButton("Box"   , &fpass.m_BlurTechnique, PostFX_FragmentPassProgram::BLUR_BOX);  ImGui::SameLine();
+            ImGui::RadioButton("Radial", &fpass.m_BlurTechnique, PostFX_FragmentPassProgram::BLUR_RADIAL);
+            switch(fpass.m_BlurTechnique) {
+            case PostFX_FragmentPassProgram::BLUR_NONE:
                 break;
-            case GLDemoPostFXProgram::BLUR_BOX: 
-                ImGui::SliderInt("Matrix Half Side", &m_PostFX.m_BoxBlurMatrixHalfSide, 0, 8);
+            case PostFX_FragmentPassProgram::BLUR_BOX: 
+                ImGui::SliderInt("Matrix Half Side", &fpass.m_BoxBlurMatrixHalfSide, 0, 8);
                 {
-                    int s = m_PostFX.m_BoxBlurMatrixHalfSide;
+                    int s = fpass.m_BoxBlurMatrixHalfSide;
                     ImGui::Text("%ix%i matrix", s+1+s, s+1+s);
                 }
                 break;
-            case GLDemoPostFXProgram::BLUR_RADIAL:
-                ImGui::SliderInt("Num Samples", &m_PostFX.m_RadialBlurNumSamples, 1, 64);
-                ImGui::SliderFloat("Max Length", &m_PostFX.m_RadialBlurMaxLength, 0, 1000.0f);
+            case PostFX_FragmentPassProgram::BLUR_RADIAL:
+                ImGui::SliderInt("Num Samples",  &fpass.m_RadialBlurNumSamples, 1, 64);
+                ImGui::SliderFloat("Max Length", &fpass.m_RadialBlurMaxLength, 0, 1.0f);
                 break;
             }
-            ImGui::SliderFloat("Gamma", &m_PostFX.m_Gamma, 0, 16);
-            ImGui::SliderFloat3("Final Touch Mul", &m_PostFX.m_FinalTouchMul[0], -2, 2);
-            ImGui::SliderFloat3("Final Touch Add", &m_PostFX.m_FinalTouchAdd[0], -2, 2);
+        }
+        if(cpass.m_IsEnabled) {
+            ImGui::SliderFloat("Gamma", &cpass.m_Gamma, 0, 16);
+            ImGui::SliderFloat3("Final Touch Mul", &cpass.m_FinalTouchMul[0], -2, 2);
+            ImGui::SliderFloat3("Final Touch Add", &cpass.m_FinalTouchAdd[0], -2, 2);
         }
     }
 
@@ -210,7 +216,14 @@ void Demo::render() {
         break;
     }
 
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_PostFX.m_IsEnabled ? m_PostFX.m_Input.m_Fbo : 0);
+    auto& fpass = m_PostFX.m_FragmentPass;
+    auto& cpass = m_PostFX.m_ComputePass;
+
+    GLuint nextRenderTarget = 0;
+    /**/ if(fpass.m_IsEnabled) nextRenderTarget = fpass.m_HiRes.m_Fbo;
+    else if(cpass.m_IsEnabled) nextRenderTarget = cpass.m_Input.m_Fbo;
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, nextRenderTarget);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     switch(m_PipelineKind) {
@@ -267,25 +280,50 @@ void Demo::render() {
         break;
     }
 
-    if(m_PostFX.m_IsEnabled) {
-        glBindImageTexture(0, m_PostFX.m_Input.m_Texture.glId(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
-        glBindImageTexture(1, m_PostFX.m_Output.m_Texture.glId(), 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-        m_PostFX.m_Program.use();
-        m_PostFX.m_Program.setUniformInputImage(0);
-        m_PostFX.m_Program.setUniformOutputImage(1);
-        m_PostFX.m_Program.setUniformBlurTechnique(m_PostFX.m_BlurTechnique);
-        m_PostFX.m_Program.setUniformBoxBlurMatrixHalfSide(m_PostFX.m_BoxBlurMatrixHalfSide);
-        m_PostFX.m_Program.setUniformRadialBlurNumSamples(m_PostFX.m_RadialBlurNumSamples);
-        m_PostFX.m_Program.setUniformRadialBlurMaxLength(m_PostFX.m_RadialBlurMaxLength);
-        m_PostFX.m_Program.setUniformGammaExponent(1.f / m_PostFX.m_Gamma);
-        m_PostFX.m_Program.setUniformFinalTouchMul(m_PostFX.m_FinalTouchMul);
-        m_PostFX.m_Program.setUniformFinalTouchAdd(m_PostFX.m_FinalTouchAdd);
+    if(fpass.m_IsEnabled) {
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fpass.m_LoRes.m_Fbo);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fpass.m_HiRes.m_Fbo);
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        const GLint w = m_nWindowWidth, h = m_nWindowHeight;
+        const GLint dw = fpass.m_LoResWidth, dh = fpass.m_LoResHeight;
+        glBlitFramebuffer(0, 0, w, h, 0, 0, dw, dh, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, cpass.m_IsEnabled ? cpass.m_Input.m_Fbo : 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glActiveTexture(GL_TEXTURE0);
+        fpass.m_HiRes.m_Texture.bind();
+        glActiveTexture(GL_TEXTURE1);
+        fpass.m_LoRes.m_Texture.bind();
+        fpass.m_NearestSampler.bindToTextureUnit(0);
+        fpass.m_LinearSampler.bindToTextureUnit(1);
+        fpass.m_Program.use();
+        fpass.m_Program.setUniformHiResTexture(0);
+        fpass.m_Program.setUniformLoResTexture(1);
+        fpass.m_Program.setUniformWindowSize((GLuint) m_nWindowWidth, (GLuint) m_nWindowHeight);
+        fpass.m_Program.setUniformBlurTechnique(fpass.m_BlurTechnique);
+        fpass.m_Program.setUniformBoxBlurMatrixHalfSide(fpass.m_BoxBlurMatrixHalfSide);
+        fpass.m_Program.setUniformRadialBlurNumSamples(fpass.m_RadialBlurNumSamples);
+        fpass.m_Program.setUniformRadialBlurMaxLength(fpass.m_RadialBlurMaxLength);
+        m_ScreenCoverQuad.render();
+    }
+
+    if(cpass.m_IsEnabled) {
+        glBindImageTexture(0, cpass.m_Input.m_Texture.glId(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+        glBindImageTexture(1, cpass.m_Output.m_Texture.glId(), 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+        cpass.m_Program.use();
+        cpass.m_Program.setUniformInputImage(0);
+        cpass.m_Program.setUniformOutputImage(1);
+        cpass.m_Program.setUniformGammaExponent(1.f / cpass.m_Gamma);
+        cpass.m_Program.setUniformFinalTouchMul(cpass.m_FinalTouchMul);
+        cpass.m_Program.setUniformFinalTouchAdd(cpass.m_FinalTouchAdd);
         // NOTE!!!! 32 = local_size dans le compute shader. 
         glDispatchCompute(1 + m_nWindowWidth / 32, 1 + m_nWindowHeight / 32, 1);
         glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_FRAMEBUFFER_BARRIER_BIT);
 
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, m_PostFX.m_Output.m_Fbo);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, cpass.m_Output.m_Fbo);
         glReadBuffer(GL_COLOR_ATTACHMENT0);
         const GLint w = m_nWindowWidth, h = m_nWindowHeight;
         glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
@@ -358,5 +396,6 @@ Demo::Demo(int argc, char** argv):
     }
     m_Lighting.dirLightShadowMapBias = 0.05f;
 
-    m_PostFX.m_IsEnabled = false;
+    m_PostFX.m_FragmentPass.m_IsEnabled = false;
+    m_PostFX.m_ComputePass.m_IsEnabled = false;
 }
