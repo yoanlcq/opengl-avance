@@ -14,6 +14,11 @@ uniform int uBoxBlurMatrixHalfSide; // int, not uint, so we can negate it
 uniform uint uRadialBlurNumSamples;
 uniform float uRadialBlurMaxLength;
 
+uniform bool uBloomEnabled;
+uniform int uBloomMatrixHalfSide; // int, not uint, so we can negate it
+uniform float uBloomTexelSkip;
+uniform float uBloomThreshold;
+
 out vec4 fColor;
 
 void main() {
@@ -53,20 +58,20 @@ void main() {
         break;
     }
 
-#if 0 // Experimental bloom
-        int s = 4;
+    if(uBloomEnabled) {
+        int s = uBloomMatrixHalfSide;
 
         vec3 bloom = vec3(0);
         for(int dy=-s ; dy <= s ; ++dy) {
             for(int dx=-s ; dx <= s ; ++dx) {
-                ivec2 coords = clamp(pixelCoords + ivec2(dx, dy), ivec2(0), inputImageSize-ivec2(1));
-                vec4 loaded = imageLoad(uHiResTexture, coords);
-                bloom += smoothstep(0.6f, 1.0f, loaded.rgb) * 2.0f;
+                vec2 coords = clamp(texCoords + uBloomTexelSkip*vec2(dx, dy)/vec2(uWindowSize.xy), 0, 1);
+                vec4 fetched = texture2D(uLoResTexture, coords);
+                bloom += smoothstep(uBloomThreshold, 1.0f, fetched.rgb);
             }
         }
-        pixel.rgb += bloom / 4.0f;
+        s += s+1;
+        pixel.rgb += bloom / (s*s);
     }
-#endif
     
     pixel = clamp(pixel, 0, 1);
     fColor = pixel;

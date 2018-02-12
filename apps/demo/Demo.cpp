@@ -130,11 +130,9 @@ void Demo::renderGUI() {
     }
 
     auto& fpass = m_PostFX.m_FragmentPass;
-    auto& cpass = m_PostFX.m_ComputePass;
 
-    if(ImGui::CollapsingHeader("PostFX")) {
+    if(ImGui::CollapsingHeader("PostFX: Fragment Pass")) {
         ImGui::Checkbox("Enable Fragment Pass", &fpass.m_IsEnabled);
-        ImGui::Checkbox("Enable Compute Pass", &cpass.m_IsEnabled);
         if(fpass.m_IsEnabled) {
             ImGui::Text("Blur: "); ImGui::SameLine();
             ImGui::RadioButton("None"  , &fpass.m_BlurTechnique, PostFX_FragmentPassProgram::BLUR_NONE); ImGui::SameLine();
@@ -155,7 +153,21 @@ void Demo::renderGUI() {
                 ImGui::SliderFloat("Max Length", &fpass.m_RadialBlurMaxLength, 0, 1.0f);
                 break;
             }
+            ImGui::Checkbox("Enable Bloom", &fpass.m_BloomEnabled);
+            ImGui::SliderInt("Bloom Matrix Half Side", &fpass.m_BloomMatrixHalfSide, 0, 8);
+            {
+                int s = fpass.m_BoxBlurMatrixHalfSide;
+                ImGui::Text("%ix%i matrix", s+1+s, s+1+s);
+            }
+            ImGui::SliderFloat("Bloom Texel Skip", &fpass.m_BloomTexelSkip, 0, 20.0f);
+            ImGui::SliderFloat("Bloom Threshold", &fpass.m_BloomThreshold, 0, 1.0f);
         }
+    }
+
+    auto& cpass = m_PostFX.m_ComputePass;
+
+    if(ImGui::CollapsingHeader("PostFX: Compute Pass")) {
+        ImGui::Checkbox("Enable Compute Pass", &cpass.m_IsEnabled);
         if(cpass.m_IsEnabled) {
             ImGui::SliderFloat("Gamma", &cpass.m_Gamma, 0, 16);
             ImGui::SliderFloat3("Final Touch Mul", &cpass.m_FinalTouchMul[0], -2, 2);
@@ -306,6 +318,10 @@ void Demo::render() {
         fpass.m_Program.setUniformBoxBlurMatrixHalfSide(fpass.m_BoxBlurMatrixHalfSide);
         fpass.m_Program.setUniformRadialBlurNumSamples(fpass.m_RadialBlurNumSamples);
         fpass.m_Program.setUniformRadialBlurMaxLength(fpass.m_RadialBlurMaxLength);
+        fpass.m_Program.setUniformBloomEnabled(fpass.m_BloomEnabled);
+        fpass.m_Program.setUniformBloomMatrixHalfSide(fpass.m_BloomMatrixHalfSide);
+        fpass.m_Program.setUniformBloomTexelSkip(fpass.m_BloomTexelSkip);
+        fpass.m_Program.setUniformBloomThreshold(fpass.m_BloomThreshold);
         m_ScreenCoverQuad.render();
     }
 
@@ -395,7 +411,4 @@ Demo::Demo(int argc, char** argv):
         m_Lighting.pointLightAttenuationFactor[i] = 1;
     }
     m_Lighting.dirLightShadowMapBias = 0.05f;
-
-    m_PostFX.m_FragmentPass.m_IsEnabled = false;
-    m_PostFX.m_ComputePass.m_IsEnabled = false;
 }

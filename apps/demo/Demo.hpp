@@ -46,6 +46,10 @@ class PostFX_FragmentPassProgram: public glmlv::GLProgram {
     GLint m_UniformBoxBlurMatrixHalfSideLocation = -1;
     GLint m_UniformRadialBlurNumSamplesLocation  = -1;
     GLint m_UniformRadialBlurMaxLengthLocation   = -1;
+    GLint m_UniformBloomEnabledLocation          = -1;
+    GLint m_UniformBloomMatrixHalfSideLocation   = -1;
+    GLint m_UniformBloomTexelSkipLocation        = -1;
+    GLint m_UniformBloomThresholdLocation        = -1;
 
 public:
     PostFX_FragmentPassProgram(const glmlv::fs::path& vs, const glmlv::fs::path& fs):
@@ -56,18 +60,26 @@ public:
         m_UniformBlurTechniqueLocation        (getUniformLocation("uBlurTechnique")),
         m_UniformBoxBlurMatrixHalfSideLocation(getUniformLocation("uBoxBlurMatrixHalfSide")),
         m_UniformRadialBlurNumSamplesLocation (getUniformLocation("uRadialBlurNumSamples")),
-        m_UniformRadialBlurMaxLengthLocation  (getUniformLocation("uRadialBlurMaxLength"))
+        m_UniformRadialBlurMaxLengthLocation  (getUniformLocation("uRadialBlurMaxLength")),
+        m_UniformBloomEnabledLocation         (getUniformLocation("uBloomEnabled")),
+        m_UniformBloomMatrixHalfSideLocation  (getUniformLocation("uBloomMatrixHalfSide")),
+        m_UniformBloomTexelSkipLocation       (getUniformLocation("uBloomTexelSkip")),
+        m_UniformBloomThresholdLocation       (getUniformLocation("uBloomThreshold"))
         {}
     static const GLuint BLUR_NONE = 1;
     static const GLuint BLUR_BOX = 2;
     static const GLuint BLUR_RADIAL = 3;
-    void setUniformHiResTexture(GLint i)             const { glUniform1i(m_UniformHiResTextureLocation, i); }
-    void setUniformLoResTexture(GLint i)             const { glUniform1i(m_UniformLoResTextureLocation, i); }
-    void setUniformWindowSize(GLuint w, GLuint h)    const { glUniform2ui(m_UniformWindowSizeLocation, w, h); }
-    void setUniformBlurTechnique(GLuint tech)        const { glUniform1ui(m_UniformBlurTechniqueLocation, tech); }
-    void setUniformBoxBlurMatrixHalfSide(GLint i)    const { glUniform1i(m_UniformBoxBlurMatrixHalfSideLocation, i); }
-    void setUniformRadialBlurNumSamples(GLuint n)    const { glUniform1ui(m_UniformRadialBlurNumSamplesLocation, n); }
-    void setUniformRadialBlurMaxLength(GLfloat f)    const { glUniform1f(m_UniformRadialBlurMaxLengthLocation, f); }
+    void setUniformHiResTexture(GLint i)          const { glUniform1i(m_UniformHiResTextureLocation, i); }
+    void setUniformLoResTexture(GLint i)          const { glUniform1i(m_UniformLoResTextureLocation, i); }
+    void setUniformWindowSize(GLuint w, GLuint h) const { glUniform2ui(m_UniformWindowSizeLocation, w, h); }
+    void setUniformBlurTechnique(GLuint tech)     const { glUniform1ui(m_UniformBlurTechniqueLocation, tech); }
+    void setUniformBoxBlurMatrixHalfSide(GLint i) const { glUniform1i(m_UniformBoxBlurMatrixHalfSideLocation, i); }
+    void setUniformRadialBlurNumSamples(GLuint n) const { glUniform1ui(m_UniformRadialBlurNumSamplesLocation, n); }
+    void setUniformRadialBlurMaxLength(GLfloat f) const { glUniform1f(m_UniformRadialBlurMaxLengthLocation, f); }
+    void setUniformBloomEnabled(bool b)           const { glUniform1i(m_UniformBloomEnabledLocation, b); }
+    void setUniformBloomMatrixHalfSide(GLint i)   const { glUniform1i(m_UniformBloomMatrixHalfSideLocation, i); }
+    void setUniformBloomTexelSkip(GLfloat f)      const { glUniform1f(m_UniformBloomTexelSkipLocation, f); }
+    void setUniformBloomThreshold(GLfloat f)      const { glUniform1f(m_UniformBloomThresholdLocation, f); }
 };
 
 
@@ -234,7 +246,7 @@ struct PostFX_ComputePass {
         m_InputDepthTexture(GL_DEPTH_COMPONENT32F, w, h),
         m_Input(w, h),
         m_Output(w, h),
-        m_IsEnabled(true),
+        m_IsEnabled(false),
         m_Gamma(2.2f),
         m_FinalTouchMul(1.0f),
         m_FinalTouchAdd(0.0f)
@@ -257,6 +269,10 @@ struct PostFX_FragmentPass {
     int m_BoxBlurMatrixHalfSide;
     int m_RadialBlurNumSamples;
     float m_RadialBlurMaxLength;
+    bool m_BloomEnabled;
+    int m_BloomMatrixHalfSide;
+    float m_BloomTexelSkip;
+    float m_BloomThreshold;
 
     PostFX_FragmentPass(const Paths& paths, GLsizei w, GLsizei h):
         m_LoResWidth(w/4),
@@ -270,11 +286,15 @@ struct PostFX_FragmentPass {
         m_LoRes(m_LoResWidth, m_LoResHeight),
         m_LinearSampler(glmlv::GLSamplerParams().withWrapST(GL_CLAMP_TO_BORDER).withMinMagFilter(GL_LINEAR)),
         m_NearestSampler(glmlv::GLSamplerParams().withWrapST(GL_CLAMP_TO_BORDER).withMinMagFilter(GL_NEAREST)),
-        m_IsEnabled(true),
-        m_BlurTechnique(PostFX_FragmentPassProgram::BLUR_RADIAL),
+        m_IsEnabled(false),
+        m_BlurTechnique(PostFX_FragmentPassProgram::BLUR_NONE),
         m_BoxBlurMatrixHalfSide(2),
         m_RadialBlurNumSamples(16),
-        m_RadialBlurMaxLength(42.5f)
+        m_RadialBlurMaxLength(0.25f),
+        m_BloomEnabled(true),
+        m_BloomMatrixHalfSide(2),
+        m_BloomTexelSkip(6),
+        m_BloomThreshold(0.5f)
     {
         // Still attach a depth texture to input FBO for when using Forward Pipeline
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_HiRes.m_Fbo);
