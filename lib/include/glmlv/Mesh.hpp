@@ -79,13 +79,14 @@ public:
         glBindVertexArray(m_Vao);
         glDrawElements(GL_TRIANGLES, m_ElementCount, GL_UNSIGNED_INT, nullptr);
     }
-    void render(const GLForwardRenderingProgram& prog, const Camera& camera, const MeshInstanceData& i) const {
+    void render(const GLMaterialProgram& prog, const Camera& camera, const MeshInstanceData& i) const {
         const auto& view = camera.getViewMatrix();
         const auto& proj = camera.getProjMatrix();
         glm::mat4 modelView(view * i.modelMatrix);
         glm::mat4 modelViewProj(proj * modelView);
         glm::mat4 normalMatrix(transpose(inverse(modelView)));
 
+		prog.resetMaterialUniforms();
         prog.setUniformKdSampler(i.textureUnit);
         prog.setUniformKd(i.color);
         prog.setUniformModelViewProjMatrix(modelViewProj);
@@ -106,7 +107,7 @@ struct Mesh {
     void render() const {
         m_GLMesh.render();
     }
-    void render(const GLForwardRenderingProgram& prog, const Camera& camera, const MeshInstanceData& i) const {
+    void render(const GLMaterialProgram& prog, const Camera& camera, const MeshInstanceData& i) const {
         m_GLMesh.render(prog, camera, i);
     }
 };

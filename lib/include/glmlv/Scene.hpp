@@ -33,13 +33,18 @@ struct Scene {
         m_GLMesh(SimpleGeometry { m_ObjData.vertexBuffer, m_ObjData.indexBuffer }),
         m_GLSampler(GLSamplerParams().withWrapST(GL_REPEAT).withMinMagFilter(GL_LINEAR))
     {
-        // TODO: Anisotropic filtering and mipmaps
         for(const auto& img: m_ObjData.textures) {
             m_GLTextures2D.emplace_back(img);
+			m_GLTextures2D.back().generateMipMap();
+			m_GLTextures2D.back().setLodBias(0.0f);
+			m_GLTextures2D.back().setAnisotropy(4.0f);
         }
     }
+	glm::vec3 getBboxSize() const {
+		return m_ObjData.bboxMax - m_ObjData.bboxMin;
+	}
     float getDiagonalLength() const {
-        return glm::length(m_ObjData.bboxMax - m_ObjData.bboxMin);
+        return glm::length(getBboxSize());
     }
 
     void render(const GLMaterialProgram& prog, const Camera& camera, const SceneInstanceData& instance) const {

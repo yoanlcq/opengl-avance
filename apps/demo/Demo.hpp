@@ -275,8 +275,8 @@ struct PostFX_FragmentPass {
     float m_BloomThreshold;
 
     PostFX_FragmentPass(const Paths& paths, GLsizei w, GLsizei h):
-        m_LoResWidth(w/4),
-        m_LoResHeight(h/4),
+        m_LoResWidth(w/2),
+        m_LoResHeight(h/2),
         m_Program(
             paths.m_AppShaders / "shadingPass.vs.glsl",
             paths.m_AppShaders / "postFX.fs.glsl"

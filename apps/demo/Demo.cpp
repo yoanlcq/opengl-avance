@@ -411,4 +411,7 @@ Demo::Demo(int argc, char** argv):
         m_Lighting.pointLightAttenuationFactor[i] = 1;
     }
     m_Lighting.dirLightShadowMapBias = 0.05f;
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 }

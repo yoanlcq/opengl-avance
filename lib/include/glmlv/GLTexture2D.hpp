@@ -44,6 +44,19 @@ public:
             GL_RGBA, GL_UNSIGNED_BYTE, img.data()
         );
     }
+	void setLodBias(GLfloat f) const {
+		bind();
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, f);
+	}
+	void generateMipMap() const {
+		bind();
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	void setAnisotropy(GLfloat f) const {
+		bind();
+		static const GLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE;
+		glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, f);
+	}
 };
 
 } // namespace glmlv
