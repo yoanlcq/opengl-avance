@@ -47,10 +47,12 @@ void main() {
         vec2 velocityFromCenter = (center - coords) / float(uRadialBlurNumSamples);
         float upperLength = uRadialBlurMaxLength / float(uRadialBlurNumSamples);
         vec2 velocity = length(velocityFromCenter) < upperLength ? velocityFromCenter : upperLength * normalize(velocityFromCenter);
+        vec4 accum = vec4(0);
         for(uint i = 0; i < uRadialBlurNumSamples; ++i, coords += velocity) {
-            pixel += texture2D(uLoResTexture, coords);
+            accum += texture2D(uLoResTexture, coords);
         }
-        pixel /= float(uRadialBlurNumSamples);
+        accum /= float(uRadialBlurNumSamples);
+        pixel = mix(texture2D(uHiResTexture, texCoords), accum, 2f*length(coords-center));
         break;
     default:
         // Welp, it's obviously invalid. User forgot to set uBlurTechnique.
