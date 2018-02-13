@@ -14,6 +14,7 @@
  *   will be the same when ported to other languages.
  */
  
+#include <stddef.h>
 #include <stdint.h>
 
 class OpenSimplexNoise {
@@ -34,7 +35,7 @@ class OpenSimplexNoise {
 
 public:
 	OpenSimplexNoise();
-    OpenSimplexNoise::OpenSimplexNoise(int16_t perm[256]);
+    OpenSimplexNoise(int16_t perm[256]);
 	//Initializes the class using a permutation array generated from a 64-bit seed.
 	//Generates a proper permutation (i.e. doesn't merely perform N successive pair swaps on a base array)
 	//Uses a simple 64-bit LCG.

@@ -57,6 +57,7 @@ void Demo::renderGUI() {
         ImGui::SliderFloat("Vertical FOV", &m_Camera.m_FovY, 0.01f, radians(179.f));
         ImGui::SliderFloat("Near", &m_Camera.m_Near, 0.0001f, 1.f);
         ImGui::SliderFloat("Far", &m_Camera.m_Far, 100.f, 10000.f);
+        ImGui::SliderFloat("Skybox scale", &m_Skybox.m_Scale, 1.f, m_Sponza.getDiagonalLength() * 2.f);
     }
     ImGui::Text("Pipeline: ");
     ImGui::RadioButton("Forward", &m_PipelineKind, PIPELINE_FORWARD);
@@ -184,7 +185,17 @@ void Demo::renderGUI() {
     ImGui::Render();
 }
 
-void Demo::render() {
+
+void Demo::renderGeometry() {
+    m_Sponza.render();
+    m_Skybox.render(m_Camera);
+}
+void Demo::renderGeometry(const GLMaterialProgram& prog) {
+    m_Sponza.render(prog, m_Camera, m_SponzaInstanceData);
+    m_Skybox.render(m_Camera);
+}
+
+void Demo::renderFrame() {
     m_Lighting.dirLightDir = vec3(
         cos(radians(m_DirLightPhiAngleDegrees)) * sin(radians(m_DirLightThetaAngleDegrees)),
         sin(radians(m_DirLightPhiAngleDegrees)) * sin(radians(m_DirLightThetaAngleDegrees)),
@@ -212,7 +223,7 @@ void Demo::render() {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_DirectionalShadowMapping.m_Fbo);
         glViewport(0, 0, m_DirectionalShadowMapping.m_Resolution, m_DirectionalShadowMapping.m_Resolution);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        m_Sponza.render();
+        renderGeometry();
         glViewport(0, 0, m_nWindowWidth, m_nWindowHeight);
     }
 
@@ -225,8 +236,7 @@ void Demo::render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_DeferredRendering.m_GPassProgram.use();
         m_DeferredRendering.m_GPassProgram.resetMaterialUniforms();
-        m_Sponza.render(m_DeferredRendering.m_GPassProgram, m_Camera, m_SponzaInstanceData);
-
+        renderGeometry(m_DeferredRendering.m_GPassProgram);
         break;
     }
 
@@ -252,7 +262,7 @@ void Demo::render() {
         m_ForwardRendering.m_Program.setLightingUniforms(m_Lighting, m_Camera);
         m_Lighting.dirLightDir = -m_Lighting.dirLightDir; // FIXME Hack!!!!!!
         m_ForwardRendering.m_Program.resetMaterialUniforms();
-        m_Sponza.render(m_ForwardRendering.m_Program, m_Camera, m_SponzaInstanceData);
+        renderGeometry(m_ForwardRendering.m_Program);
         break;
     case PIPELINE_DEFERRED:
         // Shading Pass
@@ -357,7 +367,7 @@ int Demo::run()
     {
         const auto seconds = glfwGetTime();
 
-        render();
+        renderFrame();
 
         // GUI code:
         renderGUI();
@@ -394,7 +404,8 @@ Demo::Demo(int argc, char** argv):
     m_SponzaInstanceData(),
     m_Camera(m_GLFWHandle.window(), m_nWindowWidth, m_nWindowHeight),
     m_CameraMaxSpeed(m_Sponza.getDiagonalLength() / 2.f),
-    m_CameraSpeed(m_CameraMaxSpeed / 5.f)
+    m_CameraSpeed(m_CameraMaxSpeed / 5.f),
+    m_Skybox(m_Paths, m_Sponza.getDiagonalLength() / 2.f)
 {
     (void) argc;
     static_ImGuiIniFilename = m_Paths.m_AppName + ".imgui.ini";

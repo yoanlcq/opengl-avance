@@ -6,13 +6,27 @@
 #include <glmlv/GLDeferredShadingPassProgram.hpp>
 #include <glmlv/GLDirectionalSMProgram.hpp>
 #include <glmlv/GLDisplayDepthMapProgram.hpp>
-#include <glmlv/GLGammaCorrectProgram.hpp>
+#include <glmlv/GLMaterialProgram.hpp>
 #include <glmlv/GLTexture2D.hpp>
+#include <glmlv/GLCubeMapTexture.hpp>
 #include <glmlv/GLSampler.hpp>
 #include <glmlv/Scene.hpp>
 #include <glmlv/Camera.hpp>
 
 void handleFboStatus(GLenum status);
+
+class GLCubeMapProgram: public glmlv::GLProgram {
+    const GLint m_UniformModelViewProjMatrixLocation = -1;
+    const GLint m_UniformCubeMapLocation             = -1;
+public:
+    GLCubeMapProgram(const glmlv::fs::path& vs, const glmlv::fs::path& fs):
+        GLProgram(glmlv::compileProgram({ vs.string(), fs.string() })),
+        m_UniformModelViewProjMatrixLocation(getUniformLocation("uModelViewProjMatrix")),
+        m_UniformCubeMapLocation(getUniformLocation("uCubeMap"))
+        {}
+    void setUniformModelViewProjMatrix(const glm::mat4& m) const { glUniformMatrix4fv(m_UniformModelViewProjMatrixLocation, 1, GL_FALSE, &m[0][0]); }
+    void setUniformCubeMap(GLuint i) const { glUniform1i(m_UniformCubeMapLocation, i); }
+};
 
 class PostFX_ComputePassProgram: public glmlv::GLProgram {
     GLint m_UniformInputImageLocation            = -1;
@@ -109,6 +123,93 @@ struct Paths {
         m_AppShaders  { m_ShadersRoot / m_AppName }
         {}
 };
+
+class SkyboxCubeMesh {
+    GLuint m_Vbo, m_Vao;
+public:
+    ~SkyboxCubeMesh() {
+        glDeleteVertexArrays(1, &m_Vao);
+        glDeleteBuffers(1, &m_Vbo);
+    }
+    static constexpr size_t VERTEX_COUNT = 14;
+    SkyboxCubeMesh() {
+        static const float STRIP[VERTEX_COUNT*3] = {
+            -1.f,  1.f,  1.f, // Front-top-left
+             1.f,  1.f,  1.f, // Front-top-right
+            -1.f, -1.f,  1.f, // Front-bottom-left
+             1.f, -1.f,  1.f, // Front-bottom-right
+             1.f, -1.f, -1.f, // Back-bottom-right
+             1.f,  1.f,  1.f, // Front-top-right
+             1.f,  1.f, -1.f, // Back-top-right
+            -1.f,  1.f,  1.f, // Front-top-left
+            -1.f,  1.f, -1.f, // Back-top-left
+            -1.f, -1.f,  1.f, // Front-bottom-left
+            -1.f, -1.f, -1.f, // Back-bottom-left
+             1.f, -1.f, -1.f, // Back-bottom-right
+            -1.f,  1.f, -1.f, // Back-top-left
+             1.f,  1.f, -1.f  // Back-top-right
+        };
+        glGenBuffers(1, &m_Vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, m_Vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof STRIP, STRIP, GL_STATIC_DRAW);
+
+        glGenVertexArrays(1, &m_Vao);
+        glBindVertexArray(m_Vao);
+        glBindBuffer(GL_ARRAY_BUFFER, m_Vbo);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    }
+    void render() const {
+        glBindVertexArray(m_Vao);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, VERTEX_COUNT);
+    }
+};
+
+class Skybox {
+    GLCubeMapProgram        m_Program;
+    glmlv::GLSampler        m_Sampler;
+    glmlv::GLCubeMapTexture m_Texture;
+    SkyboxCubeMesh          m_CubeMesh;
+public:
+    float                   m_Scale;
+
+    Skybox(const Paths& paths, float scale): 
+        m_Program(
+            paths.m_AppShaders / "cubeMap.vs.glsl",
+            paths.m_AppShaders / "cubeMap.fs.glsl"
+        ),
+        m_Sampler(glmlv::GLSamplerParams().withWrapST(GL_CLAMP_TO_BORDER).withMinMagFilter(GL_LINEAR)),
+        m_Texture(),
+        m_CubeMesh(),
+        m_Scale(scale)
+    {
+        glmlv::CubeMapFaceImages faces;
+        faces.px = glmlv::Image2DRGBA(128, 128, 255, 000, 000, 255);
+        faces.py = glmlv::Image2DRGBA(128, 128, 000, 255, 000, 255);
+        faces.pz = glmlv::Image2DRGBA(128, 128, 000, 000, 255, 255);
+        faces.nx = glmlv::Image2DRGBA(128, 128, 128, 000, 000, 255);
+        faces.ny = glmlv::Image2DRGBA(128, 128, 000, 128, 000, 255);
+        faces.nz = glmlv::Image2DRGBA(128, 128, 000, 000, 128, 255);
+        m_Texture.uploadImages(faces);
+    }
+    void render(const glmlv::Camera& camera) const {
+        auto modelMatrix = glm::scale(glm::mat4(1.f), glm::vec3(m_Scale));
+        auto viewMatrix = camera.getViewMatrix();
+        // Cancel camera translation
+        viewMatrix[3][0] = 0;
+        viewMatrix[3][1] = 0;
+        viewMatrix[3][2] = 0;
+        const auto mvp = camera.getProjMatrix() * viewMatrix * modelMatrix;
+        m_Program.use();
+        m_Program.setUniformModelViewProjMatrix(mvp);
+        m_Program.setUniformCubeMap(0);
+        glActiveTexture(GL_TEXTURE0);
+        m_Texture.bind();
+        // m_Sampler.bindToTextureUnit(0);
+        m_CubeMesh.render();
+    }
+};
+
 
 struct ForwardRendering {
     const glmlv::GLForwardRenderingProgram m_Program;
@@ -321,7 +422,9 @@ public:
     int run();
 private:
     void renderGUI();
-    void render();
+    void renderFrame();
+    void renderGeometry();
+    void renderGeometry(const glmlv::GLMaterialProgram&);
 
     // NOTE: Make it static, so that the char pointer's lifetime is unbounded.
     // With the old code, the memory was freed before ImGUI wrote to the ini filename.
@@ -350,4 +453,5 @@ private:
     glmlv::Camera m_Camera;
     const float m_CameraMaxSpeed;
     float m_CameraSpeed;
+    Skybox m_Skybox;
 };
