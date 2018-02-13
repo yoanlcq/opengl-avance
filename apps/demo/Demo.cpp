@@ -45,6 +45,11 @@ void Demo::renderGUI() {
     if(ImGui::CollapsingHeader("ImGUI Style Editor")) {
         ImGui::ShowStyleEditor();
     }
+
+    ImGui::Text("Pipeline: ");
+    ImGui::RadioButton("Forward", &m_PipelineKind, PIPELINE_FORWARD);
+    ImGui::RadioButton("Deferred", &m_PipelineKind, PIPELINE_DEFERRED);
+
     if(ImGui::CollapsingHeader("Clear Color")) {
         if (ImGui::ColorEdit3("clearColor", &m_ClearColor[0])) {
             glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], 1.f);
@@ -58,10 +63,11 @@ void Demo::renderGUI() {
         ImGui::SliderFloat("Near", &m_Camera.m_Near, 0.0001f, 1.f);
         ImGui::SliderFloat("Far", &m_Camera.m_Far, 100.f, 10000.f);
         ImGui::SliderFloat("Skybox scale", &m_Skybox.m_Scale, 1.f, m_Sponza.getDiagonalLength() * 2.f);
+        ImGui::RadioButton("Simple Color Test", &m_Skybox.m_CurrentSky, Skybox::SkySimpleColorTest);
+        ImGui::RadioButton("Space Kurt", &m_Skybox.m_CurrentSky, Skybox::SkySpaceKurt);
+        ImGui::RadioButton("Space Ulukai Corona", &m_Skybox.m_CurrentSky, Skybox::SkySpaceUlukaiCorona);
+        ImGui::RadioButton("Space Ulukai Red Eclipse", &m_Skybox.m_CurrentSky, Skybox::SkySpaceUlukaiRedEclipse);
     }
-    ImGui::Text("Pipeline: ");
-    ImGui::RadioButton("Forward", &m_PipelineKind, PIPELINE_FORWARD);
-    ImGui::RadioButton("Deferred", &m_PipelineKind, PIPELINE_DEFERRED);
 
     switch(m_PipelineKind) {
     case PIPELINE_FORWARD:

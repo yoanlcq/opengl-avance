@@ -168,10 +168,21 @@ public:
 class Skybox {
     GLCubeMapProgram        m_Program;
     glmlv::GLSampler        m_Sampler;
-    glmlv::GLCubeMapTexture m_Texture;
     SkyboxCubeMesh          m_CubeMesh;
 public:
+    // Add new skybox cubemaps here
+    enum Sky {
+        SkySimpleColorTest = 0,
+        SkySpaceKurt,
+        SkySpaceUlukaiCorona,
+        SkySpaceUlukaiRedEclipse,
+        SkyCount,
+    };
+
     float                   m_Scale;
+    glmlv::GLCubeMapTexture m_Skies[SkyCount];
+    int                     m_CurrentSky; // int, so it is editable via radiobutton
+
 
     Skybox(const Paths& paths, float scale): 
         m_Program(
@@ -179,18 +190,44 @@ public:
             paths.m_AppShaders / "cubeMap.fs.glsl"
         ),
         m_Sampler(glmlv::GLSamplerParams().withWrapST(GL_CLAMP_TO_BORDER).withMinMagFilter(GL_LINEAR)),
-        m_Texture(),
         m_CubeMesh(),
-        m_Scale(scale)
+        m_Scale(scale),
+        m_Skies{},
+        m_CurrentSky(SkySpaceUlukaiCorona)
     {
         glmlv::CubeMapFaceImages faces;
+
         faces.px = glmlv::Image2DRGBA(128, 128, 255, 000, 000, 255);
         faces.py = glmlv::Image2DRGBA(128, 128, 000, 255, 000, 255);
         faces.pz = glmlv::Image2DRGBA(128, 128, 000, 000, 255, 255);
         faces.nx = glmlv::Image2DRGBA(128, 128, 128, 000, 000, 255);
         faces.ny = glmlv::Image2DRGBA(128, 128, 000, 128, 000, 255);
         faces.nz = glmlv::Image2DRGBA(128, 128, 000, 000, 128, 255);
-        m_Texture.uploadImages(faces);
+        m_Skies[SkySimpleColorTest].uploadImages(faces);
+
+        faces.px = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "kurt" / "space_rt.png");
+        faces.py = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "kurt" / "space_up.png");
+        faces.pz = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "kurt" / "space_bk.png");
+        faces.nx = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "kurt" / "space_lf.png");
+        faces.ny = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "kurt" / "space_dn.png");
+        faces.nz = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "kurt" / "space_ft.png");
+        m_Skies[SkySpaceKurt].uploadImages(faces);
+
+        faces.px = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_rt.png");
+        faces.py = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_up.png");
+        faces.pz = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_bk.png");
+        faces.nx = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_lf.png");
+        faces.ny = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_dn.png");
+        faces.nz = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_ft.png");
+        m_Skies[SkySpaceUlukaiCorona].uploadImages(faces);
+
+        faces.px = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_rt.png");
+        faces.py = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_up.png");
+        faces.pz = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_bk.png");
+        faces.nx = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_lf.png");
+        faces.ny = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_dn.png");
+        faces.nz = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_ft.png");
+        m_Skies[SkySpaceUlukaiRedEclipse].uploadImages(faces);
     }
     void render(const glmlv::Camera& camera) const {
         auto modelMatrix = glm::scale(glm::mat4(1.f), glm::vec3(m_Scale));
@@ -204,7 +241,7 @@ public:
         m_Program.setUniformModelViewProjMatrix(mvp);
         m_Program.setUniformCubeMap(0);
         glActiveTexture(GL_TEXTURE0);
-        m_Texture.bind();
+        m_Skies[m_CurrentSky].bind();
         // m_Sampler.bindToTextureUnit(0);
         m_CubeMesh.render();
     }
