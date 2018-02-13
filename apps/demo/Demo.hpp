@@ -229,7 +229,14 @@ public:
         faces.nz = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_ft.png");
         m_Skies[SkySpaceUlukaiRedEclipse].uploadImages(faces);
     }
-    void render(const glmlv::Camera& camera) const {
+    void render(const glmlv::Camera& camera) {
+        // sqrt(s*s + s*s + s*s) < far
+        // sqrt(3 * s^2) < far
+        // 3 * s^2 < far^2
+        // s^2 < (far^2)/3
+        // s < sqrt((far^2)/3)
+        auto far = camera.m_Far;
+        m_Scale = sqrtf(far*far/3.f);
         auto modelMatrix = glm::scale(glm::mat4(1.f), glm::vec3(m_Scale));
         auto viewMatrix = camera.getViewMatrix();
         // Cancel camera translation

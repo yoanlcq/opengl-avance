@@ -418,6 +418,7 @@ Demo::Demo(int argc, char** argv):
     ImGui::GetIO().IniFilename = static_ImGuiIniFilename.c_str(); // At exit, ImGUI will store its windows positions in this file
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
     glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], 1.f);
