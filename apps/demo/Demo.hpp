@@ -224,9 +224,7 @@ struct Paths {
 };
 
 // TODO:
-// - Move particules on GPU
 // - Use thousands of small particles
-// - Make colors WAY PRETTIER (i.e better gradient, and per-particle variation)
 // - Allow particles to have an individual scale.
 struct ParticlesManager {
     GLParticlesUpdateProgram m_ComputeProgram;
@@ -240,7 +238,7 @@ struct ParticlesManager {
             paths.m_AppShaders / "particles.vs.glsl",
             paths.m_AppShaders / "particles.fs.glsl"
         ),
-        m_ToastParticles(65353, 121.f)
+        m_ToastParticles(65353<<7, 121.f)
     {
         glEnable(GL_PROGRAM_POINT_SIZE);
     }
