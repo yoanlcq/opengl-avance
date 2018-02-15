@@ -12,8 +12,78 @@
 #include <glmlv/GLSampler.hpp>
 #include <glmlv/Scene.hpp>
 #include <glmlv/Camera.hpp>
+#include <glm/gtc/random.hpp>
 
 void handleFboStatus(GLenum status);
+
+class GLParticlesProgram: public glmlv::GLProgram {
+    const GLint m_UniformModelViewProjMatrixLocation = -1;
+public:
+    GLParticlesProgram(const glmlv::fs::path& vs, const glmlv::fs::path& fs):
+        GLProgram(glmlv::compileProgram({ vs.string(), fs.string() })),
+        m_UniformModelViewProjMatrixLocation(getUniformLocation("uModelViewProjMatrix"))
+        {}
+    void setUniformModelViewProjMatrix(const glm::mat4& m) const { glUniformMatrix4fv(m_UniformModelViewProjMatrixLocation, 1, GL_FALSE, &m[0][0]); }
+};
+
+class Particles {
+    GLuint m_Vao = 0, m_Vbo = 0;
+    std::vector<glm::vec3> m_VPositions, m_VVelocities;
+public:
+    typedef glmlv::SceneInstanceData InstanceData;
+    ~Particles() {
+        glDeleteBuffers(1, &m_Vbo);
+        glDeleteVertexArrays(1, &m_Vao);
+    }
+    Particles(const Particles& v) = delete;
+    Particles& operator=(const Particles& v) = delete;
+    Particles(Particles&& o): m_Vao(o.m_Vao), m_Vbo(o.m_Vbo), m_VPositions(std::move(o.m_VPositions)) {
+        o.m_Vao = o.m_Vbo = 0;
+    }
+    Particles& operator=(Particles&& o) {
+        std::swap(m_Vao, o.m_Vao);
+        std::swap(m_Vbo, o.m_Vbo);
+        return *this;
+    }
+    Particles() = delete;
+    Particles(size_t count, float radius) {
+        auto& v = m_VPositions;
+        for(size_t i=0 ; i<count ; ++i) {
+            v.push_back(glm::sphericalRand(radius));
+            m_VVelocities.emplace_back(glm::sphericalRand(radius));
+        }
+
+        glGenVertexArrays(1, &m_Vao);
+        glGenBuffers(1, &m_Vbo);
+        glBindVertexArray(m_Vao);
+        glBindBuffer(GL_ARRAY_BUFFER, m_Vbo);
+        glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof v[0], v.data(), GL_DYNAMIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof v[0], NULL);
+    }
+    void render() const {
+        glBindVertexArray(m_Vao);
+        glDrawArrays(GL_POINTS, 0, m_VPositions.size());
+    }
+    void render(const GLParticlesProgram& prog, const glmlv::Camera& camera, const InstanceData& i) const {
+        prog.setUniformModelViewProjMatrix(
+            camera.getProjMatrix() * camera.getViewMatrix() * i.modelMatrix
+        );
+        render();
+    }
+    void update(float dt) {
+        for(size_t i=0 ; i<m_VPositions.size() ; ++i) {
+            const auto& m = glm::rotate(glm::mat4(1.f), dt * 3.1492f, m_VVelocities[i]);
+            m_VPositions[i] = glm::vec3(m * glm::vec4(m_VPositions[i], 1));
+        }
+        updateVbo();
+    }
+    void updateVbo() const {
+        const auto& v = m_VPositions;
+        glBindBuffer(GL_ARRAY_BUFFER, m_Vbo);
+        glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof v[0], v.data(), GL_DYNAMIC_DRAW);
+    }
+};
 
 class GLCubeMapProgram: public glmlv::GLProgram {
     const GLint m_UniformModelViewProjMatrixLocation = -1;
@@ -123,6 +193,43 @@ struct Paths {
         m_AppShaders  { m_ShadersRoot / m_AppName }
         {}
 };
+
+// TODO:
+// - Make particles editable via GUI
+// - Make colors WAY PRETTIER (i.e better gradient, and per-particle variation)
+// - Allow particles to have an individual scale.
+// - Move particules on GPU
+// - Use thousands of small particles
+struct ParticlesManager {
+    GLParticlesProgram m_Program;
+    Particles m_ToastParticles;
+    glm::vec3 m_ToastParticlesOrigin;
+    ParticlesManager(const Paths& paths): 
+        m_Program(
+            paths.m_AppShaders / "particles.vs.glsl",
+            paths.m_AppShaders / "particles.fs.glsl"
+        ),
+        m_ToastParticles(64, 121.f)
+    {
+        glEnable(GL_PROGRAM_POINT_SIZE);
+    }
+    void render(const glmlv::Camera& cam) const {
+        m_Program.use();
+        glDepthMask(GL_FALSE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        Particles::InstanceData i;
+        i.modelMatrix = glm::translate(glm::mat4(1.f), m_ToastParticlesOrigin);
+        m_ToastParticles.render(m_Program, cam, i);
+        glDisable(GL_BLEND);
+        glDepthMask(GL_TRUE);
+    }
+    void update(float dt) {
+        m_ToastParticles.update(dt);
+    }
+};
+
+
 
 class SkyboxCubeMesh {
     GLuint m_Vbo, m_Vao;
@@ -498,4 +605,5 @@ private:
     const float m_CameraMaxSpeed;
     float m_CameraSpeed;
     Skybox m_Skybox;
+    ParticlesManager m_ParticlesManager;
 };

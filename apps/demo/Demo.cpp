@@ -62,11 +62,6 @@ void Demo::renderGUI() {
         ImGui::SliderFloat("Vertical FOV", &m_Camera.m_FovY, 0.01f, radians(179.f));
         ImGui::SliderFloat("Near", &m_Camera.m_Near, 0.0001f, 1.f);
         ImGui::SliderFloat("Far", &m_Camera.m_Far, 100.f, 10000.f);
-        ImGui::SliderFloat("Skybox scale", &m_Skybox.m_Scale, 1.f, m_Sponza.getDiagonalLength() * 2.f);
-        ImGui::RadioButton("Simple Color Test", &m_Skybox.m_CurrentSky, Skybox::SkySimpleColorTest);
-        ImGui::RadioButton("Space Kurt", &m_Skybox.m_CurrentSky, Skybox::SkySpaceKurt);
-        ImGui::RadioButton("Space Ulukai Corona", &m_Skybox.m_CurrentSky, Skybox::SkySpaceUlukaiCorona);
-        ImGui::RadioButton("Space Ulukai Red Eclipse", &m_Skybox.m_CurrentSky, Skybox::SkySpaceUlukaiRedEclipse);
     }
 
     switch(m_PipelineKind) {
@@ -85,8 +80,22 @@ void Demo::renderGUI() {
         }
         break;
     }
+
+    if(ImGui::CollapsingHeader("Skybox")) {
+        ImGui::SliderFloat("Skybox scale", &m_Skybox.m_Scale, 1.f, m_Sponza.getDiagonalLength() * 2.f);
+        ImGui::RadioButton("Simple Color Test", &m_Skybox.m_CurrentSky, Skybox::SkySimpleColorTest);
+        ImGui::RadioButton("Space Kurt", &m_Skybox.m_CurrentSky, Skybox::SkySpaceKurt);
+        ImGui::RadioButton("Space Ulukai Corona", &m_Skybox.m_CurrentSky, Skybox::SkySpaceUlukaiCorona);
+        ImGui::RadioButton("Space Ulukai Red Eclipse", &m_Skybox.m_CurrentSky, Skybox::SkySpaceUlukaiRedEclipse);
+    }
+
+    const float sceneBoundary = m_Sponza.getDiagonalLength() / 2.f;
+
+    if(ImGui::CollapsingHeader("Particles")) {
+        ImGui::SliderFloat3("Toast Origin", &m_ParticlesManager.m_ToastParticlesOrigin[0], -sceneBoundary, sceneBoundary);
+    }
+
     if(ImGui::CollapsingHeader("Point Lights")) {
-        const float sceneBoundary = m_Sponza.getDiagonalLength() / 2.f;
         ImGui::SliderInt("Count", &m_Lighting.pointLightCount, 0, GLDeferredShadingPassProgram::MAX_POINT_LIGHTS);
         ImGui::Indent();
         for(int i=0 ; i<m_Lighting.pointLightCount ; ++i) {
@@ -195,10 +204,16 @@ void Demo::renderGUI() {
 void Demo::renderGeometry() {
     m_Sponza.render();
     m_Skybox.render(m_Camera);
+    if(m_PipelineKind == PIPELINE_FORWARD) {
+        m_ParticlesManager.render(m_Camera);
+    }
 }
 void Demo::renderGeometry(const GLMaterialProgram& prog) {
     m_Sponza.render(prog, m_Camera, m_SponzaInstanceData);
     m_Skybox.render(m_Camera);
+    if(m_PipelineKind == PIPELINE_FORWARD) {
+        m_ParticlesManager.render(m_Camera);
+    }
 }
 
 void Demo::renderFrame() {
@@ -389,6 +404,7 @@ int Demo::run()
         if (!guiHasFocus) {
             m_Camera.update(float(elapsedTime));
         }
+        m_ParticlesManager.update(elapsedTime);
     }
 
     return 0;
@@ -411,7 +427,8 @@ Demo::Demo(int argc, char** argv):
     m_Camera(m_GLFWHandle.window(), m_nWindowWidth, m_nWindowHeight),
     m_CameraMaxSpeed(m_Sponza.getDiagonalLength() / 2.f),
     m_CameraSpeed(m_CameraMaxSpeed / 5.f),
-    m_Skybox(m_Paths, m_Sponza.getDiagonalLength() / 2.f)
+    m_Skybox(m_Paths, m_Sponza.getDiagonalLength() / 2.f),
+    m_ParticlesManager(m_Paths)
 {
     (void) argc;
     static_ImGuiIniFilename = m_Paths.m_AppName + ".imgui.ini";
