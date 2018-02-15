@@ -81,7 +81,7 @@ public:
         {
             std::vector<glm::vec3> v(m_ParticleCount);
             for(size_t i=0 ; i<count ; ++i) {
-                v[i] = glm::sphericalRand(radius);
+                v[i] = glm::sphericalRand(radius) / 10.f;
             }
             glBindBuffer(GL_COPY_WRITE_BUFFER, m_VelocityBo);
             glBufferData(GL_COPY_WRITE_BUFFER, v.size() * sizeof v[0], v.data(), GL_DYNAMIC_DRAW);
@@ -248,7 +248,8 @@ struct ParticlesManager {
         m_Program.use();
         glDepthMask(GL_FALSE);
         glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         Particles::InstanceData i;
         i.modelMatrix = glm::translate(glm::mat4(1.f), m_ToastParticlesOrigin);
         m_ToastParticles.render(m_Program, cam, i);
@@ -374,8 +375,8 @@ public:
         // 3 * s^2 < far^2
         // s^2 < (far^2)/3
         // s < sqrt((far^2)/3)
-        const auto far = camera.m_Far*0.98f;
-        m_Scale = sqrtf(far*far/3.f);
+        const auto cfar = camera.m_Far*0.98f;
+        m_Scale = sqrtf(cfar*cfar/3.f);
         const auto modelMatrix = glm::scale(glm::mat4(1.f), glm::vec3(m_Scale));
         auto viewMatrix = camera.getViewMatrix();
         // Cancel camera translation

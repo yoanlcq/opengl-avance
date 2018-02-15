@@ -52,7 +52,7 @@ void main() {
             accum += texture2D(uLoResTexture, coords);
         }
         accum /= float(uRadialBlurNumSamples);
-        pixel = mix(texture2D(uHiResTexture, texCoords), accum, 2f*length(coords-center));
+        pixel = mix(texture2D(uHiResTexture, texCoords), accum, 2.f*length(coords-center));
         break;
     default:
         // Welp, it's obviously invalid. User forgot to set uBlurTechnique.
