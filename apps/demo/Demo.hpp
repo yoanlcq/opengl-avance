@@ -16,6 +16,21 @@
 
 void handleFboStatus(GLenum status);
 
+class GLParticlesUpdateProgram: public glmlv::GLProgram {
+    GLint m_UniformParticleCountLocation = -1;
+    GLint m_UniformDeltaTimeLocation     = -1;
+
+public:
+    GLParticlesUpdateProgram(const glmlv::fs::path& cs):
+        GLProgram(glmlv::compileProgram({ cs.string() })),
+        m_UniformParticleCountLocation (getUniformLocation("uParticleCount")),
+        m_UniformDeltaTimeLocation     (getUniformLocation("uDeltaTime"))
+        {}
+    void setUniformParticleCount(size_t count) const { glUniform1ui(m_UniformParticleCountLocation, count); }
+    void setUniformDeltaTime(float dt) const { glUniform1f(m_UniformDeltaTimeLocation, dt); }
+};
+
+
 class GLParticlesProgram: public glmlv::GLProgram {
     const GLint m_UniformModelViewProjMatrixLocation = -1;
 public:
@@ -27,43 +42,60 @@ public:
 };
 
 class Particles {
-    GLuint m_Vao = 0, m_Vbo = 0;
-    std::vector<glm::vec3> m_VPositions, m_VVelocities;
+    GLuint m_Vao = 0, m_PositionBo = 0, m_VelocityBo = 0;
+    size_t m_ParticleCount;
 public:
     typedef glmlv::SceneInstanceData InstanceData;
     ~Particles() {
-        glDeleteBuffers(1, &m_Vbo);
+        glDeleteBuffers(1, &m_PositionBo);
+        glDeleteBuffers(1, &m_VelocityBo);
         glDeleteVertexArrays(1, &m_Vao);
     }
     Particles(const Particles& v) = delete;
     Particles& operator=(const Particles& v) = delete;
-    Particles(Particles&& o): m_Vao(o.m_Vao), m_Vbo(o.m_Vbo), m_VPositions(std::move(o.m_VPositions)) {
-        o.m_Vao = o.m_Vbo = 0;
+    Particles(Particles&& o) {
+        std::swap(m_Vao, o.m_Vao);
+        std::swap(m_PositionBo, o.m_PositionBo);
+        std::swap(m_VelocityBo, o.m_VelocityBo);
     }
     Particles& operator=(Particles&& o) {
         std::swap(m_Vao, o.m_Vao);
-        std::swap(m_Vbo, o.m_Vbo);
+        std::swap(m_PositionBo, o.m_PositionBo);
+        std::swap(m_VelocityBo, o.m_VelocityBo);
         return *this;
     }
     Particles() = delete;
-    Particles(size_t count, float radius) {
-        auto& v = m_VPositions;
-        for(size_t i=0 ; i<count ; ++i) {
-            v.push_back(glm::sphericalRand(radius));
-            m_VVelocities.emplace_back(glm::sphericalRand(radius));
+    Particles(size_t count, float radius) : m_ParticleCount(count) {
+
+        glGenBuffers(1, &m_PositionBo);
+        glGenBuffers(1, &m_VelocityBo);
+
+        {
+            std::vector<glm::vec3> v(m_ParticleCount);
+            for(size_t i=0 ; i<count ; ++i) {
+                v[i] = glm::sphericalRand(radius);
+            }
+            glBindBuffer(GL_COPY_READ_BUFFER, m_PositionBo);
+            glBufferData(GL_COPY_READ_BUFFER, v.size() * sizeof v[0], v.data(), GL_DYNAMIC_DRAW);
+        }
+        {
+            std::vector<glm::vec3> v(m_ParticleCount);
+            for(size_t i=0 ; i<count ; ++i) {
+                v[i] = glm::sphericalRand(radius);
+            }
+            glBindBuffer(GL_COPY_WRITE_BUFFER, m_VelocityBo);
+            glBufferData(GL_COPY_WRITE_BUFFER, v.size() * sizeof v[0], v.data(), GL_DYNAMIC_DRAW);
         }
 
         glGenVertexArrays(1, &m_Vao);
-        glGenBuffers(1, &m_Vbo);
         glBindVertexArray(m_Vao);
-        glBindBuffer(GL_ARRAY_BUFFER, m_Vbo);
-        glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof v[0], v.data(), GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, m_PositionBo);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof v[0], NULL);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), NULL);
     }
     void render() const {
         glBindVertexArray(m_Vao);
-        glDrawArrays(GL_POINTS, 0, m_VPositions.size());
+        glDrawArrays(GL_POINTS, 0, m_ParticleCount);
     }
     void render(const GLParticlesProgram& prog, const glmlv::Camera& camera, const InstanceData& i) const {
         prog.setUniformModelViewProjMatrix(
@@ -71,17 +103,14 @@ public:
         );
         render();
     }
-    void update(float dt) {
-        for(size_t i=0 ; i<m_VPositions.size() ; ++i) {
-            const auto& m = glm::rotate(glm::mat4(1.f), dt * 3.1492f, m_VVelocities[i]);
-            m_VPositions[i] = glm::vec3(m * glm::vec4(m_VPositions[i], 1));
-        }
-        updateVbo();
-    }
-    void updateVbo() const {
-        const auto& v = m_VPositions;
-        glBindBuffer(GL_ARRAY_BUFFER, m_Vbo);
-        glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof v[0], v.data(), GL_DYNAMIC_DRAW);
+    void update(const GLParticlesUpdateProgram& prog, float dt) {
+        prog.setUniformParticleCount(m_ParticleCount);
+        prog.setUniformDeltaTime(dt);
+        const GLsizeiptr size = m_ParticleCount * 3 * sizeof(float);
+        glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_PositionBo, 0, size);
+        glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, m_VelocityBo, 0, size);
+        glDispatchCompute(1 + m_ParticleCount / 1024, 1, 1);
+        glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
     }
 };
 
@@ -195,21 +224,23 @@ struct Paths {
 };
 
 // TODO:
-// - Make particles editable via GUI
-// - Make colors WAY PRETTIER (i.e better gradient, and per-particle variation)
-// - Allow particles to have an individual scale.
 // - Move particules on GPU
 // - Use thousands of small particles
+// - Make colors WAY PRETTIER (i.e better gradient, and per-particle variation)
+// - Allow particles to have an individual scale.
 struct ParticlesManager {
+    GLParticlesUpdateProgram m_ComputeProgram;
     GLParticlesProgram m_Program;
     Particles m_ToastParticles;
     glm::vec3 m_ToastParticlesOrigin;
+
     ParticlesManager(const Paths& paths): 
+        m_ComputeProgram(paths.m_AppShaders / "particles.cs.glsl"),
         m_Program(
             paths.m_AppShaders / "particles.vs.glsl",
             paths.m_AppShaders / "particles.fs.glsl"
         ),
-        m_ToastParticles(64, 121.f)
+        m_ToastParticles(65353, 121.f)
     {
         glEnable(GL_PROGRAM_POINT_SIZE);
     }
@@ -225,7 +256,8 @@ struct ParticlesManager {
         glDepthMask(GL_TRUE);
     }
     void update(float dt) {
-        m_ToastParticles.update(dt);
+        m_ComputeProgram.use();
+        m_ToastParticles.update(m_ComputeProgram, dt);
     }
 };
 
