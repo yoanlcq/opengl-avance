@@ -8,6 +8,7 @@
 #include <glm/gtx/io.hpp>
 
 #include <glmlv/OpenSimplexNoise.hpp>
+#include <glmlv/GlobalWavPlayer.hpp>
 
 
 std::string Demo::static_ImGuiIniFilename;
@@ -50,6 +51,16 @@ void Demo::renderGUI() {
     ImGui::RadioButton("Forward", &m_PipelineKind, PIPELINE_FORWARD);
     ImGui::RadioButton("Deferred", &m_PipelineKind, PIPELINE_DEFERRED);
 
+    if (ImGui::CollapsingHeader("Demo Mode")) {
+        if (ImGui::Button(m_IsDemoPlaying ? "Stop" : "Play")) {
+            if (m_IsDemoPlaying) {
+                GlobalWavPlayer::stopAll();
+            } else {
+                GlobalWavPlayer::playWav(m_Paths.m_AppAssets / "music" / "outsider.wav");
+            }
+            m_IsDemoPlaying = !m_IsDemoPlaying;
+        }
+    }
     if(ImGui::CollapsingHeader("Clear Color")) {
         if (ImGui::ColorEdit3("clearColor", &m_ClearColor[0])) {
             glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], 1.f);
@@ -359,7 +370,7 @@ void Demo::renderFrame() {
     }
 
     if(cpass.m_IsEnabled) {
-		glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+        glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
         glBindImageTexture(0, cpass.m_Input.m_Texture.glId(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
         glBindImageTexture(1, cpass.m_Output.m_Texture.glId(), 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
         cpass.m_Program.use();
@@ -428,7 +439,8 @@ Demo::Demo(int argc, char** argv):
     m_CameraMaxSpeed(m_Sponza.getDiagonalLength() / 2.f),
     m_CameraSpeed(m_CameraMaxSpeed / 5.f),
     m_Skybox(m_Paths, m_Sponza.getDiagonalLength() / 2.f),
-    m_ParticlesManager(m_Paths)
+    m_ParticlesManager(m_Paths),
+    m_IsDemoPlaying(false)
 {
     (void) argc;
     static_ImGuiIniFilename = m_Paths.m_AppName + ".imgui.ini";
@@ -436,8 +448,8 @@ Demo::Demo(int argc, char** argv):
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], 1.f);
     m_Camera.setSpeed(m_CameraSpeed);
 

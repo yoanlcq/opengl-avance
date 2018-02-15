@@ -639,4 +639,5 @@ private:
     float m_CameraSpeed;
     Skybox m_Skybox;
     ParticlesManager m_ParticlesManager;
+    bool m_IsDemoPlaying;
 };
