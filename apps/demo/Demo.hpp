@@ -16,13 +16,13 @@
 
 void handleFboStatus(GLenum status);
 
-class GLParticlesUpdateProgram: public glmlv::GLProgram {
+class GLParticlesSimulationProgram: public glmlv::GLProgram {
     GLint m_UniformParticleCountLocation = -1;
     GLint m_UniformDeltaTimeLocation     = -1;
     GLint m_UniformVelMultiplierLocation = -1;
 
 public:
-    GLParticlesUpdateProgram(const glmlv::fs::path& cs):
+    GLParticlesSimulationProgram(const glmlv::fs::path& cs):
         GLProgram(glmlv::compileProgram({ cs.string() })),
         m_UniformParticleCountLocation (getUniformLocation("uParticleCount")),
         m_UniformDeltaTimeLocation     (getUniformLocation("uDeltaTime")),
@@ -34,7 +34,7 @@ public:
 };
 
 
-class GLParticlesProgram: public glmlv::GLProgram {
+class GLParticlesRenderingProgram: public glmlv::GLProgram {
     const GLint m_UniformModelViewProjMatrixLocation = -1;
     const GLint m_UniformPointSizeLocation           = -1;
     const GLint m_UniformZScaleLocation              = -1;
@@ -42,14 +42,14 @@ class GLParticlesProgram: public glmlv::GLProgram {
     const GLint m_UniformInnerColorLocation          = -1;
     const GLint m_UniformOuterColorLocation          = -1;
 public:
-    GLParticlesProgram(const glmlv::fs::path& vs, const glmlv::fs::path& fs):
+    GLParticlesRenderingProgram(const glmlv::fs::path& vs, const glmlv::fs::path& fs):
         GLProgram(glmlv::compileProgram({ vs.string(), fs.string() })),
         m_UniformModelViewProjMatrixLocation(getUniformLocation("uModelViewProjMatrix")),
         m_UniformPointSizeLocation          (getUniformLocation("uPointSize")),
         m_UniformZScaleLocation             (getUniformLocation("uZScale")),
         m_UniformZInfluenceLocation         (getUniformLocation("uZInfluence")),
-        m_UniformInnerColorLocation          (getUniformLocation("uInnerColor")),
-        m_UniformOuterColorLocation          (getUniformLocation("uOuterColor"))
+        m_UniformInnerColorLocation         (getUniformLocation("uInnerColor")),
+        m_UniformOuterColorLocation         (getUniformLocation("uOuterColor"))
         {}
     void setUniformModelViewProjMatrix(const glm::mat4& m) const { glUniformMatrix4fv(m_UniformModelViewProjMatrixLocation, 1, GL_FALSE, &m[0][0]); }
     void setUniformPointSize(float f) const { glUniform1f(m_UniformPointSizeLocation, f); }
@@ -59,10 +59,57 @@ public:
     void setUniformOuterColor(const glm::vec4 &v) const { glUniform4fv(m_UniformOuterColorLocation, 1, &v[0]); }
 };
 
+// TODO: Two things:
+// - How they are placed
+//   - In a sphere
+//   - In a disk
+// - How they will move
+//   - Cone forward, and angle
 class Particles {
     GLuint m_Vao = 0, m_PositionBo = 0, m_VelocityBo = 0;
-    size_t m_ParticleCount;
+    size_t m_MaxParticleCount, m_ParticleCount;
+
 public:
+    enum class Shape {
+        Sphere,
+        Disk
+    };
+private:
+    struct HostData {
+        std::vector<glm::vec3> pos, vel;
+
+        HostData(size_t count, Shape shape, float radius):
+            pos(count), vel(count)
+        {
+            switch(shape) {
+            case Shape::Sphere:
+                for(size_t i=0 ; i<count ; ++i) {
+                    pos[i] = glm::sphericalRand(radius);
+                    vel[i] = glm::sphericalRand(radius) / 10.f;
+                }
+                break;
+            case Shape::Disk:
+                for(size_t i=0 ; i<count ; ++i) {
+                    pos[i] = glm::vec3(glm::diskRand(radius), 0.f);
+                    vel[i] = glm::vec3(0,0,1);
+                    // vel[i].z = std::abs(vel[i].z);
+                    // pos[i].z = 0.f;
+                    /*
+                    const auto ax = glm::radians(glm::linearRand(-60.f, 60.f));
+                    const auto ay = glm::radians(glm::linearRand(-60.f, 60.f));
+                    const auto rx = glm::rotate(glm::mat4(1), ax, glm::vec3(1,0,0));
+                    const auto ry = glm::rotate(glm::mat4(1), ay, glm::vec3(0,1,0));
+                    const auto forward = glm::vec3(0,0,1);
+                    vel[i] = glm::vec3(rx * ry * glm::vec4(forward, 0));
+                    */
+                }
+                break;
+            }
+        }
+    };
+
+public:
+
     struct InstanceData {
         // Compute shader - update
         float velMultiplier   = 1.f;
@@ -89,47 +136,64 @@ public:
         std::swap(m_Vao, o.m_Vao);
         std::swap(m_PositionBo, o.m_PositionBo);
         std::swap(m_VelocityBo, o.m_VelocityBo);
+        std::swap(m_ParticleCount, o.m_ParticleCount);
     }
     Particles& operator=(Particles&& o) {
         std::swap(m_Vao, o.m_Vao);
         std::swap(m_PositionBo, o.m_PositionBo);
         std::swap(m_VelocityBo, o.m_VelocityBo);
+        std::swap(m_ParticleCount, o.m_ParticleCount);
         return *this;
     }
     Particles() = delete;
-    Particles(size_t count, float radius) : m_ParticleCount(count) {
 
+    Particles(size_t count, Shape shape, float radius):
+        m_MaxParticleCount(count),
+        m_ParticleCount(0)
+    {
         glGenBuffers(1, &m_PositionBo);
         glGenBuffers(1, &m_VelocityBo);
-
-        {
-            std::vector<glm::vec3> v(m_ParticleCount);
-            for(size_t i=0 ; i<count ; ++i) {
-                v[i] = glm::sphericalRand(radius);
-            }
-            glBindBuffer(GL_COPY_READ_BUFFER, m_PositionBo);
-            glBufferData(GL_COPY_READ_BUFFER, v.size() * sizeof v[0], v.data(), GL_DYNAMIC_DRAW);
-        }
-        {
-            std::vector<glm::vec3> v(m_ParticleCount);
-            for(size_t i=0 ; i<count ; ++i) {
-                v[i] = glm::sphericalRand(radius) / 10.f;
-            }
-            glBindBuffer(GL_COPY_WRITE_BUFFER, m_VelocityBo);
-            glBufferData(GL_COPY_WRITE_BUFFER, v.size() * sizeof v[0], v.data(), GL_DYNAMIC_DRAW);
-        }
-
         glGenVertexArrays(1, &m_Vao);
+
+        glBindBuffer(GL_COPY_READ_BUFFER,  m_PositionBo);
+        glBindBuffer(GL_COPY_WRITE_BUFFER, m_VelocityBo);
+        glBufferData(GL_COPY_READ_BUFFER,  m_MaxParticleCount * sizeof(glm::vec3), nullptr, GL_DYNAMIC_COPY);
+        glBufferData(GL_COPY_WRITE_BUFFER, m_MaxParticleCount * sizeof(glm::vec3), nullptr, GL_DYNAMIC_COPY);
+
+        addParticles(count, shape, radius);
+
         glBindVertexArray(m_Vao);
         glBindBuffer(GL_ARRAY_BUFFER, m_PositionBo);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), NULL);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
+    }
+
+    size_t getParticleCount() const { return m_ParticleCount; }
+    size_t getMaxParticleCount() const { return m_MaxParticleCount; }
+
+    void addParticles(size_t count, Shape shape, float radius) {
+        if(m_ParticleCount + count >= m_MaxParticleCount)
+            return;
+
+        count = std::min(count, m_MaxParticleCount - m_ParticleCount);
+        const HostData d(count, shape, radius);
+        const auto& p = d.pos, v = d.vel;
+
+        glBindBuffer(GL_COPY_READ_BUFFER,  m_PositionBo);
+        glBindBuffer(GL_COPY_WRITE_BUFFER, m_VelocityBo);
+        glBufferSubData(GL_COPY_READ_BUFFER,  m_ParticleCount * sizeof(glm::vec3), count * sizeof(glm::vec3), p.data());
+        glBufferSubData(GL_COPY_WRITE_BUFFER, m_ParticleCount * sizeof(glm::vec3), count * sizeof(glm::vec3), v.data());
+
+        m_ParticleCount += count;
+    }
+    void removeParticles(size_t count) {
+        m_ParticleCount -= count;
     }
     void render() const {
         glBindVertexArray(m_Vao);
         glDrawArrays(GL_POINTS, 0, m_ParticleCount);
     }
-    void render(const GLParticlesProgram& prog, const glmlv::Camera& camera, const InstanceData& i) const {
+    void render(const GLParticlesRenderingProgram& prog, const glmlv::Camera& camera, const InstanceData& i) const {
         prog.setUniformModelViewProjMatrix(
             camera.getProjMatrix() * camera.getViewMatrix() * i.getModelMatrix()
         );
@@ -140,11 +204,12 @@ public:
         prog.setUniformOuterColor(i.outerColor);
         render();
     }
-    void update(const GLParticlesUpdateProgram& prog, float dt, const InstanceData& i) {
+    void update(const GLParticlesSimulationProgram& prog, float dt, const InstanceData& i) {
         prog.setUniformParticleCount(m_ParticleCount);
         prog.setUniformDeltaTime(dt);
         prog.setUniformVelMultiplier(i.velMultiplier);
         const GLsizeiptr size = m_ParticleCount * 3 * sizeof(float);
+        assert(size); // GL_INVALID_VALUE otherwise
         glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_PositionBo, 0, size);
         glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, m_VelocityBo, 0, size);
         glDispatchCompute(1 + m_ParticleCount / 1024, 1, 1);
@@ -261,44 +326,36 @@ struct Paths {
         {}
 };
 
-// TODO:
-// - Configure via GUI:
-//   - Num Particles
-//   | Velocity multiplier
-//   | Scale
-//   | Screen-space or world-space
-//   | Inner color
-//   | Outer color
 struct ParticlesManager {
-    GLParticlesUpdateProgram m_ComputeProgram;
-    GLParticlesProgram m_Program;
+    GLParticlesSimulationProgram m_SimulationProgram;
+    GLParticlesRenderingProgram m_RenderingProgram;
     Particles m_ToastParticles;
     glm::vec3 m_ToastParticlesOrigin;
     Particles::InstanceData m_ToastParticlesInstanceData;
 
     ParticlesManager(const Paths& paths): 
-        m_ComputeProgram(paths.m_AppShaders / "particles.cs.glsl"),
-        m_Program(
+        m_SimulationProgram(paths.m_AppShaders / "particles.cs.glsl"),
+        m_RenderingProgram(
             paths.m_AppShaders / "particles.vs.glsl",
             paths.m_AppShaders / "particles.fs.glsl"
         ),
-        m_ToastParticles(65353<<7, 121.f)
+        m_ToastParticles(1<<17, Particles::Shape::Disk, 321.f)
     {
         glEnable(GL_PROGRAM_POINT_SIZE);
     }
     void render(const glmlv::Camera& cam) const {
-        m_Program.use();
+        m_RenderingProgram.use();
         glDepthMask(GL_FALSE);
         glEnable(GL_BLEND);
         // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        m_ToastParticles.render(m_Program, cam, m_ToastParticlesInstanceData);
+        m_ToastParticles.render(m_RenderingProgram, cam, m_ToastParticlesInstanceData);
         glDisable(GL_BLEND);
         glDepthMask(GL_TRUE);
     }
     void update(float dt) {
-        m_ComputeProgram.use();
-        m_ToastParticles.update(m_ComputeProgram, dt, m_ToastParticlesInstanceData);
+        m_SimulationProgram.use();
+        m_ToastParticles.update(m_SimulationProgram, dt, m_ToastParticlesInstanceData);
     }
 };
 

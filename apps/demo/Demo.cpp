@@ -103,8 +103,17 @@ void Demo::renderGUI() {
     const float sceneBoundary = m_Sponza.getDiagonalLength() / 2.f;
 
     if(ImGui::CollapsingHeader("Particles")) {
+        const int pcount = m_ParticlesManager.m_ToastParticles.getParticleCount();
+        int new_pcount = pcount;
+        //ImGui::SliderInt("Particle Count", &new_pcount, 1, m_ParticlesManager.m_ToastParticles.getMaxParticleCount());
+        ImGui::InputInt("Particle Count", &new_pcount);
+        if(new_pcount > pcount) {
+            m_ParticlesManager.m_ToastParticles.addParticles(new_pcount - pcount, Particles::Shape::Disk, 321.f);
+        } else if(new_pcount < pcount) {
+            m_ParticlesManager.m_ToastParticles.removeParticles(pcount - new_pcount);
+        }
         ImGui::SliderFloat3("Origin"       , &m_ParticlesManager.m_ToastParticlesInstanceData.origin[0], -sceneBoundary, sceneBoundary);
-        ImGui::SliderFloat("Vel Multiplier", &m_ParticlesManager.m_ToastParticlesInstanceData.velMultiplier, -10.f, 10.f);
+        ImGui::SliderFloat("Vel Multiplier", &m_ParticlesManager.m_ToastParticlesInstanceData.velMultiplier, -400.f, 400.f);
         ImGui::SliderFloat("Point Size"    , &m_ParticlesManager.m_ToastParticlesInstanceData.pointSize, 0, 200.f);
         ImGui::SliderFloat("Z Scale"       , &m_ParticlesManager.m_ToastParticlesInstanceData.zScale, 0, 3000.f);
         ImGui::SliderFloat("Z Influence"   , &m_ParticlesManager.m_ToastParticlesInstanceData.zInfluence, 0, 1);
