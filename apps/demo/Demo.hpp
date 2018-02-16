@@ -19,33 +19,65 @@ void handleFboStatus(GLenum status);
 class GLParticlesUpdateProgram: public glmlv::GLProgram {
     GLint m_UniformParticleCountLocation = -1;
     GLint m_UniformDeltaTimeLocation     = -1;
+    GLint m_UniformVelMultiplierLocation = -1;
 
 public:
     GLParticlesUpdateProgram(const glmlv::fs::path& cs):
         GLProgram(glmlv::compileProgram({ cs.string() })),
         m_UniformParticleCountLocation (getUniformLocation("uParticleCount")),
-        m_UniformDeltaTimeLocation     (getUniformLocation("uDeltaTime"))
+        m_UniformDeltaTimeLocation     (getUniformLocation("uDeltaTime")),
+        m_UniformVelMultiplierLocation (getUniformLocation("uVelMultiplier"))
         {}
     void setUniformParticleCount(size_t count) const { glUniform1ui(m_UniformParticleCountLocation, count); }
     void setUniformDeltaTime(float dt) const { glUniform1f(m_UniformDeltaTimeLocation, dt); }
+    void setUniformVelMultiplier(float f) const { glUniform1f(m_UniformVelMultiplierLocation, f); }
 };
 
 
 class GLParticlesProgram: public glmlv::GLProgram {
     const GLint m_UniformModelViewProjMatrixLocation = -1;
+    const GLint m_UniformPointSizeLocation           = -1;
+    const GLint m_UniformZScaleLocation              = -1;
+    const GLint m_UniformZInfluenceLocation          = -1;
+    const GLint m_UniformInnerColorLocation          = -1;
+    const GLint m_UniformOuterColorLocation          = -1;
 public:
     GLParticlesProgram(const glmlv::fs::path& vs, const glmlv::fs::path& fs):
         GLProgram(glmlv::compileProgram({ vs.string(), fs.string() })),
-        m_UniformModelViewProjMatrixLocation(getUniformLocation("uModelViewProjMatrix"))
+        m_UniformModelViewProjMatrixLocation(getUniformLocation("uModelViewProjMatrix")),
+        m_UniformPointSizeLocation          (getUniformLocation("uPointSize")),
+        m_UniformZScaleLocation             (getUniformLocation("uZScale")),
+        m_UniformZInfluenceLocation         (getUniformLocation("uZInfluence")),
+        m_UniformInnerColorLocation          (getUniformLocation("uInnerColor")),
+        m_UniformOuterColorLocation          (getUniformLocation("uOuterColor"))
         {}
     void setUniformModelViewProjMatrix(const glm::mat4& m) const { glUniformMatrix4fv(m_UniformModelViewProjMatrixLocation, 1, GL_FALSE, &m[0][0]); }
+    void setUniformPointSize(float f) const { glUniform1f(m_UniformPointSizeLocation, f); }
+    void setUniformZScale(float f) const { glUniform1f(m_UniformZScaleLocation, f); }
+    void setUniformZInfluence(float f) const { glUniform1f(m_UniformZInfluenceLocation, f); }
+    void setUniformInnerColor(const glm::vec4 &v) const { glUniform4fv(m_UniformInnerColorLocation, 1, &v[0]); }
+    void setUniformOuterColor(const glm::vec4 &v) const { glUniform4fv(m_UniformOuterColorLocation, 1, &v[0]); }
 };
 
 class Particles {
     GLuint m_Vao = 0, m_PositionBo = 0, m_VelocityBo = 0;
     size_t m_ParticleCount;
 public:
-    typedef glmlv::SceneInstanceData InstanceData;
+    struct InstanceData {
+        // Compute shader - update
+        float velMultiplier   = 1.f;
+        // Vertex-Fragment shader - render
+        glm::vec3 origin      = glm::vec3(0.f);
+        float pointSize       = 8.f;
+        float zScale          = 1000.f;
+        float zInfluence      = 1.f;
+        glm::vec4 innerColor  = glm::vec4(1.f, 0.9f, 0.3f, 1.0f);
+        glm::vec4 outerColor  = glm::vec4(1.f, 0.2f, 0.0f, 0.0f);
+
+        glm::mat4 getModelMatrix() const {
+            return glm::translate(glm::mat4(1.f), origin);
+        }
+    };
     ~Particles() {
         glDeleteBuffers(1, &m_PositionBo);
         glDeleteBuffers(1, &m_VelocityBo);
@@ -99,13 +131,19 @@ public:
     }
     void render(const GLParticlesProgram& prog, const glmlv::Camera& camera, const InstanceData& i) const {
         prog.setUniformModelViewProjMatrix(
-            camera.getProjMatrix() * camera.getViewMatrix() * i.modelMatrix
+            camera.getProjMatrix() * camera.getViewMatrix() * i.getModelMatrix()
         );
+        prog.setUniformPointSize(i.pointSize);
+        prog.setUniformZScale(i.zScale);
+        prog.setUniformZInfluence(i.zInfluence);
+        prog.setUniformInnerColor(i.innerColor);
+        prog.setUniformOuterColor(i.outerColor);
         render();
     }
-    void update(const GLParticlesUpdateProgram& prog, float dt) {
+    void update(const GLParticlesUpdateProgram& prog, float dt, const InstanceData& i) {
         prog.setUniformParticleCount(m_ParticleCount);
         prog.setUniformDeltaTime(dt);
+        prog.setUniformVelMultiplier(i.velMultiplier);
         const GLsizeiptr size = m_ParticleCount * 3 * sizeof(float);
         glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_PositionBo, 0, size);
         glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, m_VelocityBo, 0, size);
@@ -224,13 +262,19 @@ struct Paths {
 };
 
 // TODO:
-// - Use thousands of small particles
-// - Allow particles to have an individual scale.
+// - Configure via GUI:
+//   - Num Particles
+//   | Velocity multiplier
+//   | Scale
+//   | Screen-space or world-space
+//   | Inner color
+//   | Outer color
 struct ParticlesManager {
     GLParticlesUpdateProgram m_ComputeProgram;
     GLParticlesProgram m_Program;
     Particles m_ToastParticles;
     glm::vec3 m_ToastParticlesOrigin;
+    Particles::InstanceData m_ToastParticlesInstanceData;
 
     ParticlesManager(const Paths& paths): 
         m_ComputeProgram(paths.m_AppShaders / "particles.cs.glsl"),
@@ -248,15 +292,13 @@ struct ParticlesManager {
         glEnable(GL_BLEND);
         // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        Particles::InstanceData i;
-        i.modelMatrix = glm::translate(glm::mat4(1.f), m_ToastParticlesOrigin);
-        m_ToastParticles.render(m_Program, cam, i);
+        m_ToastParticles.render(m_Program, cam, m_ToastParticlesInstanceData);
         glDisable(GL_BLEND);
         glDepthMask(GL_TRUE);
     }
     void update(float dt) {
         m_ComputeProgram.use();
-        m_ToastParticles.update(m_ComputeProgram, dt);
+        m_ToastParticles.update(m_ComputeProgram, dt, m_ToastParticlesInstanceData);
     }
 };
 

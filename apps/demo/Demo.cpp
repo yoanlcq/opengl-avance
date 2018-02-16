@@ -103,7 +103,13 @@ void Demo::renderGUI() {
     const float sceneBoundary = m_Sponza.getDiagonalLength() / 2.f;
 
     if(ImGui::CollapsingHeader("Particles")) {
-        ImGui::SliderFloat3("Toast Origin", &m_ParticlesManager.m_ToastParticlesOrigin[0], -sceneBoundary, sceneBoundary);
+        ImGui::SliderFloat3("Origin"       , &m_ParticlesManager.m_ToastParticlesInstanceData.origin[0], -sceneBoundary, sceneBoundary);
+        ImGui::SliderFloat("Vel Multiplier", &m_ParticlesManager.m_ToastParticlesInstanceData.velMultiplier, -10.f, 10.f);
+        ImGui::SliderFloat("Point Size"    , &m_ParticlesManager.m_ToastParticlesInstanceData.pointSize, 0, 200.f);
+        ImGui::SliderFloat("Z Scale"       , &m_ParticlesManager.m_ToastParticlesInstanceData.zScale, 0, 3000.f);
+        ImGui::SliderFloat("Z Influence"   , &m_ParticlesManager.m_ToastParticlesInstanceData.zInfluence, 0, 1);
+        ImGui::ColorEdit4 ("Inner Color"   , &m_ParticlesManager.m_ToastParticlesInstanceData.innerColor[0]);
+        ImGui::ColorEdit4 ("Outer Color"   , &m_ParticlesManager.m_ToastParticlesInstanceData.outerColor[0]);
     }
 
     if(ImGui::CollapsingHeader("Point Lights")) {

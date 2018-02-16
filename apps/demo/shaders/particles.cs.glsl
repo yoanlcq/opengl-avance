@@ -6,11 +6,12 @@ layout(std430, binding = 1) buffer velB { vec3 vel[]; };
 
 uniform uint uParticleCount;
 uniform float uDeltaTime;
+uniform float uVelMultiplier;
 
 void main() {
     uint i = uint(gl_GlobalInvocationID.x);
     if(i >= uParticleCount)
         return;
-    pos[i].xyz += uDeltaTime * vel[i].xyz;
+    pos[i].xyz += uDeltaTime * uVelMultiplier * vel[i].xyz;
 }
 
