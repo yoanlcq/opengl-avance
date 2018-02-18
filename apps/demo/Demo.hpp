@@ -76,7 +76,7 @@ public:
     };
 private:
     struct HostData {
-        std::vector<glm::vec3> pos, vel;
+        std::vector<glm::vec4> pos, vel;
 
         HostData(size_t count, Shape shape, float radius):
             pos(count), vel(count)
@@ -84,14 +84,14 @@ private:
             switch(shape) {
             case Shape::Sphere:
                 for(size_t i=0 ; i<count ; ++i) {
-                    pos[i] = glm::sphericalRand(radius);
-                    vel[i] = glm::sphericalRand(radius) / 10.f;
+                    pos[i] = glm::vec4(glm::sphericalRand(radius), 1);
+                    vel[i] = glm::vec4(glm::sphericalRand(radius) / 10.f, 0);
                 }
                 break;
             case Shape::Disk:
                 for(size_t i=0 ; i<count ; ++i) {
-                    pos[i] = glm::vec3(glm::diskRand(radius), 0.f);
-                    vel[i] = glm::vec3(0,0,1);
+                    pos[i] = glm::vec4(glm::diskRand(radius), 0, 1);
+                    vel[i] = glm::vec4(0,0,1,0);
                     // vel[i].z = std::abs(vel[i].z);
                     // pos[i].z = 0.f;
                     /*
@@ -125,6 +125,7 @@ public:
             return glm::translate(glm::mat4(1.f), origin);
         }
     };
+
     ~Particles() {
         glDeleteBuffers(1, &m_PositionBo);
         glDeleteBuffers(1, &m_VelocityBo);
@@ -137,12 +138,14 @@ public:
         std::swap(m_PositionBo, o.m_PositionBo);
         std::swap(m_VelocityBo, o.m_VelocityBo);
         std::swap(m_ParticleCount, o.m_ParticleCount);
+        std::swap(m_MaxParticleCount, o.m_MaxParticleCount);
     }
     Particles& operator=(Particles&& o) {
         std::swap(m_Vao, o.m_Vao);
         std::swap(m_PositionBo, o.m_PositionBo);
         std::swap(m_VelocityBo, o.m_VelocityBo);
         std::swap(m_ParticleCount, o.m_ParticleCount);
+        std::swap(m_MaxParticleCount, o.m_MaxParticleCount);
         return *this;
     }
     Particles() = delete;
@@ -157,39 +160,41 @@ public:
 
         glBindBuffer(GL_COPY_READ_BUFFER,  m_PositionBo);
         glBindBuffer(GL_COPY_WRITE_BUFFER, m_VelocityBo);
-        glBufferData(GL_COPY_READ_BUFFER,  m_MaxParticleCount * sizeof(glm::vec3), nullptr, GL_DYNAMIC_COPY);
-        glBufferData(GL_COPY_WRITE_BUFFER, m_MaxParticleCount * sizeof(glm::vec3), nullptr, GL_DYNAMIC_COPY);
+        glBufferData(GL_COPY_READ_BUFFER,  m_MaxParticleCount * sizeof(glm::vec4), nullptr, GL_DYNAMIC_COPY);
+        glBufferData(GL_COPY_WRITE_BUFFER, m_MaxParticleCount * sizeof(glm::vec4), nullptr, GL_DYNAMIC_COPY);
 
         addParticles(count, shape, radius);
 
         glBindVertexArray(m_Vao);
         glBindBuffer(GL_ARRAY_BUFFER, m_PositionBo);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), nullptr);
     }
 
     size_t getParticleCount() const { return m_ParticleCount; }
     size_t getMaxParticleCount() const { return m_MaxParticleCount; }
 
     void addParticles(size_t count, Shape shape, float radius) {
-        if(m_ParticleCount + count >= m_MaxParticleCount)
+        if(m_ParticleCount >= m_MaxParticleCount)
             return;
 
         count = std::min(count, m_MaxParticleCount - m_ParticleCount);
+        assert(m_ParticleCount + count <= m_MaxParticleCount);
         const HostData d(count, shape, radius);
-        const auto& p = d.pos, v = d.vel;
 
         glBindBuffer(GL_COPY_READ_BUFFER,  m_PositionBo);
         glBindBuffer(GL_COPY_WRITE_BUFFER, m_VelocityBo);
-        glBufferSubData(GL_COPY_READ_BUFFER,  m_ParticleCount * sizeof(glm::vec3), count * sizeof(glm::vec3), p.data());
-        glBufferSubData(GL_COPY_WRITE_BUFFER, m_ParticleCount * sizeof(glm::vec3), count * sizeof(glm::vec3), v.data());
+        glBufferSubData(GL_COPY_READ_BUFFER,  m_ParticleCount * sizeof d.pos[0], count * sizeof d.pos[0], d.pos.data());
+        glBufferSubData(GL_COPY_WRITE_BUFFER, m_ParticleCount * sizeof d.vel[0], count * sizeof d.vel[0], d.vel.data());
 
         m_ParticleCount += count;
     }
     void removeParticles(size_t count) {
+        count = std::min(count, m_ParticleCount);
         m_ParticleCount -= count;
     }
     void render() const {
+        glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT); // Barrier for compute shader that updates particles
         glBindVertexArray(m_Vao);
         glDrawArrays(GL_POINTS, 0, m_ParticleCount);
     }
@@ -208,12 +213,9 @@ public:
         prog.setUniformParticleCount(m_ParticleCount);
         prog.setUniformDeltaTime(dt);
         prog.setUniformVelMultiplier(i.velMultiplier);
-        const GLsizeiptr size = m_ParticleCount * 3 * sizeof(float);
-        assert(size); // GL_INVALID_VALUE otherwise
-        glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_PositionBo, 0, size);
-        glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, m_VelocityBo, 0, size);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_PositionBo);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_VelocityBo);
         glDispatchCompute(1 + m_ParticleCount / 1024, 1, 1);
-        glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
     }
 };
 
