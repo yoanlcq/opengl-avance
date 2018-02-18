@@ -66,15 +66,19 @@ public:
 // - How they will move
 //   - Cone forward, and angle
 class Particles {
-    GLuint m_Vao = 0, m_PositionBo = 0, m_VelocityBo = 0;
-    size_t m_MaxParticleCount, m_ParticleCount;
-
 public:
     enum class Shape {
         Sphere,
         Disk
     };
 private:
+
+    GLuint m_Vao = 0, m_PositionBo = 0, m_VelocityBo = 0;
+    const size_t m_MaxParticleCount;
+    size_t m_ParticleCount;
+    const Shape m_Shape;
+    float m_SpawnRadius;
+
     struct HostData {
         std::vector<glm::vec4> pos, vel;
 
@@ -90,18 +94,12 @@ private:
                 break;
             case Shape::Disk:
                 for(size_t i=0 ; i<count ; ++i) {
-                    pos[i] = glm::vec4(glm::diskRand(radius), 0, 1);
-                    vel[i] = glm::vec4(0,0,1,0);
-                    // vel[i].z = std::abs(vel[i].z);
-                    // pos[i].z = 0.f;
-                    /*
                     const auto ax = glm::radians(glm::linearRand(-60.f, 60.f));
                     const auto ay = glm::radians(glm::linearRand(-60.f, 60.f));
                     const auto rx = glm::rotate(glm::mat4(1), ax, glm::vec3(1,0,0));
                     const auto ry = glm::rotate(glm::mat4(1), ay, glm::vec3(0,1,0));
-                    const auto forward = glm::vec3(0,0,1);
-                    vel[i] = glm::vec3(rx * ry * glm::vec4(forward, 0));
-                    */
+                    vel[i] = rx * ry * glm::vec4(0,0,1,0);
+                    pos[i] = glm::vec4(glm::diskRand(radius), 0, 1);
                 }
                 break;
             }
@@ -133,26 +131,15 @@ public:
     }
     Particles(const Particles& v) = delete;
     Particles& operator=(const Particles& v) = delete;
-    Particles(Particles&& o) {
-        std::swap(m_Vao, o.m_Vao);
-        std::swap(m_PositionBo, o.m_PositionBo);
-        std::swap(m_VelocityBo, o.m_VelocityBo);
-        std::swap(m_ParticleCount, o.m_ParticleCount);
-        std::swap(m_MaxParticleCount, o.m_MaxParticleCount);
-    }
-    Particles& operator=(Particles&& o) {
-        std::swap(m_Vao, o.m_Vao);
-        std::swap(m_PositionBo, o.m_PositionBo);
-        std::swap(m_VelocityBo, o.m_VelocityBo);
-        std::swap(m_ParticleCount, o.m_ParticleCount);
-        std::swap(m_MaxParticleCount, o.m_MaxParticleCount);
-        return *this;
-    }
+    Particles(Particles&& o) = delete;
+    Particles& operator=(Particles&& o) = delete;
     Particles() = delete;
 
     Particles(size_t count, Shape shape, float radius):
         m_MaxParticleCount(count),
-        m_ParticleCount(0)
+        m_ParticleCount(0),
+        m_Shape(shape),
+        m_SpawnRadius(radius)
     {
         glGenBuffers(1, &m_PositionBo);
         glGenBuffers(1, &m_VelocityBo);
@@ -163,7 +150,7 @@ public:
         glBufferData(GL_COPY_READ_BUFFER,  m_MaxParticleCount * sizeof(glm::vec4), nullptr, GL_DYNAMIC_COPY);
         glBufferData(GL_COPY_WRITE_BUFFER, m_MaxParticleCount * sizeof(glm::vec4), nullptr, GL_DYNAMIC_COPY);
 
-        addParticles(count, shape, radius);
+        addParticles(count);
 
         glBindVertexArray(m_Vao);
         glBindBuffer(GL_ARRAY_BUFFER, m_PositionBo);
@@ -174,13 +161,13 @@ public:
     size_t getParticleCount() const { return m_ParticleCount; }
     size_t getMaxParticleCount() const { return m_MaxParticleCount; }
 
-    void addParticles(size_t count, Shape shape, float radius) {
+    void addParticles(size_t count) {
         if(m_ParticleCount >= m_MaxParticleCount)
             return;
 
         count = std::min(count, m_MaxParticleCount - m_ParticleCount);
         assert(m_ParticleCount + count <= m_MaxParticleCount);
-        const HostData d(count, shape, radius);
+        const HostData d(count, m_Shape, m_SpawnRadius);
 
         glBindBuffer(GL_COPY_READ_BUFFER,  m_PositionBo);
         glBindBuffer(GL_COPY_WRITE_BUFFER, m_VelocityBo);

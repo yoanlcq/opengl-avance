@@ -108,7 +108,7 @@ void Demo::renderGUI() {
         //ImGui::SliderInt("Particle Count", &new_pcount, 1, m_ParticlesManager.m_ToastParticles.getMaxParticleCount());
         ImGui::InputInt("Particle Count", &new_pcount);
         if(new_pcount > pcount) {
-            m_ParticlesManager.m_ToastParticles.addParticles(new_pcount - pcount, Particles::Shape::Disk, 321.f);
+            m_ParticlesManager.m_ToastParticles.addParticles(new_pcount - pcount);
         } else if(new_pcount < pcount) {
             m_ParticlesManager.m_ToastParticles.removeParticles(pcount - new_pcount);
         }
