@@ -59,12 +59,6 @@ public:
     void setUniformOuterColor(const glm::vec4 &v) const { glUniform4fv(m_UniformOuterColorLocation, 1, &v[0]); }
 };
 
-// TODO: Two things:
-// - How they are placed
-//   - In a sphere
-//   - In a disk
-// - How they will move
-//   - Cone forward, and angle
 class Particles {
 public:
     enum class Shape {
