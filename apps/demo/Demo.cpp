@@ -227,6 +227,9 @@ void Demo::renderGUI() {
 }
 
 
+GLuint Demo::getHighestGeometryTextureUnit() const {
+    return m_Sponza.m_GLTextures2D.size() + 2; // + 2 just in case
+}
 void Demo::renderGeometry() {
     m_Sponza.render();
     m_Skybox.render(m_Camera);
@@ -258,6 +261,7 @@ void Demo::renderFrame() {
     const auto sceneCenter = (m_Sponza.m_ObjData.bboxMin + m_Sponza.m_ObjData.bboxMax) / 2.f;
     const float sceneRadius = m_Sponza.getDiagonalLength() / 2.f;
 
+    // const auto dirLightUpVector = vec3(0,1,0);
     const auto dirLightUpVector = computeDirectionVectorUp(radians(m_DirLightPhiAngleDegrees), radians(m_DirLightThetaAngleDegrees));
     const auto dirLightViewMatrix = glm::lookAt(sceneCenter + m_Lighting.dirLightDir * sceneRadius, sceneCenter, dirLightUpVector); // Will not work if m_Lighting.dirLightDir is colinear to lightUpVector
     const auto dirLightProjMatrix = glm::ortho(-sceneRadius, sceneRadius, -sceneRadius, sceneRadius, 0.01f * sceneRadius, 2.f * sceneRadius);
@@ -300,14 +304,12 @@ void Demo::renderFrame() {
     switch(m_PipelineKind) {
     case PIPELINE_FORWARD:
         m_ForwardRendering.m_Program.use();
-        m_Lighting.dirLightShadowMap = m_Sponza.m_GLTextures2D.size()+2; // XXX HACK
+        m_Lighting.dirLightShadowMap = getHighestGeometryTextureUnit();
         glActiveTexture(GL_TEXTURE0 + m_Lighting.dirLightShadowMap);
         m_DirectionalShadowMapping.m_Texture.bind();
         m_DirectionalShadowMapping.m_Sampler.bindToTextureUnit(m_Lighting.dirLightShadowMap);
         m_Lighting.dirLightViewProjMatrix = dirLightProjMatrix * dirLightViewMatrix * m_Camera.getRcpViewMatrix();
-        m_Lighting.dirLightDir = -m_Lighting.dirLightDir; // FIXME Hack!!!!!!
         m_ForwardRendering.m_Program.setLightingUniforms(m_Lighting, m_Camera);
-        m_Lighting.dirLightDir = -m_Lighting.dirLightDir; // FIXME Hack!!!!!!
         m_ForwardRendering.m_Program.resetMaterialUniforms();
         renderGeometry(m_ForwardRendering.m_Program);
         break;
@@ -338,9 +340,7 @@ void Demo::renderFrame() {
             m_DirectionalShadowMapping.m_Texture.bind();
             m_DirectionalShadowMapping.m_Sampler.bindToTextureUnit(m_Lighting.dirLightShadowMap);
             m_Lighting.dirLightViewProjMatrix = dirLightProjMatrix * dirLightViewMatrix * m_Camera.getRcpViewMatrix();
-            m_Lighting.dirLightDir = -m_Lighting.dirLightDir; // FIXME Hack!!!!!!
             m_DeferredRendering.m_ShadingPassProgram.setLightingUniforms(m_Lighting, m_Camera);
-            m_Lighting.dirLightDir = -m_Lighting.dirLightDir;
             m_DeferredRendering.m_ShadingPassProgram.setUniformGPosition(0);
             m_DeferredRendering.m_ShadingPassProgram.setUniformGNormal(1);
             m_DeferredRendering.m_ShadingPassProgram.setUniformGAmbient(2);

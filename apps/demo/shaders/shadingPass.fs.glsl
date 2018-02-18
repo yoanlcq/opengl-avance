@@ -85,7 +85,7 @@ void main() {
     const vec3 SMALL3 = vec3(0.001f);
     vec3 wi, Li, halfVector;
 
-    wi = -uDirectionalLightDir; // Expected to be normalized
+    wi = uDirectionalLightDir; // Expected to be normalized
     Li = uDirectionalLightIntensity;
     halfVector = normalize(mix(wo, wi, 0.5));
     color += dirLightVisibility * Li*(Kd*dot(wi, N) + pow(max(vec3(0), Ks*dot(halfVector, N)), max(SMALL3, vec3(shininess))));

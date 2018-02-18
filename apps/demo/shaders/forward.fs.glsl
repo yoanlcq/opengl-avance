@@ -92,7 +92,7 @@ void main() {
     vec3 N = normalize(vViewSpaceNormal);
     vec3 wo = vec3(0,0,1);
 
-    vec3 wi = -uDirectionalLightDir; // Expected to be normalized
+    vec3 wi = uDirectionalLightDir; // Expected to be normalized
     vec3 Li = uDirectionalLightIntensity;
     vec3 halfVector = normalize(mix(wo, wi, 0.5));
     color += dirLightVisibility * Li*(Kd*dot(wi, N) + pow(max(vec3(0), Ks*dot(halfVector, N)), max(SMALL3, vec3(shininess))));

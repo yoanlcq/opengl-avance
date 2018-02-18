@@ -689,6 +689,7 @@ private:
     void renderFrame();
     void renderGeometry();
     void renderGeometry(const glmlv::GLMaterialProgram&);
+    GLuint getHighestGeometryTextureUnit() const;
 
     // NOTE: Make it static, so that the char pointer's lifetime is unbounded.
     // With the old code, the memory was freed before ImGUI wrote to the ini filename.
