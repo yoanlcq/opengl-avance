@@ -324,7 +324,9 @@ struct ParticlesManager {
         ),
         m_ToastParticles(1<<17, Particles::Shape::Disk, 321.f)
     {
+		glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
         glEnable(GL_PROGRAM_POINT_SIZE);
+		//glEnable(34913 /*GL_POINT_SPRITE*/);
     }
     void render(const glmlv::Camera& cam) const {
         m_RenderingProgram.use();
@@ -470,7 +472,9 @@ public:
         glActiveTexture(GL_TEXTURE0);
         m_Skies[m_CurrentSky].bind();
         // m_Sampler.bindToTextureUnit(0);
+		glDepthMask(GL_FALSE);
         m_CubeMesh.render();
+		glDepthMask(GL_TRUE);
     }
 };
 
