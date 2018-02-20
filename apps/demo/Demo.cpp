@@ -226,23 +226,30 @@ void Demo::renderGUI() {
     ImGui::Render();
 }
 
+#define CORALIE
 
 GLuint Demo::getHighestGeometryTextureUnit() const {
     return m_Sponza.m_GLTextures2D.size() + 2; // + 2 just in case
 }
 void Demo::renderGeometry() {
     m_Sponza.render();
+#ifndef CORALIE
     m_Skybox.render(m_Camera);
+#endif
     if(m_PipelineKind == PIPELINE_FORWARD) {
         m_ParticlesManager.render(m_Camera);
     }
+	
 }
 void Demo::renderGeometry(const GLMaterialProgram& prog) {
     m_Sponza.render(prog, m_Camera, m_SponzaInstanceData);
-    m_Skybox.render(m_Camera);
+#ifndef CORALIE
+	m_Skybox.render(m_Camera);
+#endif
     if(m_PipelineKind == PIPELINE_FORWARD) {
         m_ParticlesManager.render(m_Camera);
     }
+	
 }
 
 void Demo::renderFrame() {
