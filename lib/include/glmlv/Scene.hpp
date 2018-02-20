@@ -39,6 +39,7 @@ struct Scene {
 			m_GLTextures2D.back().setLodBias(0.0f);
 			m_GLTextures2D.back().setAnisotropy(4.0f);
         }
+        std::clog << "Done loading " << path << ": Loaded " << m_GLTextures2D.size() << " textures into GL." << std::endl;
     }
 	glm::vec3 getBboxSize() const {
 		return m_ObjData.bboxMax - m_ObjData.bboxMin;

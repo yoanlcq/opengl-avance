@@ -40,13 +40,20 @@ struct TinyObjLoaderEqualTo
 // Obj models might use different set of indices per vertex. The default rendering mechanism of OpenGL does not support this feature to this functions duplicate attributes with different indices.
 void loadObj(const fs::path & objPath, const fs::path & mtlBaseDir, ObjData & data, bool loadTextures)
 {
-    // Load obj
+#ifdef PARANOID_LOG
+    std::clog << "Loading " << objPath << "." << std::endl;
+#endif
+
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
     tinyobj::attrib_t attribs;
 
     std::string err;
     bool ret = tinyobj::LoadObj(&attribs, &shapes, &materials, &err, objPath.string().c_str(), (mtlBaseDir.string() + "/").c_str());
+
+#ifdef PARANOID_LOG
+    std::clog << "Creating ObjData for " << objPath << "." << std::endl;
+#endif
 
     if (!err.empty()) { // `err` may contain warning message.
         std::cerr << err << std::endl;
@@ -58,6 +65,9 @@ void loadObj(const fs::path & objPath, const fs::path & mtlBaseDir, ObjData & da
 
     data.shapeCount += shapes.size();
     data.materialCount += materials.size();
+#ifdef PARANOID_LOG
+    std::clog << data.shapeCount << " shape(s) and " << data.materialCount <<  " material(s). " << std::endl;
+#endif
 
     std::unordered_map<tinyobj::index_t, uint32_t, TinyObjLoaderIndexHash, TinyObjLoaderEqualTo> indexMap;
 
@@ -98,6 +108,12 @@ void loadObj(const fs::path & objPath, const fs::path & mtlBaseDir, ObjData & da
         const int32_t localMaterialID = mesh.material_ids.empty() ? -1 : mesh.material_ids[0];
         const int32_t materialID = localMaterialID >= 0 ? materialIdOffset + localMaterialID : -1;
 
+#ifdef PARANOID_LOG
+        if(materialID < 0) {
+            std::clog << "Some shape has no materialsIDs!" << std::endl;
+        }
+#endif
+
         data.materialIDPerShape.emplace_back(materialID);
 
         // Only load textures that are used
@@ -108,6 +124,15 @@ void loadObj(const fs::path & objPath, const fs::path & mtlBaseDir, ObjData & da
             texturePaths.emplace(material.diffuse_texname);
             texturePaths.emplace(material.specular_texname);
             texturePaths.emplace(material.specular_highlight_texname);
+            if(material.emissive_texname[0]) {
+                std::clog << "Warning: Emissive texture (map_Ke) \"" << material.emissive_texname << "\" WILL NOT be handled by the renderer." << std::endl;
+            }
+#ifdef PARANOID_LOG
+            std::clog << "Ka: \"" << material.ambient_texname << "\"" << std::endl;
+            std::clog << "Kd: \"" << material.diffuse_texname << "\"" << std::endl;
+            std::clog << "Ks: \"" << material.specular_texname << "\"" << std::endl;
+            std::clog << "Kg: \"" << material.specular_highlight_texname << "\"" << std::endl;
+#endif
         }
     }
 
@@ -115,27 +140,33 @@ void loadObj(const fs::path & objPath, const fs::path & mtlBaseDir, ObjData & da
 
     if (loadTextures)
     {
+#ifdef PARANOID_LOG
+        std::clog << "Loading " << texturePaths.size() << " texture paths." << std::endl;
+#endif
         const auto textureIdOffset = data.textures.size();
         for (const auto & texturePath : texturePaths)
         {
-            if (!texturePath.empty())
-            {
-                auto newTexturePath = texturePath;
-                std::replace(begin(newTexturePath), end(newTexturePath), '\\', '/');
-                const auto completePath = mtlBaseDir / newTexturePath;
-                if (fs::exists(completePath))
-                {
-                    std::clog << "Loading image " << completePath << std::endl;
-                    data.textures.emplace_back(readImage(completePath));
-                    data.textures.back().flipY();
+#ifdef PARANOID_LOG
+            std::clog << "Texture path \"" << texturePath << "\"" << std::endl;
+#endif
+            if (texturePath.empty())
+                continue;
 
-                    const auto localTexId = textureIdMap.size();
-                    textureIdMap[texturePath] = textureIdOffset + localTexId;
-                }
-                else
-                {
-                    std::clog << "'Warning: image " << completePath << " not found" << std::endl;
-                }
+            auto newTexturePath = texturePath;
+            std::replace(begin(newTexturePath), end(newTexturePath), '\\', '/');
+            const auto completePath = mtlBaseDir / newTexturePath;
+            if (fs::exists(completePath))
+            {
+                std::clog << "Loading image " << completePath << std::endl;
+                data.textures.emplace_back(readImage(completePath));
+                data.textures.back().flipY();
+
+                const auto localTexId = textureIdMap.size();
+                textureIdMap[texturePath] = textureIdOffset + localTexId;
+            }
+            else
+            {
+                std::clog << "'Warning: image " << completePath << " not found" << std::endl;
             }
         }
     }
