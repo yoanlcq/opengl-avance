@@ -34,6 +34,15 @@ void handleFboStatus(GLenum status) {
 using namespace glm;
 using namespace glmlv;
 
+Image2DRGBA readImageNoException(const fs::path& path) noexcept {
+    try {
+        return readImage(path);
+    } catch(...) {
+        std::clog << "Warning: Could not load " << path << ". Returning a 1x1 magenta image instead." << std::endl;
+        return Image2DRGBA(1, 1, 255, 000, 255, 255); // Magenta
+    }
+}
+
 void Demo::renderGUI() {
     ImGui_ImplGlfwGL3_NewFrame();
 

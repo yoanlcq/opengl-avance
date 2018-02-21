@@ -67,7 +67,7 @@ public:
     static const size_t MAX_POINT_LIGHTS = LightingUniforms::MAX_POINT_LIGHTS;
 
     void setLightingUniforms(const CommonLighting& d, const ViewController& vc) const {
-        auto count = d.pointLightCount;
+        size_t count = d.pointLightCount;
         assert(count < MAX_POINT_LIGHTS);
         setUniformDirectionalLightDir(d.dirLightDir, vc);
         setUniformDirectionalLightIntensity(d.dirLightIntensity);

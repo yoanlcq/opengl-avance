@@ -16,6 +16,8 @@
 
 void handleFboStatus(GLenum status);
 
+glmlv::Image2DRGBA readImageNoException(const glmlv::fs::path& path) noexcept;
+
 class GLParticlesSimulationProgram: public glmlv::GLProgram {
     GLint m_UniformParticleCountLocation = -1;
     GLint m_UniformDeltaTimeLocation     = -1;
@@ -427,28 +429,28 @@ public:
         faces.nz = glmlv::Image2DRGBA(128, 128, 000, 000, 128, 255);
         m_Skies[SkySimpleColorTest].uploadImages(faces);
 
-        faces.px = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "kurt" / "space_rt.png");
-        faces.py = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "kurt" / "space_up.png");
-        faces.pz = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "kurt" / "space_bk.png");
-        faces.nx = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "kurt" / "space_lf.png");
-        faces.ny = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "kurt" / "space_dn.png");
-        faces.nz = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "kurt" / "space_ft.png");
+        faces.px = readImageNoException(paths.m_AppAssets / "skyboxes" / "kurt" / "space_rt.png");
+        faces.py = readImageNoException(paths.m_AppAssets / "skyboxes" / "kurt" / "space_up.png");
+        faces.pz = readImageNoException(paths.m_AppAssets / "skyboxes" / "kurt" / "space_bk.png");
+        faces.nx = readImageNoException(paths.m_AppAssets / "skyboxes" / "kurt" / "space_lf.png");
+        faces.ny = readImageNoException(paths.m_AppAssets / "skyboxes" / "kurt" / "space_dn.png");
+        faces.nz = readImageNoException(paths.m_AppAssets / "skyboxes" / "kurt" / "space_ft.png");
         m_Skies[SkySpaceKurt].uploadImages(faces);
 
-        faces.px = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_rt.png");
-        faces.py = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_up.png");
-        faces.pz = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_bk.png");
-        faces.nx = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_lf.png");
-        faces.ny = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_dn.png");
-        faces.nz = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_ft.png");
+        faces.px = readImageNoException(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_rt.png");
+        faces.py = readImageNoException(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_up.png");
+        faces.pz = readImageNoException(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_bk.png");
+        faces.nx = readImageNoException(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_lf.png");
+        faces.ny = readImageNoException(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_dn.png");
+        faces.nz = readImageNoException(paths.m_AppAssets / "skyboxes" / "ulukai" / "corona_ft.png");
         m_Skies[SkySpaceUlukaiCorona].uploadImages(faces);
 
-        faces.px = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_rt.png");
-        faces.py = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_up.png");
-        faces.pz = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_bk.png");
-        faces.nx = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_lf.png");
-        faces.ny = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_dn.png");
-        faces.nz = glmlv::readImage(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_ft.png");
+        faces.px = readImageNoException(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_rt.png");
+        faces.py = readImageNoException(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_up.png");
+        faces.pz = readImageNoException(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_bk.png");
+        faces.nx = readImageNoException(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_lf.png");
+        faces.ny = readImageNoException(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_dn.png");
+        faces.nz = readImageNoException(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_ft.png");
         m_Skies[SkySpaceUlukaiRedEclipse].uploadImages(faces);
     }
     void render(const glmlv::Camera& camera) {
