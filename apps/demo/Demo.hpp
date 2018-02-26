@@ -221,6 +221,8 @@ class PostFX_ComputePassProgram: public glmlv::GLProgram {
     GLint m_UniformGammaExponentLocation         = -1;
     GLint m_UniformFinalTouchMulLocation         = -1;
     GLint m_UniformFinalTouchAddLocation         = -1;
+    GLint m_UniformGlitchLocation                = -1;
+	GLint m_UniformTimeLocation                  = -1;
 
 public:
     PostFX_ComputePassProgram(const glmlv::fs::path& cs):
@@ -229,13 +231,17 @@ public:
         m_UniformOutputImageLocation          (getUniformLocation("uOutputImage")),
         m_UniformGammaExponentLocation        (getUniformLocation("uGammaExponent")),
         m_UniformFinalTouchMulLocation        (getUniformLocation("uFinalTouchMul")),
-        m_UniformFinalTouchAddLocation        (getUniformLocation("uFinalTouchAdd"))
+        m_UniformFinalTouchAddLocation        (getUniformLocation("uFinalTouchAdd")),
+        m_UniformGlitchLocation               (getUniformLocation("uGlitch")),
+		m_UniformTimeLocation                 (getUniformLocation("uTime"))
         {}
     void setUniformInputImage(GLint i)               const { glUniform1i(m_UniformInputImageLocation, i); }
     void setUniformOutputImage(GLint i)              const { glUniform1i(m_UniformOutputImageLocation, i); }
     void setUniformGammaExponent(GLfloat f)          const { glUniform1f(m_UniformGammaExponentLocation, f); }
     void setUniformFinalTouchMul(const glm::vec3 &v) const { glUniform3fv(m_UniformFinalTouchMulLocation, 1, &v[0]); }
     void setUniformFinalTouchAdd(const glm::vec3 &v) const { glUniform3fv(m_UniformFinalTouchAddLocation, 1, &v[0]); }
+    void setUniformGlitch(GLfloat f)                 const { glUniform1f(m_UniformGlitchLocation, f); }
+	void setUniformTime(GLfloat f)                   const { glUniform1f(m_UniformTimeLocation, f); }
 };
 
 
@@ -611,6 +617,8 @@ struct PostFX_ComputePass {
     float m_Gamma;
     glm::vec3 m_FinalTouchMul;
     glm::vec3 m_FinalTouchAdd;
+	float m_Glitch;
+    float m_Time;
 
     PostFX_ComputePass(const Paths& paths, GLsizei w, GLsizei h):
         m_Program(paths.m_AppShaders / "postFX.cs.glsl"),
@@ -620,7 +628,9 @@ struct PostFX_ComputePass {
         m_IsEnabled(false),
         m_Gamma(2.2f),
         m_FinalTouchMul(1.0f),
-        m_FinalTouchAdd(0.0f)
+        m_FinalTouchAdd(0.0f),
+        m_Glitch(1.0f),
+		m_Time(0.0f)
     {
         // Still attach a depth texture to input FBO for when using Forward Pipeline
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_Input.m_Fbo);
