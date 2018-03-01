@@ -14,6 +14,9 @@
 #include <glmlv/Camera.hpp>
 #include <glmlv/GlobalWavPlayer.hpp>
 #include <glm/gtc/random.hpp>
+#include <glm/gtx/rotate_vector.hpp>
+#include <functional>
+#include <map>
 
 void handleFboStatus(GLenum status);
 
@@ -697,11 +700,66 @@ struct PostFX {
 };
 
 class Story {
+
+
+    struct Interpolations {
+        static glm::vec3 slerp(const glm::vec3& a, const glm::vec3& b, float t) { return glm::slerp(a, b, t); }
+        static glm::vec3 lerp3(const glm::vec3& a, const glm::vec3& b, float t) { return glm::mix(a, b, t); }
+        static glm::vec2 lerp2(const glm::vec2& a, const glm::vec2& b, float t) { return glm::mix(a, b, t); }
+        static float lerp(const float& a, const float& b, float t) { return glm::mix(a, b, t); }
+        template<typename T>
+        static T lower(const T& x, const T&, float) { return x; }
+        template<typename T>
+        static T upper(const T&, const T& x, float) { return x; }
+        template<typename T>
+        static T nearest(const T& a, const T& b, float t) { return t < 0.5f ? a : b; }
+    };
+
+    template<typename T>
+    struct Timeline {
+        typedef std::function<T(const T&, const T&, float)> Lerp;
+        const Lerp m_Lerp;
+        std::map<float, T> m_Keyframes;
+
+        Timeline() = delete;
+        Timeline(const Lerp& lerp, std::map<float, T>&& init):
+            m_Lerp(lerp),
+            m_Keyframes(init)
+            {}
+
+        T at(float t) const {
+            assert(!m_Keyframes.empty() && "There must be at least one keyframe!");
+
+            auto upper = m_Keyframes.upper_bound(t);
+            if(upper == m_Keyframes.cend())
+                --upper;
+
+            auto lower = upper;
+            if(lower != m_Keyframes.begin())
+                --lower;
+
+            if(t <= lower->first)
+                return lower->second;
+            if(t >= upper->first)
+                return upper->second;
+
+            const auto lerp_factor = (t - lower->first) / (upper->first - lower->first);
+            return m_Lerp(lower->second, upper->second, lerp_factor);
+        }
+    };
+
     bool m_IsPlaying;
     bool m_IsToggleKeyHeld;
     float m_PlayheadTime; // time (seconds) since entering demo mode.
+
 public:
     const glmlv::fs::path m_SoundtrackWavPath;
+
+    const Timeline<glmlv::Camera::Mode> m_CameraMode;
+    const Timeline<glm::vec3> m_CameraTarget;
+    const Timeline<glm::vec3> m_CameraForward;
+    const Timeline<glm::vec2> m_CameraNoiseFactor;
+    const Timeline<float> m_CameraNoiseSpeed;
 
     static constexpr float BPM = 170;
     static constexpr int TOGGLE_KEY = GLFW_KEY_SPACE;
@@ -710,7 +768,33 @@ public:
         m_IsPlaying(false),
         m_IsToggleKeyHeld(false),
         m_PlayheadTime(0),
-        m_SoundtrackWavPath(paths.m_AppAssets / "music" / "outsider.wav")
+        m_SoundtrackWavPath(paths.m_AppAssets / "music" / "outsider.wav"),
+        m_CameraMode(Interpolations::lower<glmlv::Camera::Mode>, {
+            { 0, glmlv::Camera::Mode::LookAt },
+            { 6, glmlv::Camera::Mode::LookAt },
+            { 51, glmlv::Camera::Mode::FreeFly },
+        }),
+        m_CameraTarget(Interpolations::lerp3, {
+            { 0, glm::vec3(0,200,0) },
+        }),
+        // FIXME(yoanlcq): At 8 seconds, we get NaN values.
+        m_CameraForward(Interpolations::slerp, {
+            { 0, glm::vec3(800,0,0) },
+            { 6, glm::vec3(0,0,100) },
+            { 8, glm::vec3(-400,100,0) },
+            { 10, glm::vec3(400,100,0) },
+            { 12, glm::vec3(0,0,-100) },
+        }),
+        m_CameraNoiseFactor(Interpolations::lerp2, {
+            { 0, glm::vec2(0) },
+            { 6, glm::vec2(5) },
+            { 8, glm::vec2(0) },
+            { 50, glm::vec2(0) },
+        }),
+        m_CameraNoiseSpeed(Interpolations::lerp, {
+            { 0, 0 },
+            { 6, 20 },
+        })
         {}
 
     bool isPlaying() const { return m_IsPlaying; }
@@ -742,7 +826,9 @@ public:
     }
 
     void update(glmlv::GLFWHandle& glfwHandle, float dt) {
-        m_PlayheadTime += dt;
+        if(m_IsPlaying) {
+            m_PlayheadTime += dt;
+        }
 
         switch(glfwGetKey(glfwHandle.window(), TOGGLE_KEY)) {
         case GLFW_PRESS:
@@ -776,7 +862,7 @@ private:
 
     const size_t m_nWindowWidth = 1280;
     const size_t m_nWindowHeight = 720;
-    glmlv::GLFWHandle m_GLFWHandle{ m_nWindowWidth, m_nWindowHeight, "Creating Dimensions" }; // Note: the handle must be declared before the creation of any object managing OpenGL resource (e.g. glmlv::GLProgram, GLShader)
+    glmlv::GLFWHandle m_GLFWHandle{ m_nWindowWidth, m_nWindowHeight, "REVOLVE" }; // Note: the handle must be declared before the creation of any object managing OpenGL resource (e.g. glmlv::GLProgram, GLShader)
 
     Paths m_Paths;
     static const int PIPELINE_FORWARD = 1;

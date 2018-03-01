@@ -6,7 +6,6 @@
 #include <glmlv/imgui_impl_glfw_gl3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/io.hpp>
-#include <glm/gtx/rotate_vector.hpp>
 
 
 std::string Demo::static_ImGuiIniFilename;
@@ -71,6 +70,7 @@ void Demo::renderGUI() {
         }
     }
     if(ImGui::CollapsingHeader("Camera")) {
+        // FIXME(yoanlcq): For some reason editing noise parameters also move the camera.
         switch(m_Camera.getMode()) {
         case Camera::Mode::FreeFly:
             if(ImGui::Button("Switch to LookAt Mode")) {
@@ -441,6 +441,18 @@ void Demo::update(float dt) {
     m_Story.update(m_GLFWHandle, dt);
     m_Camera.update(dt);
     m_ParticlesManager.update(dt);
+
+    if(!m_Story.isPlaying())
+        return;
+
+    const auto& s = m_Story;
+    const float t = s.getPlayheadTime();
+    m_Camera.setMode(s.m_CameraMode.at(t));
+    m_Camera.m_LookAtData.m_Target = s.m_CameraTarget.at(t);
+    m_Camera.m_LookAtData.m_Forward = s.m_CameraForward.at(t);
+    m_Camera.m_FreeFlyData.m_Forward = s.m_CameraForward.at(t);
+    m_Camera.m_NoiseFactor = s.m_CameraNoiseFactor.at(t);
+    m_Camera.m_NoiseSpeed = s.m_CameraNoiseSpeed.at(t);
 }
 
 int Demo::run() {
