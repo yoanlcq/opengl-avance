@@ -6,8 +6,7 @@
 #include <glmlv/imgui_impl_glfw_gl3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/io.hpp>
-
-#include <glmlv/GlobalWavPlayer.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 
 std::string Demo::static_ImGuiIniFilename;
@@ -43,34 +42,10 @@ Image2DRGBA readImageNoException(const fs::path& path) noexcept {
 }
 
 
-void Demo::toggleDemoMode() {
-    if(m_IsDemoPlaying)
-        leaveDemoMode();
-    else
-        enterDemoMode();
-}
-void Demo::enterDemoMode() {
-    if(m_IsDemoPlaying) {
-        std::clog << "WARN: Trying to enter demo mode, but m_IsDemoPlaying is already true!" << std::endl;
-        return;
-    }
-    m_IsDemoPlaying = true;
-    GlobalWavPlayer::playWav(m_Story.m_SoundtrackWavPath);
-}
-void Demo::leaveDemoMode() {
-    if(!m_IsDemoPlaying) {
-        std::clog << "WARN: Trying to leave demo mode, but m_IsDemoPlaying is already false!" << std::endl;
-        return;
-    }
-    m_IsDemoPlaying = false;
-    GlobalWavPlayer::stopAll();
-}
-
-
 void Demo::renderGUI() {
 
     // Simple, there's no GUI in demo mode (for now!)
-    if(m_IsDemoPlaying)
+    if(m_Story.isPlaying())
         return;
 
     ImGui_ImplGlfwGL3_NewFrame();
@@ -462,43 +437,21 @@ void Demo::renderFrame() {
     }
 }
 
-int Demo::run()
-{
-    // Loop until the user closes the window
-    for (auto frameCount = 0u; !m_GLFWHandle.shouldClose(); ++frameCount)
-    {
+void Demo::update(float dt) {
+    m_Story.update(m_GLFWHandle, dt);
+    m_Camera.update(dt);
+    m_ParticlesManager.update(dt);
+}
+
+int Demo::run() {
+    for (auto frameCount = 0u; !m_GLFWHandle.shouldClose(); ++frameCount) {
         const auto seconds = glfwGetTime();
-
-        switch(glfwGetKey(m_GLFWHandle.window(), GLFW_KEY_SPACE)) {
-        case GLFW_PRESS:
-            if(!m_IsDemoModeKeyHeld)
-                toggleDemoMode();
-            m_IsDemoModeKeyHeld = true;
-            break;
-        case GLFW_RELEASE:
-            m_IsDemoModeKeyHeld = false;
-            break;
-        }
-
         renderFrame();
-
-        // GUI code:
         renderGUI();
-
-        /* Poll for and process events */
         glfwPollEvents();
-
-        /* Swap front and back buffers*/
         m_GLFWHandle.swapBuffers();
-
-        auto elapsedTime = glfwGetTime() - seconds;
-        // auto guiHasFocus = ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
-        /* if (!guiHasFocus) */ {
-            m_Camera.update(float(elapsedTime));
-        }
-        m_ParticlesManager.update(elapsedTime);
+        update(glfwGetTime() - seconds);
     }
-
     return 0;
 }
 
@@ -521,8 +474,6 @@ Demo::Demo(int argc, char** argv):
     m_CameraSpeed(m_CameraMaxSpeed / 5.f),
     m_Skybox(m_Paths, m_Sponza.getDiagonalLength() / 2.f),
     m_ParticlesManager(m_Paths),
-    m_IsDemoPlaying(false),
-    m_IsDemoModeKeyHeld(false),
     m_Story(m_Paths)
 {
     (void) argc;

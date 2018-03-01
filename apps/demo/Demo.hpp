@@ -12,6 +12,7 @@
 #include <glmlv/GLSampler.hpp>
 #include <glmlv/Scene.hpp>
 #include <glmlv/Camera.hpp>
+#include <glmlv/GlobalWavPlayer.hpp>
 #include <glm/gtc/random.hpp>
 
 void handleFboStatus(GLenum status);
@@ -695,14 +696,65 @@ struct PostFX {
         {}
 };
 
-struct Story {
-    static constexpr float BPM = 170;
-
+class Story {
+    bool m_IsPlaying;
+    bool m_IsToggleKeyHeld;
+    float m_PlayheadTime; // time (seconds) since entering demo mode.
+public:
     const glmlv::fs::path m_SoundtrackWavPath;
 
+    static constexpr float BPM = 170;
+    static constexpr int TOGGLE_KEY = GLFW_KEY_SPACE;
+
     Story(const Paths& paths):
+        m_IsPlaying(false),
+        m_IsToggleKeyHeld(false),
+        m_PlayheadTime(0),
         m_SoundtrackWavPath(paths.m_AppAssets / "music" / "outsider.wav")
         {}
+
+    bool isPlaying() const { return m_IsPlaying; }
+    float getPlayheadTime() const { return m_PlayheadTime; }
+
+    void play() {
+        if(m_IsPlaying) {
+            std::clog << "WARN: Trying to enter demo mode, but m_IsPlaying is already true!" << std::endl;
+            return;
+        }
+
+        m_PlayheadTime = 0;
+        m_IsPlaying = true;
+        glmlv::GlobalWavPlayer::playWav(m_SoundtrackWavPath);
+    }
+
+    void stop() {
+        if(!m_IsPlaying) {
+            std::clog << "WARN: Trying to leave demo mode, but m_IsPlaying is already false!" << std::endl;
+            return;
+        }
+
+        m_IsPlaying = false;
+        glmlv::GlobalWavPlayer::stopAll();
+    }
+
+    void togglePlayStop() {
+        if(m_IsPlaying) stop(); else play();
+    }
+
+    void update(glmlv::GLFWHandle& glfwHandle, float dt) {
+        m_PlayheadTime += dt;
+
+        switch(glfwGetKey(glfwHandle.window(), TOGGLE_KEY)) {
+        case GLFW_PRESS:
+            if(!m_IsToggleKeyHeld)
+                togglePlayStop();
+            m_IsToggleKeyHeld = true;
+            break;
+        case GLFW_RELEASE:
+            m_IsToggleKeyHeld = false;
+            break;
+        }
+    }
 };
 
 class Demo {
@@ -711,10 +763,7 @@ public:
 
     int run();
 private:
-    void enterDemoMode();
-    void leaveDemoMode();
-    void toggleDemoMode();
-
+    void update(float dt);
     void renderGUI();
     void renderFrame();
     void renderGeometry();
@@ -750,8 +799,5 @@ private:
     float m_CameraSpeed;
     Skybox m_Skybox;
     ParticlesManager m_ParticlesManager;
-
-    bool m_IsDemoPlaying;
-    bool m_IsDemoModeKeyHeld;
     Story m_Story;
 };
