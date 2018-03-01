@@ -34,6 +34,15 @@ void handleFboStatus(GLenum status) {
 using namespace glm;
 using namespace glmlv;
 
+Image2DRGBA readImageNoException(const fs::path& path) noexcept {
+    try {
+        return readImage(path);
+    } catch(...) {
+        std::clog << "Warning: Could not load " << path << ". Returning a 1x1 magenta image instead." << std::endl;
+        return Image2DRGBA(1, 1, 255, 000, 255, 255); // Magenta
+    }
+}
+
 void Demo::renderGUI() {
     ImGui_ImplGlfwGL3_NewFrame();
 
@@ -216,10 +225,13 @@ void Demo::renderGUI() {
             ImGui::SliderFloat("Gamma", &cpass.m_Gamma, 0, 16);
             ImGui::SliderFloat3("Final Touch Mul", &cpass.m_FinalTouchMul[0], -2, 2);
             ImGui::SliderFloat3("Final Touch Add", &cpass.m_FinalTouchAdd[0], -2, 2);
+			ImGui::SliderFloat("Glitch", &cpass.m_Glitch, 0, 50);
         }
     }
 
     ImGui::End();
+
+    cpass.m_Time = glfwGetTime();
 
     const auto viewportSize = m_GLFWHandle.framebufferSize();
     glViewport(0, 0, viewportSize.x, viewportSize.y);
@@ -395,6 +407,8 @@ void Demo::renderFrame() {
         cpass.m_Program.setUniformGammaExponent(1.f / cpass.m_Gamma);
         cpass.m_Program.setUniformFinalTouchMul(cpass.m_FinalTouchMul);
         cpass.m_Program.setUniformFinalTouchAdd(cpass.m_FinalTouchAdd);
+        cpass.m_Program.setUniformGlitch(cpass.m_Glitch);
+		cpass.m_Program.setUniformTime(cpass.m_Time);
         // NOTE!!!! 32 = local_size dans le compute shader. 
         glDispatchCompute(1 + m_nWindowWidth / 32, 1 + m_nWindowHeight / 32, 1);
         glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
