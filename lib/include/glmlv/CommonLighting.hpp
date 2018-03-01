@@ -6,7 +6,7 @@
 #include "filesystem.hpp"
 #include "load_obj.hpp"
 #include "GLProgram.hpp"
-#include "ViewController.hpp"
+#include "Camera.hpp"
 
 namespace glmlv
 {
@@ -66,7 +66,7 @@ public:
     typedef CommonLighting LightingUniforms;
     static const size_t MAX_POINT_LIGHTS = LightingUniforms::MAX_POINT_LIGHTS;
 
-    void setLightingUniforms(const CommonLighting& d, const ViewController& vc) const {
+    void setLightingUniforms(const CommonLighting& d, const Camera& vc) const {
         size_t count = d.pointLightCount;
         assert(count < MAX_POINT_LIGHTS);
         setUniformDirectionalLightDir(d.dirLightDir, vc);
@@ -83,7 +83,7 @@ public:
         setUniformPointLightAttenuationFactor(count, d.pointLightAttenuationFactor);
     }
 
-    void setUniformDirectionalLightDir(const glm::vec3& v, const ViewController& vc) const {
+    void setUniformDirectionalLightDir(const glm::vec3& v, const Camera& vc) const {
         auto view = vc.getViewMatrix();
         auto data = glm::vec3(view * glm::vec4(v, 0));
         glUniform3fv(m_UniformDirectionalLightDirLocation, 1, &data[0]);
@@ -109,7 +109,7 @@ public:
     }
 
 
-    void setUniformPointLightPosition(size_t count, const glm::vec3* v, const ViewController& vc) const {
+    void setUniformPointLightPosition(size_t count, const glm::vec3* v, const Camera& vc) const {
         assert(count < MAX_POINT_LIGHTS);
         auto view = vc.getViewMatrix();
         glm::vec3 vsPointLightPosition[MAX_POINT_LIGHTS] = {};

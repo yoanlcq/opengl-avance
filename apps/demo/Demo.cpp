@@ -97,6 +97,31 @@ void Demo::renderGUI() {
         }
     }
     if(ImGui::CollapsingHeader("Camera")) {
+        switch(m_Camera.getMode()) {
+        case Camera::Mode::FreeFly:
+            if(ImGui::Button("LookAt Mode")) {
+                m_Camera.setMode(Camera::Mode::LookAt);
+            }
+            {
+                auto pos = m_Camera.getPosition();
+                auto fwd = m_Camera.getNormalizedForwardVector();
+                ImGui::InputFloat3("Position", &pos[0]);
+                ImGui::InputFloat3("Normalized Forward", &fwd[0]);
+            }
+            break;
+        case Camera::Mode::LookAt:
+            if(ImGui::Button("FreeFly Mode")) {
+                m_Camera.setMode(Camera::Mode::FreeFly);
+            }
+            {
+                auto tgt = m_Camera.getTarget();
+                auto fwd = m_Camera.getNormalizedForwardVector();
+                ImGui::InputFloat3("Target", &tgt[0]);
+                ImGui::InputFloat3("Normalized Forward", &fwd[0]);
+                ImGui::Text("Distance from target: %f", m_Camera.getDistanceFromTarget());
+            }
+            break;
+        }
         if(ImGui::SliderFloat("Speed", &m_CameraSpeed, 0.001f, m_CameraMaxSpeed)) {
             m_Camera.setSpeed(m_CameraSpeed);
         }
