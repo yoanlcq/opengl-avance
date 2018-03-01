@@ -44,24 +44,24 @@ private:
     bool m_LeftButtonPressed = false;
     glm::dvec2 m_LastCursorPosition = glm::dvec2(0, 0);
     Mode m_Mode;
-    FreeFlyData m_FreeFlyData;
-    LookAtData m_LookAtData;
 public:
     size_t m_nWindowWidth, m_nWindowHeight;
     float m_FovY, m_Near, m_Far, m_Speed;
+    FreeFlyData m_FreeFlyData;
+    LookAtData m_LookAtData;
 
     Camera() = delete;
     Camera(GLFWwindow* window, size_t w, size_t h, float speed = 1):
         m_pWindow(window),
         m_Mode(Mode::FreeFly),
-        m_FreeFlyData(),
-        m_LookAtData(m_FreeFlyData),
         m_nWindowWidth(w),
         m_nWindowHeight(h),
         m_FovY(glm::radians(60.f)),
         m_Near(0.2f),
         m_Far(10000.0f),
-        m_Speed(speed)
+        m_Speed(speed),
+        m_FreeFlyData(),
+        m_LookAtData(m_FreeFlyData)
         {}
 
     Mode getMode() const { return m_Mode; }
