@@ -7,7 +7,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/io.hpp>
 
-#include <glmlv/OpenSimplexNoise.hpp>
 #include <glmlv/GlobalWavPlayer.hpp>
 
 
@@ -114,12 +113,15 @@ void Demo::renderGUI() {
             ImGui::Text("Distance from target: %f", m_Camera.getDistanceFromTarget());
             break;
         }
+
         if(ImGui::SliderFloat("Speed", &m_CameraSpeed, 0.001f, m_CameraMaxSpeed)) {
             m_Camera.setSpeed(m_CameraSpeed);
         }
         ImGui::SliderFloat("Vertical FOV", &m_Camera.m_FovY, 0.01f, radians(179.f));
         ImGui::SliderFloat("Near", &m_Camera.m_Near, 0.0001f, 1.f);
         ImGui::SliderFloat("Far", &m_Camera.m_Far, 100.f, 10000.f);
+        ImGui::SliderFloat2("Noise Factor", &m_Camera.m_NoiseFactor[0], 0.f, 42.f);
+        ImGui::SliderFloat("Noise Speed", &m_Camera.m_NoiseSpeed, 0.f, 42.f);
     }
 
     switch(m_PipelineKind) {
@@ -490,8 +492,8 @@ int Demo::run()
         m_GLFWHandle.swapBuffers();
 
         auto elapsedTime = glfwGetTime() - seconds;
-        auto guiHasFocus = ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
-        if (!guiHasFocus) {
+        // auto guiHasFocus = ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
+        /* if (!guiHasFocus) */ {
             m_Camera.update(float(elapsedTime));
         }
         m_ParticlesManager.update(elapsedTime);

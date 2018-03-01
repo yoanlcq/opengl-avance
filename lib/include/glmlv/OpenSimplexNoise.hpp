@@ -1,6 +1,10 @@
+#pragma once
+
 /*
  * OpenSimplex Noise in Java.
  * by Kurt Spencer
+ *
+ * (C++ port by Yoan Lecoq)
  * 
  * v1.1 (October 5, 2014)
  * - Added 2D and 4D implementations.

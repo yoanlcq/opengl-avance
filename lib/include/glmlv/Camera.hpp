@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "GLFWHandle.hpp"
+#include "OpenSimplexNoise.hpp"
 
 namespace glmlv {
 
@@ -42,18 +43,24 @@ struct Camera {
 private:
     GLFWwindow* m_pWindow;
     bool m_LeftButtonPressed = false;
-    glm::dvec2 m_LastCursorPosition = glm::dvec2(0, 0);
+    glm::dvec2 m_LastCursorPosition = glm::dvec2(0);
     Mode m_Mode;
+    OpenSimplexNoise m_OpenSimplexNoise;
+    glm::dvec2 m_CurrentNoiseValue = glm::dvec2(0);
+    double m_TotalTime = 0.0;
 public:
     size_t m_nWindowWidth, m_nWindowHeight;
     float m_FovY, m_Near, m_Far, m_Speed;
     FreeFlyData m_FreeFlyData;
     LookAtData m_LookAtData;
+    glm::vec2 m_NoiseFactor;
+    float m_NoiseSpeed;
 
     Camera() = delete;
     Camera(GLFWwindow* window, size_t w, size_t h, float speed = 1):
         m_pWindow(window),
         m_Mode(Mode::FreeFly),
+        m_OpenSimplexNoise(),
         m_nWindowWidth(w),
         m_nWindowHeight(h),
         m_FovY(glm::radians(60.f)),
@@ -61,7 +68,9 @@ public:
         m_Far(10000.0f),
         m_Speed(speed),
         m_FreeFlyData(),
-        m_LookAtData(m_FreeFlyData)
+        m_LookAtData(m_FreeFlyData),
+        m_NoiseFactor(0),
+        m_NoiseSpeed(1)
         {}
 
     Mode getMode() const { return m_Mode; }
@@ -85,7 +94,15 @@ public:
         assert(m_FovY < glm::radians(180.f));
         return glm::perspective(m_FovY, getAspect(), m_Near, m_Far);
     }
+    glm::vec3 getNoiseTranslationVector() const {
+        const auto tx = float(m_CurrentNoiseValue.x * m_NoiseFactor.x) * getNormalizedRightVector();
+        const auto ty = float(m_CurrentNoiseValue.y * m_NoiseFactor.y) * getNormalizedUpVector();
+        return tx + ty;
+    }
     glm::mat4 getViewMatrix() const {
+        return glm::translate(getViewMatrixWithoutNoise(), getNoiseTranslationVector());
+    }
+    glm::mat4 getViewMatrixWithoutNoise() const {
         switch(m_Mode) {
         case Mode::FreeFly: return m_FreeFlyData.getViewMatrix(); break;
         case Mode::LookAt: return m_LookAtData.getViewMatrix(); break;
@@ -133,6 +150,14 @@ public:
     }
 
     void update(float dt) {
+
+        m_TotalTime += dt * m_NoiseSpeed;
+
+        m_CurrentNoiseValue = glm::dvec2(
+            m_OpenSimplexNoise.eval(m_TotalTime, 0.0),
+            m_OpenSimplexNoise.eval(0.0, m_TotalTime)
+        );
+
         const auto forward = getNormalizedForwardVector();
         const auto right = getNormalizedRightVector();
         const auto up = getNormalizedUpVector();
