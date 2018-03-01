@@ -43,7 +43,37 @@ Image2DRGBA readImageNoException(const fs::path& path) noexcept {
     }
 }
 
+
+void Demo::toggleDemoMode() {
+    if(m_IsDemoPlaying)
+        leaveDemoMode();
+    else
+        enterDemoMode();
+}
+void Demo::enterDemoMode() {
+    if(m_IsDemoPlaying) {
+        std::clog << "WARN: Trying to enter demo mode, but m_IsDemoPlaying is already true!" << std::endl;
+        return;
+    }
+    m_IsDemoPlaying = true;
+    GlobalWavPlayer::playWav(m_Paths.m_AppAssets / "music" / "outsider.wav");
+}
+void Demo::leaveDemoMode() {
+    if(!m_IsDemoPlaying) {
+        std::clog << "WARN: Trying to leave demo mode, but m_IsDemoPlaying is already false!" << std::endl;
+        return;
+    }
+    m_IsDemoPlaying = false;
+    GlobalWavPlayer::stopAll();
+}
+
+
 void Demo::renderGUI() {
+
+    // Simple, there's no GUI in demo mode (for now!)
+    if(m_IsDemoPlaying)
+        return;
+
     ImGui_ImplGlfwGL3_NewFrame();
 
 
@@ -56,20 +86,11 @@ void Demo::renderGUI() {
         ImGui::ShowStyleEditor();
     }
 
+    ImGui::Text("NOTE: Press SPACE to toggle Demo Mode.");
     ImGui::Text("Pipeline: ");
     ImGui::RadioButton("Forward", &m_PipelineKind, PIPELINE_FORWARD);
     ImGui::RadioButton("Deferred", &m_PipelineKind, PIPELINE_DEFERRED);
 
-    if (ImGui::CollapsingHeader("Demo Mode")) {
-        if (ImGui::Button(m_IsDemoPlaying ? "Stop" : "Play")) {
-            if (m_IsDemoPlaying) {
-                GlobalWavPlayer::stopAll();
-            } else {
-                GlobalWavPlayer::playWav(m_Paths.m_AppAssets / "music" / "outsider.wav");
-            }
-            m_IsDemoPlaying = !m_IsDemoPlaying;
-        }
-    }
     if(ImGui::CollapsingHeader("Clear Color")) {
         if (ImGui::ColorEdit3("clearColor", &m_ClearColor[0])) {
             glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], 1.f);
@@ -429,6 +450,17 @@ int Demo::run()
     {
         const auto seconds = glfwGetTime();
 
+        switch(glfwGetKey(m_GLFWHandle.window(), GLFW_KEY_SPACE)) {
+        case GLFW_PRESS:
+            if(!m_IsDemoModeKeyHeld)
+                toggleDemoMode();
+            m_IsDemoModeKeyHeld = true;
+            break;
+        case GLFW_RELEASE:
+            m_IsDemoModeKeyHeld = false;
+            break;
+        }
+
         renderFrame();
 
         // GUI code:
@@ -470,7 +502,8 @@ Demo::Demo(int argc, char** argv):
     m_CameraSpeed(m_CameraMaxSpeed / 5.f),
     m_Skybox(m_Paths, m_Sponza.getDiagonalLength() / 2.f),
     m_ParticlesManager(m_Paths),
-    m_IsDemoPlaying(false)
+    m_IsDemoPlaying(false),
+    m_IsDemoModeKeyHeld(false)
 {
     (void) argc;
     static_ImGuiIniFilename = m_Paths.m_AppName + ".imgui.ini";

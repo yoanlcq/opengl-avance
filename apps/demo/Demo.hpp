@@ -701,6 +701,10 @@ public:
 
     int run();
 private:
+    void enterDemoMode();
+    void leaveDemoMode();
+    void toggleDemoMode();
+
     void renderGUI();
     void renderFrame();
     void renderGeometry();
@@ -737,4 +741,5 @@ private:
     Skybox m_Skybox;
     ParticlesManager m_ParticlesManager;
     bool m_IsDemoPlaying;
+    bool m_IsDemoModeKeyHeld;
 };
