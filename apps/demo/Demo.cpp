@@ -55,7 +55,7 @@ void Demo::enterDemoMode() {
         return;
     }
     m_IsDemoPlaying = true;
-    GlobalWavPlayer::playWav(m_Paths.m_AppAssets / "music" / "outsider.wav");
+    GlobalWavPlayer::playWav(m_Story.m_SoundtrackWavPath);
 }
 void Demo::leaveDemoMode() {
     if(!m_IsDemoPlaying) {
@@ -522,7 +522,8 @@ Demo::Demo(int argc, char** argv):
     m_Skybox(m_Paths, m_Sponza.getDiagonalLength() / 2.f),
     m_ParticlesManager(m_Paths),
     m_IsDemoPlaying(false),
-    m_IsDemoModeKeyHeld(false)
+    m_IsDemoModeKeyHeld(false),
+    m_Story(m_Paths)
 {
     (void) argc;
     static_ImGuiIniFilename = m_Paths.m_AppName + ".imgui.ini";

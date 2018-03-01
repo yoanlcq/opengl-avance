@@ -695,6 +695,16 @@ struct PostFX {
         {}
 };
 
+struct Story {
+    static constexpr float BPM = 170;
+
+    const glmlv::fs::path m_SoundtrackWavPath;
+
+    Story(const Paths& paths):
+        m_SoundtrackWavPath(paths.m_AppAssets / "music" / "outsider.wav")
+        {}
+};
+
 class Demo {
 public:
     Demo(int argc, char** argv);
@@ -740,6 +750,8 @@ private:
     float m_CameraSpeed;
     Skybox m_Skybox;
     ParticlesManager m_ParticlesManager;
+
     bool m_IsDemoPlaying;
     bool m_IsDemoModeKeyHeld;
+    Story m_Story;
 };
