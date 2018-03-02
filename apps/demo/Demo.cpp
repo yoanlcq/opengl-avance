@@ -27,6 +27,23 @@ void handleFboStatus(GLenum status) {
 }
 
 
+// Picked using GIMP
+using Ru = Atlases::Rect<uint32_t>;
+using Rf = Atlases::Rect<float>;
+using Tu = Atlases::TexCoordsUint;
+using Tf = Atlases::TexCoords;
+const Ru Tu::YOAN_LECOQ = Ru(0, 48, 328, 95 - 48);
+const Ru Tu::CORALIE_GOLDBAUM = Ru(0, 126, Tu::W, 177 - 126);
+const Ru Tu::TEACHER = Ru(0, 203, 158, 257 - 203);
+const Ru Tu::SOUNDTRACK = Ru(0, 268, 310, 322 - 268);
+const Ru Tu::REVOLVE = Ru(0, 347, Tu::W, 436 - 347);
+const Rf Tf::YOAN_LECOQ = Tu::normalize(Tu::YOAN_LECOQ);
+const Rf Tf::CORALIE_GOLDBAUM = Tu::normalize(Tu::CORALIE_GOLDBAUM);
+const Rf Tf::TEACHER = Tu::normalize(Tu::TEACHER);
+const Rf Tf::SOUNDTRACK = Tu::normalize(Tu::SOUNDTRACK);
+const Rf Tf::REVOLVE = Tu::normalize(Tu::REVOLVE);
+
+
 using namespace glm;
 using namespace glmlv;
 
@@ -458,6 +475,7 @@ void Demo::update(float dt) {
     m_Camera.m_FreeFlyData.m_Forward = s.m_CameraForward.at(t);
     m_Camera.m_NoiseFactor = s.m_CameraNoiseFactor.at(t);
     m_Camera.m_NoiseSpeed = s.m_CameraNoiseSpeed.at(t);
+    m_Camera.m_FovY = s.m_CameraFovY.at(t);
 }
 
 int Demo::run() {
@@ -486,6 +504,7 @@ Demo::Demo(int argc, char** argv):
     m_ScreenCoverQuad(glmlv::makeScreenCoverQuad()),
     m_Sponza(m_Paths.m_AssetsRoot / "glmlv" / "models" / "crytek-sponza" / "sponza.obj"),
     m_SponzaInstanceData(),
+    m_Atlases(m_Paths),
     m_Camera(m_GLFWHandle.window(), m_nWindowWidth, m_nWindowHeight),
     m_CameraMaxSpeed(m_Sponza.getDiagonalLength() / 2.f),
     m_CameraSpeed(m_CameraMaxSpeed / 5.f),

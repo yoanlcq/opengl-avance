@@ -322,6 +322,44 @@ struct Paths {
         {}
 };
 
+struct Atlases {
+    template<typename T> struct Rect {
+        T x, y, w, h;
+        Rect(T x, T y, T w, T h) : x(x), y(y), w(w), h(h) {}
+    };
+    struct TexCoordsUint {
+        static constexpr uint32_t W = 512, H = 512;
+        using R = Atlases::Rect<uint32_t>;
+        static const R YOAN_LECOQ;
+        static const R CORALIE_GOLDBAUM;
+        static const R TEACHER;
+        static const R SOUNDTRACK;
+        static const R REVOLVE;
+
+        static Rect<float> normalize(R r) {
+            const float h = H, w = H;
+            return Rect<float>(r.x / w, r.y / h, r.w / w, r.h / h);
+        }
+    };
+    struct TexCoords {
+        using R = Atlases::Rect<float>;
+        static const R YOAN_LECOQ;
+        static const R CORALIE_GOLDBAUM;
+        static const R TEACHER;
+        static const R SOUNDTRACK;
+        static const R REVOLVE;
+    };
+
+    const glmlv::GLTexture2D m_TextAtlas, m_ImacLogo;
+
+    Atlases() = delete;
+    Atlases(const Paths& paths):
+        m_TextAtlas(paths.m_AppAssets / "images" / "texts.png"),
+        m_ImacLogo(paths.m_AppAssets / "images" / "imac_gris_numerique_petit.png")
+        {}
+};
+
+
 struct ParticlesManager {
     GLParticlesSimulationProgram m_SimulationProgram;
     GLParticlesRenderingProgram m_RenderingProgram;
@@ -777,6 +815,7 @@ public:
     const Timeline<glm::vec3> m_CameraForward;
     const Timeline<glm::vec2> m_CameraNoiseFactor;
     const Timeline<float> m_CameraNoiseSpeed;
+    const Timeline<float> m_CameraFovY;
 
     static constexpr float BPM = 170;
     static constexpr float DURATION = 88; // 1 min 28
@@ -786,6 +825,7 @@ public:
     Story(const Paths& paths):
         m_IsPlaying(false),
         m_IsPlayKeyHeld(false),
+        m_ShouldGuiBeVisible(true),
         m_IsGuiKeyHeld(false),
         m_PlayheadTime(0),
         m_SoundtrackWavPath(paths.m_AppAssets / "music" / "outsider.wav"),
@@ -817,6 +857,11 @@ public:
         m_CameraNoiseSpeed(Interpolations::lerp, {
             { 0, 0 },
             { 6, 20 },
+        }),
+        m_CameraFovY(Interpolations::lerp, {
+            { 0, glm::radians(60.f) },
+            { 6, glm::radians(179.f) },
+            { 8, glm::radians(60.f) },
         })
         {}
 
@@ -916,6 +961,7 @@ private:
     glmlv::GLMesh m_ScreenCoverQuad;
     glmlv::Scene m_Sponza;
     glmlv::SceneInstanceData m_SponzaInstanceData;
+    Atlases m_Atlases;
     glmlv::Camera m_Camera;
     const float m_CameraMaxSpeed;
     float m_CameraSpeed;
