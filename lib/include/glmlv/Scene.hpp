@@ -22,14 +22,23 @@ struct SceneInstanceData {
 
 // A scene loaded from an OBJ file; Contains both the on-CPU and on-GPU data.
 struct Scene {
+
+    static constexpr bool WANTS_TEXTURES_BY_DEFAULT = 
+#if 0 // Change this to speed up program loading time.
+        false
+#else
+        true
+#endif
+        ;
+
     ObjData m_ObjData;
     GLMesh m_GLMesh;
     GLSampler m_GLSampler;
     std::vector<GLTexture2D> m_GLTextures2D;
 
     Scene() = delete;
-    Scene(const fs::path& path) :
-        m_ObjData(objDataFromPath(path)),
+    Scene(const fs::path& path, bool wantsTextures = WANTS_TEXTURES_BY_DEFAULT):
+        m_ObjData(objDataFromPath(path, wantsTextures)),
         m_GLMesh(SimpleGeometry { m_ObjData.vertexBuffer, m_ObjData.indexBuffer }),
         m_GLSampler(GLSamplerParams().withWrapST(GL_REPEAT).withMinMagFilter(GL_LINEAR))
     {
@@ -99,9 +108,9 @@ struct Scene {
         }
     }
 private:
-    static ObjData objDataFromPath(const fs::path& path) {
+    static ObjData objDataFromPath(const fs::path& path, bool wantsTextures = true) {
         ObjData d;
-        loadObj(path, d);
+        loadObj(path, d, wantsTextures);
         return d;
     }
 };

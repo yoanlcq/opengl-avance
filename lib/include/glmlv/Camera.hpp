@@ -4,6 +4,7 @@
 #include <cassert>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/io.hpp>
 
 #include "GLFWHandle.hpp"
 #include "OpenSimplexNoise.hpp"
@@ -13,6 +14,16 @@ namespace glmlv {
 // An enhanced ViewController that, given perspective parameters, can
 // build a perspective projection matrix.
 struct Camera {
+
+    static void checkForwardVector(glm::vec3& v) {
+        const auto forward = glm::normalize(v);
+        const auto up = getNormalizedUpVector();
+        if(fabsf(glm::dot(forward, up)) > 0.9998f) {
+            std::clog << "WARN: forward and up vectors are colinear! (NOTE: " << v << " vs. " << up << ")" << std::endl;
+            // v = glm::vec3(glm::rotate(glm::mat4(1), glm::radians(1.f), glm::vec3(1,0,0)) * glm::vec4(v, 0.f));
+        }
+    }
+
     enum class Mode {
         FreeFly,
         LookAt,
@@ -24,6 +35,7 @@ struct Camera {
         FreeFlyData() : m_Position(0,0,0), m_Forward(0,0,-1) {}
         FreeFlyData(const LookAtData& l): m_Position(l.getPosition()), m_Forward(l.m_Forward) {}
         glm::mat4 getViewMatrix() const {
+            checkForwardVector(const_cast<glm::vec3&>(m_Forward));
             return glm::lookAt(m_Position, m_Position + m_Forward, getNormalizedUpVector());
         }
     };
@@ -36,6 +48,7 @@ struct Camera {
             return m_Target - m_Forward;
         }
         glm::mat4 getViewMatrix() const {
+            checkForwardVector(const_cast<glm::vec3&>(m_Forward));
             return glm::lookAt(getPosition(), m_Target, getNormalizedUpVector());
         }
     };

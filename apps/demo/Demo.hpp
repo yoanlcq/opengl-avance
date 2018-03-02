@@ -13,6 +13,7 @@
 #include <glmlv/Scene.hpp>
 #include <glmlv/Camera.hpp>
 #include <glmlv/GlobalWavPlayer.hpp>
+#include <glm/gtx/io.hpp>
 #include <glm/gtc/random.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <functional>
@@ -701,9 +702,23 @@ struct PostFX {
 
 class Story {
 
-
     struct Interpolations {
-        static glm::vec3 slerp(const glm::vec3& a, const glm::vec3& b, float t) { return glm::slerp(a, b, t); }
+        static glm::vec3 slerp(const glm::vec3& a, const glm::vec3& b, float t) {
+#if 1
+            const auto al = glm::length(a);
+            const auto bl = glm::length(b);
+            const auto an = a / al;
+            const auto bn = b / bl;
+            const auto xn = glm::slerp(an, bn, t);
+            const auto x = xn * glm::mix(al, bl, t);
+#else
+            const auto x = glm::slerp(a, b, t);
+#endif
+            if(glm::any(glm::isnan(x))) {
+                std::clog << "WARN: slerp(" << a << ", " << b << ", " << t << ") returned " << x << std::endl;
+            }
+            return x;
+        }
         static glm::vec3 lerp3(const glm::vec3& a, const glm::vec3& b, float t) { return glm::mix(a, b, t); }
         static glm::vec2 lerp2(const glm::vec2& a, const glm::vec2& b, float t) { return glm::mix(a, b, t); }
         static float lerp(const float& a, const float& b, float t) { return glm::mix(a, b, t); }
@@ -749,7 +764,9 @@ class Story {
     };
 
     bool m_IsPlaying;
-    bool m_IsToggleKeyHeld;
+    bool m_IsPlayKeyHeld;
+    bool m_ShouldGuiBeVisible;
+    bool m_IsGuiKeyHeld;
     float m_PlayheadTime; // time (seconds) since entering demo mode.
 
 public:
@@ -762,28 +779,34 @@ public:
     const Timeline<float> m_CameraNoiseSpeed;
 
     static constexpr float BPM = 170;
-    static constexpr int TOGGLE_KEY = GLFW_KEY_SPACE;
+    static constexpr float DURATION = 88; // 1 min 28
+    static constexpr int PLAY_KEY = GLFW_KEY_SPACE;
+    static constexpr int GUI_KEY = GLFW_KEY_G;
 
     Story(const Paths& paths):
         m_IsPlaying(false),
-        m_IsToggleKeyHeld(false),
+        m_IsPlayKeyHeld(false),
+        m_IsGuiKeyHeld(false),
         m_PlayheadTime(0),
         m_SoundtrackWavPath(paths.m_AppAssets / "music" / "outsider.wav"),
         m_CameraMode(Interpolations::lower<glmlv::Camera::Mode>, {
             { 0, glmlv::Camera::Mode::LookAt },
             { 6, glmlv::Camera::Mode::LookAt },
-            { 51, glmlv::Camera::Mode::FreeFly },
+            { 61, glmlv::Camera::Mode::FreeFly },
         }),
         m_CameraTarget(Interpolations::lerp3, {
-            { 0, glm::vec3(0,200,0) },
+            { 0, glm::vec3(0,0,0) },
+            { 6, glm::vec3(0,200,0) },
+            { 12, glm::vec3(0,500,0) },
+            { 60, glm::vec3(0,4000,0) },
         }),
-        // FIXME(yoanlcq): At 8 seconds, we get NaN values.
         m_CameraForward(Interpolations::slerp, {
-            { 0, glm::vec3(800,0,0) },
-            { 6, glm::vec3(0,0,100) },
-            { 8, glm::vec3(-400,100,0) },
-            { 10, glm::vec3(400,100,0) },
-            { 12, glm::vec3(0,0,-100) },
+            { 0, glm::vec3(400,0,0) },
+            { 6, glm::vec3(0,0,50) },
+            { 8, glm::vec3(-400,0,0) },
+            { 10, glm::vec3(0,0,-50) },
+            { 12, glm::vec3(400,0,0) },
+            { 16, glm::vec3(50,-400,0) },
         }),
         m_CameraNoiseFactor(Interpolations::lerp2, {
             { 0, glm::vec2(0) },
@@ -799,6 +822,7 @@ public:
 
     bool isPlaying() const { return m_IsPlaying; }
     float getPlayheadTime() const { return m_PlayheadTime; }
+    bool shouldGuiBeVisible() const { return m_ShouldGuiBeVisible; }
 
     void play() {
         if(m_IsPlaying) {
@@ -808,6 +832,7 @@ public:
 
         m_PlayheadTime = 0;
         m_IsPlaying = true;
+        m_ShouldGuiBeVisible = false;
         glmlv::GlobalWavPlayer::playWav(m_SoundtrackWavPath);
     }
 
@@ -818,6 +843,7 @@ public:
         }
 
         m_IsPlaying = false;
+        m_ShouldGuiBeVisible = true;
         glmlv::GlobalWavPlayer::stopAll();
     }
 
@@ -830,14 +856,24 @@ public:
             m_PlayheadTime += dt;
         }
 
-        switch(glfwGetKey(glfwHandle.window(), TOGGLE_KEY)) {
+        switch(glfwGetKey(glfwHandle.window(), PLAY_KEY)) {
         case GLFW_PRESS:
-            if(!m_IsToggleKeyHeld)
+            if(!m_IsPlayKeyHeld)
                 togglePlayStop();
-            m_IsToggleKeyHeld = true;
+            m_IsPlayKeyHeld = true;
             break;
         case GLFW_RELEASE:
-            m_IsToggleKeyHeld = false;
+            m_IsPlayKeyHeld = false;
+            break;
+        }
+        switch(glfwGetKey(glfwHandle.window(), GUI_KEY)) {
+        case GLFW_PRESS:
+            if(!m_IsGuiKeyHeld)
+                m_ShouldGuiBeVisible = !m_ShouldGuiBeVisible;
+            m_IsGuiKeyHeld = true;
+            break;
+        case GLFW_RELEASE:
+            m_IsGuiKeyHeld = false;
             break;
         }
     }

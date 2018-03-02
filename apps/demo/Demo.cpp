@@ -5,7 +5,6 @@
 #include <imgui.h>
 #include <glmlv/imgui_impl_glfw_gl3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/io.hpp>
 
 
 std::string Demo::static_ImGuiIniFilename;
@@ -43,8 +42,7 @@ Image2DRGBA readImageNoException(const fs::path& path) noexcept {
 
 void Demo::renderGUI() {
 
-    // Simple, there's no GUI in demo mode (for now!)
-    if(m_Story.isPlaying())
+    if(!m_Story.shouldGuiBeVisible())
         return;
 
     ImGui_ImplGlfwGL3_NewFrame();
@@ -59,7 +57,14 @@ void Demo::renderGUI() {
         ImGui::ShowStyleEditor();
     }
 
-    ImGui::Text("NOTE: Press SPACE to toggle Demo Mode.");
+    if(m_Story.isPlaying()) {
+        const auto t = m_Story.getPlayheadTime();
+        ImGui::Text("Playhead time : %.2f (%.2f%%)", t, 100.f * t / Story::DURATION);
+        ImGui::Text("Press G to toggle GUI, SPACE to stop.");
+    } else {
+        ImGui::Text("NOTE: Press SPACE to toggle Demo Mode.");
+        ImGui::Text("While in Demo Mode, press G to toggle GUI.");
+    }
     ImGui::Text("Pipeline: ");
     ImGui::RadioButton("Forward", &m_PipelineKind, PIPELINE_FORWARD);
     ImGui::RadioButton("Deferred", &m_PipelineKind, PIPELINE_DEFERRED);
