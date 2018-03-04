@@ -28,21 +28,34 @@ void handleFboStatus(GLenum status) {
 
 
 // Picked using GIMP
-using Ru = Atlases::Rect<uint32_t>;
-using Rf = Atlases::Rect<float>;
-using Tu = Atlases::TexCoordsUint;
-using Tf = Atlases::TexCoords;
-const Ru Tu::YOAN_LECOQ = Ru(0, 48, 328, 95 - 48);
-const Ru Tu::CORALIE_GOLDBAUM = Ru(0, 126, Tu::W, 177 - 126);
-const Ru Tu::TEACHER = Ru(0, 203, 158, 257 - 203);
-const Ru Tu::SOUNDTRACK = Ru(0, 268, 310, 322 - 268);
-const Ru Tu::REVOLVE = Ru(0, 347, Tu::W, 436 - 347);
-const Rf Tf::YOAN_LECOQ = Tu::normalize(Tu::YOAN_LECOQ);
-const Rf Tf::CORALIE_GOLDBAUM = Tu::normalize(Tu::CORALIE_GOLDBAUM);
-const Rf Tf::TEACHER = Tu::normalize(Tu::TEACHER);
-const Rf Tf::SOUNDTRACK = Tu::normalize(Tu::SOUNDTRACK);
-const Rf Tf::REVOLVE = Tu::normalize(Tu::REVOLVE);
-
+const std::array<Rect<uint32_t>, Sprites::AtlasCount> Sprites::ATLAS_SIZE = {
+    Rect<uint32_t> { 0, 0, 512, 512 },
+    Rect<uint32_t> { 0, 0, 512, 512 },
+};
+const std::array<Sprites::AtlasIndex, Sprites::SprCount> Sprites::SPR_ATLAS_INDEX = {
+    AtlasImacLogo,
+    AtlasTexts,
+    AtlasTexts,
+    AtlasTexts,
+    AtlasTexts,
+    AtlasTexts,
+};
+const std::array<Rect<uint32_t>, Sprites::SprCount> Sprites::SPR_TEXCOORDS_UINT = {
+    Rect<uint32_t> { 0, 0, 512, 512 },
+    Rect<uint32_t> { 0, 48, 328, 95 - 48 },
+    Rect<uint32_t> { 0, 126, 512, 177 - 126 },
+    Rect<uint32_t> { 0, 203, 158, 257 - 203 },
+    Rect<uint32_t> { 0, 268, 310, 322 - 268 },
+    Rect<uint32_t> { 0, 347, 512, 436 - 347 },
+};
+const std::array<Rect<float>, Sprites::SprCount> Sprites::SPR_TEXCOORDS = {
+    SPR_TEXCOORDS_UINT[0].dividedBySize(512, 512),
+    SPR_TEXCOORDS_UINT[1].dividedBySize(512, 512),
+    SPR_TEXCOORDS_UINT[2].dividedBySize(512, 512),
+    SPR_TEXCOORDS_UINT[3].dividedBySize(512, 512),
+    SPR_TEXCOORDS_UINT[4].dividedBySize(512, 512),
+    SPR_TEXCOORDS_UINT[5].dividedBySize(512, 512),
+};
 
 using namespace glm;
 using namespace glmlv;
@@ -92,7 +105,6 @@ void Demo::renderGUI() {
         }
     }
     if(ImGui::CollapsingHeader("Camera")) {
-        // FIXME(yoanlcq): For some reason editing noise parameters also move the camera.
         switch(m_Camera.getMode()) {
         case Camera::Mode::FreeFly:
             if(ImGui::Button("Switch to LookAt Mode")) {
@@ -119,6 +131,26 @@ void Demo::renderGUI() {
         ImGui::SliderFloat("Far", &m_Camera.m_Far, 100.f, 10000.f);
         ImGui::SliderFloat2("Noise Factor", &m_Camera.m_NoiseFactor[0], 0.f, 42.f);
         ImGui::SliderFloat("Noise Speed", &m_Camera.m_NoiseSpeed, 0.f, 42.f);
+    }
+
+    if(ImGui::CollapsingHeader("Sprites")) {
+        ImGui::Indent();
+#define SPR_GUI(i) \
+        ImGui::PushID(i); \
+        if(ImGui::CollapsingHeader(#i + strlen("Sprites::Spr"))) { \
+            ImGui::SliderFloat2("Position", &m_Sprites.m_SprPosition[i][0], -2, 2); \
+            ImGui::SliderFloat("Scale", &m_Sprites.m_SprScale[i], 0, 4); \
+            ImGui::SliderFloat("Alpha", &m_Sprites.m_SprAlpha[i], 0, 1); \
+        } \
+        ImGui::PopID();
+        SPR_GUI(Sprites::SprImacLogo);
+        SPR_GUI(Sprites::SprYoanLecoq);
+        SPR_GUI(Sprites::SprCoralieGoldbaum);
+        SPR_GUI(Sprites::SprTeacher);
+        SPR_GUI(Sprites::SprSoundtrack);
+        SPR_GUI(Sprites::SprRevolve);
+#undef SPR_GUI
+        ImGui::Unindent();
     }
 
     switch(m_PipelineKind) {
@@ -283,6 +315,7 @@ void Demo::renderGeometry() {
     m_Skybox.render(m_Camera);
     if(m_PipelineKind == PIPELINE_FORWARD) {
         m_ParticlesManager.render(m_Camera);
+        m_Sprites.render(m_nWindowWidth, m_nWindowHeight);
     }
 	
 }
@@ -291,8 +324,8 @@ void Demo::renderGeometry(const GLMaterialProgram& prog) {
 	m_Skybox.render(m_Camera);
     if(m_PipelineKind == PIPELINE_FORWARD) {
         m_ParticlesManager.render(m_Camera);
+        m_Sprites.render(m_nWindowWidth, m_nWindowHeight);
     }
-	
 }
 
 void Demo::renderFrame() {
@@ -461,7 +494,11 @@ void Demo::renderFrame() {
 
 void Demo::update(float dt) {
     m_Story.update(m_GLFWHandle, dt);
-    m_Camera.update(dt);
+    auto guiHasFocus = ImGui::GetIO().WantCaptureMouse 
+                    || ImGui::GetIO().WantCaptureKeyboard;
+    if (!guiHasFocus || (guiHasFocus && m_Story.isPlaying())) {
+        m_Camera.update(dt);
+    }
     m_ParticlesManager.update(dt);
 
     if(!m_Story.isPlaying())
@@ -504,7 +541,7 @@ Demo::Demo(int argc, char** argv):
     m_ScreenCoverQuad(glmlv::makeScreenCoverQuad()),
     m_Sponza(m_Paths.m_AssetsRoot / "glmlv" / "models" / "crytek-sponza" / "sponza.obj"),
     m_SponzaInstanceData(),
-    m_Atlases(m_Paths),
+    m_Sprites(m_Paths),
     m_Camera(m_GLFWHandle.window(), m_nWindowWidth, m_nWindowHeight),
     m_CameraMaxSpeed(m_Sponza.getDiagonalLength() / 2.f),
     m_CameraSpeed(m_CameraMaxSpeed / 5.f),

@@ -23,6 +23,32 @@ void handleFboStatus(GLenum status);
 
 glmlv::Image2DRGBA readImageNoException(const glmlv::fs::path& path) noexcept;
 
+class GLScreenQuadProgram: public glmlv::GLProgram {
+    GLint m_UniformScaleLocation            = -1;
+    GLint m_UniformPositionLocation         = -1;
+    GLint m_UniformTextureLocation          = -1;
+    GLint m_UniformTexCoordsOffsetLocation  = -1;
+    GLint m_UniformTexCoordsSizeLocation    = -1;
+    GLint m_UniformAlphaMultiplierLocation  = -1;
+
+public:
+    GLScreenQuadProgram(const glmlv::fs::path& vs, const glmlv::fs::path& fs):
+        GLProgram(glmlv::compileProgram({ vs.string(), fs.string() })),
+        m_UniformScaleLocation           (getUniformLocation("uScale")),
+        m_UniformPositionLocation        (getUniformLocation("uPosition")),
+        m_UniformTextureLocation         (getUniformLocation("uTexture")),
+        m_UniformTexCoordsOffsetLocation (getUniformLocation("uTexCoordsOffset")),
+        m_UniformTexCoordsSizeLocation   (getUniformLocation("uTexCoordsSize")),
+        m_UniformAlphaMultiplierLocation (getUniformLocation("uAlphaMultiplier"))
+        {}
+    void setUniformScale(const glm::vec2& v) const { glUniform2fv(m_UniformScaleLocation, 1, &v[0]); }
+    void setUniformPosition(const glm::vec2& v) const { glUniform2fv(m_UniformPositionLocation, 1, &v[0]); }
+    void setUniformTexture(GLint i) const { glUniform1i(m_UniformTextureLocation, i); }
+    void setUniformTexCoordsOffset(const glm::vec2& v) const { glUniform2fv(m_UniformTexCoordsOffsetLocation, 1, &v[0]); }
+    void setUniformTexCoordsSize(const glm::vec2& v) const { glUniform2fv(m_UniformTexCoordsSizeLocation, 1, &v[0]); }
+    void setUniformAlphaMultipler(float f) const { glUniform1f(m_UniformAlphaMultiplierLocation, f); }
+};
+
 class GLParticlesSimulationProgram: public glmlv::GLProgram {
     GLint m_UniformParticleCountLocation = -1;
     GLint m_UniformDeltaTimeLocation     = -1;
@@ -322,41 +348,123 @@ struct Paths {
         {}
 };
 
-struct Atlases {
-    template<typename T> struct Rect {
-        T x, y, w, h;
-        Rect(T x, T y, T w, T h) : x(x), y(y), w(w), h(h) {}
-    };
-    struct TexCoordsUint {
-        static constexpr uint32_t W = 512, H = 512;
-        using R = Atlases::Rect<uint32_t>;
-        static const R YOAN_LECOQ;
-        static const R CORALIE_GOLDBAUM;
-        static const R TEACHER;
-        static const R SOUNDTRACK;
-        static const R REVOLVE;
+// TODO(yoanlcq):
+// - Make all of this tweakable via GUI;
+// - Grant ability for texcoords to vary;
 
-        static Rect<float> normalize(R r) {
-            const float h = H, w = H;
-            return Rect<float>(r.x / w, r.y / h, r.w / w, r.h / h);
+template<typename T> struct Rect {
+    T x, y, w, h;
+    Rect(T x, T y, T w, T h) : x(x), y(y), w(w), h(h) {}
+    Rect<float> dividedBySize(float sw, float sh) const {
+        return Rect<float>(x / sw, y / sh, w / sw, h / sh);
+    }
+};
+
+struct Sprites {
+    enum SpriteIndex {
+        SprImacLogo = 0,
+        SprYoanLecoq,
+        SprCoralieGoldbaum,
+        SprTeacher,
+        SprSoundtrack,
+        SprRevolve,
+        SprCount
+    };
+    enum AtlasIndex {
+        AtlasImacLogo = 0,
+        AtlasTexts,
+        AtlasCount
+    };
+
+    static const std::array<Rect<uint32_t>, AtlasCount> ATLAS_SIZE;
+    static const std::array<Rect<uint32_t>, SprCount> SPR_TEXCOORDS_UINT;
+    static const std::array<Rect<float>, SprCount> SPR_TEXCOORDS;
+    static const std::array<AtlasIndex, SprCount> SPR_ATLAS_INDEX;
+    const std::array<glmlv::GLTexture2D, AtlasCount> m_AtlasTexture;
+    std::array<glm::vec2, SprCount> m_SprPosition;
+    std::array<float, SprCount> m_SprScale;
+    std::array<float, SprCount> m_SprAlpha;
+
+    const GLScreenQuadProgram m_Program;
+    GLuint m_Vbo, m_Vao;
+
+    ~Sprites() {
+        glDeleteVertexArrays(1, &m_Vao);
+        glDeleteBuffers(1, &m_Vbo);
+    }
+
+    Sprites() = delete;
+    Sprites(const Paths& paths):
+        m_AtlasTexture {
+            paths.m_AppAssets / "images" / "imac_gris_numerique_petit.png",
+            paths.m_AppAssets / "images" / "texts.png"
+        },
+        m_SprPosition {
+            glm::vec2(0),
+            glm::vec2(0),
+            glm::vec2(0),
+            glm::vec2(0),
+            glm::vec2(0),
+            glm::vec2(0)
+        },
+        m_SprScale { 1, 1, 1, 1, 1, 1 },
+        m_SprAlpha { 0, 0, 0, 0, 0, 0 },
+        m_Program(
+            paths.m_AppShaders / "screenQuad.vs.glsl",
+            paths.m_AppShaders / "screenQuad.fs.glsl"
+        ),
+        m_Vbo(0),
+        m_Vao(0)
+    {
+        static const float STRIP[] = {
+            // x, y, u, v
+            -1, +1, 0, 0,
+            -1, -1, 0, 1,
+            +1, +1, 1, 0,
+            +1, -1, 1, 1
+        };
+        glGenBuffers(1, &m_Vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, m_Vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof STRIP, STRIP, GL_STATIC_DRAW);
+
+        glGenVertexArrays(1, &m_Vao);
+        glBindVertexArray(m_Vao);
+        glBindBuffer(GL_ARRAY_BUFFER, m_Vbo);
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 16, nullptr);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 16, (void*)8);
+    }
+
+    void render(size_t w, size_t h) const {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_DEPTH_TEST);
+        glDepthMask(GL_FALSE);
+
+        for(int i=0 ; i<AtlasCount ; ++i) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            m_AtlasTexture[i].bind();
         }
-    };
-    struct TexCoords {
-        using R = Atlases::Rect<float>;
-        static const R YOAN_LECOQ;
-        static const R CORALIE_GOLDBAUM;
-        static const R TEACHER;
-        static const R SOUNDTRACK;
-        static const R REVOLVE;
-    };
+        m_Program.use();
+        glBindVertexArray(m_Vao);
+        for(int i=0 ; i<SprCount ; ++i) {
+            const auto& r = SPR_TEXCOORDS_UINT[i];
+            const auto imgScale = glm::vec2(r.w / float(w), r.h / float(h));
+            const auto& tc = SPR_TEXCOORDS[i];
+            m_Program.setUniformTexture(SPR_ATLAS_INDEX[i]);
+            m_Program.setUniformScale(m_SprScale[i] * imgScale);
+            m_Program.setUniformPosition(m_SprPosition[i]);
+            m_Program.setUniformTexCoordsOffset(glm::vec2(tc.x, tc.y));
+            m_Program.setUniformTexCoordsSize(glm::vec2(tc.w, tc.h));
+            m_Program.setUniformAlphaMultipler(m_SprAlpha[i]);
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        }
 
-    const glmlv::GLTexture2D m_TextAtlas, m_ImacLogo;
-
-    Atlases() = delete;
-    Atlases(const Paths& paths):
-        m_TextAtlas(paths.m_AppAssets / "images" / "texts.png"),
-        m_ImacLogo(paths.m_AppAssets / "images" / "imac_gris_numerique_petit.png")
-        {}
+        glDepthMask(GL_TRUE);
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+    }
 };
 
 
@@ -738,6 +846,27 @@ struct PostFX {
         {}
 };
 
+// 0-2:   Soleil. fade-in
+// 2-5:   Soleil-base. zoom-in sur la base
+// 5-8:   rotation; fade in noms
+// 8-11:  fade out noms
+// 11-21: zoom jusqu'à très proche du vaisseau
+// 21-28: fade in REVOLVE
+// 28-30: Flash lumière
+// 30-33: Fissures
+// 33-36: Flashback
+// 36-39: Plan rotation autour du vaisseau
+// 39-42: Focus sur les débris. La base s'écroule
+// 42-45: Flashback
+// 45-49: Vaisseau-base. Il reste plus grand chose de la base.
+// 49-53: Flashback
+// 53-55: Allumage des réacteurs
+// 55-59: Décollage vaisseau
+// 59-63: Plan base-soleil, vaisseau s'éloigne
+// 63-70: Base s'écroule totalement
+// 70-88: Vue à partir du vaisseau, puis fondu en blanc.
+//        Soleil prend moitié droite de l'écran. Base prend sur la gauche.
+
 class Story {
 
     struct Interpolations {
@@ -961,7 +1090,7 @@ private:
     glmlv::GLMesh m_ScreenCoverQuad;
     glmlv::Scene m_Sponza;
     glmlv::SceneInstanceData m_SponzaInstanceData;
-    Atlases m_Atlases;
+    Sprites m_Sprites;
     glmlv::Camera m_Camera;
     const float m_CameraMaxSpeed;
     float m_CameraSpeed;
