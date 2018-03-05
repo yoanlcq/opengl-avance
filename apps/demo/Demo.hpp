@@ -558,7 +558,9 @@ public:
         SkySpaceKurt,
         SkySpaceUlukaiCorona,
         SkySpaceUlukaiRedEclipse,
-        SkyCount,
+		SkyPlanetFlashBack,
+		SkySpace,
+		SkyCount,
     };
 
     float                   m_Scale;
@@ -575,7 +577,7 @@ public:
         m_CubeMesh(),
         m_Scale(scale),
         m_Skies{},
-        m_CurrentSky(SkySpaceUlukaiCorona)
+        m_CurrentSky(SkySpace)
     {
         glmlv::CubeMapFaceImages faces;
 
@@ -610,6 +612,22 @@ public:
         faces.ny = readImageNoException(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_dn.png");
         faces.nz = readImageNoException(paths.m_AppAssets / "skyboxes" / "ulukai" / "redeclipse_ft.png");
         m_Skies[SkySpaceUlukaiRedEclipse].uploadImages(faces);
+
+		faces.px = readImageNoException(paths.m_AppAssets / "skyboxes" / "custom_planet" / "morning_rt.tga");
+		faces.py = readImageNoException(paths.m_AppAssets / "skyboxes" / "custom_planet" / "morning_up.tga");
+		faces.pz = readImageNoException(paths.m_AppAssets / "skyboxes" / "custom_planet" / "morning_bk.tga");
+		faces.nx = readImageNoException(paths.m_AppAssets / "skyboxes" / "custom_planet" / "morning_lf.tga");
+		faces.ny = readImageNoException(paths.m_AppAssets / "skyboxes" / "custom_planet" / "morning_dn.tga");
+		faces.nz = readImageNoException(paths.m_AppAssets / "skyboxes" / "custom_planet" / "morning_ft.tga");
+		m_Skies[SkyPlanetFlashBack].uploadImages(faces);
+
+		faces.px = readImageNoException(paths.m_AppAssets / "skyboxes" / "custom_space" / "purplenebula_rt.tga");
+		faces.py = readImageNoException(paths.m_AppAssets / "skyboxes" / "custom_space" / "purplenebula_up.tga");
+		faces.pz = readImageNoException(paths.m_AppAssets / "skyboxes" / "custom_space" / "purplenebula_bk.tga");
+		faces.nx = readImageNoException(paths.m_AppAssets / "skyboxes" / "custom_space" / "purplenebula_lf.tga");
+		faces.ny = readImageNoException(paths.m_AppAssets / "skyboxes" / "custom_space" / "purplenebula_dn.tga");
+		faces.nz = readImageNoException(paths.m_AppAssets / "skyboxes" / "custom_space" / "purplenebula_ft.tga");
+		m_Skies[SkySpace].uploadImages(faces);
     }
     void render(const glmlv::Camera& camera) {
         // sqrt(s*s + s*s + s*s) < far

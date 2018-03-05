@@ -176,6 +176,8 @@ void Demo::renderGUI() {
         ImGui::RadioButton("Space Kurt", &m_Skybox.m_CurrentSky, Skybox::SkySpaceKurt);
         ImGui::RadioButton("Space Ulukai Corona", &m_Skybox.m_CurrentSky, Skybox::SkySpaceUlukaiCorona);
         ImGui::RadioButton("Space Ulukai Red Eclipse", &m_Skybox.m_CurrentSky, Skybox::SkySpaceUlukaiRedEclipse);
+		ImGui::RadioButton("Planet Flash Back", &m_Skybox.m_CurrentSky, Skybox::SkyPlanetFlashBack);
+		ImGui::RadioButton("Space", &m_Skybox.m_CurrentSky, Skybox::SkySpace);
     }
 
     const float sceneBoundary = m_Sponza.getDiagonalLength() / 2.f;
