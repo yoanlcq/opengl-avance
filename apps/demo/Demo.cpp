@@ -509,13 +509,16 @@ void Demo::update(float dt) {
     const auto& s = m_Story;
     const float t = s.getPlayheadTime();
     // TODO(coraliegold): For each timeline, evaluate the current value, juste like the following lines.
-    m_Camera.setMode(s.m_CameraMode.at(t));
+    /*m_Camera.setMode(s.m_CameraMode.at(t));
     m_Camera.m_LookAtData.m_Target = s.m_CameraTarget.at(t);
     m_Camera.m_LookAtData.m_Forward = s.m_CameraForward.at(t);
     m_Camera.m_FreeFlyData.m_Forward = s.m_CameraForward.at(t);
     m_Camera.m_NoiseFactor = s.m_CameraNoiseFactor.at(t);
     m_Camera.m_NoiseSpeed = s.m_CameraNoiseSpeed.at(t);
-    m_Camera.m_FovY = s.m_CameraFovY.at(t);
+    m_Camera.m_FovY = s.m_CameraFovY.at(t);*/
+	m_PostFX.m_ComputePass.m_IsEnabled = s.m_ComputePass.at(t);
+	m_PostFX.m_ComputePass.m_Gamma = s.m_ComputePassGamma.at(t);
+	m_PostFX.m_ComputePass.m_FinalTouchAdd = s.m_ComputePassFinalTouchAdd.at(t);
 }
 
 int Demo::run() {

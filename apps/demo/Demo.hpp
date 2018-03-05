@@ -960,12 +960,15 @@ public:
 
     // TODO(coraliegold): Add new timelines as needed.
     // Every property that needs to change over time needs a timeline.
-    const Timeline<glmlv::Camera::Mode> m_CameraMode;
+    /*const Timeline<glmlv::Camera::Mode> m_CameraMode;
     const Timeline<glm::vec3> m_CameraTarget;
     const Timeline<glm::vec3> m_CameraForward;
     const Timeline<glm::vec2> m_CameraNoiseFactor;
     const Timeline<float> m_CameraNoiseSpeed;
-    const Timeline<float> m_CameraFovY;
+    const Timeline<float> m_CameraFovY;*/
+	const Timeline<bool> m_ComputePass;
+	const Timeline<float> m_ComputePassGamma;
+	const Timeline<glm::vec3> m_ComputePassFinalTouchAdd;
 
     static constexpr float BPM = 170;
     static constexpr float DURATION = 88; // 1 min 28
@@ -981,6 +984,7 @@ public:
         m_SoundtrackWavPath(paths.m_AppAssets / "music" / "outsider.wav"),
         // TODO(coraliegold): Here, keyframes are specified for each timeline.
         // It's backed by a std::map so one can also run some logic in the constructor.
+		/*
         m_CameraMode(Interpolations::lower<glmlv::Camera::Mode>, {
             { 0, glmlv::Camera::Mode::LookAt },
             { 6, glmlv::Camera::Mode::LookAt },
@@ -1014,7 +1018,22 @@ public:
             { 0, glm::radians(60.f) },
             { 6, glm::radians(179.f) },
             { 8, glm::radians(60.f) },
-        })
+        })*/
+		m_ComputePass(Interpolations::lower<bool>, {
+			{ 0, false },
+			{ 28, true },
+			{ 29, false },
+		}),
+		m_ComputePassGamma(Interpolations::lerp, {
+			{ 0, 2.2 },
+			{ 28, 16 },
+			{ 29, 2.2 },
+		}),
+		m_ComputePassFinalTouchAdd(Interpolations::lerp3, {
+			{ 0, glm::vec3(1) },
+			{ 28, glm::vec3(2) },
+			{ 29, glm::vec3(1) },
+		})
         {}
 
     bool isPlaying() const { return m_IsPlaying; }
