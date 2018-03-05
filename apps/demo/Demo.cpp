@@ -171,7 +171,7 @@ void Demo::renderGUI() {
     }
 
     if(ImGui::CollapsingHeader("Skybox")) {
-        ImGui::SliderFloat("Skybox scale", &m_Skybox.m_Scale, 1.f, m_Sponza.getDiagonalLength() * 2.f);
+        ImGui::SliderFloat("Skybox scale", &m_Skybox.m_Scale, 1.f, m_EndOfTheWorld.getDiagonalLength() * 2.f);
         ImGui::RadioButton("Simple Color Test", &m_Skybox.m_CurrentSky, Skybox::SkySimpleColorTest);
         ImGui::RadioButton("Space Kurt", &m_Skybox.m_CurrentSky, Skybox::SkySpaceKurt);
         ImGui::RadioButton("Space Ulukai Corona", &m_Skybox.m_CurrentSky, Skybox::SkySpaceUlukaiCorona);
@@ -180,7 +180,7 @@ void Demo::renderGUI() {
 		ImGui::RadioButton("Space", &m_Skybox.m_CurrentSky, Skybox::SkySpace);
     }
 
-    const float sceneBoundary = m_Sponza.getDiagonalLength() / 2.f;
+    const float sceneBoundary = m_EndOfTheWorld.getDiagonalLength() / 2.f;
 
     if(ImGui::CollapsingHeader("Particles")) {
         const int pcount = m_ParticlesManager.m_ToastParticles.getParticleCount();
@@ -310,10 +310,10 @@ void Demo::renderGUI() {
 }
 
 GLuint Demo::getHighestGeometryTextureUnit() const {
-    return m_Sponza.m_GLTextures2D.size() + 2; // + 2 just in case
+    return m_EndOfTheWorld.m_GLTextures2D.size() + 2; // + 2 just in case
 }
 void Demo::renderGeometry() {
-    m_Sponza.render();
+	m_EndOfTheWorld.render();
     m_Skybox.render(m_Camera);
     if(m_PipelineKind == PIPELINE_FORWARD) {
         m_ParticlesManager.render(m_Camera);
@@ -322,7 +322,7 @@ void Demo::renderGeometry() {
 	
 }
 void Demo::renderGeometry(const GLMaterialProgram& prog) {
-    m_Sponza.render(prog, m_Camera, m_SponzaInstanceData);
+	m_EndOfTheWorld.render(prog, m_Camera, m_EndOfTheWorldInstanceData);
 	m_Skybox.render(m_Camera);
     if(m_PipelineKind == PIPELINE_FORWARD) {
         m_ParticlesManager.render(m_Camera);
@@ -343,8 +343,8 @@ void Demo::renderFrame() {
         const auto cosTheta = glm::cos(thetaRadians);
         return -glm::normalize(glm::vec3(sinPhi * cosTheta, -glm::sin(thetaRadians), cosPhi * cosTheta));
     };
-    const auto sceneCenter = (m_Sponza.m_ObjData.bboxMin + m_Sponza.m_ObjData.bboxMax) / 2.f;
-    const float sceneRadius = m_Sponza.getDiagonalLength() / 2.f;
+    const auto sceneCenter = (m_EndOfTheWorld.m_ObjData.bboxMin + m_EndOfTheWorld.m_ObjData.bboxMax) / 2.f;
+    const float sceneRadius = m_EndOfTheWorld.getDiagonalLength() / 2.f;
 
     // const auto dirLightUpVector = vec3(0,1,0);
     const auto dirLightUpVector = computeDirectionVectorUp(radians(m_DirLightPhiAngleDegrees), radians(m_DirLightThetaAngleDegrees));
@@ -554,13 +554,13 @@ Demo::Demo(int argc, char** argv):
     m_DirLightPhiAngleDegrees(260),
     m_DirLightThetaAngleDegrees(260),
     m_ScreenCoverQuad(glmlv::makeScreenCoverQuad()),
-    m_Sponza(m_Paths.m_AssetsRoot / "glmlv" / "models" / "crytek-sponza" / "sponza.obj"),
-    m_SponzaInstanceData(),
+	m_EndOfTheWorld(m_Paths.m_AssetsRoot / "demo" / "models" / "end_of_the_world" / "end_of_the_world.obj"),
+	m_EndOfTheWorldInstanceData(),
     m_Sprites(m_Paths),
     m_Camera(m_GLFWHandle.window(), m_nWindowWidth, m_nWindowHeight),
-    m_CameraMaxSpeed(m_Sponza.getDiagonalLength() / 2.f),
+    m_CameraMaxSpeed(m_EndOfTheWorld.getDiagonalLength() / 2.f),
     m_CameraSpeed(m_CameraMaxSpeed / 5.f),
-    m_Skybox(m_Paths, m_Sponza.getDiagonalLength() / 2.f),
+    m_Skybox(m_Paths, m_EndOfTheWorld.getDiagonalLength() / 2.f),
     m_ParticlesManager(m_Paths),
     m_Story(m_Paths)
 {

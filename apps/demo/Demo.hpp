@@ -1173,8 +1173,10 @@ private:
     float m_DirLightPhiAngleDegrees; // Angle around Y
     float m_DirLightThetaAngleDegrees; // Angle around X
     glmlv::GLMesh m_ScreenCoverQuad;
-    glmlv::Scene m_Sponza;
-    glmlv::SceneInstanceData m_SponzaInstanceData;
+    /*glmlv::Scene m_Sponza;
+    glmlv::SceneInstanceData m_SponzaInstanceData;*/
+	glmlv::Scene m_EndOfTheWorld;
+	glmlv::SceneInstanceData m_EndOfTheWorldInstanceData;
     Sprites m_Sprites;
     glmlv::Camera m_Camera;
     const float m_CameraMaxSpeed;
