@@ -1,0 +1,37 @@
+# Blender MTL File: 'end_of_the_world.blend'
+# Material Count: 3
+
+newmtl BaseGranite
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.007576 0.007576 0.007576
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd lavaground.jpg
+
+newmtl ShipMat
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.729508 0.729508 0.729508
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd black_power.jpg
+
+newmtl SunLava
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.001275 0.800000 0.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd 2k_sun.jpg
+map_Ka 2k_sun.jpg
+map_Ke 2k_sun.jpg

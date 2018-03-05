@@ -969,6 +969,11 @@ public:
 	const Timeline<bool> m_ComputePass;
 	const Timeline<float> m_ComputePassGamma;
 	const Timeline<glm::vec3> m_ComputePassFinalTouchAdd;
+	const Timeline<float> m_SpritesYoanLecoqAlpha;
+	const Timeline<glm::vec2> m_SpritesYoanLecoqPos;
+	const Timeline<float> m_SpritesCoralieGoldbaumAlpha;
+	const Timeline<glm::vec2> m_SpritesCoralieGoldbaumPos;
+	const Timeline<float> m_SpritesRevolveAlpha;
 
     static constexpr float BPM = 170;
     static constexpr float DURATION = 88; // 1 min 28
@@ -1019,20 +1024,58 @@ public:
             { 6, glm::radians(179.f) },
             { 8, glm::radians(60.f) },
         })*/
+
+		// Sprites
+		m_SpritesYoanLecoqAlpha(Interpolations::lerp, {
+			{ 0, 0 },
+			// Noms
+			{ 5, 0 }, 
+			{ 8, 1 },
+			{ 11, 0 },
+		}),
+		m_SpritesYoanLecoqPos(Interpolations::lower<glm::vec2>, {
+			{ 0, glm::vec2(-0.725, 0.913) },
+		}),
+		m_SpritesCoralieGoldbaumAlpha(Interpolations::lerp, {
+			{ 0, 0 },
+			// Noms
+			{ 5, 0 }, 
+			{ 8, 1 }, 
+			{ 11, 0 },
+		}),
+		m_SpritesCoralieGoldbaumPos(Interpolations::lower<glm::vec2>, {
+			{ 0, glm::vec2(0.595, -0.913) },
+		}),
+		m_SpritesRevolveAlpha(Interpolations::lerp, {
+			{ 0, 0 },
+			// Titre
+			{ 21, 0 },
+			{ 25, 1 },
+			{ 28, 0 },
+		}),
+
+		// Compute Pass
 		m_ComputePass(Interpolations::lower<bool>, {
-			{ 0, false },
-			{ 28, true },
-			{ 29, false },
+			// Fade in
+			{ 0, true },
+			{ 2, false },
+			{ 28.7, true },
+			// Flash lumière
+			{ 29.3, false },
 		}),
 		m_ComputePassGamma(Interpolations::lerp, {
-			{ 0, 2.2 },
-			{ 28, 16 },
-			{ 29, 2.2 },
+			// Fade in
+			{ 0, 0 },
+			{ 2, 1 },
+			// Flash lumière
+			{ 28.7, 16 },
+			{ 29.3, 2.2 },
 		}),
 		m_ComputePassFinalTouchAdd(Interpolations::lerp3, {
-			{ 0, glm::vec3(1) },
-			{ 28, glm::vec3(2) },
-			{ 29, glm::vec3(1) },
+			{ 0, glm::vec3(0) },
+			// Flash lumière
+			{ 28.7, glm::vec3(2) },
+			{ 29.3, glm::vec3(1) },
 		})
         {}
 

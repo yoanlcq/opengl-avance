@@ -516,6 +516,15 @@ void Demo::update(float dt) {
     m_Camera.m_NoiseFactor = s.m_CameraNoiseFactor.at(t);
     m_Camera.m_NoiseSpeed = s.m_CameraNoiseSpeed.at(t);
     m_Camera.m_FovY = s.m_CameraFovY.at(t);*/
+
+	// Sprites
+	m_Sprites.m_SprAlpha[1] = s.m_SpritesYoanLecoqAlpha.at(t);
+	m_Sprites.m_SprAlpha[2] = s.m_SpritesCoralieGoldbaumAlpha.at(t);
+	m_Sprites.m_SprPosition[1] = s.m_SpritesYoanLecoqPos.at(t);
+	m_Sprites.m_SprPosition[2] = s.m_SpritesCoralieGoldbaumPos.at(t);
+	m_Sprites.m_SprAlpha[5] = s.m_SpritesRevolveAlpha.at(t);
+
+	// Compute Pass
 	m_PostFX.m_ComputePass.m_IsEnabled = s.m_ComputePass.at(t);
 	m_PostFX.m_ComputePass.m_Gamma = s.m_ComputePassGamma.at(t);
 	m_PostFX.m_ComputePass.m_FinalTouchAdd = s.m_ComputePassFinalTouchAdd.at(t);

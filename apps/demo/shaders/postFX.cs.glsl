@@ -164,9 +164,9 @@ void main() {
 			float bnMask2 = noiseX2 * noiseY2;
 	          
 			float waveNoise = (sin(pixelCoords.y * 1200.0) + 1.0) / 2.0 * (0.15 + strength * 0.2);
-			pixel.r *= uGlitch * bnMask*whiteNoise;
-			pixel.g *= uGlitch * bnMask2*whiteNoise;
-			pixel.b *= uGlitch * bnMask*whiteNoise;
+			pixel.r *= uGlitch * bnMask;
+			pixel.g *= uGlitch * bnMask2;
+			pixel.b *= uGlitch * whiteNoise;
 		}
           		
 	}
