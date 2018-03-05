@@ -552,7 +552,7 @@ class Skybox {
     glmlv::GLSampler        m_Sampler;
     SkyboxCubeMesh          m_CubeMesh;
 public:
-    // Add new skybox cubemaps here
+    // TODO(coraliegold) Add new skybox cubemaps here, and improve constructor accordingly
     enum Sky {
         SkySimpleColorTest = 0,
         SkySpaceKurt,
@@ -940,6 +940,8 @@ class Story {
 public:
     const glmlv::fs::path m_SoundtrackWavPath;
 
+    // TODO(coraliegold): Add new timelines as needed.
+    // Every property that needs to change over time needs a timeline.
     const Timeline<glmlv::Camera::Mode> m_CameraMode;
     const Timeline<glm::vec3> m_CameraTarget;
     const Timeline<glm::vec3> m_CameraForward;
@@ -959,6 +961,8 @@ public:
         m_IsGuiKeyHeld(false),
         m_PlayheadTime(0),
         m_SoundtrackWavPath(paths.m_AppAssets / "music" / "outsider.wav"),
+        // TODO(coraliegold): Here, keyframes are specified for each timeline.
+        // It's backed by a std::map so one can also run some logic in the constructor.
         m_CameraMode(Interpolations::lower<glmlv::Camera::Mode>, {
             { 0, glmlv::Camera::Mode::LookAt },
             { 6, glmlv::Camera::Mode::LookAt },

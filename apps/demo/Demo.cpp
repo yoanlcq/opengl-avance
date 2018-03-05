@@ -506,6 +506,7 @@ void Demo::update(float dt) {
 
     const auto& s = m_Story;
     const float t = s.getPlayheadTime();
+    // TODO(coraliegold): For each timeline, evaluate the current value, juste like the following lines.
     m_Camera.setMode(s.m_CameraMode.at(t));
     m_Camera.m_LookAtData.m_Target = s.m_CameraTarget.at(t);
     m_Camera.m_LookAtData.m_Forward = s.m_CameraForward.at(t);
