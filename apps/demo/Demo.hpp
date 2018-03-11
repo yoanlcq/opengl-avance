@@ -974,6 +974,14 @@ public:
 	const Timeline<glm::vec3> m_ComputePassFinalTouchAdd;
 	const Timeline<glm::vec3> m_ComputePassFinalTouchMul;
 
+	const Timeline<bool> m_FragmentPass;
+	const Timeline<int> m_BlurKind;
+	const Timeline<int> m_BlurHalfSide;
+	const Timeline<bool> m_Bloom;
+	const Timeline<float> m_BloomHalfSide;
+	const Timeline<float> m_BloomTexelSkip;
+	const Timeline<float> m_BloomThreshold;
+
 	const Timeline<float> m_SpritesYoanLecoqAlpha;
 	const Timeline<glm::vec2> m_SpritesYoanLecoqPos;
 	const Timeline<float> m_SpritesCoralieGoldbaumAlpha;
@@ -1138,6 +1146,65 @@ public:
 			// Plan 19
 			{ 82, glm::vec3(1) },
 			{ 90, glm::vec3(-2) },
+		}),
+
+
+		/*** Fragment Pass ***/
+
+
+		m_FragmentPass(Interpolations::lower<bool>, {
+			// Plan 1
+			{ 0, false },
+			// Plan 8
+			{ 33, true },
+			// Plan 9
+			{ 36, false },
+			// Plan 11
+			{ 42, true },
+			// Plan 12
+			{ 45, false },
+			// Plan 13
+			{ 49, true },
+			// Plan 14
+			{ 53, false },
+		}),
+
+		m_BlurKind(Interpolations::lower<int>, {
+			// Plan 1
+			{ 0, 1 },
+		}),
+		m_BlurHalfSide(Interpolations::lower<int>, {
+			// Plan 1
+			{ 0, 3 },
+		}),
+
+		m_Bloom(Interpolations::lower<bool>, {
+			// Plan 1
+			{ 0, false },
+			// Plan 8
+			{ 33, true },
+			// Plan 9
+			{ 36, false },
+			// Plan 11
+			{ 42, true },
+			// Plan 12
+			{ 45, false },
+			// Plan 13
+			{ 49, true },
+			// Plan 14
+			{ 53, false },
+		}),
+		m_BloomHalfSide(Interpolations::lower<int>, {
+			// Plan 1
+			{ 0, 3 },
+		}),
+		m_BloomTexelSkip(Interpolations::lower<float>, {
+			// Plan 1
+			{ 0, 5.5 },
+		}),
+		m_BloomThreshold(Interpolations::lower<float>, {
+			// Plan 1
+			{ 0, 0.125 },
 		}),
 
 

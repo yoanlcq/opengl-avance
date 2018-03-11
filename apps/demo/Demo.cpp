@@ -539,6 +539,14 @@ void Demo::update(float dt) {
 	m_PostFX.m_ComputePass.m_FinalTouchAdd = s.m_ComputePassFinalTouchAdd.at(t);
 	m_PostFX.m_ComputePass.m_FinalTouchMul = s.m_ComputePassFinalTouchMul.at(t);
 
+	// Fragment Pass
+	m_PostFX.m_FragmentPass.m_IsEnabled = s.m_FragmentPass.at(t);
+	m_PostFX.m_FragmentPass.m_BlurTechnique = s.m_BlurKind.at(t);
+	m_PostFX.m_FragmentPass.m_BloomEnabled = s.m_Bloom.at(t);
+	m_PostFX.m_FragmentPass.m_BloomMatrixHalfSide = s.m_BloomHalfSide.at(t);
+	m_PostFX.m_FragmentPass.m_BloomTexelSkip = s.m_BloomTexelSkip.at(t);
+	m_PostFX.m_FragmentPass.m_BloomThreshold = s.m_BloomThreshold.at(t);
+
 	// Camera
 	m_Camera.setMode(s.m_CameraMode.at(t));
 	m_Camera.m_LookAtData.m_Forward = s.m_CameraForward.at(t);
