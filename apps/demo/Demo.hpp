@@ -482,7 +482,8 @@ struct ParticlesManager {
             paths.m_AppShaders / "particles.vs.glsl",
             paths.m_AppShaders / "particles.fs.glsl"
         ),
-        m_ToastParticles(1<<17, Particles::Shape::Disk, 321.f)
+        //m_ToastParticles(1<<17, Particles::Shape::Disk, 321.f)
+		m_ToastParticles(0, Particles::Shape::Disk, 321.f) // Todo (coraliegold) : show particles when animation done
     {
 		glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
         glEnable(GL_PROGRAM_POINT_SIZE);
@@ -961,7 +962,6 @@ public:
     // TODO(coraliegold): Add new timelines as needed.
     // Every property that needs to change over time needs a timeline.
     /*const Timeline<glmlv::Camera::Mode> m_CameraMode;
-    const Timeline<glm::vec3> m_CameraTarget;
     const Timeline<glm::vec3> m_CameraForward;
     const Timeline<glm::vec2> m_CameraNoiseFactor;
     const Timeline<float> m_CameraNoiseSpeed;
@@ -969,11 +969,23 @@ public:
 	const Timeline<bool> m_ComputePass;
 	const Timeline<float> m_ComputePassGamma;
 	const Timeline<glm::vec3> m_ComputePassFinalTouchAdd;
+	const Timeline<glm::vec3> m_ComputePassFinalTouchMul;
 	const Timeline<float> m_SpritesYoanLecoqAlpha;
 	const Timeline<glm::vec2> m_SpritesYoanLecoqPos;
 	const Timeline<float> m_SpritesCoralieGoldbaumAlpha;
 	const Timeline<glm::vec2> m_SpritesCoralieGoldbaumPos;
+	const Timeline<float> m_SpritesTeacherAlpha;
+	const Timeline<float> m_SpritesTeacherScale;
+	const Timeline<glm::vec2> m_SpritesTeacherPos;
+	const Timeline<float> m_SpritesSoundtrackAlpha;
+	const Timeline<float> m_SpritesSoundtrackScale;
+	const Timeline<glm::vec2> m_SpritesSoundtrackPos;
 	const Timeline<float> m_SpritesRevolveAlpha;
+	const Timeline<float> m_SpritesIMACAlpha;
+	const Timeline<glmlv::Camera::Mode> m_CameraMode;
+	const Timeline<glm::vec3> m_CameraForward;
+	const Timeline<glm::vec3> m_CameraTarget;
+	const Timeline<float> m_CameraVerticalFOV;
 
     static constexpr float BPM = 170;
     static constexpr float DURATION = 88; // 1 min 28
@@ -989,95 +1001,206 @@ public:
         m_SoundtrackWavPath(paths.m_AppAssets / "music" / "outsider.wav"),
         // TODO(coraliegold): Here, keyframes are specified for each timeline.
         // It's backed by a std::map so one can also run some logic in the constructor.
-		/*
-        m_CameraMode(Interpolations::lower<glmlv::Camera::Mode>, {
-            { 0, glmlv::Camera::Mode::LookAt },
-            { 6, glmlv::Camera::Mode::LookAt },
-            { 61, glmlv::Camera::Mode::FreeFly },
-        }),
-        m_CameraTarget(Interpolations::lerp3, {
-            { 0, glm::vec3(0,0,0) },
-            { 6, glm::vec3(0,200,0) },
-            { 12, glm::vec3(0,500,0) },
-            { 60, glm::vec3(0,4000,0) },
-        }),
-        m_CameraForward(Interpolations::slerp, {
-            { 0, glm::vec3(400,0,0) },
-            { 6, glm::vec3(0,0,50) },
-            { 8, glm::vec3(-400,0,0) },
-            { 10, glm::vec3(0,0,-50) },
-            { 12, glm::vec3(400,0,0) },
-            { 16, glm::vec3(50,-400,0) },
-        }),
-        m_CameraNoiseFactor(Interpolations::lerp2, {
-            { 0, glm::vec2(0) },
-            { 6, glm::vec2(5) },
-            { 8, glm::vec2(0) },
-            { 50, glm::vec2(0) },
-        }),
-        m_CameraNoiseSpeed(Interpolations::lerp, {
-            { 0, 0 },
-            { 6, 20 },
-        }),
-        m_CameraFovY(Interpolations::lerp, {
-            { 0, glm::radians(60.f) },
-            { 6, glm::radians(179.f) },
-            { 8, glm::radians(60.f) },
-        })*/
-
-		// Sprites
+		
+		/****** Sprites ******/
+		
 		m_SpritesYoanLecoqAlpha(Interpolations::lerp, {
+			// Plan 1
 			{ 0, 0 },
-			// Noms
-			{ 5, 0 }, 
+			// Plan 2
+			{ 4.5, 0 }, 
 			{ 8, 1 },
-			{ 11, 0 },
+			// Plan 3
+			{ 9.5, 0 },
 		}),
 		m_SpritesYoanLecoqPos(Interpolations::lower<glm::vec2>, {
-			{ 0, glm::vec2(-0.725, 0.913) },
-		}),
-		m_SpritesCoralieGoldbaumAlpha(Interpolations::lerp, {
-			{ 0, 0 },
-			// Noms
-			{ 5, 0 }, 
-			{ 8, 1 }, 
-			{ 11, 0 },
-		}),
-		m_SpritesCoralieGoldbaumPos(Interpolations::lower<glm::vec2>, {
-			{ 0, glm::vec2(0.595, -0.913) },
-		}),
-		m_SpritesRevolveAlpha(Interpolations::lerp, {
-			{ 0, 0 },
-			// Titre
-			{ 21, 0 },
-			{ 25, 1 },
-			{ 28, 0 },
+			{ 0, glm::vec2(-0.650, 0.800) },
 		}),
 
-		// Compute Pass
+		m_SpritesCoralieGoldbaumAlpha(Interpolations::lerp, {
+			// Plan 1
+			{ 0, 0 },
+			// Plan 2
+			{ 4.5, 0 },
+			{ 8, 1 },
+			// Plan 3
+			{ 9.5, 0 },
+		}),
+		m_SpritesCoralieGoldbaumPos(Interpolations::lower<glm::vec2>, {
+			{ 0, glm::vec2(0.500, -0.800) },
+		}),
+
+		m_SpritesRevolveAlpha(Interpolations::lerp, {
+			{ 0, 0 },
+			// Plan 5
+			{ 21, 0 },
+			{ 25, 1 },
+			{ 28.6, 0 },
+		}),
+
+		m_SpritesTeacherAlpha(Interpolations::lerp, {
+			// Plan 1
+			{ 0, 0 },
+			// Plan 4
+			{ 15, 0 },
+			{ 18, 1 },
+			// Plan 5
+			{ 19.5, 0 },
+		}),
+		m_SpritesTeacherPos(Interpolations::lower<glm::vec2>, {
+			{ 0, glm::vec2(0.750, 0.800) },
+		}),
+		m_SpritesTeacherScale(Interpolations::lerp, {
+			{ 0, 1.5 },
+		}),
+
+		m_SpritesSoundtrackAlpha(Interpolations::lerp, {
+			// Plan 1
+			{ 0, 0 },
+			// Plan 4
+			{ 15, 0 },
+			{ 18, 1 },
+			// Plan 5
+			{ 19.5, 0 },
+		}),
+		m_SpritesSoundtrackPos(Interpolations::lower<glm::vec2>, {
+			{ 0, glm::vec2(-0.350, -0.800) },
+		}),
+		m_SpritesSoundtrackScale(Interpolations::lerp, {
+			{ 0, 1.5 },
+		}),
+
+		m_SpritesIMACAlpha(Interpolations::lerp, {
+		// Plan 1
+			{ 0, 0 },
+			// Plan 19
+			{ 84, 0 },
+			{ 87, 1 },
+		}),
+
+		/****** Compute Pass *****/
+
+
 		m_ComputePass(Interpolations::lower<bool>, {
-			// Fade in
+			// Plan 1
 			{ 0, true },
-			{ 2, false },
-			{ 28.7, true },
-			// Flash lumière
-			{ 29.3, false },
 		}),
 		m_ComputePassGamma(Interpolations::lerp, {
-			// Fade in
+			// Plan 1
 			{ 0, 0 },
 			{ 2, 1 },
-			// Flash lumière
+			// Plan 6
+			{ 28.6, 1 },
 			{ 28.7, 16 },
-			{ 29.3, 2.2 },
+			{ 29.0, 1 },
+			// Plan 19
+			{ 82, 1 },
+			{ 90, 0 },
 		}),
 		m_ComputePassFinalTouchAdd(Interpolations::lerp3, {
+			// Plan 1
 			{ 0, glm::vec3(0) },
-			// Flash lumière
+			{ 2, glm::vec3(0) },
+			// Plan 6
+			{ 28.6, glm::vec3(0) },
 			{ 28.7, glm::vec3(2) },
-			{ 29.3, glm::vec3(1) },
+			{ 28.8, glm::vec3(0) },
+		}),
+		m_ComputePassFinalTouchMul(Interpolations::lerp3, {
+			// Plan 1
+			{ 0, glm::vec3(-2) },
+			{ 2, glm::vec3(1) },
+			// Plan 6
+			{ 28.6, glm::vec3(1) },
+			{ 28.7, glm::vec3(2) },
+			{ 28.8, glm::vec3(1) },
+			// Plan 19
+			{ 82, glm::vec3(1) },
+			{ 90, glm::vec3(-2) },
+		}),
+
+
+		/****** Camera ******/
+
+
+		m_CameraMode(Interpolations::lower<glmlv::Camera::Mode>, {
+			{ 0, glmlv::Camera::Mode::LookAt },
+		}),
+		m_CameraTarget(Interpolations::lower<glm::vec3>, {
+			// Plan 1
+			{ 0, glm::vec3(0, 0, -1) },
+			// Plan 18
+			{ 69.99, glm::vec3(0, 0, -1) },
+			{ 70, glm::vec3(0, 0, -300) },
+		}),
+		m_CameraForward(Interpolations::lerp3, {
+			// Plan 1
+			{ 0, glm::vec3(0, 0, -1750) },
+			// Plan 2
+			{ 4.5, glm::vec3(-25, 0, -1200) },
+			// Plan 3
+			{ 8, glm::vec3(-50, 0, -500) },
+			// Plan 4
+			{ 11, glm::vec3(-5, 0, -100) },
+			// Plan 5
+			{ 21, glm::vec3(-5, -5, -5) },
+			// Plan 6
+			{ 28.7, glm::vec3(-3, 0, -1.5) },
+			// Plan 7
+			{ 28.81, glm::vec3(-3, 0, -1.5) },
+			{ 29, glm::vec3(-25, 15, -35) },
+			{ 30, glm::vec3(-15, 15, -35) },
+			{ 31, glm::vec3(-5, 15, -35) },
+			{ 32, glm::vec3(5, 15, -35) },
+			{ 33, glm::vec3(15, 15, -35) },
+			// Plan 8
+			
+			// Plan 9
+			{ 35.99, glm::vec3(15, 15, -35) },
+			{ 36, glm::vec3(-35, -5, -15) },
+			{ 39, glm::vec3(40, -5, -5) },
+			// Plan 10
+
+			// Plan 11
+
+			// Plan 12
+
+			// Plan 13
+
+			// Plan 14
+			{ 52.99, glm::vec3(40, -5, -5) },
+			{ 53, glm::vec3(0, -0.5, -3) },
+
+			// Plan 15
+			{ 54.99, glm::vec3(0, -0.5, -3) },
+			{ 55, glm::vec3(-4.5, -0.5, -2) },
+
+			// Plan 16
+			{ 58.99, glm::vec3(-4.5, -0.5, -2) },
+			{ 59, glm::vec3(20, -13, -60) },
+
+			// Plan 17
+			{ 62.99, glm::vec3(20, -13, -60) },
+			{ 63, glm::vec3(1, 5, -90) },
+
+			// Plan 18
+			{ 69.99, glm::vec3(1, 5, -90) },
+			{ 70, glm::vec3(-500, -60, -200) },
+			{ 76, glm::vec3(-500, -60, 100) },
+
+			// Plan 19
+			{ 82, glm::vec3(-500, -60, 220) },
+			{ 90, glm::vec3(-500, -60, 500) },
+
+		}),
+		m_CameraVerticalFOV(Interpolations::lerp, {
+			// Plan 1
+			{ 0, 3.124 },
+			// Plan 2
+			{ 5.2, 1 },
 		})
         {}
+		
 
     bool isPlaying() const { return m_IsPlaying; }
     float getPlayheadTime() const { return m_PlayheadTime; }
@@ -1173,8 +1296,6 @@ private:
     float m_DirLightPhiAngleDegrees; // Angle around Y
     float m_DirLightThetaAngleDegrees; // Angle around X
     glmlv::GLMesh m_ScreenCoverQuad;
-    /*glmlv::Scene m_Sponza;
-    glmlv::SceneInstanceData m_SponzaInstanceData;*/
 	glmlv::Scene m_EndOfTheWorld;
 	glmlv::SceneInstanceData m_EndOfTheWorldInstanceData;
     Sprites m_Sprites;

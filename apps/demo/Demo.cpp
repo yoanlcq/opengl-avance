@@ -42,10 +42,10 @@ const std::array<Sprites::AtlasIndex, Sprites::SprCount> Sprites::SPR_ATLAS_INDE
 };
 const std::array<Rect<uint32_t>, Sprites::SprCount> Sprites::SPR_TEXCOORDS_UINT = {
     Rect<uint32_t> { 0, 0, 512, 512 },
-    Rect<uint32_t> { 0, 48, 328, 95 - 48 },
+    Rect<uint32_t> { 0, 48, 328, 110 - 48 },
     Rect<uint32_t> { 0, 126, 512, 177 - 126 },
     Rect<uint32_t> { 0, 203, 158, 257 - 203 },
-    Rect<uint32_t> { 0, 268, 310, 322 - 268 },
+    Rect<uint32_t> { 0, 268, 492, 322 - 268 },
     Rect<uint32_t> { 0, 347, 512, 436 - 347 },
 };
 const std::array<Rect<float>, Sprites::SprCount> Sprites::SPR_TEXCOORDS = {
@@ -510,7 +510,6 @@ void Demo::update(float dt) {
     const float t = s.getPlayheadTime();
     // TODO(coraliegold): For each timeline, evaluate the current value, juste like the following lines.
     /*m_Camera.setMode(s.m_CameraMode.at(t));
-    m_Camera.m_LookAtData.m_Target = s.m_CameraTarget.at(t);
     m_Camera.m_LookAtData.m_Forward = s.m_CameraForward.at(t);
     m_Camera.m_FreeFlyData.m_Forward = s.m_CameraForward.at(t);
     m_Camera.m_NoiseFactor = s.m_CameraNoiseFactor.at(t);
@@ -520,14 +519,28 @@ void Demo::update(float dt) {
 	// Sprites
 	m_Sprites.m_SprAlpha[1] = s.m_SpritesYoanLecoqAlpha.at(t);
 	m_Sprites.m_SprAlpha[2] = s.m_SpritesCoralieGoldbaumAlpha.at(t);
+	m_Sprites.m_SprAlpha[3] = s.m_SpritesTeacherAlpha.at(t);
+	m_Sprites.m_SprAlpha[4] = s.m_SpritesSoundtrackAlpha.at(t);
+	m_Sprites.m_SprAlpha[5] = s.m_SpritesRevolveAlpha.at(t);
+	m_Sprites.m_SprAlpha[0] = s.m_SpritesIMACAlpha.at(t);
 	m_Sprites.m_SprPosition[1] = s.m_SpritesYoanLecoqPos.at(t);
 	m_Sprites.m_SprPosition[2] = s.m_SpritesCoralieGoldbaumPos.at(t);
-	m_Sprites.m_SprAlpha[5] = s.m_SpritesRevolveAlpha.at(t);
+	m_Sprites.m_SprPosition[3] = s.m_SpritesTeacherPos.at(t);
+	m_Sprites.m_SprPosition[4] = s.m_SpritesSoundtrackPos.at(t);
+	m_Sprites.m_SprScale[4] = s.m_SpritesSoundtrackScale.at(t);
+	m_Sprites.m_SprScale[3] = s.m_SpritesTeacherScale.at(t);
 
 	// Compute Pass
 	m_PostFX.m_ComputePass.m_IsEnabled = s.m_ComputePass.at(t);
 	m_PostFX.m_ComputePass.m_Gamma = s.m_ComputePassGamma.at(t);
 	m_PostFX.m_ComputePass.m_FinalTouchAdd = s.m_ComputePassFinalTouchAdd.at(t);
+	m_PostFX.m_ComputePass.m_FinalTouchMul = s.m_ComputePassFinalTouchMul.at(t);
+
+	// Camera
+	m_Camera.setMode(s.m_CameraMode.at(t));
+	m_Camera.m_LookAtData.m_Forward = s.m_CameraForward.at(t);
+	m_Camera.m_LookAtData.m_Target = s.m_CameraTarget.at(t);
+	m_Camera.m_FovY = s.m_CameraVerticalFOV.at(t);
 }
 
 int Demo::run() {
@@ -570,7 +583,7 @@ Demo::Demo(int argc, char** argv):
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-    glEnable(GL_CULL_FACE);
+    // glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], 1.f);
     m_Camera.setSpeed(m_CameraSpeed);
