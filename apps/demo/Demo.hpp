@@ -973,6 +973,7 @@ public:
 	const Timeline<float> m_ComputePassGamma;
 	const Timeline<glm::vec3> m_ComputePassFinalTouchAdd;
 	const Timeline<glm::vec3> m_ComputePassFinalTouchMul;
+	const Timeline<float> m_ComputePassGlitch;
 
 	const Timeline<bool> m_FragmentPass;
 	const Timeline<int> m_BlurKind;
@@ -1001,6 +1002,8 @@ public:
 	const Timeline<float> m_CameraVerticalFOV;
 	const Timeline<glm::vec2> m_CameraNoiseFactor;
 	const Timeline<float> m_CameraNoiseSpeed;
+	const Timeline<glm::vec3> m_CameraFreeflyForward;
+	const Timeline<glm::vec3> m_CameraFreeflyPosition;
 
 	const Timeline<Skybox::Sky> m_Skybox;
 
@@ -1021,6 +1024,8 @@ public:
 		
 
 		/****** Pipeline ******/
+
+
 		m_Pipeline(Interpolations::lower<int>, {
 			// Plan 1
 			{ 0, 2 },
@@ -1147,6 +1152,34 @@ public:
 			{ 82, glm::vec3(1) },
 			{ 90, glm::vec3(-2) },
 		}),
+		m_ComputePassGlitch(Interpolations::lerp, {
+			// Plan 1
+			{ 0, 0. },
+			// Plan 8
+			{ 32.9, 0. },
+			{ 33.2, 10. },
+			{ 33.5, 0. },
+			// Plan 9
+			{ 35.9, 0. },
+			{ 36.2, 10. },
+			{ 36.5, 0. },
+			// Plan 11
+			{ 41.9, 0. },
+			{ 42.2, 10. },
+			{ 42.5, 0. },
+			// Plan 12
+			{ 44.9, 0. },
+			{ 45.2, 10. },
+			{ 45.5, 0. },
+			// Plan 13
+			{ 48.9, 0. },
+			{ 49.2, 10. },
+			{ 49.5, 0. },
+			// Plan 14
+			{ 52.9, 0. },
+			{ 53.2, 10. },
+			{ 53.5, 0. },
+		}),
 
 
 		/*** Fragment Pass ***/
@@ -1212,7 +1245,20 @@ public:
 
 
 		m_CameraMode(Interpolations::lower<glmlv::Camera::Mode>, {
+			// Plan 1
 			{ 0, glmlv::Camera::Mode::LookAt },
+			// Plan 8
+			{ 33, glmlv::Camera::Mode::FreeFly },
+			// Plan 9
+			{ 36.0, glmlv::Camera::Mode::LookAt },
+			// Plan 11
+			{ 42.0, glmlv::Camera::Mode::FreeFly },
+			// Plan 12
+			{ 45, glmlv::Camera::Mode::LookAt },
+			// Plan 13
+			{ 49, glmlv::Camera::Mode::FreeFly },
+			// Plan 14
+			{ 53, glmlv::Camera::Mode::LookAt },
 		}),
 		m_CameraTarget(Interpolations::lower<glm::vec3>, {
 			// Plan 1
@@ -1315,6 +1361,50 @@ public:
 			{ 0, 3.124 },
 			// Plan 2
 			{ 5.2, 1 },
+		}),
+		m_CameraFreeflyPosition(Interpolations::lower<glm::vec3>, {
+			// Plan 1
+			{ 0, glm::vec3(0, 0, 0) },
+			// Plan 8
+			{ 32.99, glm::vec3(0, 0, 0) },
+			{ 33, glm::vec3(0, 0, 0) },
+			// Plan 9
+			{ 35.99, glm::vec3(0, 0, 0) },
+			{ 36.0, glm::vec3(0, 0, 0) },
+			// Plan 11
+			{ 41.99, glm::vec3(0, 0, 0) },
+			{ 42.0, glm::vec3(0, 0, 0) },
+			// Plan 12
+			{ 44.99, glm::vec3(0, 0, 0) },
+			{ 45, glm::vec3(0, 0, 0) },
+			// Plan 13
+			{ 48.99, glm::vec3(0, 0, 0) },
+			{ 49, glm::vec3(0, 0, 0) },
+			// Plan 14
+			{ 52.99, glm::vec3(0, 0, 0) },
+			{ 53, glm::vec3(0, 0, 0) },
+		}),
+		m_CameraFreeflyForward(Interpolations::lower<glm::vec3>, {
+			// Plan 1
+			{ 0, glm::vec3(0, 0, 0) },
+			// Plan 8
+			{ 32.99, glm::vec3(0, 0, 0) },
+			{ 33, glm::vec3(0, 0, 0) },
+			// Plan 9
+			{ 35.99, glm::vec3(0, 0, 0) },
+			{ 36.0, glm::vec3(0, 0, 0) },
+			// Plan 11
+			{ 41.99, glm::vec3(0, 0, 0) },
+			{ 42.0, glm::vec3(0, 0, 0) },
+			// Plan 12
+			{ 44.99, glm::vec3(0, 0, 0) },
+			{ 45, glm::vec3(0, 0, 0) },
+			// Plan 13
+			{ 48.99, glm::vec3(0, 0, 0) },
+			{ 49, glm::vec3(0, 0, 0) },
+			// Plan 14
+			{ 52.99, glm::vec3(0, 0, 0) },
+			{ 53, glm::vec3(0, 0, 0) },
 		}),
 
 

@@ -538,6 +538,7 @@ void Demo::update(float dt) {
 	m_PostFX.m_ComputePass.m_Gamma = s.m_ComputePassGamma.at(t);
 	m_PostFX.m_ComputePass.m_FinalTouchAdd = s.m_ComputePassFinalTouchAdd.at(t);
 	m_PostFX.m_ComputePass.m_FinalTouchMul = s.m_ComputePassFinalTouchMul.at(t);
+	m_PostFX.m_ComputePass.m_Glitch = s.m_ComputePassGlitch.at(t);
 
 	// Fragment Pass
 	m_PostFX.m_FragmentPass.m_IsEnabled = s.m_FragmentPass.at(t);
@@ -554,6 +555,8 @@ void Demo::update(float dt) {
 	m_Camera.m_FovY = s.m_CameraVerticalFOV.at(t);
 	m_Camera.m_NoiseFactor = s.m_CameraNoiseFactor.at(t);
 	m_Camera.m_NoiseSpeed = s.m_CameraNoiseSpeed.at(t);
+	m_Camera.m_FreeFlyData.m_Forward = s.m_CameraFreeflyForward.at(t);
+	m_Camera.m_FreeFlyData.m_Position = s.m_CameraFreeflyPosition.at(t);
 
 	// Skybox
 	m_Skybox.m_CurrentSky = s.m_Skybox.at(t);
