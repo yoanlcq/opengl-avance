@@ -538,7 +538,6 @@ void Demo::update(float dt) {
 	m_PostFX.m_ComputePass.m_Gamma = s.m_ComputePassGamma.at(t);
 	m_PostFX.m_ComputePass.m_FinalTouchAdd = s.m_ComputePassFinalTouchAdd.at(t);
 	m_PostFX.m_ComputePass.m_FinalTouchMul = s.m_ComputePassFinalTouchMul.at(t);
-	m_PostFX.m_ComputePass.m_Glitch = s.m_ComputePassGlitch.at(t);
 
 	// Fragment Pass
 	m_PostFX.m_FragmentPass.m_IsEnabled = s.m_FragmentPass.at(t);

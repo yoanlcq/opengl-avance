@@ -973,7 +973,6 @@ public:
 	const Timeline<float> m_ComputePassGamma;
 	const Timeline<glm::vec3> m_ComputePassFinalTouchAdd;
 	const Timeline<glm::vec3> m_ComputePassFinalTouchMul;
-	const Timeline<float> m_ComputePassGlitch;
 
 	const Timeline<bool> m_FragmentPass;
 	const Timeline<int> m_BlurKind;
@@ -1151,34 +1150,6 @@ public:
 			// Plan 19
 			{ 82, glm::vec3(1) },
 			{ 90, glm::vec3(-2) },
-		}),
-		m_ComputePassGlitch(Interpolations::lerp, {
-			// Plan 1
-			{ 0, 0. },
-			// Plan 8
-			{ 32.9, 0. },
-			{ 33.2, 10. },
-			{ 33.5, 0. },
-			// Plan 9
-			{ 35.9, 0. },
-			{ 36.2, 10. },
-			{ 36.5, 0. },
-			// Plan 11
-			{ 41.9, 0. },
-			{ 42.2, 10. },
-			{ 42.5, 0. },
-			// Plan 12
-			{ 44.9, 0. },
-			{ 45.2, 10. },
-			{ 45.5, 0. },
-			// Plan 13
-			{ 48.9, 0. },
-			{ 49.2, 10. },
-			{ 49.5, 0. },
-			// Plan 14
-			{ 52.9, 0. },
-			{ 53.2, 10. },
-			{ 53.5, 0. },
 		}),
 
 
