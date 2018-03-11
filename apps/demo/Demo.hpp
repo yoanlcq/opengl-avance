@@ -970,6 +970,7 @@ public:
 	const Timeline<float> m_ComputePassGamma;
 	const Timeline<glm::vec3> m_ComputePassFinalTouchAdd;
 	const Timeline<glm::vec3> m_ComputePassFinalTouchMul;
+
 	const Timeline<float> m_SpritesYoanLecoqAlpha;
 	const Timeline<glm::vec2> m_SpritesYoanLecoqPos;
 	const Timeline<float> m_SpritesCoralieGoldbaumAlpha;
@@ -982,10 +983,15 @@ public:
 	const Timeline<glm::vec2> m_SpritesSoundtrackPos;
 	const Timeline<float> m_SpritesRevolveAlpha;
 	const Timeline<float> m_SpritesIMACAlpha;
+
 	const Timeline<glmlv::Camera::Mode> m_CameraMode;
 	const Timeline<glm::vec3> m_CameraForward;
 	const Timeline<glm::vec3> m_CameraTarget;
 	const Timeline<float> m_CameraVerticalFOV;
+	const Timeline<glm::vec2> m_CameraNoiseFactor;
+	const Timeline<float> m_CameraNoiseSpeed;
+
+	const Timeline<Skybox::Sky> m_Skybox;
 
     static constexpr float BPM = 170;
     static constexpr float DURATION = 88; // 1 min 28
@@ -1002,8 +1008,10 @@ public:
         // TODO(coraliegold): Here, keyframes are specified for each timeline.
         // It's backed by a std::map so one can also run some logic in the constructor.
 		
+
 		/****** Sprites ******/
 		
+
 		m_SpritesYoanLecoqAlpha(Interpolations::lerp, {
 			// Plan 1
 			{ 0, 0 },
@@ -1077,6 +1085,7 @@ public:
 			{ 84, 0 },
 			{ 87, 1 },
 		}),
+
 
 		/****** Compute Pass *****/
 
@@ -1193,11 +1202,63 @@ public:
 			{ 90, glm::vec3(-500, -60, 500) },
 
 		}),
+		m_CameraNoiseFactor(Interpolations::lower<glm::vec2>, {
+			// Plan 1
+			{ 0, glm::vec2(0, 0) },
+			// Plan 10
+			{ 38.99, glm::vec2(0, 0) },
+			{ 39, glm::vec2(0.1, 0.1) },
+			// Plan 11
+			{ 41.99, glm::vec2(0, 0) },
+			// Plan 12
+			{ 44.99, glm::vec2(0, 0) },
+			{ 45, glm::vec2(0.1, 0.1) },
+			// Plan 13
+			{ 49, glm::vec2(0, 0) },
+			// Plan 14
+			{ 52.99, glm::vec2(0, 0) },
+			{ 53, glm::vec2(0.1, 0.1) },
+			{ 53.5, glm::vec2(0.2, 0.2) },
+			// Plan 15
+			{ 54, glm::vec2(0.1, 0.1) },
+			// Plan 16
+			{ 58.99, glm::vec2(0, 0) },
+			// Plan 17
+			{ 62.99, glm::vec2(0, 0) },
+			{ 63, glm::vec2(0.1, 0.1) },
+			{ 70, glm::vec2(0, 0) },
+
+		}),
+		m_CameraNoiseSpeed(Interpolations::lerp, {
+			// Plan 1
+			{ 0, 20. },
+			}),
 		m_CameraVerticalFOV(Interpolations::lerp, {
 			// Plan 1
 			{ 0, 3.124 },
 			// Plan 2
 			{ 5.2, 1 },
+		}),
+
+
+		/****** Skybox ******/
+
+
+		m_Skybox(Interpolations::lower<Skybox::Sky>, {
+			// Plan 1
+			{ 0, Skybox::Sky::SkySpace },
+			// Plan 8
+			{ 33, Skybox::Sky::SkyPlanetFlashBack },
+			// Plan 9
+			{ 36, Skybox::Sky::SkySpace },
+			// Plan 11
+			{ 42, Skybox::Sky::SkyPlanetFlashBack },
+			// Plan 12
+			{ 45, Skybox::Sky::SkySpace },
+			// Plan 13
+			{ 49, Skybox::Sky::SkyPlanetFlashBack },
+			// Plan 14
+			{ 53, Skybox::Sky::SkySpace },
 		})
         {}
 		

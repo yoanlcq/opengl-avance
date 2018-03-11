@@ -541,6 +541,11 @@ void Demo::update(float dt) {
 	m_Camera.m_LookAtData.m_Forward = s.m_CameraForward.at(t);
 	m_Camera.m_LookAtData.m_Target = s.m_CameraTarget.at(t);
 	m_Camera.m_FovY = s.m_CameraVerticalFOV.at(t);
+	m_Camera.m_NoiseFactor = s.m_CameraNoiseFactor.at(t);
+	m_Camera.m_NoiseSpeed = s.m_CameraNoiseSpeed.at(t);
+
+	// Skybox
+	m_Skybox.m_CurrentSky = s.m_Skybox.at(t);
 }
 
 int Demo::run() {
