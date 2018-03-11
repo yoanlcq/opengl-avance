@@ -516,6 +516,9 @@ void Demo::update(float dt) {
     m_Camera.m_NoiseSpeed = s.m_CameraNoiseSpeed.at(t);
     m_Camera.m_FovY = s.m_CameraFovY.at(t);*/
 
+	// Pipeline
+	m_PipelineKind = s.m_Pipeline.at(t);
+
 	// Sprites
 	m_Sprites.m_SprAlpha[1] = s.m_SpritesYoanLecoqAlpha.at(t);
 	m_Sprites.m_SprAlpha[2] = s.m_SpritesCoralieGoldbaumAlpha.at(t);

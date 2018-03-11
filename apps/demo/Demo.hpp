@@ -966,6 +966,9 @@ public:
     const Timeline<glm::vec2> m_CameraNoiseFactor;
     const Timeline<float> m_CameraNoiseSpeed;
     const Timeline<float> m_CameraFovY;*/
+
+	const Timeline<int> m_Pipeline;
+
 	const Timeline<bool> m_ComputePass;
 	const Timeline<float> m_ComputePassGamma;
 	const Timeline<glm::vec3> m_ComputePassFinalTouchAdd;
@@ -1008,6 +1011,15 @@ public:
         // TODO(coraliegold): Here, keyframes are specified for each timeline.
         // It's backed by a std::map so one can also run some logic in the constructor.
 		
+
+		/****** Pipeline ******/
+		m_Pipeline(Interpolations::lower<int>, {
+			// Plan 1
+			{ 0, 2 },
+			// Plan 2
+			{ 4.5, 1 },
+		}),
+
 
 		/****** Sprites ******/
 		
@@ -1221,8 +1233,6 @@ public:
 			{ 53.5, glm::vec2(0.2, 0.2) },
 			// Plan 15
 			{ 54, glm::vec2(0.1, 0.1) },
-			// Plan 16
-			{ 58.99, glm::vec2(0, 0) },
 			// Plan 17
 			{ 62.99, glm::vec2(0, 0) },
 			{ 63, glm::vec2(0.1, 0.1) },
