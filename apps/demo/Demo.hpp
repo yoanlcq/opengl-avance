@@ -887,6 +887,9 @@ struct PostFX {
 // 70-88: Vue à partir du vaisseau, puis fondu en blanc.
 //        Soleil prend moitié droite de l'écran. Base prend sur la gauche.
 
+#define PIPELINE_FORWARD 1
+#define PIPELINE_DEFERRED 2
+
 class Story {
 
     struct Interpolations {
@@ -1027,9 +1030,9 @@ public:
 
 		m_Pipeline(Interpolations::lower<int>, {
 			// Plan 1
-			{ 0, 2 },
+			{ 0, PIPELINE_DEFERRED },
 			// Plan 2
-			{ 4.5, 1 },
+			{ 4.5, PIPELINE_FORWARD },
 		}),
 
 
@@ -1482,8 +1485,6 @@ private:
     glmlv::GLFWHandle m_GLFWHandle{ m_nWindowWidth, m_nWindowHeight, "REVOLVE" }; // Note: the handle must be declared before the creation of any object managing OpenGL resource (e.g. glmlv::GLProgram, GLShader)
 
     Paths m_Paths;
-    static const int PIPELINE_FORWARD = 1;
-    static const int PIPELINE_DEFERRED = 2;
     int m_PipelineKind;
     ForwardRendering m_ForwardRendering;
     DeferredRendering m_DeferredRendering;
