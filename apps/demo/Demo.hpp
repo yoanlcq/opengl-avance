@@ -890,6 +890,10 @@ struct PostFX {
 #define PIPELINE_FORWARD 1
 #define PIPELINE_DEFERRED 2
 
+#define SCENEID_END_OF_THE_WORLD 1
+#define SCENEID_CITY 2
+
+
 class Story {
 
     struct Interpolations {
@@ -1008,6 +1012,7 @@ public:
 	const Timeline<glm::vec3> m_CameraFreeflyPosition;
 
 	const Timeline<Skybox::Sky> m_Skybox;
+	const Timeline<int> m_SceneID;
 
     static constexpr float BPM = 170;
     static constexpr float DURATION = 88; // 1 min 28
@@ -1400,7 +1405,27 @@ public:
 			{ 49, Skybox::Sky::SkyPlanetFlashBack },
 			// Plan 14
 			{ 53, Skybox::Sky::SkySpace },
+		}),
+
+		/****** SceneID ******/
+
+		m_SceneID(Interpolations::lower<int>, {
+			// Plan 1
+			{ 0, SCENEID_END_OF_THE_WORLD },
+			// Plan 8
+			{ 33, SCENEID_CITY },
+			// Plan 9
+			{ 36, SCENEID_END_OF_THE_WORLD },
+			// Plan 11
+			{ 42, SCENEID_CITY },
+			// Plan 12
+			{ 45, SCENEID_END_OF_THE_WORLD },
+			// Plan 13
+			{ 49, SCENEID_CITY },
+			// Plan 14
+			{ 53, SCENEID_END_OF_THE_WORLD },
 		})
+
         {}
 		
 
@@ -1496,8 +1521,11 @@ private:
     float m_DirLightPhiAngleDegrees; // Angle around Y
     float m_DirLightThetaAngleDegrees; // Angle around X
     glmlv::GLMesh m_ScreenCoverQuad;
+    int m_SceneID;
 	glmlv::Scene m_EndOfTheWorld;
 	glmlv::SceneInstanceData m_EndOfTheWorldInstanceData;
+	glmlv::Scene m_City;
+	glmlv::SceneInstanceData m_CityInstanceData;
     Sprites m_Sprites;
     glmlv::Camera m_Camera;
     const float m_CameraMaxSpeed;

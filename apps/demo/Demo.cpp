@@ -99,6 +99,10 @@ void Demo::renderGUI() {
     ImGui::RadioButton("Forward", &m_PipelineKind, PIPELINE_FORWARD);
     ImGui::RadioButton("Deferred", &m_PipelineKind, PIPELINE_DEFERRED);
 
+    ImGui::Text("Scene: ");
+    ImGui::RadioButton("End Of The World", &m_SceneID, SCENEID_END_OF_THE_WORLD);
+    ImGui::RadioButton("City", &m_SceneID, SCENEID_CITY);
+
     if(ImGui::CollapsingHeader("Clear Color")) {
         if (ImGui::ColorEdit3("clearColor", &m_ClearColor[0])) {
             glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], 1.f);
@@ -313,16 +317,21 @@ GLuint Demo::getHighestGeometryTextureUnit() const {
     return m_EndOfTheWorld.m_GLTextures2D.size() + 2; // + 2 just in case
 }
 void Demo::renderGeometry() {
-	m_EndOfTheWorld.render();
+    switch(m_SceneID) {
+    case SCENEID_END_OF_THE_WORLD: m_EndOfTheWorld.render(); break;
+    case SCENEID_CITY: m_City.render(); break;
+    }
     m_Skybox.render(m_Camera);
     if(m_PipelineKind == PIPELINE_FORWARD) {
         m_ParticlesManager.render(m_Camera);
         m_Sprites.render(m_nWindowWidth, m_nWindowHeight);
     }
-	
 }
 void Demo::renderGeometry(const GLMaterialProgram& prog) {
-	m_EndOfTheWorld.render(prog, m_Camera, m_EndOfTheWorldInstanceData);
+    switch(m_SceneID) {
+    case SCENEID_END_OF_THE_WORLD: m_EndOfTheWorld.render(prog, m_Camera, m_EndOfTheWorldInstanceData); break;
+    case SCENEID_CITY: m_City.render(prog, m_Camera, m_CityInstanceData); break;
+    }
 	m_Skybox.render(m_Camera);
     if(m_PipelineKind == PIPELINE_FORWARD) {
         m_ParticlesManager.render(m_Camera);
@@ -519,6 +528,9 @@ void Demo::update(float dt) {
 	// Pipeline
 	m_PipelineKind = s.m_Pipeline.at(t);
 
+    // Scene
+    m_SceneID = s.m_SceneID.at(t);
+
 	// Sprites
 	m_Sprites.m_SprAlpha[1] = s.m_SpritesYoanLecoqAlpha.at(t);
 	m_Sprites.m_SprAlpha[2] = s.m_SpritesCoralieGoldbaumAlpha.at(t);
@@ -585,8 +597,11 @@ Demo::Demo(int argc, char** argv):
     m_DirLightPhiAngleDegrees(260),
     m_DirLightThetaAngleDegrees(260),
     m_ScreenCoverQuad(glmlv::makeScreenCoverQuad()),
+    m_SceneID(SCENEID_END_OF_THE_WORLD),
 	m_EndOfTheWorld(m_Paths.m_AssetsRoot / "demo" / "models" / "end_of_the_world" / "end_of_the_world.obj"),
 	m_EndOfTheWorldInstanceData(),
+	m_City(m_Paths.m_AssetsRoot / "demo" / "models" / "city" / "city.obj"),
+	m_CityInstanceData(),
     m_Sprites(m_Paths),
     m_Camera(m_GLFWHandle.window(), m_nWindowWidth, m_nWindowHeight),
     m_CameraMaxSpeed(m_EndOfTheWorld.getDiagonalLength() / 2.f),
