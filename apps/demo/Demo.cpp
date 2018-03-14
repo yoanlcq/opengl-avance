@@ -45,7 +45,7 @@ const std::array<Rect<uint32_t>, Sprites::SprCount> Sprites::SPR_TEXCOORDS_UINT 
     Rect<uint32_t> { 0, 48, 328, 110 - 48 },
     Rect<uint32_t> { 0, 126, 512, 177 - 126 },
     Rect<uint32_t> { 0, 203, 158, 257 - 203 },
-    Rect<uint32_t> { 0, 268, 492, 322 - 268 },
+    Rect<uint32_t> { 0, 268, 492, 328 - 268 },
     Rect<uint32_t> { 0, 347, 512, 436 - 347 },
 };
 const std::array<Rect<float>, Sprites::SprCount> Sprites::SPR_TEXCOORDS = {
