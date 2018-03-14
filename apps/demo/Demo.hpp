@@ -976,6 +976,19 @@ public:
 
 	const Timeline<int> m_Pipeline;
 
+	const Timeline<float> m_SpritesYoanLecoqAlpha;
+	const Timeline<glm::vec2> m_SpritesYoanLecoqPos;
+	const Timeline<float> m_SpritesCoralieGoldbaumAlpha;
+	const Timeline<glm::vec2> m_SpritesCoralieGoldbaumPos;
+	const Timeline<float> m_SpritesRevolveAlpha;
+	const Timeline<float> m_SpritesTeacherAlpha;
+	const Timeline<glm::vec2> m_SpritesTeacherPos;
+	const Timeline<float> m_SpritesTeacherScale;
+	const Timeline<float> m_SpritesSoundtrackAlpha;
+	const Timeline<glm::vec2> m_SpritesSoundtrackPos;
+	const Timeline<float> m_SpritesSoundtrackScale;
+	const Timeline<float> m_SpritesIMACAlpha;
+
 	const Timeline<bool> m_ComputePass;
 	const Timeline<float> m_ComputePassGamma;
 	const Timeline<glm::vec3> m_ComputePassFinalTouchAdd;
@@ -989,27 +1002,14 @@ public:
 	const Timeline<float> m_BloomTexelSkip;
 	const Timeline<float> m_BloomThreshold;
 
-	const Timeline<float> m_SpritesYoanLecoqAlpha;
-	const Timeline<glm::vec2> m_SpritesYoanLecoqPos;
-	const Timeline<float> m_SpritesCoralieGoldbaumAlpha;
-	const Timeline<glm::vec2> m_SpritesCoralieGoldbaumPos;
-	const Timeline<float> m_SpritesTeacherAlpha;
-	const Timeline<float> m_SpritesTeacherScale;
-	const Timeline<glm::vec2> m_SpritesTeacherPos;
-	const Timeline<float> m_SpritesSoundtrackAlpha;
-	const Timeline<float> m_SpritesSoundtrackScale;
-	const Timeline<glm::vec2> m_SpritesSoundtrackPos;
-	const Timeline<float> m_SpritesRevolveAlpha;
-	const Timeline<float> m_SpritesIMACAlpha;
-
 	const Timeline<glmlv::Camera::Mode> m_CameraMode;
-	const Timeline<glm::vec3> m_CameraForward;
 	const Timeline<glm::vec3> m_CameraTarget;
-	const Timeline<float> m_CameraVerticalFOV;
+	const Timeline<glm::vec3> m_CameraForward;
 	const Timeline<glm::vec2> m_CameraNoiseFactor;
 	const Timeline<float> m_CameraNoiseSpeed;
-	const Timeline<glm::vec3> m_CameraFreeflyForward;
+	const Timeline<float> m_CameraVerticalFOV;
 	const Timeline<glm::vec3> m_CameraFreeflyPosition;
+	const Timeline<glm::vec3> m_CameraFreeflyForward;
 
 	const Timeline<Skybox::Sky> m_Skybox;
 	const Timeline<int> m_SceneID;
