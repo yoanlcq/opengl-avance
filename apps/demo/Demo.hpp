@@ -1025,6 +1025,12 @@ public:
 	const Timeline<Skybox::Sky> m_Skybox;
 	const Timeline<int> m_SceneID;
 
+	const Timeline<glm::vec3> m_EndOfTheWorldDataShardsDirection;
+	const Timeline<float> m_EndOfTheWorldDataShardsVelocity;
+	const Timeline<float> m_ShipReactorStrength;
+	const Timeline<glm::vec3> m_ShipPosition;
+	const Timeline<glm::vec3> m_ShipForward;
+
     static constexpr float BPM = 170;
     static constexpr float DURATION = 88; // 1 min 28
     static constexpr int PLAY_KEY = GLFW_KEY_SPACE;
@@ -1224,6 +1230,24 @@ public:
 		m_BloomTexelSkip(Interpolations::lower<float>, {
 			// Plan 1
 			{ 0, 5.5 },
+			// Plan 8
+			{ 32.99, 5.5 },
+			{ 33, 0.6 },
+			// Plan 9
+			{ 35.99, 0.6 },
+			{ 36, 5.5 },
+			// Plan 11
+			{ 41.99, 5.5 },
+			{ 42, 0.6 },
+			// Plan 12
+			{ 44.99, 0.6 },
+			{ 45, 5.5 },
+			// Plan 13
+			{ 48.99, 5.5 },
+			{ 49, 0.6 },
+			// Plan 14
+			{ 52.99, 0.6 },
+			{ 53, 5.5 },
 		}),
 		m_BloomThreshold(Interpolations::lower<float>, {
 			// Plan 1
@@ -1276,11 +1300,9 @@ public:
 			{ 30, glm::vec3(-15, 15, -35) },
 			{ 31, glm::vec3(-5, 15, -35) },
 			{ 32, glm::vec3(5, 15, -35) },
-			{ 33, glm::vec3(15, 15, -35) },
+			{ 32.99, glm::vec3(15, 15, -35) },
 			// Plan 8
-			
 			// Plan 9
-			{ 35.99, glm::vec3(15, 15, -35) },
 			{ 36, glm::vec3(-35, -5, -15) },
 			{ 39, glm::vec3(40, -5, -5) },
 			// Plan 10
@@ -1288,11 +1310,11 @@ public:
 			// Plan 11
 
 			// Plan 12
+			{ 45, glm::vec3(40, -5, -5) },
 
 			// Plan 13
 
 			// Plan 14
-			{ 52.99, glm::vec3(40, -5, -5) },
 			{ 53, glm::vec3(0, -0.5, -3) },
 
 			// Plan 15
@@ -1352,49 +1374,42 @@ public:
 			// Plan 2
 			{ 5.2, 1 },
 		}),
-		m_CameraFreeflyPosition(Interpolations::lower<glm::vec3>, {
+		m_CameraFreeflyPosition(Interpolations::lerp3, {
 			// Plan 1
 			{ 0, glm::vec3(0, 0, 0) },
 			// Plan 8
-			{ 32.99, glm::vec3(0, 0, 0) },
-			{ 33, glm::vec3(0, 0, 0) },
+			{ 32.99, glm::vec3(0, 0, -0.5) },
+			{ 33, glm::vec3(0, 0, -0.5) },
 			// Plan 9
 			{ 35.99, glm::vec3(0, 0, 0) },
 			{ 36.0, glm::vec3(0, 0, 0) },
 			// Plan 11
-			{ 41.99, glm::vec3(0, 0, 0) },
-			{ 42.0, glm::vec3(0, 0, 0) },
+			{ 41.99, glm::vec3(0, 0, -0.5) },
+			{ 42.0, glm::vec3(0.3, 0, 0.2) },
 			// Plan 12
 			{ 44.99, glm::vec3(0, 0, 0) },
 			{ 45, glm::vec3(0, 0, 0) },
 			// Plan 13
 			{ 48.99, glm::vec3(0, 0, 0) },
-			{ 49, glm::vec3(0, 0, 0) },
+			{ 49, glm::vec3(0.5, 0.2, 0.4) },
 			// Plan 14
-			{ 52.99, glm::vec3(0, 0, 0) },
-			{ 53, glm::vec3(0, 0, 0) },
+			{ 52.99, glm::vec3(0.5, 0.2, 0.4) },
+			{ 53, glm::vec3(0.6, 0.2, 0.4) },
 		}),
-		m_CameraFreeflyForward(Interpolations::lower<glm::vec3>, {
-			// Plan 1
-			{ 0, glm::vec3(0, 0, 0) },
+		m_CameraFreeflyForward(Interpolations::lerp3, {
 			// Plan 8
-			{ 32.99, glm::vec3(0, 0, 0) },
-			{ 33, glm::vec3(0, 0, 0) },
-			// Plan 9
-			{ 35.99, glm::vec3(0, 0, 0) },
-			{ 36.0, glm::vec3(0, 0, 0) },
+			{ 33, glm::vec3(0, 0, 0.009) },
+			{ 35.99 , glm::vec3(0, 0, 0.009) },
+
 			// Plan 11
-			{ 41.99, glm::vec3(0, 0, 0) },
-			{ 42.0, glm::vec3(0, 0, 0) },
-			// Plan 12
-			{ 44.99, glm::vec3(0, 0, 0) },
-			{ 45, glm::vec3(0, 0, 0) },
+			{ 41.9, glm::vec3(0, 0, 0.009) },
+			{ 42, glm::vec3(0, 0, 0.009) },
+			{ 44.99, glm::vec3(0, 0, 0.009) },
+
 			// Plan 13
-			{ 48.99, glm::vec3(0, 0, 0) },
-			{ 49, glm::vec3(0, 0, 0) },
-			// Plan 14
-			{ 52.99, glm::vec3(0, 0, 0) },
-			{ 53, glm::vec3(0, 0, 0) },
+			{ 48.99, glm::vec3(0, 0, 0.009) },
+			{ 49, glm::vec3(0, 0, 0.009) },
+			{ 52.99, glm::vec3(-0.006, -0.003, -0.006) },
 		}),
 
 
@@ -1418,6 +1433,7 @@ public:
 			{ 53, Skybox::Sky::SkySpace },
 		}),
 
+		
 		/****** SceneID ******/
 
 		m_SceneID(Interpolations::lower<int>, {
@@ -1435,8 +1451,51 @@ public:
 			{ 49, SCENEID_CITY },
 			// Plan 14
 			{ 53, SCENEID_END_OF_THE_WORLD },
-		})
+		}),
 
+		m_EndOfTheWorldDataShardsDirection(Interpolations::lower<glm::vec3>, {
+			// Plan 1
+			{ 0, glm::vec3(0, -1.5, 1)},
+		}),
+
+		m_EndOfTheWorldDataShardsVelocity(Interpolations::lerp, {
+			// Plan 1
+			{ 0, 0 },
+				
+			// Plan 10
+			{ 38.99, 0 },
+			{ 39, 0.750 },
+		}),
+
+		m_ShipReactorStrength(Interpolations::lerp, {
+			// Plan 1
+			{ 0, 0 },
+
+			// Plan 14
+			{ 53, 0 },
+			{ 55, 1 },
+		}),
+
+		m_ShipForward(Interpolations::lerp3, {
+			// Plan 1
+			{ 0, glm::vec3(0, 0, -1) },
+
+			// Plan 15
+			{ 55, glm::vec3(0, 0, -1) },
+			{ 57, glm::vec3(1, 1, 0) },
+		}),
+
+		m_ShipPosition(Interpolations::lerp3, {
+			// Plan 1
+			{ 0, glm::vec3(0, 0, 0) },
+
+			// Plan 15
+			{ 55, glm::vec3(0, 0, 0) },
+			{ 59, glm::vec3(50, 15, -30) },
+
+			// Plan 16
+			{ 63, glm::vec3(100, 15, -60) },
+		})
         {}
 		
 

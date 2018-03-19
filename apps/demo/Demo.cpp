@@ -761,7 +761,7 @@ void Demo::update(float dt) {
 
     // FIXME(coraliegold):
     // Mettre à true pour expérimenter, puis conditionner d'après getPlayheadTime() une fois prêt
-    if(false) {
+	if (m_Story.getPlayheadTime() >= 53) {
         m_ParticlesManager.m_LeftReactorParticles.addParticles(2, m_ParticlesManager.m_LeftReactorParticlesInstanceData);
         m_ParticlesManager.m_RightReactorParticles.addParticles(2, m_ParticlesManager.m_RightReactorParticlesInstanceData);
     }
@@ -836,6 +836,15 @@ void Demo::update(float dt) {
 
 	// Skybox
 	m_Skybox.m_CurrentSky = s.m_Skybox.at(t);
+
+
+	// End Of The World Datas
+	m_AllShardsAddedDirection = s.m_EndOfTheWorldDataShardsDirection.at(t);
+	m_AllShardsVelocityFactor = s.m_EndOfTheWorldDataShardsVelocity.at(t);
+	m_ShipReactorStrength = s.m_ShipReactorStrength.at(t);
+	m_ShipInstanceData.m_Position = s.m_ShipPosition.at(t);
+	m_ShipInstanceData.m_Forward = s.m_ShipForward.at(t);
+
 }
 
 int Demo::run() {

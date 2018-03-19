@@ -1,2 +1,5 @@
 .vs
 CMakeSettings.json
+apps/demo/assets/models/end_of_the_world_2/export_all_obj.py
+*.blend
+apps/demo/assets/models/end_of_the_world_2/end_of_the_world.blend1
