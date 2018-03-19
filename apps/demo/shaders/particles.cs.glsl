@@ -13,5 +13,6 @@ void main() {
     if(i >= uParticleCount)
         return;
     pos[i].xyz += uDeltaTime * uVelMultiplier * vel[i].xyz;
+    pos[i].w -= 0.001f; // Decrease lifetime; Hardcoded because deadlines.
 }
 

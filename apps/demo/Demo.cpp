@@ -69,6 +69,129 @@ Image2DRGBA readImageNoException(const fs::path& path) noexcept {
     }
 }
 
+Scene& Demo::getCurrentScene() {
+    return const_cast<Scene&>(static_cast<const Demo&>(*this).getCurrentScene());
+}
+const Scene& Demo::getCurrentScene() const {
+    switch(m_SceneID) {
+    case SCENEID_END_OF_THE_WORLD: return m_Sun;
+    case SCENEID_CITY: return m_City;
+    }
+    return m_Sun;
+}
+
+float Demo::getCurrentSceneDiagonalLength() const {
+    return getCurrentScene().getDiagonalLength();
+}
+
+glm::vec3 Demo::getCurrentSceneCenter() const {
+    const auto& o = getCurrentScene().m_ObjData;
+    return (o.bboxMax + o.bboxMin) / 2.f;
+}
+
+vec3 Demo::getShipLeftReactorPosition() const {
+    return vec3(m_ShipInstanceData.getModelMatrix() * vec4(-0.275, 0.165, 0.739, 1));
+}
+vec3 Demo::getShipRightReactorPosition() const {
+    return vec3(m_ShipInstanceData.getModelMatrix() * vec4( 0.275, 0.165, 0.739, 1));
+}
+
+
+void Demo::changeSceneIDAndConfigure(int sceneID) {
+    if(sceneID == m_SceneID) {
+        return;
+    }
+    std::cout << "Changing SceneID: " << sceneID << std::endl;
+
+    m_SceneID = sceneID;
+
+    m_CameraMaxSpeed = getCurrentSceneDiagonalLength() / 2.f;
+    m_CameraSpeed = m_CameraMaxSpeed / 5.f;
+    m_DirectionalShadowMapping.m_IsDirty = true;
+
+    switch(sceneID) {
+    case SCENEID_END_OF_THE_WORLD:
+        m_Skybox.m_CurrentSky = Skybox::SkySpace;
+        m_Camera.m_Near = 0.2f;
+        m_Camera.m_Far = 10000.f;
+        m_Camera.m_FovY = radians(60.f);
+        m_SceneCenterForShadowMap = vec3(0/*, -20, 0*/);
+        m_SceneRadiusForShadowMap = 32.f;
+        m_Lighting.dirLightIntensity = vec3(0);
+        m_Lighting.pointLightCount = 4;
+
+        // Main sun
+        m_Lighting.pointLightIntensity[0] = vec3(1);
+        m_Lighting.pointLightPosition[0] = vec3(0, 14, -56);
+        m_Lighting.pointLightRange[0] = 75;
+        m_Lighting.pointLightAttenuationFactor[0] = 1;
+
+        // Base top
+        m_Lighting.pointLightIntensity[1] = vec3(198, 80, 11) / 255.f;
+        m_Lighting.pointLightPosition[1] = vec3(0, 4, -6);
+        m_Lighting.pointLightRange[1] = 10;
+        m_Lighting.pointLightAttenuationFactor[1] = 0.094;
+
+        // Left reactor (see also update())
+        m_Lighting.pointLightIntensity[2] = vec3(255, 134, 56) / 255.f;
+        m_Lighting.pointLightPosition[2] = getShipLeftReactorPosition();
+        m_Lighting.pointLightRange[2] = 0.25;
+        m_Lighting.pointLightAttenuationFactor[2] = 0.039;
+
+        // Right reactor (see also update())
+        m_Lighting.pointLightIntensity[3] = vec3(255, 134, 56) / 255.f;
+        m_Lighting.pointLightPosition[3] = getShipRightReactorPosition();
+        m_Lighting.pointLightRange[3] = 0.25;
+        m_Lighting.pointLightAttenuationFactor[3] = 0.039;
+
+        m_ParticlesManager.m_LeftReactorParticles.m_SpawnRadius = 0.226f;
+        m_ParticlesManager.m_RightReactorParticles.m_SpawnRadius = 0.226f;
+
+        m_ParticlesManager.m_LeftReactorParticlesInstanceData.origin = getShipLeftReactorPosition();
+        m_ParticlesManager.m_LeftReactorParticlesInstanceData.velMultiplier = 0.f;
+        m_ParticlesManager.m_LeftReactorParticlesInstanceData.pointSize = 8;
+        m_ParticlesManager.m_LeftReactorParticlesInstanceData.zScale = 1.613f;
+        m_ParticlesManager.m_LeftReactorParticlesInstanceData.zInfluence = 1;
+
+        m_ParticlesManager.m_RightReactorParticlesInstanceData.origin = getShipRightReactorPosition();
+        m_ParticlesManager.m_RightReactorParticlesInstanceData.velMultiplier = 0.f;
+        m_ParticlesManager.m_RightReactorParticlesInstanceData.pointSize = 8;
+        m_ParticlesManager.m_RightReactorParticlesInstanceData.zScale = 1.613f;
+        m_ParticlesManager.m_RightReactorParticlesInstanceData.zInfluence = 1;
+
+        break;
+    case SCENEID_CITY:
+        m_Skybox.m_CurrentSky = Skybox::SkyPlanetFlashBack;
+        m_Camera.m_Near = 0.001f;
+        m_Camera.m_Far = 1000.f;
+        m_CameraSpeed = 0.1f;
+        m_Camera.m_FovY = 0.8f;
+        m_SceneCenterForShadowMap = vec3(0);
+        m_SceneRadiusForShadowMap = 4.2f;
+        m_DirLightPhiAngleDegrees = 340.f;
+        m_DirLightThetaAngleDegrees = 248.f;
+        m_Lighting.dirLightShadowMapBias = 0.005f;
+        m_Lighting.dirLightShadowMapSampleCount = 1;
+        m_Lighting.dirLightShadowMapSpread = 0;
+        m_Lighting.dirLightIntensity = vec3(1);
+
+        m_Lighting.pointLightCount = 0; // <===== En fait ignorer la light ci-dessous
+
+        // Une point light pour faire joli. N'est qu'un example pour en mettre
+        // plusieurs.
+        m_Lighting.pointLightIntensity[0] = vec3(1);
+        m_Lighting.pointLightPosition[0] = vec3(0, 0, 1);
+        m_Lighting.pointLightRange[0] = 0.017f;
+        m_Lighting.pointLightAttenuationFactor[0] = 0.06f;
+        // Other notes:
+        // Cam pos: 0.0145 0.0856 -1
+        // Cam forward: 0 0.05 1
+        break;
+    }
+
+    m_Camera.setSpeed(m_CameraSpeed);
+}
+
 
 void Demo::renderGUI() {
 
@@ -100,8 +223,38 @@ void Demo::renderGUI() {
     ImGui::RadioButton("Deferred", &m_PipelineKind, PIPELINE_DEFERRED);
 
     ImGui::Text("Scene: ");
-    ImGui::RadioButton("End Of The World", &m_SceneID, SCENEID_END_OF_THE_WORLD);
-    ImGui::RadioButton("City", &m_SceneID, SCENEID_CITY);
+    int tmpSceneID = m_SceneID;
+    ImGui::RadioButton("End Of The World", &tmpSceneID, SCENEID_END_OF_THE_WORLD);
+    ImGui::RadioButton("City", &tmpSceneID, SCENEID_CITY);
+    changeSceneIDAndConfigure(tmpSceneID);
+
+    if(ImGui::CollapsingHeader("End Of The World - Data")) {
+
+        const float mmin = -10.f, mmax = 10.f;
+
+        ImGui::SliderFloat("Ship Reactor Strength", &m_ShipReactorStrength, 0, 1);
+        ImGui::InputFloat3("Ship Position", &m_ShipInstanceData.m_Position[0]);
+        ImGui::InputFloat3("Ship Forward", &m_ShipInstanceData.m_Forward[0]);
+        
+        ImGui::SliderFloat3("All Shards Added Direction", &m_AllShardsAddedDirection[0], -10.f, 10.f);
+        ImGui::SliderFloat("All Shards Velocity Factor", &m_AllShardsVelocityFactor, mmin, mmax);
+
+        ImGui::SliderFloat3("BackTopLeftDirection", &m_BaseBackTopLeftDirection[0], -1.f, 1.f);
+        ImGui::SliderFloat3("DownLeftDirection   ", &m_BaseDownLeftDirection   [0], -1.f, 1.f);
+        ImGui::SliderFloat3("FrontLeftDirection  ", &m_BaseFrontLeftDirection  [0], -1.f, 1.f);
+        ImGui::SliderFloat3("LeftBackDirection   ", &m_BaseLeftBackDirection   [0], -1.f, 1.f);
+        ImGui::SliderFloat3("LeftCenterDirection ", &m_BaseLeftCenterDirection [0], -1.f, 1.f);
+        ImGui::SliderFloat3("RightBackDirection  ", &m_BaseRightBackDirection  [0], -1.f, 1.f);
+        ImGui::SliderFloat3("RightDirection      ", &m_BaseRightDirection      [0], -1.f, 1.f);
+
+        ImGui::SliderFloat("BackTopLeftVelocityFactor", &m_BaseBackTopLeftVelocityFactor, mmin, mmax);
+        ImGui::SliderFloat("DownLeftVelocityFactor   ", &m_BaseDownLeftVelocityFactor   , mmin, mmax);
+        ImGui::SliderFloat("FrontLeftVelocityFactor  ", &m_BaseFrontLeftVelocityFactor  , mmin, mmax);
+        ImGui::SliderFloat("LeftBackVelocityFactor   ", &m_BaseLeftBackVelocityFactor   , mmin, mmax);
+        ImGui::SliderFloat("LeftCenterVelocityFactor ", &m_BaseLeftCenterVelocityFactor , mmin, mmax);
+        ImGui::SliderFloat("RightBackVelocityFactor  ", &m_BaseRightBackVelocityFactor  , mmin, mmax);
+        ImGui::SliderFloat("RightVelocityFactor      ", &m_BaseRightVelocityFactor      , mmin, mmax);
+    }
 
     if(ImGui::CollapsingHeader("Clear Color")) {
         if (ImGui::ColorEdit3("clearColor", &m_ClearColor[0])) {
@@ -175,7 +328,7 @@ void Demo::renderGUI() {
     }
 
     if(ImGui::CollapsingHeader("Skybox")) {
-        ImGui::SliderFloat("Skybox scale", &m_Skybox.m_Scale, 1.f, m_EndOfTheWorld.getDiagonalLength() * 2.f);
+        ImGui::SliderFloat("Skybox scale", &m_Skybox.m_Scale, 1.f, getCurrentSceneDiagonalLength() * 2.f);
         ImGui::RadioButton("Simple Color Test", &m_Skybox.m_CurrentSky, Skybox::SkySimpleColorTest);
         ImGui::RadioButton("Space Kurt", &m_Skybox.m_CurrentSky, Skybox::SkySpaceKurt);
         ImGui::RadioButton("Space Ulukai Corona", &m_Skybox.m_CurrentSky, Skybox::SkySpaceUlukaiCorona);
@@ -184,25 +337,50 @@ void Demo::renderGUI() {
 		ImGui::RadioButton("Space", &m_Skybox.m_CurrentSky, Skybox::SkySpace);
     }
 
-    const float sceneBoundary = m_EndOfTheWorld.getDiagonalLength() / 2.f;
+    // const float sceneBoundary = getCurrentSceneDiagonalLength();
 
-    if(ImGui::CollapsingHeader("Particles")) {
-        const int pcount = m_ParticlesManager.m_ToastParticles.getParticleCount();
+    if(ImGui::CollapsingHeader("Left Reactor Particles")) {
+        ImGui::PushID(13);
+        const int pcount = m_ParticlesManager.m_LeftReactorParticles.getParticleCount();
         int new_pcount = pcount;
-        //ImGui::SliderInt("Particle Count", &new_pcount, 1, m_ParticlesManager.m_ToastParticles.getMaxParticleCount());
         ImGui::InputInt("Particle Count", &new_pcount);
         if(new_pcount > pcount) {
-            m_ParticlesManager.m_ToastParticles.addParticles(new_pcount - pcount);
+            m_ParticlesManager.m_LeftReactorParticles.addParticles(new_pcount - pcount, m_ParticlesManager.m_LeftReactorParticlesInstanceData);
         } else if(new_pcount < pcount) {
-            m_ParticlesManager.m_ToastParticles.removeParticles(pcount - new_pcount);
+            m_ParticlesManager.m_LeftReactorParticles.removeParticles(pcount - new_pcount);
         }
-        ImGui::SliderFloat3("Origin"       , &m_ParticlesManager.m_ToastParticlesInstanceData.origin[0], -sceneBoundary, sceneBoundary);
-        ImGui::SliderFloat("Vel Multiplier", &m_ParticlesManager.m_ToastParticlesInstanceData.velMultiplier, -400.f, 400.f);
-        ImGui::SliderFloat("Point Size"    , &m_ParticlesManager.m_ToastParticlesInstanceData.pointSize, 0, 200.f);
-        ImGui::SliderFloat("Z Scale"       , &m_ParticlesManager.m_ToastParticlesInstanceData.zScale, 0, 3000.f);
-        ImGui::SliderFloat("Z Influence"   , &m_ParticlesManager.m_ToastParticlesInstanceData.zInfluence, 0, 1);
-        ImGui::ColorEdit4 ("Inner Color"   , &m_ParticlesManager.m_ToastParticlesInstanceData.innerColor[0]);
-        ImGui::ColorEdit4 ("Outer Color"   , &m_ParticlesManager.m_ToastParticlesInstanceData.outerColor[0]);
+        ImGui::SliderFloat("Spawn Radius", &m_ParticlesManager.m_LeftReactorParticles.m_SpawnRadius, 0, 1);
+
+        ImGui::SliderFloat3("Origin"       , &m_ParticlesManager.m_LeftReactorParticlesInstanceData.origin[0], -1, 1);
+        ImGui::SliderFloat("Vel Multiplier", &m_ParticlesManager.m_LeftReactorParticlesInstanceData.velMultiplier, -10.f, 100.f);
+        ImGui::SliderFloat("Point Size"    , &m_ParticlesManager.m_LeftReactorParticlesInstanceData.pointSize, 0, 8.f);
+        ImGui::SliderFloat("Z Scale"       , &m_ParticlesManager.m_LeftReactorParticlesInstanceData.zScale, 0, 100.f);
+        ImGui::SliderFloat("Z Influence"   , &m_ParticlesManager.m_LeftReactorParticlesInstanceData.zInfluence, 0, 1);
+        ImGui::ColorEdit4 ("Inner Color"   , &m_ParticlesManager.m_LeftReactorParticlesInstanceData.innerColor[0]);
+        ImGui::ColorEdit4 ("Outer Color"   , &m_ParticlesManager.m_LeftReactorParticlesInstanceData.outerColor[0]);
+        ImGui::PopID();
+    }
+
+    if(ImGui::CollapsingHeader("Right Reactor Particles")) {
+        ImGui::PushID(42);
+        const int pcount = m_ParticlesManager.m_RightReactorParticles.getParticleCount();
+        int new_pcount = pcount;
+        ImGui::InputInt("Particle Count", &new_pcount);
+        if(new_pcount > pcount) {
+            m_ParticlesManager.m_RightReactorParticles.addParticles(new_pcount - pcount, m_ParticlesManager.m_RightReactorParticlesInstanceData);
+        } else if(new_pcount < pcount) {
+            m_ParticlesManager.m_RightReactorParticles.removeParticles(pcount - new_pcount);
+        }
+        ImGui::SliderFloat("Spawn Radius", &m_ParticlesManager.m_RightReactorParticles.m_SpawnRadius, 0, 1);
+
+        ImGui::SliderFloat3("Origin"       , &m_ParticlesManager.m_RightReactorParticlesInstanceData.origin[0], -1, 1);
+        ImGui::SliderFloat("Vel Multiplier", &m_ParticlesManager.m_RightReactorParticlesInstanceData.velMultiplier, -10.f, 100.f);
+        ImGui::SliderFloat("Point Size"    , &m_ParticlesManager.m_RightReactorParticlesInstanceData.pointSize, 0, 8.f);
+        ImGui::SliderFloat("Z Scale"       , &m_ParticlesManager.m_RightReactorParticlesInstanceData.zScale, 0, 100.f);
+        ImGui::SliderFloat("Z Influence"   , &m_ParticlesManager.m_RightReactorParticlesInstanceData.zInfluence, 0, 1);
+        ImGui::ColorEdit4 ("Inner Color"   , &m_ParticlesManager.m_RightReactorParticlesInstanceData.innerColor[0]);
+        ImGui::ColorEdit4 ("Outer Color"   , &m_ParticlesManager.m_RightReactorParticlesInstanceData.outerColor[0]);
+        ImGui::PopID();
     }
 
     if(ImGui::CollapsingHeader("Point Lights")) {
@@ -214,9 +392,9 @@ void Demo::renderGUI() {
             ImGui::PushID(i);
             if(ImGui::CollapsingHeader(txt)) {
                 ImGui::ColorEdit3("Intensity", &m_Lighting.pointLightIntensity[i][0]);
-                ImGui::SliderFloat3("Position", &m_Lighting.pointLightPosition[i][0], -sceneBoundary, sceneBoundary);
-                ImGui::SliderFloat("Range", &m_Lighting.pointLightRange[i], 0.01f, 1000);
-                ImGui::SliderFloat("Attenuation Factor", &m_Lighting.pointLightAttenuationFactor[i], 0, 100.f);
+                ImGui::InputFloat3("Position", &m_Lighting.pointLightPosition[i][0]);
+                ImGui::InputFloat("Range", &m_Lighting.pointLightRange[i]);
+                ImGui::SliderFloat("Attenuation Factor", &m_Lighting.pointLightAttenuationFactor[i], 0, 1.f);
             }
             ImGui::PopID();
         }
@@ -233,7 +411,13 @@ void Demo::renderGUI() {
         if(ImGui::CollapsingHeader("Directional Shadow Mapping")) {
             ImGui::Checkbox("Show Shadow Map", &m_DirectionalShadowMapping.m_GuiDisplaysShadowMap);
             ImGui::Text(m_DirectionalShadowMapping.m_IsDirty ? "Shadow Map is dirty" : "Shadow Map is not dirty");
-            ImGui::SliderFloat("Bias", &m_Lighting.dirLightShadowMapBias, 0, 10.f);
+
+            if(ImGui::SliderFloat3("Geom Center", &m_SceneCenterForShadowMap[0], -getCurrentSceneDiagonalLength() / 2.f, getCurrentSceneDiagonalLength() / 2.f))
+                m_DirectionalShadowMapping.m_IsDirty = true;
+            if(ImGui::SliderFloat("Geom Radius", &m_SceneRadiusForShadowMap, 0.01f, getCurrentSceneDiagonalLength()))
+                m_DirectionalShadowMapping.m_IsDirty = true;
+
+            ImGui::SliderFloat("Bias", &m_Lighting.dirLightShadowMapBias, 0, 0.1f);
             ImGui::SliderInt("Sample Count", &m_Lighting.dirLightShadowMapSampleCount, 1, 128);
             ImGui::SliderFloat("Spread", &m_Lighting.dirLightShadowMapSpread, 0, 0.01f);
             ImGui::Text("Resolution:");
@@ -314,30 +498,59 @@ void Demo::renderGUI() {
 }
 
 GLuint Demo::getHighestGeometryTextureUnit() const {
-    return m_EndOfTheWorld.m_GLTextures2D.size() + 2; // + 2 just in case
+    return 16; // Totally not a hack
 }
-void Demo::renderGeometry() {
+
+void Demo::renderGeometryForShadowMap() {
     switch(m_SceneID) {
-    case SCENEID_END_OF_THE_WORLD: m_EndOfTheWorld.render(); break;
     case SCENEID_CITY: m_City.render(); break;
+    case SCENEID_END_OF_THE_WORLD:
+        m_BaseBackTopLeft.render();
+        m_BaseBase       .render();
+        m_BaseDownLeft   .render();
+        m_BaseFrontLeft  .render();
+        m_BaseLeftBack   .render();
+        m_BaseLeftCenter .render();
+        m_BaseRightBack  .render();
+        m_BaseRight      .render();
+        m_Piste          .render();
+        m_Ship           .render();
+        // m_Sun            .render();
+        break;
+    }
+}
+
+void Demo::renderGeometry(const GLMaterialProgram& prog) {
+    switch(m_SceneID) {
+    case SCENEID_CITY:
+        m_City.render(prog, m_Camera, m_CityInstanceData);
+        break;
+    case SCENEID_END_OF_THE_WORLD:
+        m_BaseBackTopLeft.render(prog, m_Camera, m_BaseBackTopLeftInstanceData);
+        m_BaseDownLeft   .render(prog, m_Camera, m_BaseDownLeftInstanceData);
+        m_BaseFrontLeft  .render(prog, m_Camera, m_BaseFrontLeftInstanceData);
+        m_BaseLeftBack   .render(prog, m_Camera, m_BaseLeftBackInstanceData);
+        m_BaseLeftCenter .render(prog, m_Camera, m_BaseLeftCenterInstanceData);
+        m_BaseRightBack  .render(prog, m_Camera, m_BaseRightBackInstanceData);
+        m_BaseRight      .render(prog, m_Camera, m_BaseRightInstanceData);
+        m_BaseBase       .render(prog, m_Camera, m_EndOfTheWorldInstanceData);
+        m_Sun            .render(prog, m_Camera, m_EndOfTheWorldInstanceData);
+        m_Piste          .render(prog, m_Camera, m_EndOfTheWorldInstanceData);
+        m_Ship           .render(prog, m_Camera, m_ShipInstanceData);
+        break;
     }
     m_Skybox.render(m_Camera);
     if(m_PipelineKind == PIPELINE_FORWARD) {
         m_ParticlesManager.render(m_Camera);
-        m_Sprites.render(m_nWindowWidth, m_nWindowHeight);
     }
 }
-void Demo::renderGeometry(const GLMaterialProgram& prog) {
-    switch(m_SceneID) {
-    case SCENEID_END_OF_THE_WORLD: m_EndOfTheWorld.render(prog, m_Camera, m_EndOfTheWorldInstanceData); break;
-    case SCENEID_CITY: m_City.render(prog, m_Camera, m_CityInstanceData); break;
-    }
-	m_Skybox.render(m_Camera);
+
+void Demo::renderGeometryAfterPostFX() {
     if(m_PipelineKind == PIPELINE_FORWARD) {
-        m_ParticlesManager.render(m_Camera);
         m_Sprites.render(m_nWindowWidth, m_nWindowHeight);
     }
 }
+
 
 void Demo::renderFrame() {
     m_Lighting.dirLightDir = vec3(
@@ -352,8 +565,8 @@ void Demo::renderFrame() {
         const auto cosTheta = glm::cos(thetaRadians);
         return -glm::normalize(glm::vec3(sinPhi * cosTheta, -glm::sin(thetaRadians), cosPhi * cosTheta));
     };
-    const auto sceneCenter = (m_EndOfTheWorld.m_ObjData.bboxMin + m_EndOfTheWorld.m_ObjData.bboxMax) / 2.f;
-    const float sceneRadius = m_EndOfTheWorld.getDiagonalLength() / 2.f;
+    const auto& sceneCenter = m_SceneCenterForShadowMap;
+    const float& sceneRadius = m_SceneRadiusForShadowMap;
 
     // const auto dirLightUpVector = vec3(0,1,0);
     const auto dirLightUpVector = computeDirectionVectorUp(radians(m_DirLightPhiAngleDegrees), radians(m_DirLightThetaAngleDegrees));
@@ -368,7 +581,7 @@ void Demo::renderFrame() {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_DirectionalShadowMapping.m_Fbo);
         glViewport(0, 0, m_DirectionalShadowMapping.m_Resolution, m_DirectionalShadowMapping.m_Resolution);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        renderGeometry();
+        renderGeometryForShadowMap();
         glViewport(0, 0, m_nWindowWidth, m_nWindowHeight);
     }
 
@@ -501,6 +714,8 @@ void Demo::renderFrame() {
         glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
     }
+
+    renderGeometryAfterPostFX();
 }
 
 void Demo::update(float dt) {
@@ -512,8 +727,57 @@ void Demo::update(float dt) {
     }
     m_ParticlesManager.update(dt);
 
+    m_BaseBackTopLeftInstanceData.m_Position += (normalize(m_BaseBackTopLeftDirection) + m_AllShardsAddedDirection) * m_BaseBackTopLeftVelocityFactor * m_AllShardsVelocityFactor * dt;
+    m_BaseDownLeftInstanceData   .m_Position += (normalize(m_BaseDownLeftDirection   ) + m_AllShardsAddedDirection) * m_BaseDownLeftVelocityFactor    * m_AllShardsVelocityFactor * dt;
+    m_BaseFrontLeftInstanceData  .m_Position += (normalize(m_BaseFrontLeftDirection  ) + m_AllShardsAddedDirection) * m_BaseFrontLeftVelocityFactor   * m_AllShardsVelocityFactor * dt;
+    m_BaseLeftBackInstanceData   .m_Position += (normalize(m_BaseLeftBackDirection   ) + m_AllShardsAddedDirection) * m_BaseLeftBackVelocityFactor    * m_AllShardsVelocityFactor * dt;
+    m_BaseLeftCenterInstanceData .m_Position += (normalize(m_BaseLeftCenterDirection ) + m_AllShardsAddedDirection) * m_BaseLeftCenterVelocityFactor  * m_AllShardsVelocityFactor * dt;
+    m_BaseRightBackInstanceData  .m_Position += (normalize(m_BaseRightBackDirection  ) + m_AllShardsAddedDirection) * m_BaseRightBackVelocityFactor   * m_AllShardsVelocityFactor * dt;
+    m_BaseRightInstanceData      .m_Position += (normalize(m_BaseRightDirection      ) + m_AllShardsAddedDirection) * m_BaseRightVelocityFactor       * m_AllShardsVelocityFactor * dt;
+
+    switch(m_SceneID) {
+    case SCENEID_END_OF_THE_WORLD:
+        m_Lighting.pointLightIntensity[2] = m_ShipReactorStrength * vec3(255, 134, 56) / 255.f;
+        m_Lighting.pointLightIntensity[3] = m_ShipReactorStrength * vec3(255, 134, 56) / 255.f;
+        m_Lighting.pointLightPosition [2] = getShipLeftReactorPosition();
+        m_Lighting.pointLightPosition [3] = getShipRightReactorPosition();
+        break;
+    case SCENEID_CITY:
+        break;
+    }
+
+    m_ParticlesManager.m_LeftReactorParticlesInstanceData.origin = getShipLeftReactorPosition();
+    m_ParticlesManager.m_LeftReactorParticlesInstanceData.forward = -m_ShipInstanceData.m_Forward;
+
+    m_ParticlesManager.m_RightReactorParticlesInstanceData.origin = getShipRightReactorPosition();
+    m_ParticlesManager.m_RightReactorParticlesInstanceData.forward = -m_ShipInstanceData.m_Forward;
+
+
+
     if(!m_Story.isPlaying())
         return;
+
+
+
+    // FIXME(coraliegold):
+    // Mettre à true pour expérimenter, puis conditionner d'après getPlayheadTime() une fois prêt
+    if(false) {
+        m_ParticlesManager.m_LeftReactorParticles.addParticles(2, m_ParticlesManager.m_LeftReactorParticlesInstanceData);
+        m_ParticlesManager.m_RightReactorParticles.addParticles(2, m_ParticlesManager.m_RightReactorParticlesInstanceData);
+    }
+
+    // NOTE(coraliegold):
+    // - Quand les réacteurs sont en marche, il faut ajouter 2 particules à chaque frame.
+    //   On ne les supprime pas derrière (i.e on n'appelle jamais removeParticles(), point).
+    //
+    // - m_ShipReactorStrength est une variable entre 0 et 1 qui va changer l'intensité
+    //   des point lights des réacteurs.
+    //
+    // - m_ShipInstanceData.m_Position
+    // - m_ShipInstanceData.m_Forward
+    // - m_AllShardsAddedDirection
+    // - m_AllShardsVelocityFactor
+    // - ... Sinon voir le GUI
 
     const auto& s = m_Story;
     const float t = s.getPlayheadTime();
@@ -529,7 +793,7 @@ void Demo::update(float dt) {
 	m_PipelineKind = s.m_Pipeline.at(t);
 
     // Scene
-    m_SceneID = s.m_SceneID.at(t);
+    changeSceneIDAndConfigure(s.m_SceneID.at(t));
 
 	// Sprites
 	m_Sprites.m_SprAlpha[1] = s.m_SpritesYoanLecoqAlpha.at(t);
@@ -560,6 +824,7 @@ void Demo::update(float dt) {
 	m_PostFX.m_FragmentPass.m_BloomThreshold = s.m_BloomThreshold.at(t);
 
 	// Camera
+    m_Camera.setSpeed(m_CameraSpeed);
 	m_Camera.setMode(s.m_CameraMode.at(t));
 	m_Camera.m_LookAtData.m_Forward = s.m_CameraForward.at(t);
 	m_Camera.m_LookAtData.m_Target = s.m_CameraTarget.at(t);
@@ -598,15 +863,60 @@ Demo::Demo(int argc, char** argv):
     m_DirLightThetaAngleDegrees(260),
     m_ScreenCoverQuad(glmlv::makeScreenCoverQuad()),
     m_SceneID(SCENEID_END_OF_THE_WORLD),
-	m_EndOfTheWorld(m_Paths.m_AssetsRoot / "demo" / "models" / "end_of_the_world" / "end_of_the_world.obj"),
+
+    m_BaseBackTopLeft(m_Paths.m_AssetsRoot / "demo" / "models" / "end_of_the_world_2" / "BaseBackTopLeft.obj"),
+    m_BaseBase       (m_Paths.m_AssetsRoot / "demo" / "models" / "end_of_the_world_2" / "BaseBase.obj"),
+    m_BaseDownLeft   (m_Paths.m_AssetsRoot / "demo" / "models" / "end_of_the_world_2" / "BaseDownLeft.obj"),
+    m_BaseFrontLeft  (m_Paths.m_AssetsRoot / "demo" / "models" / "end_of_the_world_2" / "BaseFrontLeft.obj"),
+    m_BaseLeftBack   (m_Paths.m_AssetsRoot / "demo" / "models" / "end_of_the_world_2" / "BaseLeftBack.obj"),
+    m_BaseLeftCenter (m_Paths.m_AssetsRoot / "demo" / "models" / "end_of_the_world_2" / "BaseLeftCenter.obj"),
+    m_BaseRightBack  (m_Paths.m_AssetsRoot / "demo" / "models" / "end_of_the_world_2" / "BaseRightBack.obj"),
+    m_BaseRight      (m_Paths.m_AssetsRoot / "demo" / "models" / "end_of_the_world_2" / "BaseRight.obj"),
+    m_Piste          (m_Paths.m_AssetsRoot / "demo" / "models" / "end_of_the_world_2" / "Piste.obj"),
+    m_Ship           (m_Paths.m_AssetsRoot / "demo" / "models" / "end_of_the_world_2" / "Ship.obj"),
+    m_Sun            (m_Paths.m_AssetsRoot / "demo" / "models" / "end_of_the_world_2" / "Sun.obj"),
+
 	m_EndOfTheWorldInstanceData(),
+	m_ShipInstanceData(),
+    m_BaseBackTopLeftInstanceData(),
+    m_BaseDownLeftInstanceData   (),
+    m_BaseFrontLeftInstanceData  (),
+    m_BaseLeftBackInstanceData   (),
+    m_BaseLeftCenterInstanceData (),
+    m_BaseRightBackInstanceData  (),
+    m_BaseRightInstanceData      (),
+
+    m_AllShardsAddedDirection(0),
+    m_BaseBackTopLeftDirection(-1,0,0),
+    m_BaseDownLeftDirection   (-1,-0.3,0.7),
+    m_BaseFrontLeftDirection  (-1,0,-0.7),
+    m_BaseLeftBackDirection   (-0.2,0,1),
+    m_BaseLeftCenterDirection (-1,0,0.7),
+    m_BaseRightBackDirection  (0.3,0,1),
+    m_BaseRightDirection      (1,0,0.2),
+
+    m_AllShardsVelocityFactor(0),
+    m_BaseBackTopLeftVelocityFactor(1),
+    m_BaseDownLeftVelocityFactor   (1),
+    m_BaseFrontLeftVelocityFactor  (1),
+    m_BaseLeftBackVelocityFactor   (1),
+    m_BaseLeftCenterVelocityFactor (1),
+    m_BaseRightBackVelocityFactor  (1),
+    m_BaseRightVelocityFactor      (1),
+
+    m_ShipReactorStrength(0),
+
 	m_City(m_Paths.m_AssetsRoot / "demo" / "models" / "city" / "city.obj"),
 	m_CityInstanceData(),
+
+    m_SceneCenterForShadowMap(0),
+    m_SceneRadiusForShadowMap(m_Sun.getDiagonalLength() / 2.f),
+
     m_Sprites(m_Paths),
     m_Camera(m_GLFWHandle.window(), m_nWindowWidth, m_nWindowHeight),
-    m_CameraMaxSpeed(m_EndOfTheWorld.getDiagonalLength() / 2.f),
+    m_CameraMaxSpeed(m_Sun.getDiagonalLength() / 2.f),
     m_CameraSpeed(m_CameraMaxSpeed / 5.f),
-    m_Skybox(m_Paths, m_EndOfTheWorld.getDiagonalLength() / 2.f),
+    m_Skybox(m_Paths, m_Sun.getDiagonalLength() / 2.f),
     m_ParticlesManager(m_Paths),
     m_Story(m_Paths)
 {
@@ -631,4 +941,8 @@ Demo::Demo(int argc, char** argv):
         m_Lighting.pointLightAttenuationFactor[i] = 1;
     }
     m_Lighting.dirLightShadowMapBias = 0.05f;
+
+    // Force update
+    m_SceneID = -1;
+    changeSceneIDAndConfigure(SCENEID_END_OF_THE_WORLD);
 }

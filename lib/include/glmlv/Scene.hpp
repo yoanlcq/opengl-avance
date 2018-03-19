@@ -17,7 +17,32 @@ namespace glmlv
 {
 
 struct SceneInstanceData {
-    glm::mat4 modelMatrix = glm::mat4(1);
+    glm::vec3 m_Position;
+    glm::vec3 m_Forward = glm::vec3(0,0,-1);
+    glm::vec3 m_Scale = glm::vec3(1);
+
+    glm::mat4 getTranslationMatrix() const {
+        return glm::translate(glm::mat4(1), m_Position);
+    }
+    glm::mat4 getRotationMatrix() const {
+        return glm::mat4_cast(quatLookAt(m_Forward, glm::vec3(0,1,0)));
+    }
+    glm::mat4 getScaleMatrix() const {
+        return glm::scale(glm::mat4(1), m_Scale);
+    }
+    glm::mat4 getModelMatrix() const {
+        return getTranslationMatrix() * getRotationMatrix() * getScaleMatrix();
+    }
+
+    // https://github.com/g-truc/glm/pull/659/commits/3ee83a15ef776cd9db9af29d3426bb9d7c39e6a2
+    static glm::quat quatLookAt(const glm::vec3& direction, const glm::vec3& up) {
+        using namespace glm;
+        mat3 Result;
+        Result[2] = -normalize(direction);
+        Result[0] = normalize(cross(up, Result[2]));
+        Result[1] = cross(Result[2], Result[0]);
+        return quat_cast(Result);
+    }
 };
 
 // A scene loaded from an OBJ file; Contains both the on-CPU and on-GPU data.
@@ -60,7 +85,7 @@ struct Scene {
     void render(const GLMaterialProgram& prog, const Camera& camera, const SceneInstanceData& instance) const {
         const auto& view = camera.getViewMatrix();
         const auto& proj = camera.getProjMatrix();
-        glm::mat4 modelView(view * instance.modelMatrix);
+        glm::mat4 modelView(view * instance.getModelMatrix());
         glm::mat4 modelViewProj(proj * modelView);
         glm::mat4 normalMatrix(transpose(inverse(modelView)));
 

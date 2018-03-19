@@ -33,7 +33,7 @@ int Application::run()
     m_ViewController.setSpeed(cameraSpeed);
 
     SceneInstanceData sceneInstance;
-    sceneInstance.modelMatrix = translate(mat4(1), vec3(2,0,-2));
+    sceneInstance.m_Position = vec3(2,0,-2);
 
     int currentGBufferTextureType = GNormal;
 

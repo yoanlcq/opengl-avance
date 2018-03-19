@@ -99,35 +99,57 @@ public:
         Sphere,
         Disk
     };
+    struct InstanceData {
+        // Compute shader - update
+        float velMultiplier   = 1.f;
+        // Vertex-Fragment shader - render
+        glm::vec3 origin      = glm::vec3(0.f);
+        glm::vec3 forward     = glm::vec3(1.f);
+        float pointSize       = 8.f;
+        float zScale          = 1000.f;
+        float zInfluence      = 1.f;
+        glm::vec4 innerColor  = glm::vec4(1.f, 0.9f, 0.3f, 1.0f);
+        glm::vec4 outerColor  = glm::vec4(1.f, 0.2f, 0.0f, 0.0f);
+
+        glm::mat4 getTranslationMatrix() const {
+            return glm::translate(glm::mat4(1.f), origin);
+        }
+        glm::mat4 getRotationMatrix() const {
+            return glm::mat4_cast(glmlv::SceneInstanceData::quatLookAt(forward, glm::vec3(0,1,0)));
+        }
+        glm::mat4 getModelMatrix() const {
+            return getTranslationMatrix() * getRotationMatrix();
+        }
+    };
+
 private:
 
     GLuint m_Vao = 0, m_PositionBo = 0, m_VelocityBo = 0;
     const size_t m_MaxParticleCount;
     size_t m_ParticleCount;
-    const Shape m_Shape;
-    float m_SpawnRadius;
 
     struct HostData {
         std::vector<glm::vec4> pos, vel;
 
-        HostData(size_t count, Shape shape, float radius):
+        HostData(size_t count, Shape shape, float radius, const InstanceData& instanceData):
             pos(count), vel(count)
         {
+            const auto m = instanceData.getModelMatrix();
             switch(shape) {
             case Shape::Sphere:
                 for(size_t i=0 ; i<count ; ++i) {
-                    pos[i] = glm::vec4(glm::sphericalRand(radius), 1);
-                    vel[i] = glm::vec4(glm::sphericalRand(radius) / 10.f, 0);
+                    pos[i] = m * glm::vec4(glm::sphericalRand(radius), 1);
+                    vel[i] = m * glm::vec4(glm::sphericalRand(radius) / 10.f, 0);
                 }
                 break;
             case Shape::Disk:
                 for(size_t i=0 ; i<count ; ++i) {
-                    const auto ax = glm::radians(glm::linearRand(-60.f, 60.f));
-                    const auto ay = glm::radians(glm::linearRand(-60.f, 60.f));
+                    const auto ax = glm::radians(glm::linearRand(-20.f, 20.f));
+                    const auto ay = glm::radians(glm::linearRand(-20.f, 20.f));
                     const auto rx = glm::rotate(glm::mat4(1), ax, glm::vec3(1,0,0));
                     const auto ry = glm::rotate(glm::mat4(1), ay, glm::vec3(0,1,0));
-                    vel[i] = rx * ry * glm::vec4(0,0,1,0);
-                    pos[i] = glm::vec4(glm::diskRand(radius), 0, 1);
+                    vel[i] = m * rx * ry * glm::vec4(0,0,-1,0);
+                    pos[i] = m * glm::vec4(glm::diskRand(radius), 0, 1);
                 }
                 break;
             }
@@ -136,21 +158,8 @@ private:
 
 public:
 
-    struct InstanceData {
-        // Compute shader - update
-        float velMultiplier   = 1.f;
-        // Vertex-Fragment shader - render
-        glm::vec3 origin      = glm::vec3(0.f);
-        float pointSize       = 8.f;
-        float zScale          = 1000.f;
-        float zInfluence      = 1.f;
-        glm::vec4 innerColor  = glm::vec4(1.f, 0.9f, 0.3f, 1.0f);
-        glm::vec4 outerColor  = glm::vec4(1.f, 0.2f, 0.0f, 0.0f);
-
-        glm::mat4 getModelMatrix() const {
-            return glm::translate(glm::mat4(1.f), origin);
-        }
-    };
+    Shape m_Shape;
+    float m_SpawnRadius;
 
     ~Particles() {
         glDeleteBuffers(1, &m_PositionBo);
@@ -178,24 +187,24 @@ public:
         glBufferData(GL_COPY_READ_BUFFER,  m_MaxParticleCount * sizeof(glm::vec4), nullptr, GL_DYNAMIC_COPY);
         glBufferData(GL_COPY_WRITE_BUFFER, m_MaxParticleCount * sizeof(glm::vec4), nullptr, GL_DYNAMIC_COPY);
 
-        addParticles(count);
+        // addParticles(count);
 
         glBindVertexArray(m_Vao);
         glBindBuffer(GL_ARRAY_BUFFER, m_PositionBo);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), nullptr);
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), nullptr);
     }
 
     size_t getParticleCount() const { return m_ParticleCount; }
     size_t getMaxParticleCount() const { return m_MaxParticleCount; }
 
-    void addParticles(size_t count) {
+    void addParticles(size_t count, const InstanceData& instanceData) {
         if(m_ParticleCount >= m_MaxParticleCount)
             return;
 
         count = std::min(count, m_MaxParticleCount - m_ParticleCount);
         assert(m_ParticleCount + count <= m_MaxParticleCount);
-        const HostData d(count, m_Shape, m_SpawnRadius);
+        const HostData d(count, m_Shape, m_SpawnRadius, instanceData);
 
         glBindBuffer(GL_COPY_READ_BUFFER,  m_PositionBo);
         glBindBuffer(GL_COPY_WRITE_BUFFER, m_VelocityBo);
@@ -215,7 +224,8 @@ public:
     }
     void render(const GLParticlesRenderingProgram& prog, const glmlv::Camera& camera, const InstanceData& i) const {
         prog.setUniformModelViewProjMatrix(
-            camera.getProjMatrix() * camera.getViewMatrix() * i.getModelMatrix()
+            // camera.getProjMatrix() * camera.getViewMatrix() * i.getModelMatrix()
+            camera.getProjMatrix() * camera.getViewMatrix()
         );
         prog.setUniformPointSize(i.pointSize);
         prog.setUniformZScale(i.zScale);
@@ -349,10 +359,6 @@ struct Paths {
         {}
 };
 
-// TODO(yoanlcq):
-// - Make all of this tweakable via GUI;
-// - Grant ability for texcoords to vary;
-
 template<typename T> struct Rect {
     T x, y, w, h;
     Rect(T x, T y, T w, T h) : x(x), y(y), w(w), h(h) {}
@@ -472,9 +478,10 @@ struct Sprites {
 struct ParticlesManager {
     GLParticlesSimulationProgram m_SimulationProgram;
     GLParticlesRenderingProgram m_RenderingProgram;
-    Particles m_ToastParticles;
-    glm::vec3 m_ToastParticlesOrigin;
-    Particles::InstanceData m_ToastParticlesInstanceData;
+    Particles m_LeftReactorParticles;
+    Particles m_RightReactorParticles;
+    Particles::InstanceData m_LeftReactorParticlesInstanceData;
+    Particles::InstanceData m_RightReactorParticlesInstanceData;
 
     ParticlesManager(const Paths& paths): 
         m_SimulationProgram(paths.m_AppShaders / "particles.cs.glsl"),
@@ -482,8 +489,10 @@ struct ParticlesManager {
             paths.m_AppShaders / "particles.vs.glsl",
             paths.m_AppShaders / "particles.fs.glsl"
         ),
-        //m_ToastParticles(1<<17, Particles::Shape::Disk, 321.f)
-		m_ToastParticles(0, Particles::Shape::Disk, 321.f) // Todo (coraliegold) : show particles when animation done
+        // NOTE: Do NOT set first argument to zero: It's the max number of particles
+        // and is set once.
+		m_LeftReactorParticles(1<<17, Particles::Shape::Disk, 321.f),
+		m_RightReactorParticles(1<<17, Particles::Shape::Disk, 321.f)
     {
 		glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
         glEnable(GL_PROGRAM_POINT_SIZE);
@@ -495,13 +504,15 @@ struct ParticlesManager {
         glEnable(GL_BLEND);
         // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        m_ToastParticles.render(m_RenderingProgram, cam, m_ToastParticlesInstanceData);
+        m_LeftReactorParticles.render(m_RenderingProgram, cam, m_LeftReactorParticlesInstanceData);
+        m_RightReactorParticles.render(m_RenderingProgram, cam, m_RightReactorParticlesInstanceData);
         glDisable(GL_BLEND);
         glDepthMask(GL_TRUE);
     }
     void update(float dt) {
         m_SimulationProgram.use();
-        m_ToastParticles.update(m_SimulationProgram, dt, m_ToastParticlesInstanceData);
+        m_LeftReactorParticles.update(m_SimulationProgram, dt, m_LeftReactorParticlesInstanceData);
+        m_RightReactorParticles.update(m_SimulationProgram, dt, m_RightReactorParticlesInstanceData);
     }
 };
 
@@ -1497,9 +1508,17 @@ private:
     void update(float dt);
     void renderGUI();
     void renderFrame();
-    void renderGeometry();
+    void renderGeometryForShadowMap();
     void renderGeometry(const glmlv::GLMaterialProgram&);
+    void renderGeometryAfterPostFX();
     GLuint getHighestGeometryTextureUnit() const;
+    glmlv::Scene& getCurrentScene();
+    const glmlv::Scene& getCurrentScene() const;
+    float getCurrentSceneDiagonalLength() const;
+    glm::vec3 getCurrentSceneCenter() const;
+    void changeSceneIDAndConfigure(int sceneID);
+    glm::vec3 getShipLeftReactorPosition() const;
+    glm::vec3 getShipRightReactorPosition() const;
 
     // NOTE: Make it static, so that the char pointer's lifetime is unbounded.
     // With the old code, the memory was freed before ImGUI wrote to the ini filename.
@@ -1522,13 +1541,58 @@ private:
     float m_DirLightThetaAngleDegrees; // Angle around X
     glmlv::GLMesh m_ScreenCoverQuad;
     int m_SceneID;
-	glmlv::Scene m_EndOfTheWorld;
+
+    glmlv::Scene m_BaseBackTopLeft;
+    glmlv::Scene m_BaseBase       ;
+    glmlv::Scene m_BaseDownLeft   ;
+    glmlv::Scene m_BaseFrontLeft  ;
+    glmlv::Scene m_BaseLeftBack   ;
+    glmlv::Scene m_BaseLeftCenter ;
+    glmlv::Scene m_BaseRightBack  ;
+    glmlv::Scene m_BaseRight      ;
+    glmlv::Scene m_Piste          ;
+    glmlv::Scene m_Ship           ;
+    glmlv::Scene m_Sun            ;
+
 	glmlv::SceneInstanceData m_EndOfTheWorldInstanceData;
+	glmlv::SceneInstanceData m_ShipInstanceData;
+    glmlv::SceneInstanceData m_BaseBackTopLeftInstanceData;
+    glmlv::SceneInstanceData m_BaseDownLeftInstanceData   ;
+    glmlv::SceneInstanceData m_BaseFrontLeftInstanceData  ;
+    glmlv::SceneInstanceData m_BaseLeftBackInstanceData   ;
+    glmlv::SceneInstanceData m_BaseLeftCenterInstanceData ;
+    glmlv::SceneInstanceData m_BaseRightBackInstanceData  ;
+    glmlv::SceneInstanceData m_BaseRightInstanceData      ;
+
+    glm::vec3 m_AllShardsAddedDirection;
+    glm::vec3 m_BaseBackTopLeftDirection;
+    glm::vec3 m_BaseDownLeftDirection   ;
+    glm::vec3 m_BaseFrontLeftDirection  ;
+    glm::vec3 m_BaseLeftBackDirection   ;
+    glm::vec3 m_BaseLeftCenterDirection ;
+    glm::vec3 m_BaseRightBackDirection  ;
+    glm::vec3 m_BaseRightDirection      ;
+
+    float m_AllShardsVelocityFactor;
+    float m_BaseBackTopLeftVelocityFactor;
+    float m_BaseDownLeftVelocityFactor   ;
+    float m_BaseFrontLeftVelocityFactor  ;
+    float m_BaseLeftBackVelocityFactor   ;
+    float m_BaseLeftCenterVelocityFactor ;
+    float m_BaseRightBackVelocityFactor  ;
+    float m_BaseRightVelocityFactor      ;
+
+    float m_ShipReactorStrength;
+
 	glmlv::Scene m_City;
 	glmlv::SceneInstanceData m_CityInstanceData;
+
+    glm::vec3 m_SceneCenterForShadowMap;
+    float m_SceneRadiusForShadowMap;
+
     Sprites m_Sprites;
     glmlv::Camera m_Camera;
-    const float m_CameraMaxSpeed;
+    float m_CameraMaxSpeed;
     float m_CameraSpeed;
     Skybox m_Skybox;
     ParticlesManager m_ParticlesManager;

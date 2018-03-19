@@ -46,7 +46,7 @@ int Application::run()
     cubeInstance.textureUnit = cubeTextureUnit;
 
     SceneInstanceData sceneInstance;
-    sceneInstance.modelMatrix = translate(mat4(1), vec3(2,0,-2));
+    sceneInstance.m_Position = vec3(2,0,-2);
 
     // Loop until the user closes the window
     for (auto iterationCount = 0u; !m_GLFWHandle.shouldClose(); ++iterationCount)
