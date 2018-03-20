@@ -106,8 +106,8 @@ public:
         glm::vec3 origin      = glm::vec3(0.f);
         glm::vec3 forward     = glm::vec3(1.f);
         float pointSize       = 8.f;
-        float zScale          = 1000.f;
-        float zInfluence      = 1.f;
+        float zScale          = 20000.f;
+        float zInfluence      = 0.2;
         glm::vec4 innerColor  = glm::vec4(1.f, 0.9f, 0.3f, 1.0f);
         glm::vec4 outerColor  = glm::vec4(1.f, 0.2f, 0.0f, 0.0f);
 
@@ -403,7 +403,7 @@ struct Sprites {
     Sprites() = delete;
     Sprites(const Paths& paths):
         m_AtlasTexture {
-            paths.m_AppAssets / "images" / "imac_gris_numerique_petit.png",
+            paths.m_AppAssets / "images" / "imac_rvb_numerique_petit.png",
             paths.m_AppAssets / "images" / "texts.png"
         },
         m_SprPosition {
@@ -977,14 +977,6 @@ class Story {
 public:
     const glmlv::fs::path m_SoundtrackWavPath;
 
-    // TODO(coraliegold): Add new timelines as needed.
-    // Every property that needs to change over time needs a timeline.
-    /*const Timeline<glmlv::Camera::Mode> m_CameraMode;
-    const Timeline<glm::vec3> m_CameraForward;
-    const Timeline<glm::vec2> m_CameraNoiseFactor;
-    const Timeline<float> m_CameraNoiseSpeed;
-    const Timeline<float> m_CameraFovY;*/
-
 	const Timeline<int> m_Pipeline;
 
 	const Timeline<float> m_SpritesYoanLecoqAlpha;
@@ -1004,10 +996,12 @@ public:
 	const Timeline<float> m_ComputePassGamma;
 	const Timeline<glm::vec3> m_ComputePassFinalTouchAdd;
 	const Timeline<glm::vec3> m_ComputePassFinalTouchMul;
+	const Timeline<float> m_Glitch;
 
 	const Timeline<bool> m_FragmentPass;
 	const Timeline<int> m_BlurKind;
-	const Timeline<int> m_BlurHalfSide;
+	const Timeline<int> m_BlurSamples;
+	const Timeline<float> m_BlurLength;
 	const Timeline<bool> m_Bloom;
 	const Timeline<float> m_BloomHalfSide;
 	const Timeline<float> m_BloomTexelSkip;
@@ -1043,9 +1037,7 @@ public:
         m_IsGuiKeyHeld(false),
         m_PlayheadTime(0),
         m_SoundtrackWavPath(paths.m_AppAssets / "music" / "outsider.wav"),
-        // TODO(coraliegold): Here, keyframes are specified for each timeline.
-        // It's backed by a std::map so one can also run some logic in the constructor.
-		
+	
 
 		/****** Pipeline ******/
 
@@ -1128,11 +1120,12 @@ public:
 		}),
 
 		m_SpritesIMACAlpha(Interpolations::lerp, {
-		// Plan 1
+			// Plan 1
 			{ 0, 0 },
 			// Plan 19
-			{ 84, 0 },
-			{ 87, 1 },
+			{ 82, 0 },
+			{ 84, 1 },
+			{ 86, 0 },
 		}),
 
 
@@ -1148,33 +1141,37 @@ public:
 			{ 0, 0 },
 			{ 2, 1 },
 			// Plan 6
-			{ 28.6, 1 },
-			{ 28.7, 16 },
-			{ 29.0, 1 },
+			{ 28.3, 1 },
+			{ 28.35, 16 },
+			{ 28.5, 1 },
 			// Plan 19
-			{ 82, 1 },
-			{ 90, 0 },
+			{ 78, 1 },
+			{ 82, 0 },
 		}),
 		m_ComputePassFinalTouchAdd(Interpolations::lerp3, {
 			// Plan 1
 			{ 0, glm::vec3(0) },
 			{ 2, glm::vec3(0) },
 			// Plan 6
-			{ 28.6, glm::vec3(0) },
-			{ 28.7, glm::vec3(2) },
-			{ 28.8, glm::vec3(0) },
+			{ 28.3, glm::vec3(0) },
+			{ 28.35, glm::vec3(2) },
+			{ 28.5, glm::vec3(0) },
 		}),
 		m_ComputePassFinalTouchMul(Interpolations::lerp3, {
 			// Plan 1
 			{ 0, glm::vec3(-2) },
 			{ 2, glm::vec3(1) },
 			// Plan 6
-			{ 28.6, glm::vec3(1) },
-			{ 28.7, glm::vec3(2) },
-			{ 28.8, glm::vec3(1) },
+			{ 28.3, glm::vec3(1) },
+			{ 28.35, glm::vec3(2) },
+			{ 28.5, glm::vec3(1) },
 			// Plan 19
-			{ 82, glm::vec3(1) },
-			{ 90, glm::vec3(-2) },
+			{ 78, glm::vec3(1) },
+			{ 82, glm::vec3(-2) },
+		}),
+		m_Glitch(Interpolations::lerp, {
+			// Plan 1
+			{ 0, 0 },
 		}),
 
 
@@ -1183,75 +1180,67 @@ public:
 
 		m_FragmentPass(Interpolations::lower<bool>, {
 			// Plan 1
-			{ 0, false },
-			// Plan 8
-			{ 33, true },
-			// Plan 9
-			{ 36, false },
-			// Plan 11
-			{ 42, true },
-			// Plan 12
-			{ 45, false },
-			// Plan 13
-			{ 49, true },
-			// Plan 14
-			{ 53, false },
+			{ 0, true },
 		}),
 
 		m_BlurKind(Interpolations::lower<int>, {
 			// Plan 1
-			{ 0, 1 },
-		}),
-		m_BlurHalfSide(Interpolations::lower<int>, {
-			// Plan 1
 			{ 0, 3 },
+		}),
+		m_BlurSamples(Interpolations::lower<int>, {
+			// Plan 1
+			{ 0, 64 },
+		}),
+		m_BlurLength(Interpolations::lerp, {
+			// Plan 1
+			{ 0, 0.250 },
 		}),
 
 		m_Bloom(Interpolations::lower<bool>, {
 			// Plan 1
-			{ 0, false },
+			{ 0, true },
 			// Plan 8
-			{ 33, true },
+			{ 33, false },
 			// Plan 9
-			{ 36, false },
+			{ 36, true },
 			// Plan 11
-			{ 42, true },
+			{ 42, false },
 			// Plan 12
-			{ 45, false },
+			{ 45, true },
 			// Plan 13
-			{ 49, true },
+			{ 49, false },
 			// Plan 14
-			{ 53, false },
+			{ 53, true },
 		}),
 		m_BloomHalfSide(Interpolations::lower<int>, {
 			// Plan 1
-			{ 0, 3 },
+			{ 0, 1 },
 		}),
 		m_BloomTexelSkip(Interpolations::lower<float>, {
 			// Plan 1
-			{ 0, 5.5 },
-			// Plan 8
-			{ 32.99, 5.5 },
-			{ 33, 0.6 },
-			// Plan 9
-			{ 35.99, 0.6 },
-			{ 36, 5.5 },
-			// Plan 11
-			{ 41.99, 5.5 },
-			{ 42, 0.6 },
-			// Plan 12
-			{ 44.99, 0.6 },
-			{ 45, 5.5 },
-			// Plan 13
-			{ 48.99, 5.5 },
-			{ 49, 0.6 },
-			// Plan 14
-			{ 52.99, 0.6 },
-			{ 53, 5.5 },
+			{ 0, 0.9 },
 		}),
 		m_BloomThreshold(Interpolations::lower<float>, {
 			// Plan 1
 			{ 0, 0.125 },
+			// Plan 8
+			{ 32.99, 0.125 },
+			{ 33, 0.9 },
+			// Plan 9
+			{ 35.99, 0.9 },
+			{ 36, 0.125 },
+			// Plan 11
+			{ 41.99, 0.125 },
+			{ 42, 0.9 },
+			// Plan 12
+			{ 44.99, 0.9 },
+			{ 45, 0.125 },
+			// Plan 13
+			{ 48.99, 0.125 },
+			{ 49, 0.9 },
+			// Plan 14
+			{ 52.99, 0.9 },
+			{ 53, 0.125 },
 		}),
 
 
@@ -1268,7 +1257,7 @@ public:
 			// Plan 11
 			{ 42.0, glmlv::Camera::Mode::FreeFly },
 			// Plan 12
-			{ 45, glmlv::Camera::Mode::LookAt },
+			{ 45.0, glmlv::Camera::Mode::LookAt },
 			// Plan 13
 			{ 49, glmlv::Camera::Mode::FreeFly },
 			// Plan 14
@@ -1293,10 +1282,10 @@ public:
 			// Plan 5
 			{ 21, glm::vec3(-5, -5, -5) },
 			// Plan 6
-			{ 28.7, glm::vec3(-3, 0, -1.5) },
+			{ 28.49, glm::vec3(-3, 0, -1.5) },
 			// Plan 7
-			{ 28.81, glm::vec3(-3, 0, -1.5) },
-			{ 29, glm::vec3(-25, 15, -35) },
+			{ 28.5, glm::vec3(0.04, -15.3, -0.05) },
+			{ 28.7, glm::vec3(-25, 15, -35) },
 			{ 30, glm::vec3(-15, 15, -35) },
 			{ 31, glm::vec3(-5, 15, -35) },
 			{ 32, glm::vec3(5, 15, -35) },
@@ -1372,44 +1361,41 @@ public:
 			// Plan 1
 			{ 0, 3.124 },
 			// Plan 2
+			{ 1.7, 3.124 },
 			{ 5.2, 1 },
 		}),
 		m_CameraFreeflyPosition(Interpolations::lerp3, {
 			// Plan 1
 			{ 0, glm::vec3(0, 0, 0) },
 			// Plan 8
-			{ 32.99, glm::vec3(0, 0, -0.5) },
-			{ 33, glm::vec3(0, 0, -0.5) },
+			{ 32.99, glm::vec3(-0.6, 0.04, -1.8) },
+			{ 33, glm::vec3(-0.6, 0.04, -1.8) },
 			// Plan 9
-			{ 35.99, glm::vec3(0, 0, 0) },
+			{ 35.99, glm::vec3(-0.6, 0.04, -1.8) },
 			{ 36.0, glm::vec3(0, 0, 0) },
 			// Plan 11
-			{ 41.99, glm::vec3(0, 0, -0.5) },
-			{ 42.0, glm::vec3(0.3, 0, 0.2) },
+			{ 41.98, glm::vec3(0, 0, 0) },
+			{ 41.99, glm::vec3(-0.3, 0.12, -0.7) },
 			// Plan 12
-			{ 44.99, glm::vec3(0, 0, 0) },
+			{ 44.99, glm::vec3(-0.2, 0.09, -0.5) },
 			{ 45, glm::vec3(0, 0, 0) },
 			// Plan 13
 			{ 48.99, glm::vec3(0, 0, 0) },
-			{ 49, glm::vec3(0.5, 0.2, 0.4) },
-			// Plan 14
-			{ 52.99, glm::vec3(0.5, 0.2, 0.4) },
-			{ 53, glm::vec3(0.6, 0.2, 0.4) },
+			{ 49, glm::vec3(1.12, 0.55, 0.04) },
+			{ 53, glm::vec3(1.12, 0.55, 0.04) },
 		}),
 		m_CameraFreeflyForward(Interpolations::lerp3, {
 			// Plan 8
-			{ 33, glm::vec3(0, 0, 0.009) },
-			{ 35.99 , glm::vec3(0, 0, 0.009) },
+			{ 33, glm::vec3(0.008, 0, 0.002) },
+			{ 35.99 , glm::vec3(0.002, 0, 0.007) },
 
 			// Plan 11
-			{ 41.9, glm::vec3(0, 0, 0.009) },
-			{ 42, glm::vec3(0, 0, 0.009) },
-			{ 44.99, glm::vec3(0, 0, 0.009) },
+			{ 41.99, glm::vec3(0.04, -0.009, 0.08) },
+			{ 44.99, glm::vec3(0.04, -0.009, 0.08) },
 
 			// Plan 13
-			{ 48.99, glm::vec3(0, 0, 0.009) },
-			{ 49, glm::vec3(0, 0, 0.009) },
-			{ 52.99, glm::vec3(-0.006, -0.003, -0.006) },
+			{ 48.99, glm::vec3(-0.04, -0.09, 0.008) },
+			{ 53, glm::vec3(-0.09, 0.025, 0.0015) },
 		}),
 
 
@@ -1455,18 +1441,19 @@ public:
 
 		m_EndOfTheWorldDataShardsDirection(Interpolations::lower<glm::vec3>, {
 			// Plan 1
-			{ 0, glm::vec3(0, -1.5, 1)},
-		}),
+			{ 0, glm::vec3(0, 0, 0) },
 
+			// Plan 10
+			{ 39, glm::vec3(0, -1.5, 1)},
+		}),
 		m_EndOfTheWorldDataShardsVelocity(Interpolations::lerp, {
 			// Plan 1
 			{ 0, 0 },
 				
 			// Plan 10
 			{ 38.99, 0 },
-			{ 39, 0.750 },
+			{ 39, 0.650 },
 		}),
-
 		m_ShipReactorStrength(Interpolations::lerp, {
 			// Plan 1
 			{ 0, 0 },
@@ -1475,26 +1462,24 @@ public:
 			{ 53, 0 },
 			{ 55, 1 },
 		}),
-
 		m_ShipForward(Interpolations::lerp3, {
 			// Plan 1
 			{ 0, glm::vec3(0, 0, -1) },
 
 			// Plan 15
 			{ 55, glm::vec3(0, 0, -1) },
-			{ 57, glm::vec3(1, 1, 0) },
+			{ 58.99, glm::vec3(0.2, 0.2, -0.5) },
+			{ 59, glm::vec3(1, 1, 0) },
 		}),
-
 		m_ShipPosition(Interpolations::lerp3, {
 			// Plan 1
 			{ 0, glm::vec3(0, 0, 0) },
 
 			// Plan 15
 			{ 55, glm::vec3(0, 0, 0) },
-			{ 59, glm::vec3(50, 15, -30) },
-
-			// Plan 16
-			{ 63, glm::vec3(100, 15, -60) },
+			{ 59, glm::vec3(2, 1, 0) },
+			{ 69.99, glm::vec3(90, 60, 0) },
+			{ 70, glm::vec3(500, 60, 0) },
 		})
         {}
 		

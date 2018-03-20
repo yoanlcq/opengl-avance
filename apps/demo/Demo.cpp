@@ -748,9 +748,11 @@ void Demo::update(float dt) {
 
     m_ParticlesManager.m_LeftReactorParticlesInstanceData.origin = getShipLeftReactorPosition();
     m_ParticlesManager.m_LeftReactorParticlesInstanceData.forward = -m_ShipInstanceData.m_Forward;
+	m_ParticlesManager.m_LeftReactorParticlesInstanceData.velMultiplier = 15.f;
 
     m_ParticlesManager.m_RightReactorParticlesInstanceData.origin = getShipRightReactorPosition();
     m_ParticlesManager.m_RightReactorParticlesInstanceData.forward = -m_ShipInstanceData.m_Forward;
+	m_ParticlesManager.m_RightReactorParticlesInstanceData.velMultiplier = 15.f;
 
 
 
@@ -761,7 +763,7 @@ void Demo::update(float dt) {
 
     // FIXME(coraliegold):
     // Mettre à true pour expérimenter, puis conditionner d'après getPlayheadTime() une fois prêt
-	if (m_Story.getPlayheadTime() >= 53) {
+	if (m_Story.getPlayheadTime() >= 54) {
         m_ParticlesManager.m_LeftReactorParticles.addParticles(2, m_ParticlesManager.m_LeftReactorParticlesInstanceData);
         m_ParticlesManager.m_RightReactorParticles.addParticles(2, m_ParticlesManager.m_RightReactorParticlesInstanceData);
     }
@@ -814,10 +816,13 @@ void Demo::update(float dt) {
 	m_PostFX.m_ComputePass.m_Gamma = s.m_ComputePassGamma.at(t);
 	m_PostFX.m_ComputePass.m_FinalTouchAdd = s.m_ComputePassFinalTouchAdd.at(t);
 	m_PostFX.m_ComputePass.m_FinalTouchMul = s.m_ComputePassFinalTouchMul.at(t);
+	m_PostFX.m_ComputePass.m_Glitch = s.m_Glitch.at(t);
 
 	// Fragment Pass
 	m_PostFX.m_FragmentPass.m_IsEnabled = s.m_FragmentPass.at(t);
 	m_PostFX.m_FragmentPass.m_BlurTechnique = s.m_BlurKind.at(t);
+	m_PostFX.m_FragmentPass.m_RadialBlurMaxLength = s.m_BlurLength.at(t);
+	m_PostFX.m_FragmentPass.m_RadialBlurNumSamples = s.m_BlurSamples.at(t);
 	m_PostFX.m_FragmentPass.m_BloomEnabled = s.m_Bloom.at(t);
 	m_PostFX.m_FragmentPass.m_BloomMatrixHalfSide = s.m_BloomHalfSide.at(t);
 	m_PostFX.m_FragmentPass.m_BloomTexelSkip = s.m_BloomTexelSkip.at(t);
