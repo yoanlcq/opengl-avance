@@ -755,41 +755,24 @@ void Demo::update(float dt) {
 	m_ParticlesManager.m_RightReactorParticlesInstanceData.velMultiplier = 15.f;
 
 
-
     if(!m_Story.isPlaying())
         return;
 
-
-
-    // FIXME(coraliegold):
-    // Mettre à true pour expérimenter, puis conditionner d'après getPlayheadTime() une fois prêt
 	if (m_Story.getPlayheadTime() >= 54) {
         m_ParticlesManager.m_LeftReactorParticles.addParticles(2, m_ParticlesManager.m_LeftReactorParticlesInstanceData);
         m_ParticlesManager.m_RightReactorParticles.addParticles(2, m_ParticlesManager.m_RightReactorParticlesInstanceData);
-    }
 
-    // NOTE(coraliegold):
-    // - Quand les réacteurs sont en marche, il faut ajouter 2 particules à chaque frame.
-    //   On ne les supprime pas derrière (i.e on n'appelle jamais removeParticles(), point).
-    //
-    // - m_ShipReactorStrength est une variable entre 0 et 1 qui va changer l'intensité
-    //   des point lights des réacteurs.
-    //
-    // - m_ShipInstanceData.m_Position
-    // - m_ShipInstanceData.m_Forward
-    // - m_AllShardsAddedDirection
-    // - m_AllShardsVelocityFactor
-    // - ... Sinon voir le GUI
+        m_ParticlesManager.m_LeftReactorParticlesInstanceData.pointSize = 4;
+        m_ParticlesManager.m_LeftReactorParticlesInstanceData.zScale = 100;
+        m_ParticlesManager.m_LeftReactorParticlesInstanceData.zInfluence = 1;
+
+        m_ParticlesManager.m_RightReactorParticlesInstanceData.pointSize = 4;
+        m_ParticlesManager.m_RightReactorParticlesInstanceData.zScale = 100;
+        m_ParticlesManager.m_RightReactorParticlesInstanceData.zInfluence = 1;
+    }
 
     const auto& s = m_Story;
     const float t = s.getPlayheadTime();
-    // TODO(coraliegold): For each timeline, evaluate the current value, juste like the following lines.
-    /*m_Camera.setMode(s.m_CameraMode.at(t));
-    m_Camera.m_LookAtData.m_Forward = s.m_CameraForward.at(t);
-    m_Camera.m_FreeFlyData.m_Forward = s.m_CameraForward.at(t);
-    m_Camera.m_NoiseFactor = s.m_CameraNoiseFactor.at(t);
-    m_Camera.m_NoiseSpeed = s.m_CameraNoiseSpeed.at(t);
-    m_Camera.m_FovY = s.m_CameraFovY.at(t);*/
 
 	// Pipeline
 	m_PipelineKind = s.m_Pipeline.at(t);

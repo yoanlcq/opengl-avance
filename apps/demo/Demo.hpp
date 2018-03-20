@@ -564,7 +564,6 @@ class Skybox {
     glmlv::GLSampler        m_Sampler;
     SkyboxCubeMesh          m_CubeMesh;
 public:
-    // TODO(coraliegold) Add new skybox cubemaps here, and improve constructor accordingly
     enum Sky {
         SkySimpleColorTest = 0,
         SkySpaceKurt,
@@ -1022,8 +1021,8 @@ public:
 	const Timeline<glm::vec3> m_EndOfTheWorldDataShardsDirection;
 	const Timeline<float> m_EndOfTheWorldDataShardsVelocity;
 	const Timeline<float> m_ShipReactorStrength;
-	const Timeline<glm::vec3> m_ShipPosition;
 	const Timeline<glm::vec3> m_ShipForward;
+	const Timeline<glm::vec3> m_ShipPosition;
 
     static constexpr float BPM = 170;
     static constexpr float DURATION = 88; // 1 min 28
